@@ -1,0 +1,8 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="prescription2">
+<g id="Union">
+<path d="M7 6H9V8H11V10H9V12H7V10H5V8H7V6Z" fill="currentColor"/>
+<path d="M2 1C2 0.447715 2.44772 0 3 0H13C13.5523 0 14 0.447715 14 1V3C14 3.55228 13.5523 4 13 4V14.5C13 15.3284 12.3284 16 11.5 16H4.5C3.67157 16 3 15.3284 3 14.5L3 4C2.44772 4 2 3.55228 2 3V1ZM4 4V14.5C4 14.7761 4.22386 15 4.5 15H11.5C11.7761 15 12 14.7761 12 14.5V4H4ZM3 3H13V1H3V3Z" fill="currentColor"/>
+</g>
+</g>
+</svg>

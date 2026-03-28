@@ -1,0 +1,107 @@
+.AgeMetrics-age {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.AgeMetrics-shape-container {
+	position: relative;
+	width: 100%;
+
+	height: auto;
+	// opacity: 0;
+	animation: flowOut 2s ease forwards;
+}
+
+// @keyframes flowOut {
+// 	0% {
+// 		transform: scale(0.9);
+// 		opacity: 0;
+// 	}
+// 	100% {
+// 		transform: scale(1);
+// 		opacity: 1;
+// 	}
+// }
+
+.AgeMetrics-shape,
+.AgeMetrics-shape-rotated {
+	width: 100%;
+	height: auto;
+	display: block;
+}
+
+.AgeMetrics-shape-rotated {
+	rotate: 180deg;
+}
+
+.AgeMetrics-content,
+.AgeMetrics-content-rotated {
+	position: absolute;
+	top: 50%;
+	left: 52%;
+	transform: translate(-50%, -50%);
+
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	color: var(--text);
+	padding: 10px 0 0;
+}
+
+.AgeMetrics-content-rotated {
+	left: 66%;
+}
+
+.AgeMetrics-content-title {
+	font-weight: 700;
+	font-size: 14px;
+	line-height: 1.2;
+	text-wrap: nowrap;
+	color: var(--text-secondary);
+
+	@media (max-width: 480px) {
+		font-size: 12px;
+	}
+}
+
+.AgeMetrics-content-value {
+	padding-left: 8px;
+
+	font-weight: 700;
+	font-size: 32px;
+	line-height: 1;
+	color: var(--text);
+
+	@media (max-width: 480px) {
+		font-size: 28px;
+	}
+}
+
+.AgeMetrics-border-green {
+	border-left: 2px solid rgba(21, 219, 207, 1);
+}
+
+.AgeMetrics-border-blue {
+	border-left: 2px solid #0974fb;
+}
+
+.AgeMetrics-content-units {
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 16px;
+	opacity: 60%;
+}
+
+.AgeMetrics-icon-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-shrink: 0;
+	width: 24px;
+	height: 24px;
+	gap: 8px;
+	border-radius: 24px;
+	background-color: var(--glass-bg);
+	border: 1px solid var(--glass-border);
+}

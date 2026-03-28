@@ -1,0 +1,95 @@
+{
+	"goals": [
+		{
+			"id": "goal-1",
+			"category": "Logistics",
+			"title": "Reduce Medical Travel",
+			"description": "Minimize distance to care by leveraging remote consultations.",
+			"target_value": "0",
+			"current_value": "50",
+			"unit": "km",
+			"progress": 20,
+			"status": "In Progress",
+			"trend": "improving"
+		},
+		{
+			"id": "goal-2",
+			"category": "Financial",
+			"title": "Minimize Care Costs",
+			"description": "Optimize spending by switching to verified generic alternatives.",
+			"target_value": "100",
+			"current_value": "160",
+			"unit": "GHS",
+			"progress": 40,
+			"status": "In Progress",
+			"trend": "improving"
+		},
+		{
+			"id": "goal-3",
+			"category": "Navigation",
+			"title": "Specialist Reach",
+			"description": "Maintain active connections with recommended specialists.",
+			"target_value": "5",
+			"current_value": "2",
+			"unit": "Specialists",
+			"progress": 40,
+			"status": "In Progress",
+			"trend": "stable"
+		}
+	],
+	"reports": [
+		{
+			"id": "rep-1",
+			"title": "Comprehensive Blood Panel",
+			"date": "2024-03-10",
+			"type": "Biomarker",
+			"summary": "Your lipid profile shows significant improvement. Focus on Vitamin D supplementation.",
+			"status": "Finalized",
+			"insights_count": 12
+		},
+		{
+			"id": "rep-2",
+			"title": "Gut Microbiome Analysis",
+			"date": "2024-02-15",
+			"type": "Microbiome",
+			"summary": "Diversity index is high. Identified potential sensitivities to gluten and dairy.",
+			"status": "Archived",
+			"insights_count": 8
+		},
+		{
+			"id": "rep-3",
+			"title": "DNA Longevity Report",
+			"date": "2024-01-20",
+			"type": "Genetic",
+			"summary": "Analysis of longevity-related gene variants and biological age estimation.",
+			"status": "Finalized",
+			"insights_count": 15
+		}
+	],
+	"tests": [
+		{
+			"id": "test-1",
+			"title": "Advanced Hormone Panel",
+			"description": "Full thyroid, adrenal, and reproductive hormone screening.",
+			"type": "Blood",
+			"status": "Results Pending",
+			"order_date": "2024-03-12"
+		},
+		{
+			"id": "test-2",
+			"title": "Cognitive Performance Test",
+			"description": "Neural efficiency and memory recall baseline assessment.",
+			"type": "Neuro",
+			"status": "Available to Order",
+			"price": "$149"
+		},
+		{
+			"id": "test-3",
+			"title": "Metabolic Shield 2.0",
+			"description": "Real-time glucose and insulin response tracking.",
+			"type": "CGM",
+			"status": "Shipped",
+			"tracking": "GEN-99210-44"
+		}
+	]
+}

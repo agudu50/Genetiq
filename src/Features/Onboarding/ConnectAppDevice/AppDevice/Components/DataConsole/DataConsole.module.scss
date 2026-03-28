@@ -1,0 +1,69 @@
+@use "@variables" as *;
+
+.console-container {
+	margin-top: 16px;
+	background: rgba(0, 0, 0, 0.4);
+	border: 1px solid rgba(255, 255, 255, 0.04);
+	border-radius: 12px;
+	padding: 10px;
+	font-family: "JetBrains Mono", "Fira Code", monospace;
+	position: relative;
+	overflow: hidden;
+}
+
+.console-header {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 9px;
+	font-weight: 700;
+	color: $indigo-soft;
+	text-transform: uppercase;
+	letter-spacing: 0.8px;
+	margin-bottom: 8px;
+	padding-bottom: 6px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+	.dot {
+		width: 4px;
+		height: 4px;
+		background: $indigo-vibrant;
+		border-radius: 50%;
+		box-shadow: 0 0 8px $indigo-vibrant;
+		animation: pulse 2s infinite;
+	}
+}
+
+.log-viewport {
+	height: 70px;
+	overflow-y: hidden;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.log-entry {
+	font-size: 10px;
+	color: rgba(255, 255, 255, 0.7);
+	line-height: 1.4;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	.timestamp {
+		color: rgba(255, 255, 255, 0.3);
+		margin-right: 8px;
+	}
+}
+
+@keyframes pulse {
+	0%,
+	100% {
+		opacity: 0.5;
+		transform: scale(0.9);
+	}
+	50% {
+		opacity: 1;
+		transform: scale(1.1);
+	}
+}

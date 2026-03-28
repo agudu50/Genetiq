@@ -1,0 +1,146 @@
+.SideBar-container {
+	position: absolute;
+	left: 32px;
+	top: 32%;
+	transform: translateY(-32%);
+	z-index: 1001;
+	height: auto;
+	max-height: 70vh;
+	width: auto !important;
+	display: flex !important;
+	flex-direction: column !important;
+	align-items: center !important;
+	justify-content: flex-start !important;
+	pointer-events: none !important;
+
+	&::before {
+		content: "";
+		position: absolute;
+		left: 50%;
+		top: 0;
+		bottom: 0;
+		width: 1px;
+		background: linear-gradient(
+			to bottom,
+			transparent,
+			rgba(52, 120, 246, 0.4) 15%,
+			rgba(139, 92, 246, 0.4) 85%,
+			transparent
+		);
+		transform: translateX(-50%);
+		z-index: -1;
+	}
+}
+
+.sidebar-inner {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	pointer-events: auto;
+	gap: 1.5vh;
+}
+
+.segment-control {
+	display: flex;
+	background: rgba(15, 23, 42, 0.8);
+	backdrop-filter: blur(8px);
+	padding: 4px;
+	border-radius: 20px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	gap: 4px;
+	margin-bottom: 8px;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.segment-tab {
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	border: none;
+	background: transparent;
+	color: rgba(255, 255, 255, 0.5);
+	font-size: 11px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	&:hover {
+		color: #ffffff;
+		background: rgba(255, 255, 255, 0.05);
+	}
+
+	&.active {
+		background: linear-gradient(135deg, #3478f6 0%, #8b5cf6 100%);
+		color: #ffffff;
+		box-shadow: 0 4px 10px rgba(52, 120, 246, 0.3);
+	}
+}
+
+.icons-grid {
+	display: flex !important;
+	flex-direction: column !important;
+	gap: 1.2vh !important;
+	align-items: center;
+}
+
+.segmented-icons {
+	display: flex;
+	flex-direction: column;
+	gap: 1.2vh;
+	align-items: center;
+}
+
+.group-separator {
+	width: 24px;
+	height: 1px;
+	background: linear-gradient(
+		to right,
+		transparent,
+		rgba(255, 255, 255, 0.2),
+		transparent
+	);
+	margin: 4px 0;
+}
+
+.separator {
+	width: 40px;
+	height: 1px;
+	background: rgba(255, 255, 255, 0.1);
+	margin-bottom: 4px;
+}
+
+.SideBar-count {
+	position: absolute;
+	top: -6px;
+	right: -6px;
+	background: #ff4757;
+	color: white;
+	font-size: 10px;
+	font-weight: 800;
+	min-width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 4px 10px rgba(255, 71, 87, 0.4);
+	border: 2px solid rgba(15, 23, 42, 1);
+	z-index: 10;
+}
+
+@media (max-width: 1024px) {
+	.SideBar-container {
+		left: 16px;
+		top: 25%;
+		max-height: 65vh;
+	}
+
+	.segment-tab {
+		width: 24px;
+		height: 24px;
+		font-size: 10px;
+	}
+}

@@ -1,0 +1,90 @@
+import QuestionMark from "@assets/PlanWidget/QuestionMark.svg?react";
+import ChevronHollow from "@assets/CtaModal/ChevronHollow.svg?react";
+import Cart from "@assets/CtaModal/Cart.svg?react";
+import styles from "./PlanRow.module.scss";
+import { PlanItem } from "../../helpers/planMockData";
+import { useLanguage } from "@/App/i18n/LanguageContext";
+
+// Icons for dynamic mapping
+import gene from "@assets/PlanWidget/FollowUpCare/gene.svg";
+import microscope from "@assets/PlanWidget/FollowUpCare/microscope.svg";
+import scale from "@assets/PlanWidget/FollowUpCare/scale.svg";
+import beetroot from "@assets/PlanWidget/Supplements/beetroot.svg";
+import tumeric from "@assets/PlanWidget/Supplements/tumeric.svg";
+import omega from "@assets/PlanWidget/Supplements/omega.svg";
+import coenzyme from "@assets/PlanWidget/Supplements/coenzyme.svg";
+import ashwagandha from "@assets/PlanWidget/Supplements/ashwagandha.svg";
+import train from "@assets/PlanWidget/Lifestyle/train.svg";
+import quitSmoking from "@assets/PlanWidget/Lifestyle/quitSmoking.svg";
+import apple from "@assets/PlanWidget/Lifestyle/apple.svg";
+
+const iconMap: Record<string, string> = {
+	gene,
+	microscope,
+	scale,
+	beetroot,
+	tumeric,
+	omega,
+	coenzyme,
+	ashwagandha,
+	train,
+	quitSmoking,
+	apple,
+};
+
+export const PlanRow = ({
+	item,
+	setActiveTab,
+}: {
+	item: PlanItem;
+	setActiveTab: (tab: string) => void;
+}) => {
+	const { t } = useLanguage();
+	const iconSrc = iconMap[item.icon] || item.icon;
+
+	const handleClick = () => {
+		if (item.link) {
+			setActiveTab(item.link);
+		}
+	};
+	return (
+		<div className={styles["PlanRow-row"]} onClick={handleClick}>
+			<div className={styles["PlanRow-icon"]}>
+				<img src={iconSrc} alt={`${item.name} icon`} />
+			</div>
+			<div className={styles["PlanRow-body"]}>
+				<div className={styles["PlanRow-name"]}>
+					{item.count && (
+						<span className={styles["PlanRow-count"]}>{item.count} </span>
+					)}
+					{item.name}
+				</div>
+				<div className={styles["PlanRow-desc"]}>{item.description}</div>
+			</div>
+			<div className={styles["PlanRow-misc"]}>
+				{item.dosage && (
+					<div className={styles["PlanRow-dosage"]}>{item.dosage}</div>
+				)}
+				{item.frequency && (
+					<div className={styles["PlanRow-frequency"]}>{item.frequency}</div>
+				)}
+			</div>
+			<div className={styles["PlanRow-buttons"]}>
+				<div className={styles["PlanRow-why"]}>
+					<p>{t("why")}</p>
+					<QuestionMark />
+				</div>
+				{item.link ? (
+					<div className={styles["PlanRow-chevron-container"]}>
+						<ChevronHollow />
+					</div>
+				) : (
+					<button className={styles["PlanRow-cart"]}>
+						<p>{t("add_to_cart")}</p>
+						<Cart />
+					</button>
+				)}
+			</div>
+		</div>
+	);
+};

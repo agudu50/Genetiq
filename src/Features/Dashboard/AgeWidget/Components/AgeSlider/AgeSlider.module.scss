@@ -1,0 +1,194 @@
+@use "@/App/Styles/_mixins" as *;
+
+.AgeSlider-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
+	width: 322px;
+	position: relative;
+
+	@media (max-width: 768px) {
+		flex-direction: column;
+		align-items: center;
+		gap: 16px;
+		padding: 0;
+		width: 100%;
+	}
+}
+
+.AgeSlider-title {
+	font-size: 14px;
+	font-weight: 700;
+	line-height: 16px;
+	width: 100%;
+	text-align: left;
+	color: var(--text);
+
+	@include media_1439 {
+		text-align: center;
+	}
+}
+
+.AgeSlider-bar-wrapper {
+	background-size: contain;
+	background-position: center;
+	padding: 4px;
+	width: 100%;
+	border-radius: 24px;
+	overflow: hidden;
+	position: relative;
+	background: color-mix(in srgb, var(--surface) 70%, transparent);
+}
+
+.AgeSlider-bar-wrapper::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background-size: contain;
+	opacity: 0.2;
+	background-image: url("@assets/AgeWidget/BarGrid.png");
+}
+
+.AgeSlider-bar-wrapper::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: 24px;
+	padding: 1px;
+	background: linear-gradient(
+		270deg,
+		#ff7bd2 6.69%,
+		var(--accent) 49.8%,
+		color-mix(in srgb, var(--accent) 70%, #ffffff 30%) 100%
+	);
+	-webkit-mask:
+		linear-gradient(white, white) content-box,
+		linear-gradient(white, white);
+	mask:
+		linear-gradient(white, white) content-box,
+		linear-gradient(white, white);
+	mask-composite: exclude;
+	-webkit-mask-composite: destination-out;
+}
+
+.AgeSlider-bar {
+	position: relative;
+	height: 24px;
+	display: flex;
+
+	justify-content: center;
+	align-items: center;
+}
+
+.AgeSlider-bar-fill {
+	position: absolute;
+	height: 100%;
+
+	background: linear-gradient(
+		270deg,
+		var(--accent) 0%,
+		color-mix(in srgb, var(--accent) 70%, #ffffff 30%) 100%
+	);
+	left: 0;
+	top: 0;
+	border-radius: 24px 0 0 24px;
+	animation: barFillAnimation 1.5s ease-in-out;
+}
+
+@keyframes barFillAnimation {
+	0% {
+		width: 0%;
+		opacity: 0;
+	}
+	60% {
+		width: calc(var(--chronoAgePercentage) + 3%);
+		opacity: 1;
+	}
+	80% {
+		width: calc(var(--chronoAgePercentage) - 1%);
+	}
+	100% {
+		width: var(--chronoAgePercentage);
+	}
+}
+
+.AgeSlider-horizontal-line {
+	position: relative;
+	height: 1px;
+	width: calc(100% - 30px);
+	background: color-mix(in srgb, var(--text) 35%, transparent);
+}
+
+.AgeSlider-thumb {
+	position: absolute;
+	top: 60%;
+	transform: translateY(-60%);
+	width: 11px;
+	height: 20px;
+	animation: thumbSlideAnimation 1.3s ease-in-out;
+}
+
+@keyframes thumbSlideAnimation {
+	0% {
+		left: 0%;
+		opacity: 0;
+	}
+
+	100% {
+		left: var(--bioAgePercentage);
+		opacity: 1;
+	}
+}
+
+.AgeSlider-circle-start {
+	position: absolute;
+	z-index: 2;
+	top: 50%;
+	left: 1%;
+	transform: translateY(-50%);
+}
+
+.AgeSlider-circle-end {
+	position: absolute;
+	z-index: 2;
+	top: 50%;
+	right: 1%;
+	transform: translateY(-50%);
+}
+
+.AgeSlider-axis {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+}
+
+.AgeSlider-axis-label {
+	color: var(--text);
+	text-align: center;
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 16px;
+	/* Improve readability in dark mode */
+	opacity: 1;
+
+	@media (max-width: 480px) {
+		font-size: 11px;
+	}
+
+	&-median {
+		opacity: 1;
+		color: var(--accent);
+	}
+	&:first-child {
+		opacity: 0.85;
+	}
+
+	&:nth-last-child(-n + 2) {
+		opacity: 0.85;
+	}
+}
+
+.AgeSlider-axis-label:nth-child(2n) {
+	display: none;
+}

@@ -1,0 +1,346 @@
+.profileWidget {
+	background: var(--glass-bg);
+	backdrop-filter: blur(8px) saturate(180%);
+	-webkit-backdrop-filter: blur(8px) saturate(180%);
+	border: 1px solid var(--glass-border);
+	border-radius: 16px;
+	padding: 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	position: relative;
+	overflow: hidden;
+	transition:
+		transform 0.3s ease,
+		box-shadow 0.3s ease;
+
+	&::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 3px;
+		background: linear-gradient(90deg, #6366f1, #8b5cf6, #a78bfa);
+		opacity: 0.8;
+	}
+
+	&:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 12px 40px rgba(99, 102, 241, 0.15);
+	}
+
+	@media (max-width: 768px) {
+		padding: 16px;
+		gap: 14px;
+		border-radius: 14px;
+	}
+}
+
+// ─── Header ───────────────────────────────────────
+.header {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.avatarRing {
+	position: relative;
+	width: 52px;
+	height: 52px;
+	flex-shrink: 0;
+	border-radius: 50%;
+	background: conic-gradient(
+		#6366f1 0deg,
+		#8b5cf6 var(--progress, 0deg),
+		rgba(255, 255, 255, 0.08) var(--progress, 0deg),
+		rgba(255, 255, 255, 0.08) 360deg
+	);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	animation: pulseRing 3s ease-in-out infinite;
+
+	@media (max-width: 480px) {
+		width: 46px;
+		height: 46px;
+	}
+}
+
+@keyframes pulseRing {
+	0%,
+	100% {
+		box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.2);
+	}
+	50% {
+		box-shadow: 0 0 0 6px rgba(99, 102, 241, 0);
+	}
+}
+
+.avatar {
+	width: 44px;
+	height: 44px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #312e81, #1e1b4b);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 700;
+	font-size: 16px;
+	color: #c7d2fe;
+	letter-spacing: 1px;
+
+	@media (max-width: 480px) {
+		width: 38px;
+		height: 38px;
+		font-size: 14px;
+	}
+}
+
+.headerInfo {
+	flex: 1;
+	min-width: 0;
+}
+
+.name {
+	font-size: 17px;
+	font-weight: 700;
+	color: var(--text);
+	margin: 0 0 4px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	@media (max-width: 480px) {
+		font-size: 15px;
+	}
+}
+
+.metaRow {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.metaTag {
+	font-size: 11px;
+	font-weight: 600;
+	padding: 2px 8px;
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.06);
+	color: var(--text-secondary);
+	text-transform: capitalize;
+	letter-spacing: 0.3px;
+}
+
+.conditionTag {
+	background: rgba(239, 68, 68, 0.12);
+	color: #fca5a5;
+}
+
+.walletTag {
+	background: rgba(99, 102, 241, 0.12);
+	color: #818cf8;
+	border: 1px solid rgba(99, 102, 241, 0.2);
+	display: flex;
+	align-items: center;
+	gap: 4px;
+
+	svg {
+		width: 12px;
+		height: 12px;
+	}
+}
+
+// ─── Vitals Grid ──────────────────────────────────
+.vitalsGrid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 10px;
+
+	@media (max-width: 480px) {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+.vitalCard {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+	padding: 14px 8px;
+	border-radius: 12px;
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	transition:
+		background 0.2s ease,
+		border-color 0.2s ease;
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.06);
+		border-color: rgba(99, 102, 241, 0.2);
+	}
+}
+
+.vitalIcon {
+	color: var(--accent);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.vitalData {
+	display: flex;
+	align-items: baseline;
+	gap: 3px;
+}
+
+.vitalValue {
+	font-size: 20px;
+	font-weight: 700;
+	color: var(--text);
+	line-height: 1;
+}
+
+.vitalUnit {
+	font-size: 11px;
+	font-weight: 500;
+	color: var(--text-secondary);
+}
+
+.vitalLabel {
+	font-size: 11px;
+	font-weight: 500;
+	color: var(--text-secondary);
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.bmiBadge {
+	font-size: 9px;
+	font-weight: 700;
+	padding: 2px 6px;
+	border-radius: 4px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+
+	&.underweight {
+		background: rgba(96, 165, 250, 0.15);
+		color: #60a5fa;
+	}
+	&.normal {
+		background: rgba(52, 211, 153, 0.15);
+		color: #34d399;
+	}
+	&.overweight {
+		background: rgba(251, 191, 36, 0.15);
+		color: #fbbf24;
+	}
+	&.obese {
+		background: rgba(239, 68, 68, 0.15);
+		color: #ef4444;
+	}
+}
+
+.isEmpty {
+	opacity: 0.6;
+	border-style: dashed !important;
+}
+
+.vitalPlaceholder {
+	font-size: 18px;
+	font-weight: 700;
+	color: rgba(255, 255, 255, 0.2);
+}
+
+// ─── Empty State ──────────────────────────────────
+.emptyState {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	padding: 16px 14px;
+	text-align: center;
+}
+
+.emptyIcon {
+	color: rgba(255, 255, 255, 0.2);
+	margin-bottom: 4px;
+}
+
+.emptyText {
+	font-size: 13px;
+	color: var(--text-secondary);
+	margin: 0;
+	line-height: 1.5;
+}
+
+.importBtn {
+	background: linear-gradient(135deg, #6366f1, #8b5cf6);
+	color: white;
+	border: none;
+	padding: 8px 20px;
+	border-radius: 10px;
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.25s ease;
+
+	&:hover {
+		transform: scale(1.04);
+		box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+	}
+}
+
+// ─── Footer ───────────────────────────────────────
+.footer {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding-top: 4px;
+}
+
+.completeness {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.completenessBar {
+	height: 6px;
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.08);
+	overflow: hidden;
+}
+
+.completenessProgress {
+	height: 100%;
+	border-radius: 4px;
+	background: linear-gradient(90deg, #6366f1, #8b5cf6);
+	transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.completenessText {
+	font-size: 11px;
+	color: var(--text-secondary);
+	font-weight: 500;
+}
+
+.updateBtn {
+	background: rgba(255, 255, 255, 0.06);
+	color: var(--accent);
+	border: 1px solid rgba(99, 102, 241, 0.2);
+	padding: 6px 14px;
+	border-radius: 8px;
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	white-space: nowrap;
+
+	&:hover {
+		background: rgba(99, 102, 241, 0.12);
+		border-color: rgba(99, 102, 241, 0.4);
+	}
+}

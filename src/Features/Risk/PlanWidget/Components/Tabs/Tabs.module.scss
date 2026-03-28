@@ -1,0 +1,104 @@
+@use "@/App/Styles/_mixins" as mixins;
+
+.Tabs-container {
+	display: flex;
+	flex-direction: row;
+	background-color: white;
+}
+
+.Tabs-tab-container {
+	display: flex;
+	position: relative;
+	height: 40px;
+	cursor: pointer;
+
+	&:not(:first-child) {
+		margin-left: -40px;
+	}
+
+	&:first-child {
+		.Tabs-tab {
+			border-top-left-radius: 8px;
+			margin-left: 1px;
+			padding-left: 20px;
+		}
+		.Tabs-slope-container {
+			display: none;
+		}
+	}
+
+	&:last-child {
+		.Tabs-tab::after {
+			content: "";
+			width: 53px;
+			height: 40px;
+			top: -1px;
+			right: 0;
+			rotate: (180deg);
+			background-color: white;
+			position: absolute;
+			clip-path: path(
+				"M29.65 31.2362L14.5656 7.92407C11.3686 2.98327 5.88493 0 0 0V40H45.7592C39.2507 40 33.1858 36.7006 29.65 31.2362Z"
+			);
+		}
+	}
+
+	&:not(.active):hover {
+		.Tabs-tab {
+			background: rgb(223, 229, 248);
+		}
+
+		svg {
+			path {
+				fill: rgb(223, 229, 248);
+			}
+		}
+	}
+}
+
+.active {
+	svg {
+		path {
+			fill: #e4ebf9;
+		}
+	}
+
+	.Tabs-tab {
+		background: var(--Background---medium, #e4ebf9);
+	}
+}
+
+.Tabs-tab {
+	display: flex;
+	align-items: center;
+
+	padding: 6px 50px 3px 20px;
+	margin-left: -1px;
+	font-size: 16px;
+	font-weight: 500;
+	line-height: 24px;
+	color: #0b101a;
+	position: relative;
+	overflow: hidden;
+	background: #f5f7fc;
+	transition: all 0.2s ease;
+
+	@include mixins.media_1536 {
+		padding: 6px 35px 3px 0px;
+		font-size: 14px;
+	}
+
+	@include mixins.media_1248 {
+		line-height: 14px;
+		text-align: center;
+	}
+}
+
+.Tabs-slope-container {
+	rotate: (180deg);
+	svg {
+		path {
+			transition: all 0.2s ease;
+		}
+	}
+}

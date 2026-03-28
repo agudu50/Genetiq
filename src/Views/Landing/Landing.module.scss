@@ -1,0 +1,825 @@
+// ─── Design Tokens ───────────────────────────────────────────────────────────
+$purple-vibrant: #7e22ce; // Deeper purple (Purple 700)
+$purple-soft: #a855f7; // Mid purple (Purple 500)
+$violet-deep: #1e1b4b; // Deeper violet (Violet 950)
+$navy-deep: #020617; // Slate 950 for deeper contrast
+$glass-bg: rgba(255, 255, 255, 0.02);
+$glass-border: rgba(255, 255, 255, 0.05);
+
+.page {
+	min-height: 100vh;
+	background: $navy-deep;
+	color: #ffffff;
+	position: relative;
+	overflow-x: hidden;
+	font-family: Inter, system-ui, sans-serif;
+
+	&::before {
+		content: "";
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100vh;
+		background: radial-gradient(
+			circle at 50% 0%,
+			rgba($purple-vibrant, 0.15) 0%,
+			transparent 70%
+		);
+		pointer-events: none;
+		z-index: 0;
+	}
+}
+
+// ── Navbar ──────────────────────────────────────────────────
+
+.nav {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 1000;
+	padding: 0 24px;
+	height: 80px;
+	transition: all 0.3s ease;
+
+	&.scrolled {
+		height: 64px;
+		background: rgba(2, 6, 23, 0.8);
+		backdrop-filter: blur(4px);
+		border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+	}
+}
+
+.navInner {
+	max-width: 1400px;
+	margin: 0 auto;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.logo {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	cursor: pointer;
+	z-index: 1;
+
+	.logoImage {
+		width: 32px;
+		height: 32px;
+		object-fit: contain;
+	}
+
+	.logoText {
+		font-size: 24px;
+		font-weight: 800;
+		letter-spacing: -1px;
+		background: linear-gradient(135deg, #fff 0%, $purple-soft 100%);
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}
+}
+
+.navLinks {
+	display: flex;
+	align-items: center;
+	gap: 32px;
+
+	@media (max-width: 1024px) {
+		display: none;
+	}
+}
+
+.navLink {
+	font-size: 14px;
+	font-weight: 500;
+	color: rgba(255, 255, 255, 0.6);
+	transition: color 0.3s ease;
+
+	&:hover {
+		color: #ffffff;
+	}
+}
+
+.btnNavOutline {
+	padding: 8px 16px;
+	border-radius: 8px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	background: transparent;
+	color: #fff;
+	font-weight: 600;
+	font-size: 14px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.05);
+		border-color: rgba(255, 255, 255, 0.2);
+	}
+}
+
+.btnNavPrimary {
+	padding: 10px 20px;
+	border-radius: 8px;
+	background: $purple-vibrant;
+	color: #fff;
+	font-weight: 700;
+	font-size: 14px;
+	cursor: pointer;
+	border: none;
+	transition: all 0.3s ease;
+	box-shadow: 0 4px 15px rgba($purple-vibrant, 0.3);
+
+	&:hover {
+		background: $purple-soft;
+		box-shadow: 0 8px 25px rgba($purple-vibrant, 0.4);
+	}
+}
+
+// ── Hero ──────────────────────────────────────────────────
+
+.hero {
+	position: relative;
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	max-width: 1400px;
+	margin: 0 auto;
+	padding: 120px 24px 60px;
+	z-index: 10;
+	gap: 64px;
+
+	@media (max-width: 1024px) {
+		flex-direction: column;
+		justify-content: center;
+		text-align: center;
+		gap: 32px;
+	}
+}
+
+.heroContent {
+	flex: 1;
+	max-width: 700px;
+	display: flex;
+	flex-direction: column;
+	gap: 40px;
+
+	@media (max-width: 1024px) {
+		align-items: center;
+	}
+}
+
+.heroBadge {
+	display: none;
+}
+
+.heroTitle {
+	font-size: clamp(40px, 6vw, 72px);
+	font-weight: 800;
+	line-height: 1.1;
+	letter-spacing: -3px;
+	margin: 0;
+
+	.titleAccent {
+		display: block;
+		background: linear-gradient(135deg, $purple-vibrant 0%, #d946ef 100%);
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}
+}
+
+.heroSub {
+	font-size: clamp(16px, 2vw, 20px);
+	color: rgba(255, 255, 255, 0.5);
+	max-width: 540px;
+	line-height: 1.6;
+}
+
+.heroVisual {
+	flex: 1.2;
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	.heroImage {
+		width: 100%;
+		max-width: 600px;
+		height: auto;
+		border-radius: 32px;
+		box-shadow:
+			0 40px 100px rgba(0, 0, 0, 0.5),
+			0 0 60px rgba($purple-vibrant, 0.2);
+		mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+	}
+}
+
+.btnPrimary {
+	padding: 16px 32px;
+	border-radius: 12px;
+	background: $purple-vibrant;
+	color: #ffffff;
+	font-size: 18px;
+	font-weight: 700;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	border: none;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	box-shadow: 0 10px 30px rgba($purple-vibrant, 0.3);
+
+	&:hover {
+		background: $purple-soft;
+		transform: translateY(-2px);
+		box-shadow: 0 15px 40px rgba($purple-vibrant, 0.4);
+	}
+}
+
+// ── Section Layout ──────────────────────────────────────────
+
+.section {
+	padding: 120px 24px;
+	position: relative;
+	z-index: 10;
+	max-width: 1400px;
+	margin: 0 auto;
+}
+
+.sectionHeader {
+	text-align: center;
+	margin-bottom: 80px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 16px;
+}
+
+.badge {
+	font-size: 12px;
+	font-weight: 800;
+	color: $purple-soft;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	background: rgba($purple-vibrant, 0.1);
+	padding: 6px 14px;
+	border-radius: 99px;
+}
+
+.sectionTitle {
+	font-size: clamp(32px, 5vw, 48px);
+	font-weight: 800;
+	letter-spacing: -2px;
+	margin: 0;
+	color: #ffffff;
+}
+
+// ── Three Pillars ──────────────────────────────────────────
+
+.pillarGrid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 32px;
+
+	@media (max-width: 1024px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.pillarCard {
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 255, 255, 0.05);
+	border-radius: 24px;
+	padding: 48px 32px;
+	transition: all 0.3s ease;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	height: 100%;
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.04);
+		border-color: rgba($purple-vibrant, 0.3);
+		transform: translateY(-4px);
+	}
+}
+
+.pillarIconWrapper {
+	width: 56px;
+	height: 56px;
+	background: rgba($purple-vibrant, 0.1);
+	border-radius: 14px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: $purple-soft;
+}
+
+.pillarTitle {
+	font-size: 22px;
+	font-weight: 700;
+	color: #ffffff;
+}
+
+.pillarDesc {
+	font-size: 15px;
+	line-height: 1.6;
+	color: rgba(255, 255, 255, 0.4);
+}
+
+// ── Medical Sovereignty ──────────────────────────────────────────
+
+.historySection {
+	padding: 120px 24px;
+	background: radial-gradient(
+		circle at center,
+		rgba($purple-vibrant, 0.05) 0%,
+		transparent 80%
+	);
+}
+
+.historyGrid {
+	max-width: 900px;
+	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+}
+
+.historyVisual {
+	display: none;
+}
+
+.historyContent {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.historyDetailCard {
+	display: flex;
+	gap: 24px;
+	padding: 32px;
+	border-radius: 24px;
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 255, 255, 0.05);
+	text-align: left;
+	transition: all 0.3s ease;
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.04);
+		border-color: rgba($purple-vibrant, 0.2);
+	}
+
+	.hd_icon {
+		color: $purple-soft;
+		flex-shrink: 0;
+	}
+	.hd_text {
+		flex: 1;
+	}
+	h3 {
+		font-size: 20px;
+		color: white;
+		margin-bottom: 8px;
+	}
+	p {
+		font-size: 15px;
+		color: rgba(255, 255, 255, 0.4);
+		line-height: 1.6;
+	}
+}
+
+// ── Ecosystem ──────────────────────────────────────────────
+
+.ecosystemGrid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 64px;
+	align-items: center;
+
+	@media (max-width: 1024px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.ecoVisual {
+	width: 100%;
+	border-radius: 32px;
+	overflow: hidden;
+	border: 1px solid rgba(255, 255, 255, 0.05);
+
+	.mockScreen {
+		width: 100%;
+		height: auto;
+		display: block;
+	}
+}
+
+.ecoList {
+	display: flex;
+	flex-direction: column;
+	gap: 40px;
+}
+
+.ecoItem {
+	display: flex;
+	gap: 24px;
+}
+
+.ecoNumber {
+	font-size: 14px;
+	font-weight: 800;
+	color: $purple-soft;
+}
+
+.ecoContent {
+	h4 {
+		font-size: 20px;
+		font-weight: 700;
+		color: #ffffff;
+		margin-bottom: 8px;
+	}
+	p {
+		font-size: 15px;
+		color: rgba(255, 255, 255, 0.4);
+		line-height: 1.6;
+	}
+}
+
+// ── Sui Edge ──────────────────────────────────────────────
+
+.techGrid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 32px;
+
+	@media (max-width: 768px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.techCard {
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 255, 255, 0.05);
+	border-radius: 20px;
+	padding: 32px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	h3 {
+		font-size: 20px;
+		font-weight: 700;
+		color: #ffffff;
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+	p {
+		font-size: 15px;
+		color: rgba(255, 255, 255, 0.4);
+		line-height: 1.6;
+	}
+}
+
+// ── Stats ──────────────────────────────────────────────────
+
+.statsSection {
+	padding: 80px 24px;
+	background: rgba(0, 0, 0, 0.2);
+}
+
+.statsGrid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 48px;
+	max-width: 1200px;
+	margin: 0 auto;
+
+	@media (max-width: 768px) {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+.statItem {
+	text-align: center;
+}
+.statValue {
+	font-size: 40px;
+	font-weight: 800;
+	color: $purple-soft;
+	display: block;
+	margin-bottom: 8px;
+}
+.statLabel {
+	font-size: 13px;
+	font-weight: 700;
+	color: rgba(255, 255, 255, 0.3);
+	text-transform: uppercase;
+	letter-spacing: 1px;
+}
+
+// ── Final CTA ──────────────────────────────────────────────
+
+.finalCta {
+	padding: 160px 24px;
+	text-align: center;
+}
+
+.finalCtaContent {
+	max-width: 800px;
+	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 40px;
+}
+
+.finalTitle {
+	font-size: clamp(36px, 6vw, 64px);
+	font-weight: 800;
+	letter-spacing: -2px;
+	color: #ffffff;
+}
+
+.btnLarge {
+	padding: 20px 48px;
+	font-size: 20px;
+	border-radius: 16px;
+	background: $purple-vibrant;
+	color: #ffffff;
+	font-weight: 800;
+	border: none;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	box-shadow: 0 10px 40px rgba($purple-vibrant, 0.3);
+
+	&:hover {
+		background: $purple-soft;
+		transform: scale(1.02);
+		box-shadow: 0 15px 50px rgba($purple-vibrant, 0.4);
+	}
+}
+
+// ── Footer ──────────────────────────────────────────────────
+
+.footer {
+	background: #020617;
+	padding: 80px 24px 40px;
+	border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.footerInner {
+	max-width: 1400px;
+	margin: 0 auto;
+}
+.footerTop {
+	display: grid;
+	grid-template-columns: 2fr 3fr;
+	gap: 80px;
+	margin-bottom: 80px;
+}
+.footerLogo {
+	font-size: 28px;
+	font-weight: 900;
+	color: white;
+	display: block;
+	margin-bottom: 24px;
+}
+.footerDesc {
+	color: rgba(255, 255, 255, 0.3);
+	font-size: 15px;
+	line-height: 1.6;
+	max-width: 300px;
+}
+.footerLinksGrid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 40px;
+}
+.footerLinkCol h4 {
+	font-size: 13px;
+	font-weight: 700;
+	color: white;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	margin-bottom: 24px;
+}
+.footerLinkList {
+	list-style: none;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+.footerLinkList a {
+	font-size: 14px;
+	color: rgba(255, 255, 255, 0.3);
+	transition: color 0.3s ease;
+}
+.footerLinkList a:hover {
+	color: white;
+}
+.footerBottom {
+	border-top: 1px solid rgba(255, 255, 255, 0.05);
+	padding-top: 40px;
+	text-align: center;
+	color: rgba(255, 255, 255, 0.2);
+	font-size: 13px;
+}
+
+// ── Modal ──────────────────────────────────────────────
+
+.modalOverlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(2, 6, 23, 0.9);
+	backdrop-filter: blur(4px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 2000;
+	padding: 20px;
+}
+
+.modalContent {
+	background: #0f172a;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 24px;
+	max-width: 500px;
+	width: 100%;
+	padding: 40px;
+	position: relative;
+	box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+
+	@media (max-width: 640px) {
+		padding: 32px 24px;
+		border-radius: 20px;
+	}
+}
+
+.modalClose {
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	background: transparent;
+	border: none;
+	color: rgba(255, 255, 255, 0.4);
+	cursor: pointer;
+}
+.modalHeader {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 16px;
+	margin-bottom: 32px;
+	text-align: center;
+}
+.securityIcon {
+	width: 64px;
+	height: 64px;
+	background: rgba($purple-vibrant, 0.1);
+	border-radius: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: $purple-soft;
+}
+.modalTitle {
+	font-size: 24px;
+	font-weight: 800;
+	color: #ffffff;
+
+	@media (max-width: 640px) {
+		font-size: 20px;
+	}
+}
+.modalBody {
+	text-align: center;
+	p {
+		color: rgba(255, 255, 255, 0.5);
+		line-height: 1.6;
+		margin-bottom: 24px;
+	}
+}
+.walletPicker {
+	text-align: left;
+}
+.pickerLabel {
+	font-size: 12px;
+	font-weight: 700;
+	color: rgba(255, 255, 255, 0.3);
+	text-transform: uppercase;
+	margin-bottom: 12px;
+	display: block;
+}
+.walletList {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+.walletOption {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 16px;
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.05);
+	border-radius: 12px;
+	color: white;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	&:hover {
+		background: rgba(255, 255, 255, 0.06);
+	}
+	&.selected {
+		border-color: $purple-soft;
+		background: rgba($purple-vibrant, 0.1);
+	}
+
+	@media (max-width: 640px) {
+		padding: 16px;
+	}
+}
+.walletInfo {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+.walletIcon {
+	width: 24px;
+	height: 24px;
+	border-radius: 4px;
+}
+.warningBox {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	color: #ef4444;
+	font-size: 13px;
+	margin-bottom: 20px;
+}
+.securityNote {
+	font-size: 12px;
+	color: rgba(255, 255, 255, 0.3) !important;
+	margin-top: 24px;
+}
+.modalActions {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 12px;
+	margin-top: 32px;
+
+	@media (max-width: 480px) {
+		grid-template-columns: 1fr;
+		gap: 8px;
+
+		.btnModalPrimary {
+			order: -1; // Put primary button on top for mobile
+		}
+	}
+}
+.btnModalOutline {
+	padding: 12px;
+	border-radius: 10px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	background: transparent;
+	color: white;
+	cursor: pointer;
+}
+.btnModalPrimary {
+	padding: 12px;
+	border-radius: 10px;
+	background: $purple-vibrant;
+	color: white;
+	border: none;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+@keyframes spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+.spinner {
+	animation: spin 1s linear infinite;
+}

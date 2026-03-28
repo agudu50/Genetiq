@@ -1,0 +1,32 @@
+.AgeWidget-container {
+	display: flex;
+	align-items: center;
+	align-self: stretch;
+	gap: 16px;
+	flex: 1 0 0;
+	box-sizing: border-box;
+	padding: 6px;
+	border-radius: 14px;
+	background: linear-gradient(
+		135deg,
+		rgba(255, 255, 255, 0.6) 0%,
+		rgba(248, 250, 255, 0.4) 100%
+	);
+	transition: all 0.3s ease;
+
+	&:hover {
+		background: linear-gradient(
+			135deg,
+			rgba(255, 255, 255, 0.8) 0%,
+			rgba(228, 235, 249, 0.5) 100%
+		);
+		box-shadow: 0 4px 16px rgba(102, 126, 234, 0.1);
+	}
+
+	@media (max-width: 1412px) {
+		flex-direction: column;
+		align-items: center;
+		gap: 16px;
+		padding: 12px;
+	}
+}

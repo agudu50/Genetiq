@@ -1,0 +1,179 @@
+@use "@/App/Styles/_mixins" as mixins;
+
+.CtaModal-container {
+	position: fixed;
+	bottom: 24px;
+	left: 24px;
+	width: 264px;
+	padding: 18px 24px;
+	border-radius: 20px;
+	border: 1px solid rgba(203, 215, 238, 0.6);
+	box-shadow:
+		0 8px 32px rgba(0, 0, 0, 0.1),
+		0 2px 8px rgba(0, 0, 0, 0.04);
+	background: linear-gradient(
+			144deg,
+			rgba(211, 221, 245, 0.8) 6.09%,
+			rgba(211, 221, 245, 0) 55.38%
+		),
+		linear-gradient(135deg, #f8faff 0%, #f1f5ff 100%);
+	backdrop-filter: blur(8px);
+	z-index: 2;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	overflow: hidden;
+
+	animation: slideIn 0.5s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+
+	&-closed {
+		animation: slideOut 0.5s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+	}
+
+	@include mixins.media_920 {
+		display: none;
+	}
+}
+
+@keyframes slideOut {
+	0% {
+		transform: translateX(0);
+	}
+	100% {
+		transform: translateX(-100%);
+	}
+}
+
+@keyframes slideIn {
+	0% {
+		transform: translateX(-100%);
+	}
+	100% {
+		transform: translateX(0);
+	}
+}
+
+.CtaModal-head {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.CtaModal-head-text {
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+	align-items: flex-end;
+}
+
+.CtaModal-number {
+	font-weight: 700;
+	font-size: 48px;
+	line-height: 36px;
+	color: #0b101a;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+.CtaModal-title {
+	width: 50%;
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 16px;
+	color: rgba(95, 104, 119, 1);
+}
+
+.CtaModal-cross-container {
+	cursor: pointer;
+	transition: all 0.3s ease;
+
+	&:hover {
+		transform: scale(1.05);
+	}
+
+	&-closed {
+		opacity: 0;
+	}
+}
+
+.CtaModal-description {
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 16px;
+	color: rgba(95, 104, 119, 1);
+	margin: 0;
+}
+
+.CtaModal-button {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	width: fit-content;
+	gap: 8px;
+	padding: 10px 16px;
+	border-radius: 24px;
+	background: linear-gradient(
+		135deg,
+		rgba(102, 126, 234, 0.12) 0%,
+		rgba(118, 75, 162, 0.08) 100%
+	);
+	border: 1px solid transparent;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	cursor: pointer;
+
+	&:hover {
+		border-color: rgba(102, 126, 234, 0.4);
+		background: linear-gradient(
+			135deg,
+			rgba(102, 126, 234, 0.18) 0%,
+			rgba(118, 75, 162, 0.12) 100%
+		);
+		transform: translateY(-1px);
+		box-shadow:
+			0px 4px 16px rgba(102, 126, 234, 0.2),
+			0px 2px 4px rgba(0, 0, 0, 0.06);
+	}
+}
+
+.CtaModal-button-text {
+	color: #667eea;
+	font-weight: 600;
+	font-size: 13px;
+	line-height: 16px;
+	margin: 0;
+	letter-spacing: -0.1px;
+}
+
+.CtaModal-cart-container {
+	width: 20px;
+	height: 20px;
+
+	svg {
+		path {
+			fill: rgba(0, 41, 173, 1);
+		}
+	}
+}
+
+.CtaModal-chevron {
+	position: absolute;
+	top: 6%;
+	right: 0;
+	transform: rotate(270deg);
+	opacity: 0;
+	transition: all 0.3s ease;
+	cursor: pointer;
+
+	&-closed {
+		opacity: 1;
+	}
+}
+
+.CtaModal-shape {
+	position: absolute;
+	top: -5%;
+	left: 0;
+}

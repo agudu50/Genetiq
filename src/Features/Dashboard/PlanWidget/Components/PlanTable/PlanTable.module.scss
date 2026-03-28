@@ -1,0 +1,97 @@
+@use "@/App/Styles/_mixins" as mixins;
+
+.PlanTable-section {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	overflow: hidden;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.PlanTable-section.PlanTable-section-animate {
+	animation: fadeIn 1s ease-out forwards;
+}
+
+@keyframes slideOutAndIn {
+	0% {
+		transform: translateX(0%);
+		opacity: 1;
+	}
+	49% {
+		transform: translateX(110%);
+		opacity: 0;
+	}
+	50% {
+		transform: translateX(-110%);
+		opacity: 0;
+	}
+	100% {
+		transform: translateX(0%);
+		opacity: 1;
+	}
+}
+
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+.PlanTable-list {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	@media (max-width: 768px) {
+		flex-direction: row;
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+		-webkit-overflow-scrolling: touch;
+		padding-bottom: 8px;
+		margin: 0 -16px;
+		padding-left: 16px;
+		padding-right: 16px;
+
+		&::-webkit-scrollbar {
+			height: 4px;
+		}
+
+		&::-webkit-scrollbar-track {
+			background: var(--surface);
+			border-radius: 4px;
+		}
+
+		&::-webkit-scrollbar-thumb {
+			background: var(--glass-border);
+			border-radius: 4px;
+			&:hover {
+				background: var(--accent);
+			}
+		}
+
+		> * {
+			flex: 0 0 280px;
+			scroll-snap-align: start;
+		}
+	}
+}
+
+.PlanTable-group-header {
+	font-weight: 400;
+	font-size: 10px;
+	line-height: 14px;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: var(--text-secondary);
+	margin: 16px 0;
+}
+
+.PlanTable-rows {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}

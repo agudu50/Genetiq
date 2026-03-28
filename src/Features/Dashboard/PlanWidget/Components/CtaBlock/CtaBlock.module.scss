@@ -1,0 +1,259 @@
+@use "@/App/Styles/_mixins" as *;
+
+.CtaBlock-container {
+	display: flex;
+	flex-direction: row;
+	align-items: stretch;
+	gap: 2px;
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+.CtaBlock-left {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+	gap: 8px;
+	padding: 12px;
+	width: 26.5%;
+	border-top-left-radius: 8px;
+	border-bottom-left-radius: 8px;
+	background: linear-gradient(90deg, #21262e 0%, #363c47 100%);
+}
+
+.CtaBlock-head {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	width: 100%;
+}
+
+.CtaBlock-bottle-icon {
+	width: 32px;
+	height: 32px;
+}
+
+.CtaBlock-more {
+	color: #3b8df5;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 16px;
+}
+
+.CtaBlock-title {
+	color: rgba(239, 240, 241, 1);
+	font-size: 20px;
+	font-weight: 600;
+	line-height: 28px;
+}
+
+.CtaBlock-list {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 4px;
+	margin: 0;
+	padding-left: 0;
+	width: 100%;
+}
+
+.CtaBlock-list-item {
+	display: flex;
+	padding: 4px 8px;
+	align-items: center;
+	gap: 8px;
+	align-self: stretch;
+	position: relative;
+	border-radius: 100px;
+	overflow: hidden;
+	transition: all 0.3s ease;
+	cursor: pointer;
+
+	color: rgba(108, 117, 132, 1);
+	text-overflow: ellipsis;
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 14px;
+
+	padding-left: 21px;
+
+	&::before {
+		content: "";
+		position: absolute;
+		left: 8px;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 5px;
+		height: 5px;
+		border-radius: 50%;
+		background-color: rgba(241, 241, 242, 0.16);
+	}
+
+	&:hover:not(.CtaBlock-list-item-active) {
+		background-color: rgba(59, 141, 245, 0.08);
+		color: rgba(239, 240, 241, 0.6);
+	}
+
+	&-active {
+		background-color: rgba(59, 141, 245, 0.24);
+		color: rgba(239, 240, 241, 1);
+
+		&::before {
+			background-color: #13161d;
+		}
+	}
+}
+
+.CtaBlock-right {
+	display: flex;
+	flex-direction: row;
+	gap: 4px;
+	padding: 12px;
+	flex: 1;
+	border-top-right-radius: 8px;
+	border-bottom-right-radius: 8px;
+	background: linear-gradient(90deg, #363c47 0%, #21262e 100%);
+}
+
+.CtaBlock-content {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	width: 100%;
+	flex: 1;
+}
+
+.CtaBlock-text {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 4px;
+	flex: 1 0 0;
+}
+
+.CtaBlock-right-head {
+	color: #fff;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 20px;
+}
+
+.CtaBlock-description {
+	color: rgba(164, 169, 177, 1);
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 16px;
+}
+
+.CtaBlock-box {
+	display: flex;
+	padding: 8px;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+
+	border-radius: 8px 100px 100px 8px;
+	background: rgba(59, 141, 245, 0.08);
+}
+
+.CtaBlock-box-left {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+}
+
+.CtaBlock-icon-container {
+	display: flex;
+	width: 32px;
+	height: 32px;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+	border-radius: 8px;
+	background: rgba(59, 141, 245, 0.24);
+}
+
+.CtaBlock-supplements {
+	width: 60%;
+	margin: 0;
+	color: rgba(164, 169, 177, 1);
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 16px;
+}
+
+.CtaBlock-supplement {
+	width: fit-content;
+	text-align: left;
+	display: inline-flex;
+	opacity: 0;
+	animation: fadeIn 2s ease forwards;
+}
+
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+.CtaBlock-amount {
+	color: rgba(239, 240, 241, 1);
+	white-space: nowrap;
+	margin-right: 4px;
+}
+
+.CtaBlock-name {
+	margin: 0;
+	white-space: nowrap;
+}
+
+.CtaBlock-coma {
+	margin-right: 4px;
+}
+
+.CtaBlock-cart-icon {
+	padding: 8px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 999px;
+	background: rgba(59, 141, 245, 1);
+	transition: all 0.3s ease;
+
+	svg {
+		path {
+			fill: #ffffff;
+		}
+	}
+
+	&:hover {
+		transform: scale(1.05);
+	}
+}
+
+.CtaBlock-image-container {
+	flex-shrink: 1;
+	width: 30%;
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.CtaBlock-image {
+	position: absolute;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	object-fit: contain;
+	height: 100%;
+	margin: 0 auto;
+	box-sizing: border-box;
+}

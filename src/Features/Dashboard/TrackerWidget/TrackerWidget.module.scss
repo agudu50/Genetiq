@@ -1,0 +1,101 @@
+.TrackerWidget-container {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 18px 10px 10px;
+	background: var(--glass-bg);
+	backdrop-filter: blur(8px) saturate(180%);
+	-webkit-backdrop-filter: blur(8px) saturate(180%);
+	border-radius: 20px;
+	border: 1px solid var(--glass-border);
+	box-shadow: var(--card-shadow);
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+	&:hover {
+		box-shadow: 0 4px 16px rgba(102, 126, 234, 0.12);
+		border-color: rgba(102, 126, 234, 0.3);
+	}
+
+	@media (max-width: 1248px) {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 16px;
+		padding: 12px;
+	}
+}
+
+.TrackerWidget-icon-container {
+	width: 24px;
+	height: 24px;
+	gap: 8px;
+	border-radius: 24px;
+	background: conic-gradient(
+		from 0deg at 50% 50%,
+		#0974fb 0deg,
+		#12b6ff 45deg,
+		#ff7bd2 90deg,
+		#12b6ff 135deg,
+		#0974fb 180deg,
+		#12b6ff 225deg,
+		#ff7bd2 270deg,
+		#0974fb 315deg,
+		#12b6ff 360deg
+	);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.TrackerWidget-icon {
+	animation: rotateLogo 2s ease-out;
+	transform: rotate(0deg);
+}
+
+@keyframes rotateLogo {
+	0% {
+		transform: rotate(-90deg);
+	}
+	100% {
+		transform: rotate(0deg);
+	}
+}
+
+.TrackerWidget-Head {
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+
+	@media (max-width: 1248px) {
+		width: 100%;
+		justify-content: flex-start;
+	}
+}
+
+.TrackerWidget-text {
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 16px;
+	text-align: left;
+	color: var(--text-secondary);
+	margin: auto;
+	text-wrap: nowrap;
+	letter-spacing: -0.01em;
+
+	@media (max-width: 1248px) {
+		margin: auto 0;
+	}
+
+	@media (max-width: 720px) {
+		text-wrap: wrap;
+	}
+}
+
+.TrackerWidget-text-highlight {
+	color: var(--text);
+	font-weight: 700;
+}
+
+.TrackerWidget-progressbar {
+	width: 240px;
+}

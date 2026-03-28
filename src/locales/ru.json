@@ -1,0 +1,15 @@
+{
+	"dashboard_title": "Панель",
+	"biological_age": "Биологический возраст",
+	"chronological_age": "Хронологический возраст",
+	"years_short": "г",
+	"stay_tuned_checking": "Оставайтесь с нами, мы проверяем ваш",
+	"cholesterol": "Холестерин",
+	"results_expected_in": "Результаты ожидаются через",
+	"days": "дней",
+	"key_areas_of_concern": "Ключевые области внимания",
+	"show_all": "Показать все",
+	"show_less": "Показать меньше",
+	"view_report": "Посмотреть отчет",
+	"no_details": "Нет доступных подробностей."
+}

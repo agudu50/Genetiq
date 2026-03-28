@@ -1,0 +1,70 @@
+.step-widget {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 60%;
+}
+
+.step-item:not(:last-child) {
+	display: flex;
+	gap: 4px;
+	justify-content: center;
+	align-items: center;
+	margin: 0 10px;
+	flex-grow: 1;
+}
+
+.step-info {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	gap: 6px;
+}
+
+.step-icon {
+	display: flex;
+	flex-shrink: 0;
+	width: 42px;
+	height: 42px;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	border-radius: 50%;
+	background: linear-gradient(
+		135deg,
+		rgba(2, 20, 39, 0.06) 0%,
+		rgba(2, 20, 39, 0.03) 100%
+	);
+	transition: all 0.3s ease;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.step-description {
+	position: absolute;
+	max-width: 300px;
+}
+
+.step-line {
+	flex-grow: 1;
+	height: 2px;
+	background: linear-gradient(
+		90deg,
+		rgba(2, 20, 39, 0.15) 0%,
+		rgba(102, 126, 234, 0.3) 100%
+	);
+	border-radius: 1px;
+}
+
+.selected-step-item {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	box-shadow:
+		0 4px 12px rgba(102, 126, 234, 0.35),
+		0 2px 4px rgba(0, 0, 0, 0.08);
+	color: white;
+
+	svg {
+		filter: brightness(0) invert(1);
+	}
+}

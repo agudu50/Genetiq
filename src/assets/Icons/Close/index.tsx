@@ -1,0 +1,20 @@
+interface CloseIconProps {
+	fill: string;
+}
+
+export const CloseIcon: React.FC<CloseIconProps> = ({ fill }) => {
+	return (
+		<svg
+			xmlns='http://www.w3.org/2000/svg'
+			width='21'
+			height='21'
+			viewBox='0 0 21 21'
+			fill='none'
+		>
+			<path
+				d='M15.25 6.76147L14.375 5.88647L10.25 10.0115L6.125 5.88647L5.25 6.76147L9.375 10.8865L5.25 15.0115L6.125 15.8865L10.25 11.7615L14.375 15.8865L15.25 15.0115L11.125 10.8865L15.25 6.76147Z'
+				fill={fill}
+			/>
+		</svg>
+	);
+};

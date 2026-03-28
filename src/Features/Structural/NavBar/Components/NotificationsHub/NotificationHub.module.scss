@@ -1,0 +1,127 @@
+.notification-wrapper {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.notification-button {
+	display: flex;
+	width: 38px;
+	height: 38px;
+	padding: 0;
+	justify-content: center;
+	align-items: center;
+	border-radius: 10px;
+	border: 1px solid rgba(0, 0, 0, 0.06);
+	background: rgba(255, 255, 255, 0.7);
+	cursor: pointer;
+	transition: all 0.2s ease;
+	position: relative;
+	color: #374151;
+
+	html[data-theme="dark"] & {
+		background: rgba(255, 255, 255, 0.05);
+		border-color: rgba(255, 255, 255, 0.1);
+		color: #e2e8f0;
+	}
+
+	@media (max-width: 768px) {
+		width: 32px;
+		height: 32px;
+		border-radius: 9px;
+		background: rgba(255, 255, 255, 0.95);
+		border: 1px solid rgba(0, 0, 0, 0.08);
+	}
+
+	&:hover,
+	&.active {
+		background: rgba(255, 255, 255, 1);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+		color: #3478f6;
+		transform: translateY(-1px);
+
+		html[data-theme="dark"] & {
+			background: rgba(255, 255, 255, 0.08);
+			color: #c084fc;
+		}
+	}
+
+	&:active {
+		transform: translateY(0);
+	}
+
+	.badge {
+		position: absolute;
+		top: 7px;
+		right: 7px;
+		width: 7px;
+		height: 7px;
+		background: #ef4444;
+		border-radius: 50%;
+		border: 1.5px solid white;
+		animation: badgePulse 2s infinite;
+
+		@media (max-width: 768px) {
+			top: 5px;
+			right: 5px;
+			width: 6px;
+			height: 6px;
+		}
+	}
+}
+
+@keyframes badgePulse {
+	0%,
+	100% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.2);
+	}
+}
+
+.notification-dropdown {
+	position: absolute;
+	top: calc(100% + 12px);
+	right: 0;
+	z-index: 2000;
+	width: 380px;
+	background: rgba(10, 15, 30, 0.96);
+	backdrop-filter: blur($glass-blur-heavy) saturate(200%);
+	-webkit-backdrop-filter: blur($glass-blur-heavy) saturate(200%);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 20px;
+	box-shadow: 0 16px 64px rgba(0, 0, 0, 0.6);
+	animation: notifSlideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	max-height: calc(100vh - 84px);
+	overflow-y: auto;
+	overflow-x: hidden;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
+	html[data-theme="light"] & {
+		background: rgba(255, 255, 255, 0.95);
+		border-color: rgba(0, 0, 0, 0.08);
+		box-shadow: 0 16px 64px rgba(0, 0, 0, 0.12);
+	}
+
+	@media (max-width: 480px) {
+		width: calc(100vw - 32px);
+		position: fixed;
+		top: 60px;
+		right: 16px;
+	}
+}
+
+@keyframes notifSlideDown {
+	from {
+		opacity: 0;
+		transform: translateY(-8px) scale(0.98);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}

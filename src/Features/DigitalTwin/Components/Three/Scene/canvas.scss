@@ -1,0 +1,308 @@
+.canvas-container {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	min-height: 400px;
+	display: flex;
+	justify-content: flex-start;
+	background-size: contain;
+	background-blend-mode: overlay;
+	overflow: visible;
+
+	@media (max-width: 1024px) {
+		min-height: 100%;
+		height: 100%;
+		overflow: visible;
+	}
+}
+
+.canvas-wrapper {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	min-height: 400px;
+	background: url("@assets/DigitalTwin/images/canvas-bg.jpg");
+	background-color: #f0f2f5; // Light Gray background
+	background-size: contain;
+	background-blend-mode: multiply; // Reverted to multiply for better model pop
+	background-position: center;
+	background-repeat: no-repeat;
+	overflow: visible;
+
+	@media (max-width: 1024px) {
+		min-height: 100%;
+		height: 100%;
+		background-size: cover;
+		background-position: center;
+		overflow: visible;
+
+		canvas {
+			transform: none;
+		}
+	}
+}
+
+.canvas-wrapper::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	// Soft white gradients for light background
+	background: linear-gradient(to bottom, #f0f2f5, transparent 15%),
+		linear-gradient(to top, #f0f2f5, transparent 20%),
+		linear-gradient(to left, #f0f2f5, transparent 20%),
+		linear-gradient(to right, #f0f2f5, transparent 20%);
+	pointer-events: none;
+	z-index: 1;
+
+	@media (max-width: 1024px) {
+		background: linear-gradient(
+				to bottom,
+				rgba(240, 242, 245, 0.5),
+				transparent 6%
+			),
+			linear-gradient(to top, rgba(240, 242, 245, 0.6), transparent 8%),
+			linear-gradient(to left, rgba(240, 242, 245, 0.5), transparent 8%),
+			linear-gradient(to right, rgba(240, 242, 245, 0.5), transparent 8%);
+	}
+}
+
+.canvas-wrapper::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(
+		to bottom,
+		rgba(255, 255, 255, 0),
+		rgba(255, 255, 255, 0) 50%,
+		rgba(99, 102, 241, 0.05) 50%,
+		// Subtle blue scanline tint
+		rgba(99, 102, 241, 0.05)
+	);
+	background-size: 100% 4px;
+	pointer-events: none;
+	z-index: 1;
+	animation: scanlineScroll 2s linear infinite;
+	opacity: 0.3;
+}
+
+@keyframes scanlineScroll {
+	0% {
+		background-position: 0 0;
+	}
+	100% {
+		background-position: 0 40px;
+	}
+}
+.mobile-help-box {
+	margin: 24px auto 0 auto;
+	padding: 16px 20px;
+	max-width: 360px;
+	background: rgba(255, 255, 255, 0.85);
+	backdrop-filter: blur(8px) saturate(180%);
+	-webkit-backdrop-filter: blur(8px) saturate(180%);
+	border-radius: 16px;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.6);
+	text-align: center;
+	font-size: 1rem;
+	color: #222;
+	z-index: 2;
+
+	@media (max-width: 600px) {
+		max-width: 95vw;
+		padding: 12px 8px;
+		font-size: 0.95rem;
+	}
+}
+
+.help-title {
+	font-weight: 700;
+	font-size: 1.1rem;
+	color: #1a73e8;
+	margin-bottom: 4px;
+	display: block;
+}
+
+.help-desc {
+	margin: 0;
+	color: #555;
+	line-height: 1.5;
+}
+
+.help-link {
+	color: #3478f6;
+	text-decoration: none;
+	font-weight: 600;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+.feature-cards {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	padding: 16px;
+	z-index: 2;
+
+	@media (max-width: 768px) {
+		flex-direction: column;
+		gap: 12px;
+		padding: 12px;
+	}
+}
+
+.feature-card {
+	background: rgba(255, 255, 255, 0.9);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	border-radius: 16px;
+	box-shadow:
+		0 4px 20px rgba(30, 64, 128, 0.08),
+		0 1px 4px rgba(30, 64, 128, 0.05);
+	padding: 20px 24px;
+	min-width: 220px;
+	max-width: 340px;
+	flex: 1 1 220px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	position: relative;
+	transition:
+		transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+		box-shadow 0.3s ease;
+	border: 1px solid rgba(218, 228, 246, 0.5);
+
+	&:hover {
+		transform: translateY(-4px);
+		box-shadow:
+			0 12px 32px rgba(30, 64, 128, 0.14),
+			0 4px 8px rgba(30, 64, 128, 0.08);
+	}
+
+	@media (max-width: 768px) {
+		max-width: 100%;
+		min-width: unset;
+		padding: 16px 18px;
+	}
+}
+
+.feature-card-header {
+	font-size: 1.1rem;
+	font-weight: 700;
+	color: #1a2b5e;
+	margin-bottom: 8px;
+	letter-spacing: -0.01em;
+}
+
+.feature-card-body {
+	font-size: 0.95rem;
+	color: #4a5568;
+	margin-bottom: 12px;
+	line-height: 1.5;
+	font-weight: 400;
+}
+
+.feature-card-footer {
+	font-size: 0.85rem;
+	color: #3478f6;
+	font-weight: 600;
+	margin-top: auto;
+	background: rgba(52, 120, 246, 0.08);
+	border-radius: 8px;
+	padding: 6px 14px;
+	align-self: flex-end;
+}
+
+.feature-card.coming-soon {
+	opacity: 0.75;
+	pointer-events: none;
+	filter: grayscale(0.1);
+}
+
+.canvas-controls {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	position: absolute;
+	right: 16px;
+	bottom: 16px;
+	z-index: 1000;
+	transition: all 0.3s ease;
+
+	@media (max-width: 1024px) {
+		right: 12px;
+		bottom: 140px; // Clear the floating dock which is at bottom: 24px
+	}
+
+	@media (max-width: 768px) {
+		right: 12px;
+		bottom: 130px;
+	}
+
+	.control-btn {
+		border-radius: 14px;
+		background: rgba(255, 255, 255, 0.92);
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
+		border: 1px solid rgba(0, 0, 0, 0.06);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		box-shadow:
+			0 4px 12px rgba(0, 0, 0, 0.08),
+			0 1px 3px rgba(0, 0, 0, 0.04);
+		transition: all 0.2s ease;
+		width: 44px;
+		height: 44px;
+
+		span {
+			color: #4a5568;
+			font-size: 20px;
+			line-height: 1;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 100%;
+			height: 100%;
+			font-family:
+				system-ui,
+				-apple-system,
+				BlinkMacSystemFont,
+				"Segoe UI",
+				Roboto,
+				sans-serif;
+		}
+
+		&:hover {
+			background: rgba(52, 120, 246, 0.08);
+			border-color: rgba(52, 120, 246, 0.2);
+
+			span {
+				color: #3478f6;
+			}
+		}
+
+		&:active {
+			transform: scale(0.93);
+		}
+
+		&:disabled {
+			opacity: 0.4;
+			cursor: default;
+		}
+
+		&.stretch-btn span {
+			font-size: 18px;
+			padding-top: 2px;
+		}
+	}
+}

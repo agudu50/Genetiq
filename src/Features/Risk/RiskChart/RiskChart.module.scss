@@ -1,0 +1,41 @@
+.RiskChart-wrapper {
+	width: 110px;
+	height: 110px;
+	position: absolute;
+	right: 0px;
+}
+
+.RiskChart-status {
+	position: absolute;
+	top: 42%;
+	left: 39%;
+	overflow: hidden;
+	color: var(--p-color-text, rgba(33, 38, 46, 1));
+	text-align: center;
+	text-overflow: ellipsis;
+
+	/* body/sm/semibold */
+	font-family: var(--Font-family-body, Inter);
+	font-size: var(--Font-size-XS, 12px);
+	font-style: normal;
+	font-weight: 600;
+	line-height: var(--Font-line-height-S, 16px); /* 133.333% */
+}
+
+.RiskChart-concern {
+	position: absolute;
+	top: 56%;
+	left: 32%;
+	overflow: hidden;
+	color: var(--p-color-text, rgba(108, 117, 132, 1));
+	text-align: center;
+	text-overflow: ellipsis;
+
+	/* body/xs/regular */
+	font-family: var(--Font-family-body, Inter);
+	font-size: var(--Font-size-2XS, 10px);
+	font-style: normal;
+	font-weight: 400;
+	line-height: var(--Font-line-height-XS, 14px); /* 140% */
+	letter-spacing: 0.2px;
+}

@@ -1,0 +1,31 @@
+@use "@/App/Styles/_mixins" as *;
+
+.PlanWidget-wrapper {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+
+.PlanWidget-tabs {
+	display: flex;
+	flex-direction: row;
+}
+
+.PlanWidget-content {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+
+	border-radius: 14px;
+	border-top-left-radius: 0px;
+	padding: 24px;
+	background: linear-gradient(
+		135deg,
+		rgba(228, 235, 249, 0.85) 0%,
+		rgba(215, 228, 250, 0.7) 100%
+	);
+	backdrop-filter: blur(8px);
+	border: 1px solid rgba(228, 235, 249, 0.4);
+	border-top: none;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}

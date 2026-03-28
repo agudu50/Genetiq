@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  react-app-stage:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+        VITE_API_KEY: ${VITE_API_KEY}
+    ports:
+      - "3001:3000"
+    env_file:
+      - .env.stage
+    environment:
+      NODE_ENV: staging
+    restart: unless-stopped
+
+  react-app-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+        VITE_API_KEY: ${VITE_API_KEY}
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.prod
+    environment:
+      NODE_ENV: production
+    restart: unless-stopped

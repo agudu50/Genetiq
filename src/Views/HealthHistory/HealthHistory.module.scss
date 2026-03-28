@@ -1,0 +1,639 @@
+$purple-accent: #a855f7;
+$bg-dark: #050510;
+$glass-bg: rgba(255, 255, 255, 0.03);
+$glass-border: rgba(255, 255, 255, 0.08);
+$text-muted: rgba(255, 255, 255, 0.5);
+$red-flag: #ef4444;
+$green-verified: #10b981;
+
+.pageWrapper {
+	min-height: 100vh;
+	background-color: $bg-dark;
+	color: #ffffff;
+	font-family:
+		"Inter",
+		-apple-system,
+		sans-serif;
+	padding: 80px 40px 100px; // Padding for fixed header/footer
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
+	overflow-y: auto;
+
+	@media (max-width: 768px) {
+		padding: 70px 16px 80px;
+		gap: 20px;
+	}
+}
+
+// ── 1. Vitals Banner ──────────────────────────────────────────
+
+.vitalsBanner {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 70px;
+	background: rgba(10, 10, 20, 0.8);
+	backdrop-filter: blur(8px);
+	border-bottom: 1px solid $glass-border;
+	z-index: 1000;
+	display: flex;
+	align-items: center;
+}
+
+.bannerContent {
+	max-width: 1400px;
+	width: 100%;
+	margin: 0 auto;
+	padding: 0 40px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	@media (max-width: 768px) {
+		padding: 0 16px;
+	}
+}
+
+.backBtn {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	background: transparent;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	color: $text-muted;
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	padding: 8px 12px;
+	border-radius: 10px;
+	transition: all 0.2s;
+	margin-right: 16px;
+
+	&:hover {
+		color: #ffffff;
+		background: rgba(255, 255, 255, 0.05);
+		border-color: rgba(255, 255, 255, 0.2);
+	}
+
+	@media (max-width: 768px) {
+		margin-right: 8px;
+		padding: 8px;
+		span {
+			display: none;
+		}
+	}
+}
+
+.userSection {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
+.avatar {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background: rgba($purple-accent, 0.1);
+	border: 1px solid rgba($purple-accent, 0.2);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: $purple-accent;
+}
+
+.userIdentity {
+	.userName {
+		font-size: 18px;
+		font-weight: 700;
+		margin: 0;
+		letter-spacing: -0.01em;
+	}
+	.userMeta {
+		font-size: 13px;
+		color: $text-muted;
+		font-weight: 500;
+	}
+}
+
+.vitalsGrid {
+	display: flex;
+	gap: 40px;
+
+	@media (max-width: 1024px) {
+		gap: 20px;
+	}
+
+	@media (max-width: 768px) {
+		display: none; // Hide on small mobile to keep banner clean
+	}
+}
+
+.vitalItem {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+
+	.vitalLabel {
+		font-size: 10px;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		color: $text-muted;
+		font-weight: 700;
+	}
+
+	.allergyBadge {
+		font-size: 12px;
+		font-weight: 800;
+		color: #ffffff;
+		background: rgba($red-flag, 0.15);
+		border: 1px solid rgba($red-flag, 0.3);
+		padding: 2px 8px;
+		border-radius: 6px;
+		letter-spacing: 0.02em;
+	}
+
+	.lastVisitGroup {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 13px;
+		color: rgba(255, 255, 255, 0.9);
+		font-weight: 600;
+
+		svg {
+			color: $purple-accent;
+		}
+	}
+}
+
+.statusSection {
+	display: flex;
+	align-items: center;
+}
+
+.suiBadge {
+	background: rgba($green-verified, 0.1);
+	border: 1px solid rgba($green-verified, 0.2);
+	color: $green-verified;
+	padding: 6px 14px;
+	border-radius: 20px;
+	font-size: 12px;
+	font-weight: 700;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	box-shadow: 0 0 20px rgba($green-verified, 0.05);
+
+	@media (max-width: 640px) {
+		padding: 4px 10px;
+		font-size: 10px;
+	}
+}
+
+.pulseDot {
+	width: 6px;
+	height: 6px;
+	background: $green-verified;
+	border-radius: 50%;
+	animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+	0% {
+		transform: scale(0.95);
+		box-shadow: 0 0 0 0 rgba($green-verified, 0.7);
+	}
+	70% {
+		transform: scale(1);
+		box-shadow: 0 0 0 10px rgba($green-verified, 0);
+	}
+	100% {
+		transform: scale(0.95);
+		box-shadow: 0 0 0 0 rgba($green-verified, 0);
+	}
+}
+
+// ── Main Content Layout ──────────────────────────────────────
+
+.mainContent {
+	max-width: 1400px;
+	width: 100%;
+	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
+}
+
+.topRow {
+	display: grid;
+	grid-template-columns: 2fr 1fr;
+	gap: 32px;
+
+	@media (max-width: 1024px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+// ── 2. Encounter Card ─────────────────────────────────────────
+
+.encounterSection {
+	background: $glass-bg;
+	backdrop-filter: blur(8px);
+	border: 1px solid $glass-border;
+	border-radius: 24px;
+	padding: 32px;
+}
+
+.cardHeader {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	margin-bottom: 24px;
+
+	.headerIcon {
+		width: 40px;
+		height: 40px;
+		border-radius: 12px;
+		background: rgba($purple-accent, 0.1);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: $purple-accent;
+	}
+
+	h2 {
+		font-size: 20px;
+		font-weight: 700;
+		margin: 0;
+	}
+}
+
+.timelineContent {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	padding-left: 20px;
+	border-left: 2px solid rgba($purple-accent, 0.15);
+}
+
+.timelineItem {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	position: relative;
+
+	&::before {
+		content: "";
+		position: absolute;
+		left: -27px;
+		top: 6px;
+		width: 12px;
+		height: 12px;
+		background: $purple-accent;
+		border-radius: 50%;
+		border: 3px solid $bg-dark;
+	}
+
+	.timelineLabel {
+		font-size: 11px;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		color: $text-muted;
+		font-weight: 800;
+	}
+
+	.timelineText {
+		font-size: 16px;
+		font-weight: 500;
+		line-height: 1.5;
+		margin: 0;
+	}
+}
+
+.findingsList {
+	margin: 0;
+	padding-left: 18px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	li {
+		font-size: 15px;
+		color: rgba(255, 255, 255, 0.85);
+	}
+}
+
+.conclusionBox {
+	background: rgba($purple-accent, 0.05);
+	border: 1px solid rgba($purple-accent, 0.15);
+	padding: 20px;
+	border-radius: 16px;
+
+	p {
+		font-size: 15px;
+		font-weight: 600;
+		color: #ffffff;
+		margin: 0;
+		line-height: 1.6;
+	}
+}
+
+// ── 4. 3D Insight Snapshot ───────────────────────────────────
+
+.insightSection {
+	height: 100%;
+}
+
+.snapshotCard {
+	background: $glass-bg;
+	backdrop-filter: blur(8px);
+	border: 1px solid $glass-border;
+	border-radius: 24px;
+	padding: 24px;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.snapshotHeader {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+
+	h3 {
+		font-size: 16px;
+		margin: 0;
+		font-weight: 700;
+	}
+}
+
+.modelContainer {
+	flex: 1;
+	background: rgba(0, 0, 0, 0.4);
+	border-radius: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	min-height: 250px;
+	overflow: hidden;
+}
+
+.modelPlaceholder {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	img {
+		max-width: 80%;
+		opacity: 0.7;
+		filter: grayscale(0.5) brightness(1.2);
+	}
+}
+
+.heatmapOverlay {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+}
+
+.heatPoint {
+	position: absolute;
+	width: 30px;
+	height: 30px;
+	background: radial-gradient(circle, rgba($red-flag, 0.8) 0%, transparent 70%);
+	animation: breath 2s infinite ease-in-out;
+	border-radius: 50%;
+
+	&.respiratory {
+		top: 35%;
+		left: 50%;
+		width: 50px;
+		height: 40px;
+	}
+	&.cardio {
+		top: 38%;
+		left: 45%;
+		width: 40px;
+		height: 40px;
+		animation-delay: 0.5s;
+	}
+}
+
+@keyframes breath {
+	0%,
+	100% {
+		transform: scale(1);
+		opacity: 0.4;
+	}
+	50% {
+		transform: scale(1.3);
+		opacity: 0.8;
+	}
+}
+
+.systemFocus {
+	text-align: center;
+	font-size: 13px;
+	color: $text-muted;
+
+	span {
+		color: $red-flag;
+		font-weight: 700;
+	}
+}
+
+// ── 3. Diagnostics Table ─────────────────────────────────────
+
+.diagnosticsSection {
+	background: $glass-bg;
+	backdrop-filter: blur(8px);
+	border: 1px solid $glass-border;
+	border-radius: 24px;
+	padding: 32px;
+}
+
+.labsTable {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 20px;
+
+	th {
+		text-align: left;
+		padding: 16px;
+		font-size: 11px;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		color: $text-muted;
+		border-bottom: 1px solid $glass-border;
+	}
+
+	td {
+		padding: 20px 16px;
+		font-size: 14px;
+		font-weight: 500;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+	}
+}
+
+.flaggedRow {
+	background: rgba($red-flag, 0.03);
+	box-shadow: inset 0 0 10px rgba($red-flag, 0.05);
+}
+
+.testNameCell {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	font-weight: 700;
+}
+
+.testIcon {
+	width: 32px;
+	height: 32px;
+	background: rgba(255, 255, 255, 0.05);
+	border-radius: 8px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: $text-muted;
+}
+
+.flaggedText {
+	color: $red-flag;
+	font-weight: 800;
+}
+
+.statusBadge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 10px;
+	border-radius: 8px;
+	font-size: 11px;
+	font-weight: 700;
+
+	&.verified {
+		background: rgba($green-verified, 0.1);
+		color: $green-verified;
+		border: 1px solid rgba($green-verified, 0.2);
+	}
+
+	&.flagged {
+		background: rgba($red-flag, 0.1);
+		color: $red-flag;
+		border: 1px solid rgba($red-flag, 0.2);
+	}
+}
+
+.txCell {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+
+	code {
+		font-family: "JetBrains Mono", monospace;
+		color: $text-muted;
+		background: rgba(0, 0, 0, 0.3);
+		padding: 4px 8px;
+		border-radius: 4px;
+		font-size: 12px;
+	}
+
+	svg {
+		color: $text-muted;
+		cursor: pointer;
+		&:hover {
+			color: #ffffff;
+		}
+	}
+}
+
+// ── 5. Share Footer ──────────────────────────────────────────
+
+.shareFooter {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 60px;
+	background: rgba($purple-accent, 0.1);
+	backdrop-filter: blur(8px);
+	border-top: 1px solid rgba($purple-accent, 0.3);
+	z-index: 1000;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 40px;
+
+	@media (max-width: 768px) {
+		flex-direction: column;
+		height: auto;
+		padding: 16px;
+		gap: 12px;
+		text-align: center;
+	}
+}
+
+.footerContent {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+
+	p {
+		margin: 0;
+		font-size: 14px;
+		color: rgba(255, 255, 255, 0.8);
+	}
+
+	.timer {
+		color: $purple-accent;
+		font-weight: 800;
+		font-variant-numeric: tabular-nums;
+	}
+}
+
+.revokeBtn {
+	background: $red-flag;
+	color: #ffffff;
+	border: none;
+	padding: 8px 16px;
+	border-radius: 10px;
+	font-size: 12px;
+	font-weight: 700;
+	cursor: pointer;
+	box-shadow: 0 4px 12px rgba($red-flag, 0.3);
+	transition: all 0.2s;
+
+	@media (max-width: 768px) {
+		width: 100%;
+		padding: 12px;
+	}
+
+	&:hover {
+		transform: translateY(-1px);
+		box-shadow: 0 6px 16px rgba($red-flag, 0.4);
+	}
+}
+
+.tableWrapper {
+	@media (max-width: 768px) {
+		overflow-x: auto;
+		margin: 0 -16px;
+		padding: 0 16px;
+		-webkit-overflow-scrolling: touch;
+	}
+}
+
+.labsTable {
+	@media (max-width: 768px) {
+		min-width: 600px;
+	}
+}

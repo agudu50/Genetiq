@@ -1,0 +1,146 @@
+@use "@variables" as *;
+
+.gauge-container {
+	width: 100%;
+	margin-bottom: 32px;
+	perspective: 1000px;
+}
+
+.gauge-card {
+	background: var(--glass-bg);
+	backdrop-filter: blur($glass-blur-desktop);
+	border: 1px solid var(--glass-border);
+	border-radius: 24px;
+	padding: 24px 32px;
+	box-shadow: var(--card-shadow);
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	background: linear-gradient(
+		135deg,
+		rgba(255, 255, 255, 0.03) 0%,
+		rgba(255, 255, 255, 0.01) 100%
+	);
+
+	@media (max-width: 768px) {
+		padding: 20px;
+		border-radius: 20px;
+	}
+}
+
+.gauge-info {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-end;
+}
+
+.label-group {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+
+	.label {
+		font-size: 11px;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 1.5px;
+		color: $indigo-soft;
+	}
+
+	.status {
+		font-size: 18px;
+		font-weight: 800;
+		color: $text-main;
+
+		@media (max-width: 480px) {
+			font-size: 16px;
+		}
+	}
+}
+
+.percent-display {
+	display: flex;
+	align-items: baseline;
+	gap: 2px;
+	font-family: "Inter", sans-serif;
+
+	.value {
+		font-size: 42px;
+		font-weight: 900;
+		line-height: 1;
+		color: $text-main;
+		text-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+
+		@media (max-width: 480px) {
+			font-size: 32px;
+		}
+	}
+
+	.symbol {
+		font-size: 18px;
+		font-weight: 700;
+		color: $indigo-soft;
+	}
+}
+
+.progress-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.progress-track {
+	width: 100%;
+	height: 12px;
+	background: rgba(255, 255, 255, 0.05);
+	border-radius: 100px;
+	overflow: hidden;
+	position: relative;
+	border: 1px solid rgba(255, 255, 255, 0.05);
+
+	@media (max-width: 768px) {
+		height: 10px;
+	}
+}
+
+.progress-fill {
+	height: 100%;
+	border-radius: 100px;
+	position: relative;
+	transition: box-shadow 0.4s ease;
+
+	&::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: linear-gradient(
+			90deg,
+			transparent 0%,
+			rgba(255, 255, 255, 0.2) 50%,
+			transparent 100%
+		);
+		animation: shimmer 2s infinite linear;
+	}
+}
+
+.gauge-metrics {
+	display: flex;
+	justify-content: space-between;
+	font-size: 10px;
+	font-weight: 600;
+	color: $text-dim;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+@keyframes shimmer {
+	from {
+		transform: translateX(-100%);
+	}
+	to {
+		transform: translateX(100%);
+	}
+}

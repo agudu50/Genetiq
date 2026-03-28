@@ -1,0 +1,94 @@
+@use "@/App/Styles/_variables.scss" as *;
+
+.walletBtn {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	padding: 14px 24px;
+	border-radius: 14px;
+	border: 1px solid rgba(79, 162, 255, 0.3);
+	background: rgba(79, 162, 255, 0.08);
+	color: #ffffff;
+	font-size: 15px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+	position: relative;
+	overflow: hidden;
+
+	&::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			135deg,
+			rgba(79, 162, 255, 0.15) 0%,
+			rgba(111, 188, 240, 0.08) 100%
+		);
+		opacity: 0;
+		transition: opacity 0.3s ease;
+	}
+
+	&:hover {
+		border-color: rgba(79, 162, 255, 0.6);
+		transform: translateY(-2px);
+		box-shadow: 0 12px 32px rgba(79, 162, 255, 0.2);
+
+		&::before {
+			opacity: 1;
+		}
+	}
+
+	&:active {
+		transform: translateY(0);
+	}
+
+	&:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+		transform: none;
+	}
+
+	svg {
+		flex-shrink: 0;
+		z-index: 1;
+	}
+
+	span {
+		z-index: 1;
+	}
+}
+
+.connected {
+	border-color: rgba(34, 197, 94, 0.4);
+	background: rgba(34, 197, 94, 0.08);
+
+	&:hover {
+		border-color: rgba(239, 68, 68, 0.5);
+		background: rgba(239, 68, 68, 0.08);
+		box-shadow: 0 12px 32px rgba(239, 68, 68, 0.15);
+
+		.disconnectHint {
+			opacity: 1;
+			transform: translateX(0);
+		}
+
+		span:first-of-type {
+			opacity: 0.4;
+		}
+	}
+}
+
+.disconnectHint {
+	position: absolute;
+	right: 16px;
+	font-size: 12px;
+	font-weight: 600;
+	color: #ef4444;
+	opacity: 0;
+	transform: translateX(8px);
+	transition: all 0.3s ease;
+	z-index: 1;
+}

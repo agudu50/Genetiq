@@ -1,0 +1,15 @@
+.percentage {
+	overflow: hidden;
+	color: var(--Neutral-text, #0b101a);
+	text-overflow: ellipsis;
+
+	font-family: var(--font-family-title, Inter);
+	font-size: var(--font-size-2xl, 28px);
+	font-style: normal;
+	font-weight: var(--font-weight-light-400, 400);
+	line-height: var(--font-line-hight-xl, 24px); /* 120% */
+	letter-spacing: -0.4px;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 1;
+}

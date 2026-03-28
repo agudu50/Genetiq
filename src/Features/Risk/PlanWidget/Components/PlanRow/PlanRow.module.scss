@@ -1,0 +1,191 @@
+@use "@/App/Styles/_mixins" as mixins;
+
+.PlanRow-row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 12px;
+	padding: 0 0 12px 12px;
+	border-bottom-left-radius: 2px;
+	border-left: 1px solid rgba(240, 241, 240, 1);
+	border-bottom: 1px solid rgba(240, 241, 240, 1);
+	position: relative;
+	box-sizing: border-box;
+	transition: all 0.3s ease;
+	cursor: pointer;
+
+	&:hover {
+		border-color: rgba(204, 223, 245, 1);
+		box-shadow: 10px 4px 6px rgba(0, 0, 0, 0.1);
+
+		&::after {
+			border-color: rgba(59, 141, 245, 1);
+		}
+
+		.PlanRow-misc {
+			display: none;
+		}
+
+		.PlanRow-buttons {
+			display: flex;
+		}
+	}
+
+	&::after {
+		content: "";
+		position: absolute;
+		bottom: -1px;
+		left: -1px;
+		width: 8px;
+		height: 8px;
+		border-left: 1px solid rgba(140, 147, 143, 1);
+		border-bottom: 1px solid rgba(140, 147, 143, 1);
+		border-radius: 2px;
+	}
+}
+
+.PlanRow-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+}
+
+.PlanRow-body {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	gap: 4px;
+}
+
+.PlanRow-name {
+	font-weight: 500;
+	font-size: 14px;
+	line-height: 16px;
+	color: rgba(11, 16, 26, 1);
+}
+
+.PlanRow-count {
+	color: rgba(59, 141, 245, 1);
+}
+
+.PlanRow-desc {
+	font-weight: 400;
+	font-size: 12px;
+	line-height: 14px;
+	color: rgba(95, 104, 119, 1);
+}
+
+.PlanRow-misc {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 4px;
+}
+
+.PlanRow-dosage {
+	padding: 2px 4px;
+	border-radius: 100px;
+	border: 1px solid rgba(239, 240, 241, 1);
+	background: rgba(208, 212, 220, 0.2);
+	color: rgba(33, 38, 46, 1);
+	font-weight: 400;
+	font-size: 12px;
+	line-height: 16px;
+
+	text-wrap: nowrap;
+}
+
+.PlanRow-frequency {
+	padding: 2px 4px;
+	border-radius: 100px;
+	border: 1px solid rgba(239, 240, 241, 1);
+	background: rgba(208, 212, 220, 0.2);
+	color: rgba(33, 38, 46, 1);
+	font-weight: 400;
+	font-size: 12px;
+	line-height: 16px;
+}
+
+.PlanRow-buttons {
+	display: none;
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
+
+	@include mixins.media_1248 {
+		flex-direction: column;
+	}
+}
+
+.PlanRow-why {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
+	border-radius: 100px;
+	padding: 8px 12px;
+	background: rgba(108, 117, 132, 0.12);
+	font-weight: 600;
+	font-size: 12px;
+	line-height: 16px;
+
+	p {
+		margin: 0;
+	}
+}
+
+.PlanRow-chevron-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	rotate: (-90deg);
+	background: rgba(59, 141, 245, 0.12);
+	border-radius: 100%;
+	padding: 8px;
+	transition: all 0.2s ease;
+
+	&:hover {
+		transform: scale(1.05);
+		background: rgba(13, 65, 133, 0.12);
+	}
+
+	svg {
+		width: 16px;
+		height: 16px;
+		stroke: rgba(0, 41, 173, 1);
+	}
+}
+
+.PlanRow-cart {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	text-wrap: nowrap;
+	gap: 8px;
+	border-radius: 100px;
+	padding: 8px 12px;
+	background-color: rgba(59, 141, 245, 1);
+	color: #ffffff;
+	font-weight: 600;
+	font-size: 12px;
+	line-height: 16px;
+	transition: all 0.2s ease;
+
+	p {
+		margin: 0;
+	}
+
+	svg {
+		width: 16px;
+		height: 16px;
+		path {
+			fill: #ffffff;
+		}
+	}
+
+	&:hover {
+		transform: scale(1.025);
+	}
+}

@@ -1,0 +1,50 @@
+@use "@/App/Styles/_mixins" as *;
+
+.PlanWidget-wrapper {
+	display: flex;
+	flex-direction: column;
+
+	&-blue {
+		.PlanWidget-content {
+			background: var(--glass-bg);
+		}
+
+		.Tabs-container {
+			background-color: transparent;
+		}
+	}
+}
+
+.PlanWidget-tabs {
+	display: flex;
+	flex-direction: row;
+}
+
+.PlanWidget-content {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+
+	border-radius: 14px;
+	padding: 24px;
+	background: var(--glass-bg);
+	backdrop-filter: blur(8px) saturate(180%);
+	-webkit-backdrop-filter: blur(8px) saturate(180%);
+	border: 1px solid var(--glass-border);
+	box-shadow: var(--card-shadow);
+
+	@media (max-width: 768px) {
+		padding: 16px;
+		gap: 12px;
+		border-radius: 12px;
+		margin: 0;
+		border: 1px solid var(--glass-border);
+	}
+
+	@media (max-width: 480px) {
+		padding: 12px;
+		margin: 0 -12px;
+		padding-left: 12px;
+		padding-right: 12px;
+	}
+}

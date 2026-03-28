@@ -1,0 +1,41 @@
+/* Modern card style for dashboard widgets */
+.modern-card {
+	background: rgba(255, 255, 255, 0.85);
+	backdrop-filter: blur(8px);
+	border-radius: 20px;
+	box-shadow:
+		0 1px 3px rgba(0, 0, 0, 0.02),
+		0 4px 24px rgba(99, 102, 241, 0.06);
+	padding: 24px 20px;
+	margin-bottom: 16px;
+	border: 1px solid rgba(226, 232, 240, 0.6);
+	position: relative;
+	overflow: hidden;
+	transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+	&:hover {
+		transform: translateY(-3px);
+		box-shadow:
+			0 16px 48px rgba(99, 102, 241, 0.1),
+			0 4px 12px rgba(0, 0, 0, 0.04);
+		border-color: rgba(99, 102, 241, 0.2);
+	}
+}
+
+.modern-card::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 3px;
+	background: linear-gradient(90deg, #4f46e5, #06b6d4);
+	transform: scaleX(0);
+	transform-origin: left;
+	transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+	z-index: 1;
+}
+
+.modern-card:hover::before {
+	transform: scaleX(1);
+}

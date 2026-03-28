@@ -1,0 +1,59 @@
+.ProgressBar-container {
+	height: 6px;
+	width: 100%;
+	background-color: #f1f4f7;
+	border-radius: 10px;
+	position: relative;
+}
+
+.ProgressBar-fill {
+	background-color: #3478f6;
+	border-radius: 10px 0 0 10px;
+	height: 100%;
+}
+
+.ProgressBar-slider {
+	position: absolute;
+	top: -50%;
+	height: 12px;
+	width: 6px;
+	border-radius: 8px;
+	background-color: #ffffff;
+	box-shadow: 0px 2px 4px 0px #141c2c1f;
+}
+
+@keyframes slide-fill {
+	0% {
+		width: 0%;
+		opacity: 0;
+	}
+	60% {
+		opacity: 1;
+	}
+	100% {
+		width: var(--progress);
+		opacity: 1;
+	}
+}
+
+@keyframes slide-slider {
+	0% {
+		left: 0%;
+		opacity: 0;
+	}
+	60% {
+		opacity: 1;
+	}
+	100% {
+		left: var(--progress);
+		opacity: 1;
+	}
+}
+
+.animate-fill {
+	animation: slide-fill 1s ease-out forwards;
+}
+
+.animate-slider {
+	animation: slide-slider 1s ease-out forwards;
+}

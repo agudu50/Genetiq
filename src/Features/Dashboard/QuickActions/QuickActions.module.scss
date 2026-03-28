@@ -1,0 +1,122 @@
+.quickActionsContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+
+	@media (max-width: 480px) {
+		gap: 10px;
+	}
+}
+
+.title {
+	font-size: 16px;
+	font-weight: 700;
+	color: var(--text);
+	margin: 0;
+	letter-spacing: -0.01em;
+
+	@media (max-width: 480px) {
+		font-size: 14px;
+	}
+}
+
+.actionsGrid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 10px;
+
+	@media (max-width: 1200px) {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	@media (max-width: 480px) {
+		grid-template-columns: repeat(3, 1fr);
+		gap: 8px;
+	}
+}
+
+.actionBtn {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 16px 12px;
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: 16px;
+	cursor: pointer;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	animation: fadeInScale 0.4s ease-out both;
+
+	@media (max-width: 480px) {
+		padding: 10px 8px;
+		gap: 6px;
+		border-radius: 12px;
+	}
+
+	&:hover {
+		transform: translateY(-4px);
+		box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+		border-color: var(--action-color);
+
+		.iconWrapper {
+			transform: scale(1.1);
+			background: var(--action-color);
+			color: white;
+		}
+	}
+
+	&:active {
+		transform: translateY(-2px);
+	}
+}
+
+@keyframes fadeInScale {
+	from {
+		opacity: 0;
+		transform: scale(0.9);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+.iconWrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 52px;
+	height: 52px;
+	border-radius: 14px;
+	background: color-mix(in srgb, var(--action-color) 12%, transparent);
+	color: var(--action-color);
+	transition: all 0.3s ease;
+
+	@media (max-width: 480px) {
+		width: 40px;
+		height: 40px;
+		border-radius: 10px;
+
+		svg {
+			width: 20px;
+			height: 20px;
+		}
+	}
+}
+
+.label {
+	font-size: 12px;
+	font-weight: 700;
+	color: var(--text-secondary);
+	text-align: center;
+	line-height: 1.2;
+
+	@media (max-width: 480px) {
+		font-size: 11px;
+	}
+}

@@ -1,0 +1,34 @@
+.switcher {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	border-radius: 12px;
+	border: 1px solid rgba(0, 0, 0, 0.04);
+	background: rgba(255, 255, 255, 0.6);
+	backdrop-filter: blur(4px);
+	color: #374151;
+	cursor: pointer;
+	transition: all 0.2s ease;
+
+	svg {
+		width: 20px;
+		height: 20px;
+		transition: transform 0.3s ease;
+	}
+}
+
+.switcher:hover {
+	background: rgba(255, 255, 255, 1);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+	transform: translateY(-1px);
+
+	svg {
+		transform: rotate(15deg);
+	}
+}
+
+.switcher:active {
+	transform: translateY(0);
+}

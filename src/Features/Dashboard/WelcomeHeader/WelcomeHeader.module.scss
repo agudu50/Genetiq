@@ -1,0 +1,254 @@
+.welcomeHeader {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 24px;
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+	background: var(--glass-bg);
+	backdrop-filter: blur(8px) saturate(180%);
+	-webkit-backdrop-filter: blur(8px) saturate(180%);
+	border-radius: 20px;
+	border: 1px solid var(--glass-border);
+	box-shadow: var(--card-shadow);
+
+	@media (max-width: 480px) {
+		padding: 12px 14px;
+		gap: 10px;
+		border-radius: 12px;
+	}
+}
+
+@keyframes fadeInDown {
+	from {
+		opacity: 0;
+		transform: translateY(-20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.greetingSection {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	flex-wrap: wrap;
+	gap: 16px;
+
+	@media (max-width: 480px) {
+		gap: 8px;
+	}
+}
+
+.greeting {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.greetingText {
+	font-size: 24px;
+	font-weight: 800;
+	color: var(--text);
+	margin: 0;
+	letter-spacing: -0.025em;
+
+	@media (max-width: 768px) {
+		font-size: 20px;
+		font-weight: 800;
+	}
+
+	@media (max-width: 480px) {
+		font-size: 18px;
+	}
+}
+
+.userName {
+	background: linear-gradient(135deg, #a855f7 0%, #c084fc 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+.subtitle {
+	font-size: 15px;
+	color: var(--text-secondary);
+	margin: 0;
+	font-weight: 500;
+
+	@media (max-width: 480px) {
+		font-size: 13px;
+	}
+}
+
+.dateInfo {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+
+	@media (max-width: 480px) {
+		display: none;
+	}
+}
+
+.date {
+	font-size: 13px;
+	font-weight: 700;
+	color: var(--text);
+	padding: 8px 16px;
+	background: var(--surface);
+	border-radius: 20px;
+	border: 1px solid var(--border);
+	backdrop-filter: blur(8px);
+}
+
+.quickStats {
+	display: flex;
+	gap: 12px;
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	-webkit-overflow-scrolling: touch;
+	padding-bottom: 4px;
+	margin: 0 -4px;
+	padding-left: 4px;
+	padding-right: 4px;
+
+	&::-webkit-scrollbar {
+		height: 4px;
+	}
+
+	&::-webkit-scrollbar-track {
+		background: rgba(0, 0, 0, 0.05);
+		border-radius: 4px;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: rgba(168, 85, 247, 0.3);
+		border-radius: 4px;
+	}
+
+	@media (max-width: 768px) {
+		gap: 12px;
+		margin: 0 -12px;
+		padding: 4px 12px 12px;
+	}
+}
+
+.statCard {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 12px 16px;
+	background: var(--surface);
+	flex: 0 0 auto;
+	min-width: 150px;
+	scroll-snap-align: start;
+	border-radius: 14px;
+	border: 1px solid var(--border);
+	box-shadow: var(--card-shadow);
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	animation: slideInUp 0.5s ease-out both;
+	cursor: pointer;
+
+	@media (max-width: 768px) {
+		padding: 10px 12px;
+		gap: 8px;
+		min-width: 130px;
+	}
+
+	&:hover {
+		transform: translateY(-3px);
+		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+		border-color: var(--stat-color);
+	}
+}
+
+@keyframes slideInUp {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.statIcon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	border-radius: 10px;
+	background: color-mix(in srgb, var(--stat-color) 12%, transparent);
+	flex-shrink: 0;
+
+	@media (max-width: 768px) {
+		width: 36px;
+		height: 36px;
+		border-radius: 8px;
+	}
+}
+
+.statContent {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	flex: 1;
+	min-width: 0;
+}
+
+.statValue {
+	font-size: 18px;
+	font-weight: 700;
+	color: var(--text);
+	line-height: 1.2;
+
+	@media (max-width: 768px) {
+		font-size: 16px;
+	}
+}
+
+.statLabel {
+	font-size: 12px;
+	color: var(--text-secondary);
+	font-weight: 600;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.statTrend {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	font-size: 12px;
+	font-weight: 600;
+	padding: 4px 8px;
+	border-radius: 8px;
+	white-space: nowrap;
+
+	&.up {
+		color: #10b981;
+		background: rgba(16, 185, 129, 0.1);
+	}
+
+	&.down {
+		color: #ef4444;
+		background: rgba(239, 68, 68, 0.1);
+	}
+
+	&.stable {
+		color: #6b7280;
+		background: rgba(107, 114, 128, 0.1);
+	}
+
+	svg {
+		width: 12px;
+		height: 12px;
+	}
+}

@@ -1,0 +1,397 @@
+@use "@/App/Styles/_mixins" as *;
+
+.PlanAggregate-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	gap: 12px;
+	opacity: 0;
+	animation: fadeIn 1s ease forwards;
+}
+
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+.PlanAggregate-table {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	position: relative;
+	z-index: 1;
+	width: 100%;
+
+	&::after {
+		content: "";
+		transition: all 0.3s ease;
+		position: absolute;
+		z-index: 0;
+		width: 100%;
+		height: 15%;
+		bottom: 0;
+
+		background: linear-gradient(
+			0deg,
+			rgba(255, 255, 255, 0.7) 0%,
+			rgba(255, 255, 255, 0) 100%
+		);
+	}
+
+	&-blue {
+		&::after {
+			background: linear-gradient(
+				0deg,
+				rgba(228, 235, 248, 0.7) 0%,
+				rgba(228, 235, 248, 0) 100%
+			);
+		}
+
+		.PlanAggregate-row {
+			background: linear-gradient(
+				293deg,
+				rgba(255, 255, 255, 0.42) 0.1%,
+				rgba(255, 255, 255, 0.6) 100%
+			);
+
+			&:hover {
+				background: #edf1f9;
+			}
+		}
+	}
+}
+
+.PlanAggregate-note {
+	color: rgba(108, 117, 132, 1);
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 14px;
+}
+
+.PlanAggregate-section {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 12px;
+
+	&:last-child {
+		.PlanAggregate-rows {
+			display: none;
+		}
+		margin-bottom: 20px;
+	}
+}
+
+.PlanAggregate-section-head {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	gap: 8px;
+}
+
+.PlanAggregate-section-count {
+	display: flex;
+	width: 20px;
+	height: 18px;
+	justify-content: center;
+	align-items: center;
+	border-radius: 24px;
+	background: rgba(59, 141, 245, 1);
+
+	color: #ffffff;
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 16px;
+}
+
+.PlanAggregate-section-title {
+	width: 100%;
+}
+
+.PlanAggregate-section-arrow {
+	background-color: inherit;
+	border: none;
+	padding: 0;
+	transition: all 0.3s ease;
+
+	&:hover {
+		transform: scale(1.3);
+
+		svg {
+			path {
+				fill: rgba(59, 141, 245, 1);
+			}
+		}
+	}
+}
+
+.PlanAggregate-rows {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	margin-left: 24px;
+}
+
+.PlanAggregate-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 14px 8px;
+
+	border-radius: 8px;
+	background: #edf1f9;
+
+	&:hover {
+		background: #e4ebf9;
+		padding: 8px;
+
+		.PlanAggregate-row-type {
+			display: none;
+		}
+
+		.PlanAggregate-buttons {
+			display: flex;
+		}
+	}
+}
+
+.PlanAggregate-row-icon-container {
+	display: flex;
+	align-items: center;
+	width: 20px;
+	height: 20px;
+}
+
+.PlanAggregate-row-icon {
+	width: 20px;
+	height: 20px;
+}
+
+.PlanAggregate-row-name {
+	width: 100%;
+	overflow: hidden;
+	color: #0b101a;
+	text-overflow: ellipsis;
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 16px;
+}
+
+.PlanAggregate-row-type {
+	display: flex;
+	padding: 2px 6px;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 8px;
+	border-radius: 100px;
+	border: 1px solid var(--neutral-background-background-base, #fff);
+	background: linear-gradient(
+		293deg,
+		rgba(255, 255, 255, 0.28) 0.1%,
+		rgba(255, 255, 255, 0.4) 100%
+	);
+
+	color: rgba(33, 38, 46, 1);
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 16px;
+}
+
+.PlanAggregate-or {
+	display: flex;
+	height: 20px;
+	padding: 2px 8px;
+	justify-content: center;
+	align-items: center;
+
+	border-radius: 100px;
+	border: 1px solid rgb(136, 136, 136);
+
+	color: rgba(33, 38, 46, 1);
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 16px;
+}
+
+.PlanAggregate-buttons {
+	display: none;
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
+
+	@include media_1248 {
+		flex-direction: column;
+	}
+}
+
+.PlanAggregate-why {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
+	border-radius: 100px;
+	padding: 8px 12px;
+	background: rgba(108, 117, 132, 0.12);
+	font-weight: 600;
+	font-size: 12px;
+	line-height: 16px;
+
+	p {
+		margin: 0;
+	}
+}
+
+.PlanAggregate-chevron-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	rotate: (-90deg);
+	background: rgba(59, 141, 245, 0.12);
+	border-radius: 100%;
+	padding: 8px;
+	transition: all 0.2s ease;
+
+	&:hover {
+		transform: scale(1.05);
+		background: rgba(13, 65, 133, 0.12);
+	}
+
+	svg {
+		width: 16px;
+		height: 16px;
+		stroke: rgba(0, 41, 173, 1);
+	}
+}
+
+.PlanAggregate-cart {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	text-wrap: nowrap;
+	gap: 8px;
+	border-radius: 100px;
+	padding: 8px 12px;
+	background-color: rgba(59, 141, 245, 1);
+	color: #ffffff;
+	font-weight: 600;
+	font-size: 12px;
+	line-height: 16px;
+	transition: all 0.2s ease;
+
+	p {
+		margin: 0;
+	}
+
+	svg {
+		width: 16px;
+		height: 16px;
+		path {
+			fill: #ffffff;
+		}
+	}
+
+	&:hover {
+		transform: scale(1.05);
+	}
+}
+
+.PlanAggregate-cta {
+	display: flex;
+	padding: 4px 12px 4px 4px;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+	border-radius: 8px;
+	border: 1px solid #e4ebf9;
+	background: linear-gradient(90deg, #21262e 0%, #363c47 100%);
+}
+
+.PlanAggregate-cta-icon-container {
+	width: 48px;
+	height: 48px;
+	flex-shrink: 0;
+
+	img {
+		border-radius: 4px;
+		width: 100%;
+		height: 100%;
+	}
+}
+
+.PlanAggregate-cta-body {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+	gap: 4px;
+	flex: 1 0 0;
+}
+
+.PlanAggregate-cta-title {
+	color: rgba(239, 240, 241, 1);
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 16px;
+	position: relative;
+}
+
+.PlanAggregate-cta-desc {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	align-self: stretch;
+	overflow: hidden;
+	color: rgba(164, 169, 177, 1);
+	text-overflow: ellipsis;
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 14px;
+	letter-spacing: 0em;
+}
+
+.PlanAggregate-cta-button {
+	display: flex;
+	padding: 8px 12px;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+
+	border-radius: 999px;
+	background: rgba(59, 141, 245, 0.16);
+	transition: all 0.3s ease;
+
+	&:hover {
+		transform: scale(1.05);
+	}
+}
+
+.PlanAggregate-cta-schedule {
+	margin: 0;
+	color: rgba(132, 184, 249, 1);
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 16px;
+}
+
+.PlanAggregate-cta-schedule-icon {
+	display: flex;
+	align-items: center;
+}
+
+.PlanAggregate-cta-shape {
+	position: absolute;
+	top: -70%;
+	right: -20%;
+
+	@include media_1248 {
+		top: -5px;
+		right: -10%;
+	}
+}

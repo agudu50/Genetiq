@@ -1,0 +1,138 @@
+.ConnectWatchWidget-container {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	position: relative;
+	gap: 8px;
+	padding: 13px 16px;
+	border-radius: 12px;
+	z-index: 1;
+	background: linear-gradient(
+		88.73deg,
+		rgba(255, 95, 168, 0) 6.5%,
+		rgba(255, 95, 168, 0.13) 42.17%,
+		rgba(255, 40, 27, 0.13) 100%
+	);
+	overflow: hidden;
+
+	@media (max-width: 1248px) {
+		flex-direction: column;
+		align-items: center;
+		gap: 16px;
+		padding: 12px;
+	}
+}
+
+.ConnectWatchWidget-container::before {
+	content: "";
+	position: absolute;
+	width: 139px;
+	height: 113px;
+	background-image: url("../../assets/ConnectWatchWidget/Heart-bg.svg");
+	background-size: contain;
+	background-repeat: no-repeat;
+	top: 6px;
+	right: 0px;
+	z-index: 0;
+	pointer-events: none;
+
+	@media (max-width: 1248px) {
+		top: 41%;
+	}
+}
+
+.ConnectWatchWidget-container::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: 12px;
+	padding: 1px;
+	border: 1px solid;
+	z-index: 0;
+
+	border-image-source: linear-gradient(
+		88.73deg,
+		rgba(255, 40, 27, 0.5) 0%,
+		rgba(255, 95, 168, 0.5) 100%
+	);
+	background: linear-gradient(
+		88.73deg,
+		rgba(255, 40, 27, 0.5) 0%,
+		rgba(255, 95, 168, 0.5) 100%
+	);
+	-webkit-mask:
+		linear-gradient(white, white) content-box,
+		linear-gradient(white, white);
+	mask:
+		linear-gradient(white, white) content-box,
+		linear-gradient(white, white);
+	mask-composite: exclude;
+	-webkit-mask-composite: destination-out;
+}
+
+.ConnectWatchWidget-left {
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+	z-index: 1;
+}
+
+.ConnectWatchWidget-heart-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.ConnectWatchWidget-title {
+	color: #0b101a;
+	font-weight: 600;
+	font-size: 14px;
+	line-height: 20px;
+	letter-spacing: -0.1px;
+}
+
+.ConnectWatchWidget-button {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	background-color: #ffffff;
+	padding: 10px 14px;
+	border-radius: 100px;
+	box-shadow:
+		0px 4px 14px 0px rgba(107, 22, 22, 0.12),
+		0 2px 6px rgba(0, 0, 0, 0.06);
+	z-index: 1;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	border: 1px solid rgba(255, 95, 168, 0.15);
+
+	&:hover {
+		background: linear-gradient(135deg, #fff5f7 0%, #ffffff 100%);
+		border-color: rgba(255, 95, 168, 0.4);
+		transform: translateY(-2px) scale(1.02);
+		box-shadow:
+			0px 8px 24px 0px rgba(255, 40, 27, 0.18),
+			0 2px 8px rgba(0, 0, 0, 0.06);
+	}
+
+	&:active {
+		transform: scale(0.98);
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+	}
+}
+
+.ConnectWatchWidget-button-text {
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 20px;
+	color: #0b101a;
+	text-wrap: nowrap;
+}
+
+.ConnectWatchWidget-button-icon-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}

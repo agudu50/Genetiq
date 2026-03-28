@@ -1,0 +1,170 @@
+@use "@/App/Styles/_mixins" as *;
+
+.RiskSlider-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
+	width: 100%;
+	position: relative;
+
+	@media (max-width: 768px) {
+		flex-direction: column;
+		align-items: center;
+		gap: 16px;
+		width: 100%;
+	}
+}
+
+.RiskSlider-title {
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 16px;
+	width: 100%;
+	text-align: left;
+
+	@include media_1439 {
+		text-align: center;
+	}
+}
+
+.RiskSlider-bar-wrapper {
+	background-size: contain;
+	background-position: center;
+	padding: 4px;
+	width: 98%;
+	border-radius: 24px;
+	margin: 0 8px;
+	overflow: hidden;
+	position: relative;
+	background: rgba(211, 222, 248, 0.63);
+}
+
+.RiskSlider-bar-wrapper::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background-size: contain;
+	opacity: 0.2;
+	background-image: url("@assets/AgeWidget/BarGrid.png");
+}
+
+.RiskSlider-bar-wrapper::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: 24px;
+	padding: 1px;
+	background: linear-gradient(
+		270deg,
+		#ff7bd2 6.69%,
+		#0974fb 49.8%,
+		#5ccdff 100%
+	);
+	-webkit-mask:
+		linear-gradient(white, white) content-box,
+		linear-gradient(white, white);
+	mask:
+		linear-gradient(white, white) content-box,
+		linear-gradient(white, white);
+	mask-composite: exclude;
+	-webkit-mask-composite: destination-out;
+}
+
+.RiskSlider-bar {
+	position: relative;
+	height: 24px;
+	display: flex;
+
+	justify-content: center;
+	align-items: center;
+}
+
+.RiskSlider-bar-item {
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 33%;
+	height: 100%;
+	background: linear-gradient(90deg, #ff6518 0%, #e74850 100%);
+	animation: barFillAnimation 1.5s ease-in-out forwards;
+	border-radius: 0px 24px 24px 0px;
+	z-index: 1;
+}
+
+@keyframes barFillAnimation {
+	0% {
+		width: 0%;
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+.RiskSlider-horizontal-line {
+	position: relative;
+	height: 1px;
+	width: calc(100% - 30px);
+	background: #c2d3f3;
+	z-index: 10;
+}
+
+.RiskSlider-thumb {
+	position: absolute;
+	top: 60%;
+	transform: translateY(-60%);
+	width: 11px;
+	height: 20px;
+	animation: thumbSlideAnimation 1.3s ease-in-out;
+	z-index: 11;
+}
+
+@keyframes thumbSlideAnimation {
+	0% {
+		left: 0;
+		opacity: 0;
+	}
+
+	100% {
+		opacity: 1;
+	}
+}
+
+.RiskSlider-circle-start {
+	position: absolute;
+	z-index: 2;
+	top: 50%;
+	left: 0.5%;
+	transform: translateY(-50%);
+}
+
+.RiskSlider-circle-end {
+	position: absolute;
+	z-index: 2;
+	top: 50%;
+	right: 0.5%;
+	transform: translateY(-50%);
+}
+
+.RiskSlider-axis {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+}
+
+.RiskSlider-axis-label {
+	color: #0b101a;
+	text-align: center;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 16px;
+
+	color: var(--p-color-text, rgba(108, 117, 132, 1));
+
+	font-family: var(--Font-family-body, Inter);
+	font-size: var(--Font-size-S, 14px);
+	font-style: normal;
+	font-weight: 400;
+	line-height: var(--Font-line-height-M, 20px);
+}

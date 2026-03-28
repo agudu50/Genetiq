@@ -1,0 +1,59 @@
+@mixin query($width) {
+	@media screen and (max-width: $width) {
+		@content;
+	}
+}
+
+@mixin media_1920 {
+	@include query(1920px) {
+		@content;
+	}
+}
+
+@mixin media_1536 {
+	@include query(1536px) {
+		@content;
+	}
+}
+
+@mixin media_1439 {
+	@include query(1439px) {
+		@content;
+	}
+}
+
+@mixin media_1248 {
+	@include query(1248px) {
+		@content;
+	}
+}
+
+@mixin media_920 {
+	@include query(920px) {
+		@content;
+	}
+}
+
+@mixin media_768 {
+	@include query(768px) {
+		@content;
+	}
+}
+
+@mixin media_480 {
+	@include query(480px) {
+		@content;
+	}
+}
+
+@mixin media_376 {
+	@include query(376px) {
+		@content;
+	}
+}
+
+@mixin media($param) {
+	@include query($param) {
+		@content;
+	}
+}

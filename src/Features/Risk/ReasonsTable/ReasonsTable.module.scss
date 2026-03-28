@@ -1,0 +1,126 @@
+@use "@/App/Styles/_mixins" as mixins;
+
+.ReasonsTable-container {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 16px;
+	align-self: stretch;
+	width: 100%;
+}
+
+.ReasonsTable-head {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+}
+
+.header {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+	align-self: stretch;
+	flex-direction: row;
+}
+
+.ReasonsTable-desc {
+	color: var(--p-color-text, rgba(81, 89, 103, 1));
+
+	/* body/md/regular */
+	font-family: var(--Font-family-body, Inter);
+	font-size: var(--Font-size-S, 14px);
+	font-style: normal;
+	font-weight: 400;
+	line-height: var(--Font-line-height-M, 20px); /* 142.857% */
+}
+
+.ReasonsTable-title {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex: 1 0 0;
+	color: var(--p-color-text, rgba(33, 38, 46, 1));
+
+	font-family: var(--Font-family-heading, Inter);
+	font-size: var(--Font-size-L, 18px);
+	font-style: normal;
+	font-weight: 600;
+	line-height: var(--Font-line-height-XL, 28px);
+
+	span {
+		display: flex;
+		min-width: 16px;
+		padding: 2px;
+		justify-content: center;
+		align-items: center;
+		gap: var(--space-2-px-0125-rem, 2px);
+		border-radius: var(--Border-Radius-xl, 24px);
+		background: var(
+			--p-color-bg-fill-magic-secondary-active,
+			rgba(59, 141, 245, 1)
+		);
+		color: var(--p-color-text-inverse, rgba(239, 240, 241, 1));
+		text-align: center;
+
+		font-family: var(--Font-family-body, Inter);
+		font-size: var(--Font-size-XS, 12px);
+		font-style: normal;
+		font-weight: 400;
+		line-height: var(--Font-line-height-S, 16px);
+	}
+}
+
+.ReasonsTable-more {
+	display: flex;
+	flex-direction: row;
+	gap: 2px;
+	align-items: center;
+	cursor: pointer;
+}
+
+.ReasonsTable-more-text {
+	color: #3b8df5;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 16px;
+}
+
+.ReasonsTable-chevron-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 2px 5px;
+}
+
+.ReasonsTable-chevron {
+	transition: transform 0.3s ease;
+
+	path {
+		fill: rgba(59, 141, 245, 1);
+	}
+}
+
+.rotate-chevron {
+	transform: rotate(180deg);
+}
+
+.ReasonsTable-table {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 4px;
+	width: 100%;
+	animation: fade 1s ease forwards;
+}
+
+@keyframes fade {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}

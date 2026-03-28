@@ -1,0 +1,100 @@
+{
+	"user_stats": {
+		"biological_age": 47,
+		"chronological_age": 54,
+		"age_range": {
+			"start": 46,
+			"end": 62
+		}
+	},
+	"tracker": {
+		"status": "checking",
+		"target": "cholesterol",
+		"expected_days": 3,
+		"progress": 31
+	},
+	"concerns": [
+		{
+			"id": 1,
+			"title": "Specialist Distance",
+			"factors": ["High travel time", "Limited local centers"],
+			"icon": "Globe",
+			"status": "High",
+			"link": "cardiovascular"
+		},
+		{
+			"id": 2,
+			"title": "Diagnostic Cost",
+			"factors": ["Expensive repetitive tests", "Insurance gaps"],
+			"icon": "Financial",
+			"status": "High",
+			"link": "cardiovascular"
+		},
+		{
+			"id": 3,
+			"title": "Information Gaps",
+			"factors": ["Limited research access", "Medical system complexity"],
+			"icon": "Brain",
+			"status": "Medium"
+		},
+		{
+			"id": 4,
+			"title": "Hypertension Risk",
+			"factors": ["High blood pressure", "Stress", "High sodium diet"],
+			"icon": "Heart",
+			"status": "Medium"
+		}
+	],
+	"action_plan": {
+		"default": [
+			{
+				"title": "Care Navigation",
+				"count": 7,
+				"data": [
+					{
+						"name": "Consult Care Navigator AI",
+						"description": "Bridge gaps in local care access",
+						"icon": "gene"
+					},
+					{
+						"name": "Local Clinic Bridging",
+						"description": "Connect with remote specialists",
+						"icon": "scale"
+					},
+					{
+						"name": "Cost Optimization Review",
+						"description": "Identify affordable care paths",
+						"icon": "microscope"
+					}
+				]
+			},
+			{
+				"title": "Supplements",
+				"count": 5,
+				"data": [
+					{
+						"name": "Beetroot powder / titrate supplements",
+						"description": "Increases nitric oxide levels",
+						"icon": "beetroot"
+					},
+					{
+						"name": "Take turmeric extract to reduce inflammation (CPR)",
+						"description": "Supports vascular health",
+						"icon": "tumeric"
+					}
+				]
+			},
+			{
+				"title": "Lifestyle",
+				"count": 7,
+				"data": [
+					{
+						"name": "Quit smoking & limit alcohol",
+						"description": "Improved lung function +5",
+						"icon": "quitSmoking"
+					}
+				]
+			}
+		]
+	}
+}

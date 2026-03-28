@@ -1,0 +1,225 @@
+.Carousel-login-wrapper {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	z-index: 2;
+	position: relative;
+	padding: 20px;
+
+	.Card-header {
+		margin-bottom: 20px;
+
+		.Favicon {
+			width: 60px;
+			height: 60px;
+			filter: drop-shadow(0 0 20px rgba($indigo-vibrant, 0.4));
+		}
+	}
+
+	.Card-visual {
+		width: 100%;
+		margin-bottom: 30px;
+		animation: floatImage 6s ease-in-out infinite;
+		display: flex;
+		justify-content: center;
+
+		img {
+			width: 100%;
+			max-width: 320px;
+			height: auto;
+			filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.4));
+		}
+	}
+
+	.Card-footer {
+		h3 {
+			font-size: 32px;
+			font-weight: 800;
+			color: #ffffff;
+			margin-bottom: 4px;
+			letter-spacing: -0.02em;
+		}
+
+		p {
+			font-size: 14px;
+			font-weight: 500;
+			color: #94a3b8;
+			text-transform: uppercase;
+			letter-spacing: 0.3em;
+		}
+	}
+}
+
+.New-branded-card {
+	width: 100%;
+	max-width: 440px;
+	padding: 24px 32px;
+	border-radius: 24px;
+	background: rgba(15, 23, 42, 0.4);
+	backdrop-filter: blur(8px);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.6);
+	animation: cardEntrance 1s cubic-bezier(0.16, 1, 0.3, 1);
+	position: relative;
+
+	&::after {
+		content: "";
+		position: absolute;
+		top: -50%;
+		left: -50%;
+		width: 200%;
+		height: 200%;
+		background: radial-gradient(
+			circle at center,
+			rgba($indigo-vibrant, 0.1) 0%,
+			transparent 70%
+		);
+		pointer-events: none;
+	}
+
+	.Card-header {
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 12px;
+
+		.Brand-badge {
+			padding: 6px 14px;
+			background: rgba($indigo-vibrant, 0.15);
+			border: 1px solid rgba($indigo-vibrant, 0.2);
+			border-radius: 100px;
+			font-size: 11px;
+			font-weight: 700;
+			color: $indigo-soft;
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+		}
+
+		.AI-badge {
+			font-size: 10px;
+			font-weight: 900;
+			color: rgba(255, 255, 255, 0.4);
+			letter-spacing: 0.15em;
+			padding: 4px 12px;
+			border-radius: 100px;
+			background: rgba(255, 255, 255, 0.05);
+			border: 1px solid rgba(255, 255, 255, 0.08);
+		}
+	}
+
+	.Visual-container {
+		position: relative;
+		width: 100%;
+		height: 160px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-bottom: 24px;
+
+		img {
+			max-width: 180px;
+			height: auto;
+			filter: drop-shadow(0 0 30px rgba(99, 102, 241, 0.3));
+			animation: floatImage 6s ease-in-out infinite;
+		}
+	}
+
+	.Feature-grid {
+		width: 100%;
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 12px;
+		margin-bottom: 16px;
+		padding: 12px;
+		background: rgba(255, 255, 255, 0.03);
+		border-radius: 20px;
+		border: 1px solid rgba(255, 255, 255, 0.05);
+
+		.Feature-item {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 12px;
+			font-weight: 600;
+			color: rgba(255, 255, 255, 0.7);
+			text-align: left;
+
+			.Dot {
+				width: 6px;
+				height: 6px;
+				background: $indigo-vibrant;
+				border-radius: 50%;
+				box-shadow: 0 0 10px rgba($indigo-vibrant, 0.5);
+			}
+		}
+	}
+
+	.Card-footer {
+		h3 {
+			font-size: 1.75rem;
+			font-weight: 900;
+			margin-bottom: 4px;
+			letter-spacing: -0.04em;
+			background: linear-gradient(180deg, #fff 0%, #cbd5e1 100%);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			background-clip: text;
+			line-height: 1.1;
+		}
+
+		.Footer-tagline {
+			font-size: 14px;
+			font-weight: 500;
+			color: $indigo-soft;
+			text-transform: uppercase;
+			letter-spacing: 0.25em;
+			margin-bottom: 12px;
+		}
+
+		.Mission-text {
+			font-size: 14px;
+			line-height: 1.6;
+			color: rgba(255, 255, 255, 0.5);
+			font-weight: 500;
+			text-align: center;
+			max-width: 400px;
+			margin: 0 auto;
+			padding: 12px 0 0;
+			border-top: 1px solid rgba(255, 255, 255, 0.05);
+
+			strong {
+				color: rgba(255, 255, 255, 0.8);
+				font-weight: 700;
+			}
+		}
+	}
+}
+
+@keyframes cardEntrance {
+	from {
+		opacity: 0;
+		transform: scale(0.95) translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
+}
+
+@keyframes floatImage {
+	0%,
+	100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-10px);
+	}
+}

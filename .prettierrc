@@ -1,0 +1,9 @@
+{
+	"useTabs": true,
+	"bracketSpacing": true,
+	"arrowParens": "always",
+	"endOfLine": "lf",
+	"jsxSingleQuote": true,
+	"proseWrap": "always",
+	"quoteProps": "consistent"
+}

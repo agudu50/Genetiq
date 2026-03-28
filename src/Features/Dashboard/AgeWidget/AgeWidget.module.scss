@@ -1,0 +1,59 @@
+.AgeWidget-container {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	position: relative;
+	gap: 32px;
+	padding: 24px;
+	background: var(--glass-bg);
+	backdrop-filter: blur(8px) saturate(180%);
+	-webkit-backdrop-filter: blur(8px) saturate(180%);
+	border-radius: 20px;
+	margin-top: -2px;
+	box-shadow: var(--card-shadow);
+	border: 1px solid var(--glass-border);
+	transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+	overflow: hidden;
+
+	&:hover {
+		box-shadow: 0 6px 24px rgba(102, 126, 234, 0.15);
+		transform: translateY(-2px);
+	}
+
+	@media (max-width: 1412px) {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 24px;
+		padding: 20px;
+	}
+
+	@media (max-width: 768px) {
+		padding: 16px;
+		gap: 20px;
+		border-radius: 16px;
+	}
+}
+
+.AgeWidget-container::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: 20px;
+	padding: 1px;
+	z-index: 0;
+
+	background: linear-gradient(
+		90deg,
+		rgba(129, 140, 248, 0.3) 0%,
+		rgba(148, 178, 236, 0) 100%
+	);
+	-webkit-mask:
+		linear-gradient(white, white) content-box,
+		linear-gradient(white, white);
+	mask:
+		linear-gradient(white, white) content-box,
+		linear-gradient(white, white);
+	mask-composite: exclude;
+	-webkit-mask-composite: destination-out;
+}

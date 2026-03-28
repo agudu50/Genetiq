@@ -1,0 +1,75 @@
+@use "@/App/Styles/_mixins" as mixins;
+
+.ReasonsTable-container {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.ReasonsTable-head {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.ReasonsTable-title {
+	color: rgba(81, 89, 103, 1);
+	font-size: 10px;
+	font-weight: 400;
+	line-height: 14px;
+	letter-spacing: 0.2px;
+	text-transform: uppercase;
+}
+
+.ReasonsTable-more {
+	display: flex;
+	flex-direction: row;
+	gap: 2px;
+	align-items: center;
+	cursor: pointer;
+}
+
+.ReasonsTable-more-text {
+	color: #3b8df5;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 16px;
+}
+
+.ReasonsTable-chevron-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 2px 5px;
+}
+
+.ReasonsTable-chevron {
+	transition: transform 0.3s ease;
+
+	path {
+		fill: rgba(59, 141, 245, 1);
+	}
+}
+
+.rotate-chevron {
+	transform: rotate(180deg);
+}
+
+.ReasonsTable-table {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 4px;
+	width: 100%;
+	animation: fade 1s ease forwards;
+}
+
+@keyframes fade {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
