@@ -1,0 +1,13 @@
+# Enforce consistent LF line endings for source files
+* text=auto eol=lf
+
+# Keep images/binaries untouched
+*.png -text
+*.jpg -text
+*.jpeg -text
+*.svg -text
+*.gif -text
+*.ico -text
+*.pdf -text
+*.glb -text
+*.gltf -text

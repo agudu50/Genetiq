@@ -11,17 +11,7 @@ require("dotenv").config();
 app.use(cors());
 app.use(express.json());
 
-// mongoose
-//   .connect(process.env.MONGO_URL, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//   })
-//   .then(() => {
-//     console.log("DB Connetion Successfull");
-//   })
-//   .catch((err) => {
-//     console.log(err.message);
-//   });
+
 
 app.get("/ping", (_req, res) => {
 	return res.json({ msg: "Ping Successful" });
@@ -34,10 +24,8 @@ app.use("/api/messages", messageRoutes);
 const distPath = path.join(__dirname, "../dist");
 app.use(express.static(distPath));
 
-app.get("*", (req, res) => {
-	if (!req.path.startsWith("/api")) {
-		res.sendFile(path.join(distPath, "index.html"));
-	}
+app.all(/^\/(?!api)/, (req, res) => {
+	res.sendFile(path.join(distPath, "index.html"));
 });
 
 const PORT = process.env.PORT || 3000;
