@@ -1,12 +1,12 @@
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
-const mongoose = require("mongoose");
 const path = require("path");
 const authRoutes = require("./routes/auth");
 const messageRoutes = require("./routes/messages");
 const app = express();
 const socket = require("socket.io");
-require("dotenv").config();
 
 app.use(cors());
 app.use(express.json());
@@ -29,7 +29,7 @@ app.all(/^\/(?!api)/, (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-const server = app.listen(PORT, () => console.log(`Server started on ${PORT}`));
+const server = app.listen(PORT, () => console.log(`Server is ready and running on port ${PORT}`));
 const io = socket(server, {
 	cors: {
 		origin: "http://localhost:3000",

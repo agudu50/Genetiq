@@ -1,11 +1,17 @@
-const User = require("../models/userModel");
-//const Room = require("../models/roomModel");
+const {
+	findUserByUsername,
+	findUserByEmail,
+	findUserById,
+	createUser,
+	getAllUsersExcept,
+	updateUserAvatar,
+} = require("../models/userQueries");
 const bcrypt = require("bcrypt");
 
 module.exports.login = async (req, res, next) => {
 	try {
 		const { username, password } = req.body;
-		const user = await User.findOne({ username });
+		const user = await findUserByUsername(username);
 		if (!user)
 			return res.json({ msg: "Incorrect Username or Password", status: false });
 		const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -21,18 +27,14 @@ module.exports.login = async (req, res, next) => {
 module.exports.register = async (req, res, next) => {
 	try {
 		const { username, email, password } = req.body;
-		const usernameCheck = await User.findOne({ username });
+		const usernameCheck = await findUserByUsername(username);
 		if (usernameCheck)
 			return res.json({ msg: "Username already used", status: false });
-		const emailCheck = await User.findOne({ email });
+		const emailCheck = await findUserByEmail(email);
 		if (emailCheck)
 			return res.json({ msg: "Email already used", status: false });
 		const hashedPassword = await bcrypt.hash(password, 10);
-		const user = await User.create({
-			email,
-			username,
-			password: hashedPassword,
-		});
+		const user = await createUser(username, email, hashedPassword);
 		delete user.password;
 		return res.json({ status: true, user });
 	} catch (ex) {
@@ -42,12 +44,7 @@ module.exports.register = async (req, res, next) => {
 
 module.exports.getAllUsers = async (req, res, next) => {
 	try {
-		const users = await User.find({ _id: { $ne: req.params.id } }).select([
-			"email",
-			"username",
-			"avatarImage",
-			"_id",
-		]);
+		const users = await getAllUsersExcept(req.params.id);
 		return res.json(users);
 	} catch (ex) {
 		next(ex);
@@ -58,14 +55,7 @@ module.exports.setAvatar = async (req, res, next) => {
 	try {
 		const userId = req.params.id;
 		const avatarImage = req.body.image;
-		const userData = await User.findByIdAndUpdate(
-			userId,
-			{
-				isAvatarImageSet: true,
-				avatarImage,
-			},
-			{ new: true },
-		);
+		const userData = await updateUserAvatar(userId, avatarImage);
 		return res.json({
 			isSet: userData.isAvatarImageSet,
 			image: userData.avatarImage,
