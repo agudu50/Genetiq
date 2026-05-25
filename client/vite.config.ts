@@ -30,13 +30,13 @@ export default defineConfig({
 		},
 	},
 	server: {
-		port: 3000,
-		strictPort: true,
+		port: 5173,
+		strictPort: false,
 		host: true,
-		origin: "http://localhost:3000",
+		origin: "http://localhost:5173",
 	},
 	preview: {
-		port: 3000,
-		strictPort: true,
+		port: 4173,
+		strictPort: false,
 	},
 });

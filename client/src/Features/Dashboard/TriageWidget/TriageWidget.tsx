@@ -6,7 +6,6 @@ import {
 	addAlert,
 	addMessage,
 } from "@/App/Redux/triageSlice";
-import { useCurrentAccount } from "@mysten/dapp-kit-react";
 import { Send, Bot, AlertTriangle } from "lucide-react";
 import styles from "./TriageWidget.module.scss";
 
@@ -15,7 +14,6 @@ export const TriageWidget: React.FC = () => {
 	const { symptomsInput, messages, isAnalyzing } = useSelector(
 		(state: RootState) => state.triage,
 	);
-	const currentAccount = useCurrentAccount();
 
 	const handleAnalyze = () => {
 		if (!symptomsInput.trim()) return;
@@ -118,9 +116,6 @@ export const TriageWidget: React.FC = () => {
 					</div>
 					<div>
 						<h3 className={styles.title}>AI Symptom Triage</h3>
-						{currentAccount && (
-							<span className={styles.onChainBadge}>Verified on Sui</span>
-						)}
 					</div>
 				</div>
 			</div>

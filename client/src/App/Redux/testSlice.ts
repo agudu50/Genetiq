@@ -15,7 +15,6 @@ export interface LabTest {
 	order_date?: string;
 	price?: string;
 	tracking?: string;
-	suiHash?: string;
 	system: string; // The system to highlight on the Digital Twin
 }
 
@@ -33,7 +32,6 @@ const initialState: TestState = {
 			type: "Blood",
 			status: "Pending",
 			order_date: "2024-03-12",
-			suiHash: "0x789...abc",
 			system: "Endocrinology",
 		},
 		{
@@ -43,7 +41,6 @@ const initialState: TestState = {
 			type: "Neuro",
 			status: "Completed",
 			date: "2024-02-28",
-			suiHash: "0x123...def",
 			system: "StressManagement",
 		},
 		{
@@ -53,7 +50,6 @@ const initialState: TestState = {
 			type: "CGM",
 			status: "Flagged",
 			date: "2024-03-15",
-			suiHash: "0x456...ghi",
 			system: "Gastroenterolgy",
 		},
 	],

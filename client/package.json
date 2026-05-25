@@ -4,7 +4,7 @@
 	"version": "0.0.0",
 	"type": "commonjs",
 	"scripts": {
-		"start": "concurrently \"node ../server/index.js --watch ../server/*\" \"vite\" --kill-others --kill-others-on-fail",
+		"start": "concurrently \"node --watch=../server ../server/index.js\" \"vite\" --kill-others --kill-others-on-fail",
 		"dev": "npm run start",
 		"build": "tsc -b && vite build",
 		"lint": "eslint .",
@@ -14,8 +14,6 @@
 		"prepare": "husky"
 	},
 	"dependencies": {
-		"@mysten/dapp-kit-react": "^2.0.1",
-		"@mysten/sui": "^2.9.1",
 		"@react-three/drei": "^9.121.0",
 		"@react-three/fiber": "^8.17.12",
 		"@react-three/postprocessing": "^2.19.0",

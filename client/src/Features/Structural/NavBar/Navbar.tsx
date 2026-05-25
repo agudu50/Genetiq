@@ -11,7 +11,6 @@ import DashboardIcon from "@assets/Navbar/Icons/Dashboard.svg?react";
 import ReportsIcon from "@assets/Navbar/Icons/Reports.svg?react";
 import GoalsIcon from "@assets/Navbar/Icons/Goals.svg?react";
 import TestIcon from "@assets/Navbar/Icons/Test.svg?react";
-import { useCurrentAccount } from "@mysten/dapp-kit-react";
 import { useSyncStatus } from "@/App/Hooks/useSyncStatus";
 import { HealthProfileWidget } from "@/Features/Dashboard/HealthProfileWidget/HealthProfileWidget";
 
@@ -31,10 +30,6 @@ const Navbar = () => {
 		.join("");
 
 	const { isOnline, syncStatus } = useSyncStatus();
-	const currentAccount = useCurrentAccount();
-	const suiAddress = currentAccount?.address || null;
-	const formatAddress = (addr: string) =>
-		addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "";
 
 	// Map paths to keys for active state
 	const pathToKey: Record<string, string> = {
@@ -272,14 +267,7 @@ const Navbar = () => {
 								<div className={styles["user-info"]}>
 									<span className={styles["user-name"]}>{userName}</span>
 									<span className={styles["user-role"]}>
-										{suiAddress ? (
-											<>
-												<span className={styles["sui-dot"]}></span>
-												{formatAddress(suiAddress)}
-											</>
-										) : (
-											t("premium_member") || "Premium Member"
-										)}
+										{t("premium_member") || "Premium Member"}
 									</span>
 								</div>
 								<svg

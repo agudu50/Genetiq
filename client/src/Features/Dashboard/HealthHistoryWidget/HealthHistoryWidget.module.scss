@@ -1,4 +1,4 @@
-$purple-vibrant: #a855f7;
+$teal-primary: #00A69D;
 $glass-bg: rgba(255, 255, 255, 0.03);
 $glass-border: rgba(255, 255, 255, 0.08);
 
@@ -76,7 +76,7 @@ $glass-border: rgba(255, 255, 255, 0.08);
 
 	&:hover {
 		background: rgba(255, 255, 255, 0.05);
-		border-color: rgba($purple-vibrant, 0.3);
+		border-color: rgba($teal-primary, 0.3);
 		transform: translateX(4px);
 		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 	}
@@ -148,9 +148,9 @@ $glass-border: rgba(255, 255, 255, 0.08);
 }
 
 .handoverBtn {
-	background: rgba($purple-vibrant, 0.1);
-	border: 1px solid rgba($purple-vibrant, 0.3);
-	color: $purple-vibrant;
+	background: rgba($teal-primary, 0.1);
+	border: 1px solid rgba($teal-primary, 0.3);
+	color: $teal-primary;
 	padding: 6px 12px;
 	border-radius: 8px;
 	font-size: 12px;
@@ -162,7 +162,7 @@ $glass-border: rgba(255, 255, 255, 0.08);
 	transition: all 0.2s ease;
 
 	&:hover {
-		background: $purple-vibrant;
+		background: $teal-primary;
 		color: #ffffff;
 		transform: translateY(-1px);
 	}
@@ -240,7 +240,7 @@ $glass-border: rgba(255, 255, 255, 0.08);
 	justify-content: center;
 	position: relative;
 	overflow: hidden;
-	box-shadow: 0 0 30px rgba($purple-vibrant, 0.2);
+	box-shadow: 0 0 30px rgba($teal-primary, 0.2);
 }
 
 .qrScanLine {
@@ -249,8 +249,8 @@ $glass-border: rgba(255, 255, 255, 0.08);
 	left: 0;
 	width: 100%;
 	height: 2px;
-	background: $purple-vibrant;
-	box-shadow: 0 0 15px $purple-vibrant;
+	background: $teal-primary;
+	box-shadow: 0 0 15px $teal-primary;
 	animation: scan 2s linear infinite;
 }
 

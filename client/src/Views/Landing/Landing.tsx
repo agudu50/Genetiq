@@ -10,39 +10,30 @@ import {
 	X,
 	Loader2,
 } from "lucide-react";
-import {
-	useCurrentAccount,
-	useWalletConnection,
-	useDAppKit,
-	useWallets,
-} from "@mysten/dapp-kit-react";
 import { toast } from "react-toastify";
 import { paths } from "@/App/Routes/Paths";
 import styles from "./Landing.module.scss";
 
 // ─── Types ─────────────────────────────────────────────────────────────
 
-interface WalletBase {
-	name: string;
-	icon: string;
-}
+// Removed WalletBase interface - no longer needed after Sui removal
 
 // ─── Static data ─────────────────────────────────────────────────────────────
 
 const PILLARS = [
 	{
 		title: "Medical Sovereignty",
-		desc: "Every blood test, biomarker, and clinical visit is stored as a permanent, encrypted object on Sui. You own the history.",
+		desc: "Every blood test, biomarker, and clinical visit is stored securely. You own your complete health history with full control and transparency.",
 		icon: <Activity size={32} />,
 	},
 	{
 		title: "AI Triage & Insights",
-		desc: "Our clinical-grade AI analyzes your symptoms and biomarkers to provide actionable longevity plans.",
+		desc: "Our clinical-grade AI analyzes your symptoms and biomarkers to provide actionable longevity plans and health recommendations.",
 		icon: <Brain size={32} />,
 	},
 	{
-		title: "Blockchain Privacy",
-		desc: "Your data belongs to you. Period. Secured by Sui's object-centric encryption and accessible only by you.",
+		title: "Enterprise Security",
+		desc: "Your data is encrypted end-to-end with enterprise-grade security. Only you control who accesses your health information.",
 		icon: <ShieldCheck size={32} />,
 	},
 ];
@@ -67,14 +58,14 @@ const ECOSYSTEM = [
 
 const SUI_EDGE = [
 	{
-		title: "zkLogin",
-		desc: "No seed phrases. No complexity. Log in with Google and let the blockchain handle the security.",
-		icon: <ShieldCheck size={24} />,
+		title: "Multi-Device Sync",
+		desc: "Seamlessly sync data across your phone, smartwatch, and other health devices. Your health data stays synchronized in real-time.",
+		icon: <Database size={24} />,
 	},
 	{
-		title: "Walrus Protocol",
-		desc: "Large-scale genetic data stored decentrally, not on a vulnerable corporate server.",
-		icon: <Database size={24} />,
+		title: "HIPAA Compliant",
+		desc: "Meet the highest healthcare compliance standards. Your data is protected with HIPAA and GDPR standards for absolute privacy.",
+		icon: <Lock size={24} />,
 	},
 ];
 
@@ -88,7 +79,7 @@ const STATS = [
 const MEDICAL_SOVEREIGNTY = [
 	{
 		title: "Your Biological Timeline",
-		desc: "Every biomarker, every genetic trait, and every AI insight is stored as a permanent, encrypted object on Sui.",
+		desc: "Every biomarker, genetic trait, and health metric is securely stored and tracked over time for complete health insights.",
 		icon: <Activity size={24} />,
 	},
 	{
@@ -98,121 +89,47 @@ const MEDICAL_SOVEREIGNTY = [
 	},
 ];
 
-const SecurityModal = ({
+const InitializeModal = ({
 	isOpen,
 	onClose,
 	onConfirm,
-	isConnecting,
-	wallets,
 }: {
 	isOpen: boolean;
 	onClose: () => void;
-	onConfirm: (wallet?: WalletBase) => void;
-	isConnecting: boolean;
-	wallets: readonly WalletBase[];
+	onConfirm: () => void;
 }) => {
-	const [selectedWallet, setSelectedWallet] = useState<WalletBase | null>(null);
-
 	if (!isOpen) return null;
 
 	return (
 		<div className={styles.modalOverlay}>
 			<div className={styles.modalContent}>
-				<button
-					className={styles.modalClose}
-					onClick={onClose}
-					disabled={isConnecting}
-				>
+				<button className={styles.modalClose} onClick={onClose}>
 					<X size={20} />
 				</button>
 
 				<div className={styles.modalHeader}>
 					<div className={styles.securityIcon}>
-						{isConnecting ? (
-							<Loader2 size={32} className={styles.spinner} />
-						) : (
-							<Lock size={32} />
-						)}
+						<ShieldCheck size={32} />
 					</div>
-					<h2 className={styles.modalTitle}>
-						{isConnecting
-							? "Waiting for Approval..."
-							: "Secure Connection Required"}
-					</h2>
+					<h2 className={styles.modalTitle}>Initialize Your Digital Twin</h2>
 				</div>
 
 				<div className={styles.modalBody}>
 					<p>
-						{isConnecting
-							? "Please approve the connection request in your Sui wallet extension to continue initializing your Digital Twin."
-							: "To secure your Digital Twin on the Sui Blockchain, please select your preferred wallet to initialize your on-chain identity."}
+						Create your secure health vault and start tracking your biological timeline today.
 					</p>
 
-					{!isConnecting && wallets.length > 0 && (
-						<div className={styles.walletPicker}>
-							<span className={styles.pickerLabel}>Detected Wallets:</span>
-							<div className={styles.walletList}>
-								{wallets.map((w: WalletBase) => (
-									<button
-										key={w.name}
-										className={`${styles.walletOption} ${selectedWallet?.name === w.name ? styles.selected : ""}`}
-										onClick={() => setSelectedWallet(w)}
-									>
-										<div className={styles.walletInfo}>
-											<img
-												src={w.icon}
-												alt={w.name}
-												className={styles.walletIcon}
-											/>
-											<span>{w.name}</span>
-										</div>
-										{selectedWallet?.name === w.name && (
-											<ShieldCheck size={16} />
-										)}
-									</button>
-								))}
-							</div>
-						</div>
-					)}
-
-					{!isConnecting && wallets.length === 0 && (
-						<div className={styles.warningBox}>
-							<X size={18} />
-							<span>
-								No Sui wallet detected. Please install a Sui wallet extension.
-							</span>
-						</div>
-					)}
-
 					<p className={styles.securityNote}>
-						{isConnecting
-							? "Check your wallet extension for a popup."
-							: "By connecting, you agree to secure your biological telemetry on-chain."}
+						Your health data is encrypted and belongs entirely to you.
 					</p>
 				</div>
 
 				<div className={styles.modalActions}>
-					<button
-						className={styles.btnModalOutline}
-						onClick={onClose}
-						disabled={isConnecting}
-					>
+					<button className={styles.btnModalOutline} onClick={onClose}>
 						Cancel
 					</button>
-					<button
-						className={styles.btnModalPrimary}
-						onClick={() => onConfirm(selectedWallet || wallets[0])}
-						disabled={isConnecting || wallets.length === 0}
-					>
-						{isConnecting ? (
-							<>
-								Connecting... <Loader2 size={18} className={styles.spinner} />
-							</>
-						) : (
-							<>
-								Connect & Initialize <ArrowRight size={18} />
-							</>
-						)}
+					<button className={styles.btnModalPrimary} onClick={onConfirm}>
+						Get Started <ArrowRight size={18} />
 					</button>
 				</div>
 			</div>
@@ -224,14 +141,6 @@ export default function Landing() {
 	const navigate = useNavigate();
 	const [isScrolled, setIsScrolled] = useState(false);
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [isConnectingLocal, setIsConnectingLocal] = useState(false);
-
-	const dAppKit = useDAppKit();
-	const connection = useWalletConnection();
-	const account = useCurrentAccount();
-	const wallets = useWallets();
-
-	type WalletType = (typeof wallets)[number];
 
 	useEffect(() => {
 		let ticking = false;
@@ -248,38 +157,9 @@ export default function Landing() {
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, []);
 
-	useEffect(() => {
-		if (account && isConnectingLocal) {
-			setIsConnectingLocal(false);
-			setIsModalOpen(false);
-			toast.success("Wallet connected successfully!");
-			navigate(paths.auth.register);
-		}
-	}, [account, isConnectingLocal, navigate]);
-
-	const handleProceed = async (targetWallet?: WalletBase) => {
-		if (account) {
-			navigate(paths.auth.register);
-			return;
-		}
-
-		if (!targetWallet && wallets.length === 0) {
-			toast.error(
-				"No Sui wallet detected. Please install a Sui wallet extension.",
-			);
-			return;
-		}
-
-		const walletToConnect = (targetWallet || wallets[0]) as WalletType;
-		setIsConnectingLocal(true);
-
-		try {
-			await dAppKit.connectWallet({ wallet: walletToConnect });
-		} catch (err: unknown) {
-			setIsConnectingLocal(false);
-			const message = err instanceof Error ? err.message : "Connection failed";
-			toast.error(message);
-		}
+	const handleProceed = () => {
+		setIsModalOpen(false);
+		navigate(paths.auth.register);
 	};
 
 	return (
@@ -330,9 +210,8 @@ export default function Landing() {
 							<span className={styles.titleAccent}>Sovereign & Secure.</span>
 						</h1>
 						<p className={styles.heroSub}>
-							Meet Genetiq: The world's first AI-powered Medical Vault secured
-							by the Sui Blockchain. Secure your biological timeline and grant
-							instant doctor access via QR.
+							Meet Genetiq: Your personal AI-powered Digital Twin for precision health diagnostics.
+							Secure your biological timeline and access comprehensive health insights whenever you need them.
 						</p>
 					</div>
 
@@ -431,13 +310,13 @@ export default function Landing() {
 				</div>
 			</section>
 
-			{/* ── Sui Edge ───────────────────────────────────────────── */}
+			{/* ── Security & Privacy ───────────────────────────────────────────── */}
 			<section className={`${styles.section} ${styles.suiEdgeSection}`}>
 				<div className={styles.sectionHeader}>
-					<span className={styles.badge}>Technical Trust</span>
-					<h2 className={styles.sectionTitle}>The Sui Edge</h2>
+					<span className={styles.badge}>Security & Privacy</span>
+					<h2 className={styles.sectionTitle}>Enterprise-Grade Protection</h2>
 					<p className={styles.sectionSub}>
-						Architected for absolute data sovereignty on the Walrus Protocol.
+						Your health data deserves the highest level of security. We use industry-leading encryption and compliance standards.
 					</p>
 				</div>
 
@@ -482,12 +361,10 @@ export default function Landing() {
 				</div>
 			</section>
 
-			<SecurityModal
+			<InitializeModal
 				isOpen={isModalOpen}
 				onClose={() => setIsModalOpen(false)}
 				onConfirm={handleProceed}
-				isConnecting={connection.isConnecting}
-				wallets={wallets}
 			/>
 
 			{/* ── Footer ─────────────────────────────────────────────── */}

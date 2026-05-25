@@ -176,8 +176,8 @@ input[type="text"] {
 
 	&:focus {
 		background: rgba(255, 255, 255, 0.06);
-		border-color: rgba($indigo-vibrant, 0.5);
-		box-shadow: 0 0 20px rgba($indigo-vibrant, 0.15);
+		border-color: rgba(#00A69D, 0.5);
+		box-shadow: 0 0 20px rgba(#00A69D, 0.15);
 
 		+ .inputIcon {
 			color: $indigo-vibrant;
