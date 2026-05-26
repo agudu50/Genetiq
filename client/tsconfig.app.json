@@ -7,13 +7,13 @@
 		"module": "ESNext",
 		"skipLibCheck": true,
 		"paths": {
-			"@/*": ["./client/src/*"],
-			"@assets/*": ["./client/src/assets/*"],
-			"@features/*": ["./client/src/Features/*"],
-			"@services/*": ["./client/src/Services/*"],
-			"@views/*": ["./client/src/Views/*"],
-			"@utils/*": ["./client/src/Utils/*"],
-			"@variables": ["./client/src/App/Styles/_variables.scss"]
+			"@/*": ["./src/*"],
+			"@assets/*": ["./src/assets/*"],
+			"@features/*": ["./src/Features/*"],
+			"@services/*": ["./src/Services/*"],
+			"@views/*": ["./src/Views/*"],
+			"@utils/*": ["./src/Utils/*"],
+			"@variables": ["./src/App/Styles/_variables.scss"]
 		},
 
 		/* Bundler mode */
@@ -31,5 +31,5 @@
 		"noFallthroughCasesInSwitch": true,
 		"noUncheckedSideEffectImports": true
 	},
-	"include": ["client/src", "vite.config.ts"]
+	"include": ["src", "vite.config.ts"]
 }

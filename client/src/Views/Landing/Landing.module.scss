@@ -332,7 +332,10 @@ $glass-border: rgba(255, 255, 255, 0.05);
 	.logoImage {
 		width: 40px;
 		height: 40px;
-		object-fit: contain;
+		object-fit: cover;
+		border-radius: 8px;
+		border: 1px solid rgba($teal-primary, 0.3);
+		filter: drop-shadow(0 0 8px rgba($teal-primary, 0.4));
 	}
 
 	.logoText {
@@ -1135,6 +1138,17 @@ $glass-border: rgba(255, 255, 255, 0.05);
 	z-index: 1;
 }
 
+.finalSub {
+	font-size: 18px;
+	color: rgba(255, 255, 255, 0.55);
+	line-height: 1.7;
+	margin: 0;
+	max-width: 520px;
+	text-align: center;
+	position: relative;
+	z-index: 1;
+}
+
 .btnLarge {
 	@include btn-primary;
 	padding: 18px 40px;
@@ -1376,3 +1390,302 @@ $glass-border: rgba(255, 255, 255, 0.05);
 .spinner {
 	animation: spin 1s linear infinite;
 }
+
+// ─── FAQ Section ─────────────────────────────────────────────────────────────
+
+.faqSection {
+	padding: 120px 24px;
+	max-width: 900px;
+	margin: 0 auto;
+	position: relative;
+	z-index: 1;
+
+	@media (max-width: 768px) { padding: 80px 24px; }
+}
+
+.faqList {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.faqItem {
+	background: $glass-bg;
+	border: 1px solid $glass-border;
+	border-radius: 16px;
+	overflow: hidden;
+	transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+	&.faqOpen {
+		border-color: rgba($teal-primary, 0.35);
+		box-shadow: 0 8px 32px rgba($teal-primary, 0.1);
+
+		.faqChevron {
+			transform: rotate(180deg);
+			color: $teal-primary;
+		}
+
+		.faqAnswer {
+			max-height: 300px;
+			padding: 0 24px 20px;
+			opacity: 1;
+		}
+
+		.faqQuestion {
+			color: $teal-primary;
+			background: rgba($teal-primary, 0.04);
+		}
+	}
+
+	&:hover:not(.faqOpen) {
+		border-color: rgba($teal-primary, 0.18);
+	}
+}
+
+.faqQuestion {
+	width: 100%;
+	background: transparent;
+	border: none;
+	padding: 22px 24px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	cursor: pointer;
+	color: rgba(255, 255, 255, 0.9);
+	font-size: 16px;
+	font-weight: 600;
+	text-align: left;
+	transition: all 0.3s ease;
+	font-family: inherit;
+
+	&:hover {
+		color: $teal-primary;
+	}
+}
+
+.faqChevron {
+	flex-shrink: 0;
+	color: rgba(255, 255, 255, 0.4);
+	transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1), color 0.3s ease;
+}
+
+.faqAnswer {
+	max-height: 0;
+	overflow: hidden;
+	opacity: 0;
+	padding: 0 24px;
+	transition: max-height 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+				opacity 0.3s ease,
+				padding 0.3s ease;
+
+	p {
+		font-size: 15px;
+		color: rgba(255, 255, 255, 0.6);
+		line-height: 1.75;
+		margin: 0;
+		padding-bottom: 4px;
+	}
+}
+
+// ─── Builder Section ──────────────────────────────────────────────────────────
+
+.builderSection {
+	padding: 120px 24px;
+	max-width: 1200px;
+	margin: 0 auto;
+	position: relative;
+	z-index: 1;
+
+	@media (max-width: 768px) { padding: 80px 24px; }
+}
+
+.builderCard {
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	gap: 48px;
+	align-items: start;
+	background: $glass-bg;
+	border: 1px solid rgba($teal-primary, 0.15);
+	border-radius: 24px;
+	padding: 48px;
+	position: relative;
+	overflow: hidden;
+	transition: border-color 0.4s ease, box-shadow 0.4s ease;
+
+	&::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 1px;
+		background: linear-gradient(90deg, transparent, $teal-primary, $cyan, transparent);
+		opacity: 0.5;
+	}
+
+	&:hover {
+		border-color: rgba($teal-primary, 0.3);
+		box-shadow: 0 20px 60px rgba($teal-primary, 0.1);
+	}
+
+	@media (max-width: 1024px) {
+		grid-template-columns: auto 1fr;
+		grid-template-rows: auto auto;
+	}
+
+	@media (max-width: 640px) {
+		grid-template-columns: 1fr;
+		padding: 32px 24px;
+		gap: 32px;
+	}
+}
+
+.builderAvatar {
+	position: relative;
+	flex-shrink: 0;
+}
+
+.builderAvatarImg {
+	width: 120px;
+	height: 120px;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 3px solid rgba($teal-primary, 0.4);
+	filter: drop-shadow(0 0 20px rgba($teal-primary, 0.3));
+	display: block;
+	position: relative;
+	z-index: 1;
+	animation: pulseGlow 3s ease-in-out infinite;
+}
+
+.builderAvatarGlow {
+	position: absolute;
+	inset: -8px;
+	border-radius: 50%;
+	border: 1px solid rgba($teal-primary, 0.2);
+	animation: pulseRing 2.5s ease-in-out infinite;
+}
+
+.builderInfo {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.builderMeta {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.builderName {
+	font-size: 28px;
+	font-weight: 800;
+	color: #ffffff;
+	margin: 0;
+	letter-spacing: -0.5px;
+}
+
+.builderRole {
+	font-size: 14px;
+	font-weight: 600;
+	color: $teal-primary;
+	text-transform: uppercase;
+	letter-spacing: 1.5px;
+}
+
+.builderBio {
+	font-size: 15px;
+	color: rgba(255, 255, 255, 0.65);
+	line-height: 1.8;
+	margin: 0;
+	font-style: italic;
+}
+
+.builderTags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.builderTag {
+	font-size: 12px;
+	font-weight: 600;
+	color: rgba($teal-primary, 0.9);
+	background: rgba($teal-primary, 0.1);
+	border: 1px solid rgba($teal-primary, 0.2);
+	border-radius: 20px;
+	padding: 5px 14px;
+	letter-spacing: 0.5px;
+}
+
+.builderSocials {
+	display: flex;
+	gap: 12px;
+	margin-top: 4px;
+}
+
+.socialLink {
+	width: 40px;
+	height: 40px;
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.04);
+	border: 1px solid $glass-border;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: rgba(255, 255, 255, 0.5);
+	text-decoration: none;
+	transition: all 0.3s ease;
+
+	&:hover {
+		background: rgba($teal-primary, 0.12);
+		border-color: rgba($teal-primary, 0.35);
+		color: $teal-primary;
+		transform: translateY(-3px);
+		box-shadow: 0 8px 20px rgba($teal-primary, 0.2);
+	}
+}
+
+.builderQuote {
+	border-left: 2px solid rgba($teal-primary, 0.4);
+	padding-left: 28px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 12px;
+	max-width: 260px;
+
+	@media (max-width: 1024px) {
+		grid-column: 1 / -1;
+		border-left: none;
+		border-top: 1px solid rgba($teal-primary, 0.15);
+		padding-left: 0;
+		padding-top: 24px;
+		max-width: 100%;
+	}
+
+	p {
+		font-size: 17px;
+		font-weight: 600;
+		color: rgba(255, 255, 255, 0.75);
+		line-height: 1.6;
+		margin: 0;
+		font-style: italic;
+
+		em {
+			color: $teal-primary;
+			font-style: normal;
+		}
+	}
+}
+
+.builderQuoteIcon {
+	font-size: 56px;
+	font-weight: 900;
+	color: rgba($teal-primary, 0.25);
+	line-height: 0.8;
+	font-family: Georgia, serif;
+}
+
