@@ -127,7 +127,7 @@ const FAQS = [
 ];
 
 const BUILDER = {
-	name: "Agu David",
+	name: "Anthony Gudu",
 	role: "Founder & Builder",
 	bio: "I built Genetiq after watching my mum come home from a clinic visit confused and anxious — she had a stack of lab results in her hand but no idea what any of the numbers meant. The doctor had 10 minutes and 20 patients. She had no one to ask. I realised millions of people face the same thing every day. Genetiq is my answer: upload your results, and within seconds, know exactly what they mean and what to do next.",
 	tags: ["Full-Stack Engineer", "Health Tech", "AI & Accessibility"],
@@ -411,7 +411,7 @@ function BuilderSection() {
 
 			<div className={`${styles.builderCard} ${reveal.visible ? styles.revealIn : styles.revealHidden}`}>
 				<div className={styles.builderAvatar}>
-					<img src='/assets/genetiq_logo.png' alt={BUILDER.name} className={styles.builderAvatarImg} />
+					<img src='/assets/genetiq_logo_v2.png' alt={BUILDER.name} className={styles.builderAvatarImg} />
 					<div className={styles.builderAvatarGlow} />
 				</div>
 
@@ -506,7 +506,7 @@ export default function Landing() {
 			<nav className={`${styles.nav} ${isScrolled ? styles.scrolled : ""}`}>
 				<div className={styles.navInner}>
 					<div className={styles.logo} onClick={() => navigate(paths.landing)}>
-						<img src='/assets/genetiq_logo.png' alt='Genetiq Logo' className={styles.logoImage} />
+						<img src='/assets/genetiq_logo_v2.png' alt='Genetiq Logo' className={styles.logoImage} />
 						<span className={styles.logoText}>Genetiq</span>
 					</div>
 					<div className={styles.navLinks}>
