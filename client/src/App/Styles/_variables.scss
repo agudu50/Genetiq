@@ -1,26 +1,45 @@
+// ─── Genetiq Design System ────────────────────────────────────────────────────
+// Single source of truth for all colours, gradients, and spacing tokens.
+// All SCSS files receive this via `@use "@variables" as *;` in vite.config.ts
+
+// ── Core Brand (landing page palette — used everywhere) ──────────────────────
+$teal-primary:  #00A69D;              // Primary CTA, accents, highlights
+$teal-dark:     #007C72;              // Hover state, deeper shade
+$teal-light:    #B3E9E6;             // Pale teal for backgrounds
+$cyan:          #06B6D4;              // Secondary accent, gradients
+$emerald:       #10B981;              // Success / vitality
+$coral:         #FF6B35;              // Warning / energy
+$mint:          #34D399;              // Positive / growth
+
+// ── Page Backgrounds ─────────────────────────────────────────────────────────
+$page-dark:     #0A0E1A;              // Landing dark background
+$page-mid:      #0F1629;              // Slightly lighter dark
+$slate-dark:    #1F2937;              // Card / surface dark
+$slate-light:   #F3F4F6;             // Light backgrounds
+$slate-gray:    #9CA3AF;              // Neutral / muted text
+
+// ── Auth / Onboarding Accent palette (mapped to brand teal) ──────────────────
+// These were previously indigo — now aligned to Genetiq's teal identity
+$indigo-vibrant: $teal-primary;       // was #6366F1 — now brand teal
+$indigo-soft:    $cyan;               // was #A5B4FC  — now brand cyan
+$indigo-pale:    $teal-light;         // was #C7D2FE  — now pale teal
+
+// ── Gradients ─────────────────────────────────────────────────────────────────
+$gradient-vibrant: linear-gradient(135deg, $teal-primary 0%, $cyan 100%);
+$gradient-dark:    linear-gradient(135deg, $page-dark 0%, $page-mid 100%);
+$gradient-glow:    linear-gradient(135deg, rgba($teal-primary, 0.2) 0%, rgba($cyan, 0.1) 100%);
+
+// ── Text ──────────────────────────────────────────────────────────────────────
 $primary-color: #ffffff;
+$text-main:     #ffffff;
+$text-muted:    rgba(255, 255, 255, 0.9);
+$text-dim:      rgba(255, 255, 255, 0.6);
+$text-faint:    rgba(255, 255, 255, 0.35);
 
-// Modern Health Palette
-$teal-primary: #00A69D; // Primary health color
-$teal-dark: #007C72; // Darker variant
-$teal-light: #B3E9E6; // Light variant
-
-$emerald: #10B981; // Vitality & health
-$cyan: #06B6D4; // Wellness & clarity
-$coral: #FF6B35; // Energy & action
-$mint: #34D399; // Positive, growth
-
-$slate-dark: #1F2937; // Professional dark
-$slate-light: #F3F4F6; // Clean light
-$slate-gray: #9CA3AF; // Neutral text
-
-// High-Contrast Text
-$text-main: #ffffff;
-$text-muted: rgba(255, 255, 255, 0.9);
-$text-dim: rgba(255, 255, 255, 0.6);
-
-// Performance-Optimized Glassmorphism
+// ── Glassmorphism ─────────────────────────────────────────────────────────────
+$glass-bg:           rgba(255, 255, 255, 0.04);
+$glass-border:       rgba(255, 255, 255, 0.08);
+$glass-blur-subtle:  2px;
 $glass-blur-desktop: 8px;
-$glass-blur-mobile: 4px;
-$glass-blur-heavy: 12px;
-$glass-blur-subtle: 2px;
+$glass-blur-mobile:  4px;
+$glass-blur-heavy:   12px;

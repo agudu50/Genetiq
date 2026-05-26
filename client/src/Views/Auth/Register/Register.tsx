@@ -1,77 +1,78 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { paths } from "@/App/Routes/Paths";
 import { RegisterForm } from "@/Features/Auth/Resgister/RegisterForm/RegisterForm";
-import { CarouselRegister } from "@/Features/Auth/Resgister/Carousel/CarouselWidget/CarouselRegister";
 import styles from "./Register.module.scss";
+import { ShieldCheck, Upload, Brain } from "lucide-react";
 
-const Blob = ({
-	color,
-	style,
-}: {
-	color: string;
-	style: React.CSSProperties;
-}) => (
-	<motion.div
-		className={styles.blob}
-		animate={{
-			x: [0, 80, 0],
-			y: [0, 40, 0],
-			scale: [1, 1.1, 1],
-		}}
-		transition={{
-			duration: 12 + Math.random() * 8,
-			repeat: Infinity,
-			ease: "easeInOut",
-		}}
-		style={{
-			...style,
-			background: color,
-			width: "clamp(300px, 40vw, 500px)",
-			height: "clamp(300px, 40vw, 500px)",
-		}}
-	/>
-);
+const FEATURES = [
+	{ icon: <Upload size={18} />, text: "Upload any lab result — paper or PDF" },
+	{ icon: <Brain size={18} />, text: "AI explains every value in plain English" },
+	{ icon: <ShieldCheck size={18} />, text: "Your data is private and encrypted" },
+];
 
 const Register = () => {
 	const navigate = useNavigate();
 
 	return (
-		<div className={styles["Auth-layout"]}>
-			<div className={styles.blobContainer}>
-				<Blob color='#312e81' style={{ top: "5%", left: "5%" }} />
-				<Blob color='#4c1d95' style={{ bottom: "10%", right: "5%" }} />
-				<Blob color='#020617' style={{ top: "40%", left: "45%" }} />
+		<div className={styles.page}>
+			{/* ── Left panel ── */}
+			<div className={styles.leftPanel}>
+				<div className={styles.leftInner}>
+					<div className={styles.brand} onClick={() => navigate(paths.landing)}>
+						<img src='/assets/genetiq_logo_v2.png' alt='Genetiq' className={styles.brandLogo} />
+						<span className={styles.brandName}>Genetiq</span>
+					</div>
+
+					<div className={styles.leftContent}>
+						<h2 className={styles.leftHeading}>
+							Finally understand what your test results mean.
+						</h2>
+						<p className={styles.leftSub}>
+							Join thousands of people who use Genetiq to make sense of their health data — and take real action on it.
+						</p>
+
+						<ul className={styles.featureList}>
+							{FEATURES.map((f, i) => (
+								<motion.li
+									key={i}
+									className={styles.featureItem}
+									initial={{ opacity: 0, x: -16 }}
+									animate={{ opacity: 1, x: 0 }}
+									transition={{ delay: 0.2 + i * 0.12 }}
+								>
+									<span className={styles.featureIcon}>{f.icon}</span>
+									<span>{f.text}</span>
+								</motion.li>
+							))}
+						</ul>
+
+						<div className={styles.trustBadge}>
+							<ShieldCheck size={14} />
+							<span>Free to start · No credit card needed</span>
+						</div>
+					</div>
+
+					<p className={styles.leftFooter}>© 2026 Genetiq · Privacy · Terms</p>
+				</div>
 			</div>
 
-			<div className={styles.logo} onClick={() => navigate(paths.landing)}>
-				<img
-					src='/assets/digital_twin_preview.png'
-					alt='Genetiq Logo'
-					className={styles.logoImage}
-				/>
-				<span className={styles.logoText}>Genetiq</span>
-			</div>
+			{/* ── Right panel ── */}
+			<div className={styles.rightPanel}>
+				<div className={styles.rightInner}>
+					<div className={styles.mobileHeader} onClick={() => navigate(paths.landing)}>
+						<img src='/assets/genetiq_logo_v2.png' alt='Genetiq' className={styles.brandLogo} />
+						<span className={styles.brandName}>Genetiq</span>
+					</div>
 
-			<div className={styles["Auth-content"]}>
-				<motion.div
-					className={styles["Auth-content-left"]}
-					initial={{ opacity: 0, x: -40 }}
-					animate={{ opacity: 1, x: 0 }}
-					transition={{ duration: 0.8, ease: "easeOut" }}
-				>
-					<CarouselRegister />
-				</motion.div>
-
-				<motion.div
-					className={styles["Auth-content-right"]}
-					initial={{ opacity: 0, x: 40 }}
-					animate={{ opacity: 1, x: 0 }}
-					transition={{ duration: 0.8, ease: "easeOut" }}
-				>
-					<RegisterForm />
-				</motion.div>
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.4 }}
+					>
+						<RegisterForm />
+					</motion.div>
+				</div>
 			</div>
 		</div>
 	);

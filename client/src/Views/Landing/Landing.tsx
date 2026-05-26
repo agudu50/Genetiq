@@ -129,7 +129,7 @@ const FAQS = [
 const BUILDER = {
 	name: "Anthony Gudu",
 	role: "Founder & Builder",
-	bio: "I built Genetiq after watching my mum come home from a clinic visit confused and anxious — she had a stack of lab results in her hand but no idea what any of the numbers meant. The doctor had 10 minutes and 20 patients. She had no one to ask. I realised millions of people face the same thing every day. Genetiq is my answer: upload your results, and within seconds, know exactly what they mean and what to do next.",
+	bio: "I built Genetiq after watching my mum come home from a clinic visit confused and anxious she had a stack of lab results in her hand but no idea what any of the numbers meant. The doctor had 10 minutes and 20 patients. She had no one to ask. I realised millions of people face the same thing every day. Genetiq is my answer: upload your results, and within seconds, know exactly what they mean and what to do next.",
 	tags: ["Full-Stack Engineer", "Health Tech", "AI & Accessibility"],
 	github: "https://github.com",
 	twitter: "https://twitter.com",

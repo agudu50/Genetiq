@@ -1,253 +1,211 @@
 @use "sass:color";
 
-.authContainer {
-	width: 100%;
+// ── LoginForm — clean flat design ─────────────────────────────────────────────
+
+.formWrap {
 	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
-.formCard {
+	flex-direction: column;
+	gap: 24px;
 	width: 100%;
-	max-width: 500px;
-	background: rgba(255, 255, 255, 0.03);
-	backdrop-filter: blur(8px);
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	border-radius: 24px;
-	padding: 24px 32px;
-	overflow-y: auto;
-	overflow-x: hidden;
-
-	@media (max-width: 640px) {
-		padding: 32px 24px;
-		background: rgba(255, 255, 255, 0.02);
-		backdrop-filter: blur(8px);
-		border-radius: 24px;
-		max-width: 100%;
-	}
-
-	@media (max-width: 480px) {
-		padding: 24px 16px;
-		border-radius: 0;
-		background: transparent;
-		backdrop-filter: none;
-		border: none;
-	}
 }
 
-.header {
-	text-align: center;
-	margin-bottom: 12px;
+// ── Heading ───────────────────────────────────────────────────────────────────
 
-	@media (max-width: 480px) {
-		margin-bottom: 24px;
-	}
+.heading {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
 }
 
 .title {
-	font-size: 2rem;
+	font-size: 1.875rem;
 	font-weight: 800;
-	margin-bottom: 8px;
-	letter-spacing: -0.04em;
-	background: linear-gradient(180deg, #fff 0%, #cbd5e1 100%);
-	-webkit-background-clip: text;
-	background-clip: text;
-	-webkit-text-fill-color: transparent;
+	color: #ffffff;
+	letter-spacing: -0.03em;
+	margin: 0;
 	line-height: 1.1;
-
-	@media (max-width: 480px) {
-		font-size: 1.875rem;
-	}
 }
 
 .subtitle {
-	color: #94a3b8;
-	font-size: 1.125rem;
-
-	@media (max-width: 480px) {
-		font-size: 1rem;
-	}
+	font-size: 0.95rem;
+	color: rgba(255, 255, 255, 0.45);
+	margin: 0;
 }
 
-.socialButtons {
-	display: flex;
-	justify-content: center;
-	gap: 16px;
-	margin-bottom: 16px;
-}
+// ── OAuth icon-only row (bottom) ─────────────────────────────────────────────
 
-.socialBtn {
-	width: 36px;
-	height: 36px;
-	flex-shrink: 0;
-	padding: 0;
-	background: rgba(255, 255, 255, 0.05);
-	border: 1px solid rgba(255, 255, 255, 0.15);
-	border-radius: 50%;
-	cursor: pointer;
+.oauthDivider {
 	display: flex;
 	align-items: center;
-	justify-content: center;
-	transition: all 0.3s ease;
-	outline: none;
-
-	svg {
-		display: block;
-		flex-shrink: 0;
-	}
-
-	&:hover {
-		background: rgba(255, 255, 255, 0.08);
-		border-color: rgba(255, 255, 255, 0.2);
-		transform: translateY(-2px);
-	}
-}
-
-.divider {
-	display: flex;
-	align-items: center;
-	gap: 16px;
-	margin-bottom: 16px;
-	color: #475569;
-	font-size: 0.875rem;
+	gap: 14px;
+	color: rgba(255, 255, 255, 0.25);
+	font-size: 0.78rem;
 	font-weight: 500;
+	letter-spacing: 0.04em;
 	text-transform: uppercase;
-	letter-spacing: 0.05em;
 
 	&::before,
 	&::after {
 		content: "";
 		flex: 1;
 		height: 1px;
-		background: rgba(255, 255, 255, 0.05);
+		background: rgba(255, 255, 255, 0.07);
 	}
 }
+
+.oauthIcons {
+	display: flex;
+	justify-content: center;
+	gap: 16px;
+}
+
+.oauthIcon {
+	width: 60px;
+	height: 60px;
+	border-radius: 16px;
+	background: rgba(255, 255, 255, 0.04);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: background 0.2s, border-color 0.2s, transform 0.15s;
+	color: rgba(255, 255, 255, 0.7);
+
+	svg {
+		width: 30px;
+		height: 30px;
+	}
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.09);
+		border-color: rgba(255, 255, 255, 0.2);
+		transform: translateY(-2px);
+	}
+
+	&:active {
+		transform: translateY(0);
+	}
+}
+
+// (divider removed — oauth is now at the bottom)
 
 .form {
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	gap: 18px;
 }
 
-.inputGroup {
+.field {
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
+	gap: 8px;
 
 	label {
-		font-size: 0.875rem;
+		font-size: 0.85rem;
 		font-weight: 600;
-		color: #cbd5e1;
-		margin-left: 4px;
+		color: rgba(255, 255, 255, 0.6);
 	}
 }
 
-.inputWrapper {
-	position: relative;
+.labelRow {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	label {
+		font-size: 0.85rem;
+		font-weight: 600;
+		color: rgba(255, 255, 255, 0.6);
+	}
 }
 
-.inputIcon {
-	position: absolute;
-	left: 16px;
-	top: 50%;
-	transform: translateY(-50%);
-	color: #64748b;
+.forgotLink {
+	font-size: 0.82rem;
+	font-weight: 600;
+	color: $teal-primary;
+	text-decoration: none;
 	transition: color 0.2s;
+
+	&:hover {
+		color: $cyan;
+	}
 }
 
-input[type="email"],
-input[type="password"],
-input[type="text"] {
-	width: 100%;
-	background: rgba(255, 255, 255, 0.03);
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	border-radius: 12px;
-	padding: 12px 16px 12px 44px;
-	color: #fff;
-	font-size: 0.95rem;
-	transition: all 0.3s ease;
-	outline: none;
+.inputWrap {
+	position: relative;
+	display: flex;
+	align-items: center;
 
-	&::placeholder {
-		color: #475569;
-	}
+	input {
+		width: 100%;
+		background: rgba(255, 255, 255, 0.04);
+		border: 1px solid rgba(255, 255, 255, 0.09);
+		border-radius: 12px;
+		padding: 13px 44px 13px 42px;
+		color: #ffffff;
+		font-size: 0.95rem;
+		font-family: inherit;
+		transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+		outline: none;
 
-	&:focus {
-		background: rgba(255, 255, 255, 0.06);
-		border-color: rgba($indigo-vibrant, 0.5);
-		box-shadow: 0 0 20px rgba($indigo-vibrant, 0.15);
+		&::placeholder {
+			color: rgba(255, 255, 255, 0.2);
+		}
 
-		+ .inputIcon {
-			color: $indigo-vibrant;
-			filter: drop-shadow(0 0 8px rgba($indigo-vibrant, 0.5));
+		&:focus {
+			background: rgba(255, 255, 255, 0.06);
+			border-color: rgba($teal-primary, 0.5);
+			box-shadow: 0 0 0 3px rgba($teal-primary, 0.08);
 		}
 	}
 }
 
-.togglePassword {
+.inputIcon {
 	position: absolute;
-	right: 16px;
-	top: 50%;
-	transform: translateY(-50%);
+	left: 14px;
+	color: rgba(255, 255, 255, 0.3);
+	pointer-events: none;
+	transition: color 0.2s;
+
+	.inputWrap:focus-within & {
+		color: $teal-primary;
+	}
+}
+
+.eyeBtn {
+	position: absolute;
+	right: 14px;
 	background: none;
 	border: none;
-	color: #64748b;
-	cursor: pointer;
 	padding: 4px;
+	cursor: pointer;
+	color: rgba(255, 255, 255, 0.3);
 	display: flex;
 	align-items: center;
 	transition: color 0.2s;
 
 	&:hover {
-		color: #fff;
+		color: rgba(255, 255, 255, 0.7);
 	}
 }
 
-.options {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	font-size: 0.875rem;
-}
+// ── Checkbox ──────────────────────────────────────────────────────────────────
 
-.rememberMe {
+.checkRow {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: 10px;
 	cursor: pointer;
-	color: #94a3b8;
 	user-select: none;
 
-	input {
+	input[type="checkbox"] {
 		display: none;
 	}
 
-	.checkmark {
-		width: 20px;
-		height: 20px;
-		background: rgba(255, 255, 255, 0.05);
-		border: 1px solid rgba(255, 255, 255, 0.1);
-		border-radius: 6px;
-		position: relative;
-		transition: all 0.2s;
-
-		&::after {
-			content: "";
-			position: absolute;
-			left: 6px;
-			top: 2px;
-			width: 6px;
-			height: 10px;
-			border: solid white;
-			border-width: 0 2px 2px 0;
-			transform: rotate(45deg) scale(0);
-			transition: transform 0.2s;
-		}
-	}
-
-	input:checked + .checkmark {
-		background: $indigo-vibrant;
-		border-color: $indigo-vibrant;
+	input:checked + .checkBox {
+		background: $teal-primary;
+		border-color: $teal-primary;
 
 		&::after {
 			transform: rotate(45deg) scale(1);
@@ -255,39 +213,59 @@ input[type="text"] {
 	}
 }
 
-.forgotPassword {
-	color: $indigo-soft;
-	text-decoration: none;
-	font-weight: 600;
-	transition: color 0.2s;
+.checkBox {
+	width: 18px;
+	height: 18px;
+	border-radius: 5px;
+	border: 1.5px solid rgba(255, 255, 255, 0.2);
+	background: rgba(255, 255, 255, 0.04);
+	flex-shrink: 0;
+	position: relative;
+	transition: all 0.2s;
 
-	&:hover {
-		color: $indigo-vibrant;
+	&::after {
+		content: "";
+		position: absolute;
+		left: 4px;
+		top: 1px;
+		width: 5px;
+		height: 9px;
+		border: solid white;
+		border-width: 0 2px 2px 0;
+		transform: rotate(45deg) scale(0);
+		transition: transform 0.15s;
 	}
 }
 
+.checkLabel {
+	font-size: 0.875rem;
+	color: rgba(255, 255, 255, 0.5);
+}
+
+// ── Submit Button ─────────────────────────────────────────────────────────────
+
 .submitBtn {
 	width: 100%;
-	background: $gradient-vibrant;
+	background: $teal-primary;
 	color: #fff;
 	border: none;
 	border-radius: 12px;
 	padding: 14px;
-	font-size: 1rem;
+	font-size: 0.95rem;
 	font-weight: 700;
+	font-family: inherit;
 	cursor: pointer;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 10px;
-	transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-	margin-top: 8px;
-	box-shadow: 0 4px 12px rgba($indigo-vibrant, 0.3);
+	gap: 8px;
+	transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+	margin-top: 4px;
 
 	&:hover:not(:disabled) {
-		transform: translateY(-3px) scale(1.01);
-		box-shadow: 0 20px 40px -10px rgba($indigo-vibrant, 0.5);
-		filter: brightness(1.1);
+		background: $teal-dark;
+		transform: translateY(-1px);
+		box-shadow: 0 8px 24px rgba($teal-primary, 0.3);
 	}
 
 	&:active {
@@ -295,49 +273,45 @@ input[type="text"] {
 	}
 
 	&:disabled {
-		opacity: 0.7;
+		opacity: 0.65;
 		cursor: not-allowed;
 	}
 }
 
-.loading {
-	position: relative;
-	color: transparent !important;
-}
-
 .spinner {
-	position: absolute;
-	width: 24px;
-	height: 24px;
-	border: 3px solid rgba(255, 255, 255, 0.3);
+	width: 20px;
+	height: 20px;
+	border: 2.5px solid rgba(255, 255, 255, 0.3);
 	border-top-color: #fff;
 	border-radius: 50%;
-	animation: spin 0.8s linear infinite;
+	animation: spin 0.7s linear infinite;
 }
 
 @keyframes spin {
-	to {
-		transform: rotate(360deg);
-	}
+	to { transform: rotate(360deg); }
 }
 
-.signupPrompt {
+// ── Switch prompt ─────────────────────────────────────────────────────────────
+
+.switchPrompt {
 	text-align: center;
-	margin-top: 16px;
-	font-size: 0.9375rem;
-	color: #64748b;
+	font-size: 0.9rem;
+	color: rgba(255, 255, 255, 0.35);
+	margin: 0;
 
 	button {
 		background: none;
 		border: none;
-		color: #fff;
+		color: $teal-primary;
 		font-weight: 700;
+		font-size: 0.9rem;
+		font-family: inherit;
 		cursor: pointer;
-		margin-left: 8px;
+		margin-left: 4px;
 		transition: color 0.2s;
 
 		&:hover {
-			color: $indigo-soft;
+			color: $cyan;
 		}
 	}
 }
