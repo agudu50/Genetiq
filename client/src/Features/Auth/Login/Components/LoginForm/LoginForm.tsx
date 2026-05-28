@@ -1,9 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { paths } from "@/App/Routes/Paths";
 import { toast } from "react-toastify";
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 import styles from "./LoginForm.module.scss";
+
+// ─── Storage keys ─────────────────────────────────────────────────────────────
+
+const KEY_SESSION  = "genetiq_session";
+const KEY_EMAIL    = "genetiq_remembered_email";
+const KEY_REMEMBER = "genetiq_remember_me";
 
 // ─── OAuth provider icons (inline SVG) ───────────────────────────────────────
 
@@ -26,19 +32,46 @@ const AppleIcon = () => (
 
 export const LoginForm = () => {
 	const navigate = useNavigate();
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
+
+	// Restore saved email & remember preference from a previous "keep me signed in"
+	const savedEmail    = localStorage.getItem(KEY_EMAIL) ?? "";
+	const savedRemember = localStorage.getItem(KEY_REMEMBER) === "true";
+
+	const [email, setEmail]               = useState(savedEmail);
+	const [password, setPassword]         = useState("");
 	const [showPassword, setShowPassword] = useState(false);
-	const [rememberMe, setRememberMe] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
+	const [rememberMe, setRememberMe]     = useState(savedRemember);
+	const [isLoading, setIsLoading]       = useState(false);
+
+	// Auto-redirect if a persistent session already exists
+	useEffect(() => {
+		if (localStorage.getItem(KEY_SESSION) === "active") {
+			navigate(paths.config.root, { replace: true });
+		}
+	}, []);
 
 	const handleLogin = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setIsLoading(true);
 		await new Promise((r) => setTimeout(r, 1500));
 		setIsLoading(false);
+
+		if (rememberMe) {
+			// Persist across browser restarts
+			localStorage.setItem(KEY_SESSION,  "active");
+			localStorage.setItem(KEY_EMAIL,    email);
+			localStorage.setItem(KEY_REMEMBER, "true");
+			toast.success("You'll stay signed in across sessions!");
+		} else {
+			// Session-only: clear any previous persistent data
+			localStorage.removeItem(KEY_SESSION);
+			localStorage.removeItem(KEY_EMAIL);
+			localStorage.removeItem(KEY_REMEMBER);
+			sessionStorage.setItem(KEY_SESSION, "active");
+			toast.success("Welcome back to Genetiq!");
+		}
+
 		navigate(paths.config.root);
-		toast.success("Welcome back to Genetiq!");
 	};
 
 	const handleOAuth = (provider: string) => {
