@@ -163,7 +163,24 @@ export const RegisterForm = () => {
 					<input type='checkbox' checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)} required />
 					<span className={styles.checkBox} />
 					<span className={styles.checkLabel}>
-						I agree to the <a href='#'>Terms of Service</a> and <a href='#'>Privacy Policy</a>
+						I agree to the{" "}
+						<a
+							href={paths.terms}
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={(e) => e.stopPropagation()}
+						>
+							Terms of Service
+						</a>
+						{" "}and{" "}
+						<a
+							href={paths.privacy}
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={(e) => e.stopPropagation()}
+						>
+							Privacy Policy
+						</a>
 					</span>
 				</label>
 

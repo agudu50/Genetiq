@@ -53,7 +53,7 @@ const Register = () => {
 						</div>
 					</div>
 
-					<p className={styles.leftFooter}>© 2026 Genetiq · Privacy · Terms</p>
+					<p className={styles.leftFooter}>© 2026 Genetiq · <a href='/privacy'>Privacy</a> · <a href='/terms'>Terms</a></p>
 				</div>
 			</div>
 

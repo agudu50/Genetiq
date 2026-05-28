@@ -30,6 +30,8 @@ const TrackMeal = lazy(() => import("@/Views/Dashboard/Logs/TrackMeal"));
 const LogExercise = lazy(() => import("@/Views/Dashboard/Logs/LogExercise"));
 const AIAssistant = lazy(() => import("@/Views/Dashboard/Logs/AIAssistant"));
 const HealthHistory = lazy(() => import("@/Views/HealthHistory/HealthHistory"));
+const Terms = lazy(() => import("@/Views/Legal/Terms/Terms"));
+const Privacy = lazy(() => import("@/Views/Legal/Privacy/Privacy"));
 
 const Lazy = ({ children }: { children: React.ReactNode }) => (
 	<Suspense fallback={null}>{children}</Suspense>
@@ -50,6 +52,22 @@ const RoutesConfig: RouteObject[] = [
 		element: (
 			<Lazy>
 				<HealthHistory />
+			</Lazy>
+		),
+	},
+	{
+		path: paths.terms,
+		element: (
+			<Lazy>
+				<Terms />
+			</Lazy>
+		),
+	},
+	{
+		path: paths.privacy,
+		element: (
+			<Lazy>
+				<Privacy />
 			</Lazy>
 		),
 	},

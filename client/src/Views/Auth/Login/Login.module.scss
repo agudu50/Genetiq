@@ -138,6 +138,13 @@
 	font-size: 0.8rem;
 	color: rgba(255, 255, 255, 0.25);
 	margin: 0;
+
+	a {
+		color: rgba(255, 255, 255, 0.35);
+		text-decoration: none;
+		transition: color 0.2s;
+		&:hover { color: #00A69D; }
+	}
 }
 
 // ── Right panel ──────────────────────────────────────────────────────────────

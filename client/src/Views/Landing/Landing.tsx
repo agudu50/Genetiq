@@ -118,7 +118,7 @@ const FAQS = [
 	},
 	{
 		q: "Does Genetiq replace my doctor?",
-		a: "No — and it's not meant to. Genetiq helps you understand your results so you're not confused or worried after leaving the clinic. Think of it as a translator that turns medical jargon into clear advice, so your next doctor visit is much more productive.",
+		a: "No and it's not meant to. Genetiq helps you understand your results so you're not confused or worried after leaving the clinic. Think of it as a translator that turns medical jargon into clear advice, so your next doctor visit is much more productive.",
 	},
 	{
 		q: "Is my health data kept private?",

@@ -1,161 +1,404 @@
-.UploadMethod-container-outter {
+// ── Config / Getting Started page ─────────────────────────────────────────────
+
+.page {
 	display: flex;
 	flex-direction: column;
-	justify-content: flex-start;
-	align-items: center;
-	flex: 1 0 auto;
+	align-items: stretch;
+	padding: 64px 48px 120px;
+	gap: 48px;
+	min-height: 100vh;
 	width: 100%;
 	box-sizing: border-box;
-	padding: 60px 24px 120px;
-	gap: 64px;
+	background: #0A0E1A;
 	position: relative;
 	overflow-x: hidden;
-	z-index: 1;
-	background: transparent;
+
+	// Subtle teal glow top-centre
+	&::before {
+		content: "";
+		position: absolute;
+		top: -60px;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 60%;
+		height: 300px;
+		background: radial-gradient(ellipse, rgba(#00A69D, 0.08) 0%, transparent 70%);
+		pointer-events: none;
+	}
 
 	@media (max-width: 768px) {
-		padding: 40px 16px 100px;
-		gap: 48px;
+		padding: 48px 20px 100px;
+		gap: 36px;
 	}
 }
 
-.config-header {
-	max-width: 800px;
-	width: 100%;
+// ── Header ────────────────────────────────────────────────────────────────────
+
+.header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 	text-align: center;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
 	gap: 16px;
+	width: 100%;
 	position: relative;
+	z-index: 1;
 }
 
-.config-header-content {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 20px;
-}
-
-.config-badge-wrapper {
-	animation: revealUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.config-badge {
+.badge {
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
 	padding: 6px 16px;
 	border-radius: 99px;
-	background: rgba(255, 255, 255, 0.1);
-	color: #e9d5ff;
-	font-size: 12px;
+	background: rgba(#00A69D, 0.1);
+	border: 1px solid rgba(#00A69D, 0.25);
+	color: #00A69D;
+	font-size: 0.78rem;
 	font-weight: 700;
-	letter-spacing: 0.5px;
+	letter-spacing: 0.04em;
 	text-transform: uppercase;
-	border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.badge-dot {
+.badgeDot {
 	width: 6px;
 	height: 6px;
 	border-radius: 50%;
-	background: #c084fc;
-	box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
-	animation: pulseGlow 2s ease-in-out infinite;
+	background: #00A69D;
+	box-shadow: 0 0 8px rgba(#00A69D, 0.6);
+	animation: pulse 2s ease-in-out infinite;
 }
 
-.config-title {
-	font-family: var(--font-family-title, Inter);
-	font-size: 48px;
+.title {
+	font-size: clamp(2.2rem, 5vw, 3.2rem);
 	font-weight: 800;
 	color: #ffffff;
-	margin: 0;
-	letter-spacing: -2px;
+	letter-spacing: -0.04em;
 	line-height: 1.1;
-	max-width: 700px;
-	animation: revealUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
-
-	@media (max-width: 768px) {
-		font-size: 36px;
-		letter-spacing: -1px;
-	}
-
-	@media (max-width: 480px) {
-		font-size: 32px;
-	}
-}
-
-.title-highlight {
-	background: linear-gradient(135deg, #7c3aed, #a855f7);
-	-webkit-background-clip: text;
-	background-clip: text;
-	-webkit-text-fill-color: transparent;
+	margin: 0;
 	position: relative;
+	display: inline-block;
 
+	// Teal underline accent
 	&::after {
 		content: "";
-		position: absolute;
-		bottom: 8px;
-		left: 0;
-		width: 100%;
-		height: 8px;
-		background: rgba(168, 85, 247, 0.15);
-		z-index: -1;
-		border-radius: 4px;
+		display: block;
+		width: 56px;
+		height: 3px;
+		background: #00A69D;
+		border-radius: 2px;
+		margin: 12px auto 0;
 	}
 }
 
-.config-subtitle {
-	font-family: var(--font-family-body, Inter);
-	font-size: 18px;
-	font-weight: 400;
-	color: rgba(255, 255, 255, 0.9);
-	line-height: 1.6;
+.subtitle {
+	font-size: 1.05rem;
+	color: rgba(255, 255, 255, 0.48);
+	line-height: 1.75;
 	margin: 0;
-	max-width: 600px;
-	animation: revealUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
-
-	@media (max-width: 768px) {
-		font-size: 16px;
-	}
+	max-width: 560px;
 }
 
-.config-items-wrapper {
+// ── Cards grid ────────────────────────────────────────────────────────────────
+
+.cards {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-	gap: 24px;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 20px;
 	width: 100%;
-	max-width: 1200px;
-	animation: revealUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+	position: relative;
+	z-index: 1;
 
-	@media (max-width: 480px) {
+	@media (max-width: 900px) {
 		grid-template-columns: 1fr;
-		gap: 16px;
 	}
 }
 
-@keyframes revealUp {
-	from {
-		opacity: 0;
-		transform: translateY(30px);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
+// ── Individual card ───────────────────────────────────────────────────────────
+
+.card {
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 20px;
+	padding: 28px 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	cursor: pointer;
+	transition: background 0.25s, border-color 0.25s, transform 0.2s, box-shadow 0.25s;
+	position: relative;
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.06);
+		border-color: rgba(255, 255, 255, 0.15);
+		transform: translateY(-4px);
+		box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
 	}
 }
 
-@keyframes pulseGlow {
-	0%,
-	100% {
-		opacity: 1;
-		transform: scale(1);
-		box-shadow: 0 0 10px rgba(67, 56, 202, 0.5);
+// Featured card (Upload) gets a teal accent border
+.cardFeatured {
+	border-color: rgba(#00A69D, 0.35);
+	background: rgba(#00A69D, 0.04);
+
+	&:hover {
+		border-color: rgba(#00A69D, 0.6);
+		background: rgba(#00A69D, 0.07);
+		box-shadow: 0 16px 40px rgba(#00A69D, 0.12);
 	}
-	50% {
-		opacity: 0.6;
-		transform: scale(0.8);
-		box-shadow: 0 0 5px rgba(67, 56, 202, 0.2);
+}
+
+.cardDisabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+
+	&:hover {
+		transform: none;
+		box-shadow: none;
 	}
+}
+
+// ── Card badge ────────────────────────────────────────────────────────────────
+
+.cardBadge {
+	display: inline-flex;
+	align-self: flex-start;
+	padding: 3px 10px;
+	border-radius: 99px;
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+}
+
+.badge-teal {
+	background: rgba(#00A69D, 0.15);
+	color: #00A69D;
+	border: 1px solid rgba(#00A69D, 0.25);
+}
+
+.badge-neutral {
+	background: rgba(255, 255, 255, 0.06);
+	color: rgba(255, 255, 255, 0.45);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+// ── Card icon ─────────────────────────────────────────────────────────────────
+
+.cardIcon {
+	width: 56px;
+	height: 56px;
+	border-radius: 16px;
+	background: rgba(#00A69D, 0.1);
+	border: 1px solid rgba(#00A69D, 0.2);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #00A69D;
+	transition: transform 0.2s;
+
+	.card:hover & {
+		transform: scale(1.08) rotate(-3deg);
+	}
+}
+
+// ── Card text ─────────────────────────────────────────────────────────────────
+
+.cardTitle {
+	font-size: 1.1rem;
+	font-weight: 700;
+	color: #ffffff;
+	letter-spacing: -0.02em;
+	margin: 0;
+	line-height: 1.3;
+}
+
+.cardDesc {
+	font-size: 0.88rem;
+	color: rgba(255, 255, 255, 0.45);
+	line-height: 1.65;
+	margin: 0;
+	flex: 1;
+}
+
+// ── Highlights ────────────────────────────────────────────────────────────────
+
+.highlights {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+
+	li {
+		display: flex;
+		align-items: center;
+		gap: 7px;
+		font-size: 0.8rem;
+		font-weight: 600;
+		color: rgba(255, 255, 255, 0.5);
+
+		svg {
+			color: #00A69D;
+			flex-shrink: 0;
+		}
+	}
+}
+
+// ── Card CTA ──────────────────────────────────────────────────────────────────
+
+.cardCta {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 11px 18px;
+	border-radius: 10px;
+	background: $teal-primary;
+	color: #fff;
+	font-size: 0.88rem;
+	font-weight: 700;
+	font-family: inherit;
+	border: none;
+	cursor: pointer;
+	align-self: flex-start;
+	transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+	margin-top: 4px;
+
+	&:hover {
+		background: $teal-dark;
+		transform: translateY(-1px);
+		box-shadow: 0 6px 20px rgba($teal-primary, 0.3);
+	}
+
+	.card:not(.cardFeatured) & {
+		background: rgba(255, 255, 255, 0.07);
+		color: rgba(255, 255, 255, 0.75);
+
+		&:hover {
+			background: rgba(255, 255, 255, 0.12);
+			box-shadow: none;
+		}
+	}
+}
+
+.comingSoon {
+	font-size: 0.78rem;
+	font-weight: 600;
+	color: rgba(255, 255, 255, 0.25);
+	margin-top: 4px;
+}
+
+// ── Footer ────────────────────────────────────────────────────────────────────
+
+.configFooter {
+	width: 100%;
+	border-top: 1px solid rgba(#00A69D, 0.08);
+	padding-top: 48px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 32px;
+	position: relative;
+	z-index: 1;
+}
+
+// Camera / quick action bar
+.quickBar {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding: 16px 28px;
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.07);
+	border-radius: 16px;
+	width: 100%;
+
+	svg {
+		color: $teal-primary;
+		flex-shrink: 0;
+	}
+
+	span {
+		font-size: 0.9rem;
+		color: rgba(255, 255, 255, 0.5);
+		flex: 1;
+	}
+
+	button {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		background: none;
+		border: none;
+		color: $teal-primary;
+		font-size: 0.9rem;
+		font-weight: 700;
+		font-family: inherit;
+		cursor: pointer;
+		white-space: nowrap;
+		transition: color 0.2s;
+
+		&:hover { color: $cyan; }
+	}
+}
+
+// Help text
+.helpText {
+	font-size: 0.875rem;
+	color: rgba(255, 255, 255, 0.25);
+	text-align: center;
+	margin: 0;
+
+	a {
+		color: $teal-primary;
+		text-decoration: none;
+		font-weight: 600;
+		transition: color 0.2s;
+
+		&:hover { color: $cyan; }
+	}
+}
+
+// Trust badges strip
+.trustStrip {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 12px 24px;
+	padding-top: 8px;
+	padding-bottom: 16px;
+}
+
+.trustBadge {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 0.78rem;
+	font-weight: 600;
+	color: rgba(255, 255, 255, 0.3);
+	letter-spacing: 0.02em;
+
+	svg {
+		color: $teal-primary;
+		opacity: 0.7;
+	}
+
+	// Dot separator between badges
+	& + &::before {
+		content: "";
+		width: 3px;
+		height: 3px;
+		border-radius: 50%;
+		background: rgba(255, 255, 255, 0.12);
+		margin-right: 12px;
+	}
+}
+
+// ── Animations ────────────────────────────────────────────────────────────────
+
+@keyframes pulse {
+	0%, 100% { opacity: 1; transform: scale(1); }
+	50%       { opacity: 0.5; transform: scale(0.85); }
 }
