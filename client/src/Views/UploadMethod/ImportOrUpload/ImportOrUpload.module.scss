@@ -564,7 +564,7 @@ $muted:  rgba(255,255,255,0.35);
 }
 
 .scoreMobileWrapper {
-	display: none;
+	display: block;
 
 	@media (max-width: 640px) {
 		display: flex;

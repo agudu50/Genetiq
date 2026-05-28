@@ -30,7 +30,7 @@ const PILLARS = [
 	},
 	{
 		title: "AI Explains It in Plain English",
-		desc: "Your AI instantly reads your results and tells you exactly what each number means — what's normal, what's not, and why it matters for your body.",
+		desc: "Your AI instantly reads your results and tells you exactly what each number means what's normal, what's not, and why it matters for your body.",
 		icon: <Brain size={32} />,
 	},
 	{
@@ -49,12 +49,12 @@ const ECOSYSTEM = [
 	{
 		number: "02",
 		title: "AI Reads & Explains Everything",
-		desc: "In seconds, the AI breaks down every value on your results — flagging what's high, what's low, and what it means for your health in words anyone can understand.",
+		desc: "In seconds, the AI breaks down every value on your results flagging what's high, what's low, and what it means for your health in words anyone can understand.",
 	},
 	{
 		number: "03",
 		title: "Get Your Personal Action Plan",
-		desc: "Receive tailored diet tips, food recommendations, supplement suggestions, and lifestyle changes — all built around your specific test results.",
+		desc: "Receive tailored diet tips, food recommendations, supplement suggestions, and lifestyle changes all built around your specific test results.",
 	},
 	{
 		number: "04",
@@ -66,7 +66,7 @@ const ECOSYSTEM = [
 const SUI_EDGE = [
 	{
 		title: "Supports All Major Test Types",
-		desc: "Blood count, liver function, kidney function, hormones, cholesterol, blood sugar, thyroid — Genetiq's AI understands them all and explains each one clearly.",
+		desc: "Blood count, liver function, kidney function, hormones, cholesterol, blood sugar, thyroid Genetiq's AI understands them all and explains each one clearly.",
 		icon: <FlaskConical size={24} />,
 	},
 	{
@@ -109,7 +109,7 @@ const FAQS = [
 	},
 	{
 		q: "What does the AI actually tell me?",
-		a: "For each value on your result (like Hemoglobin, Glucose, ALT, etc.), the AI tells you: what it measures, whether yours is normal or not, what it means for your health, and what you can do about it — all in plain, everyday language.",
+		a: "For each value on your result (like Hemoglobin, Glucose, ALT, etc.), the AI tells you: what it measures, whether yours is normal or not, what it means for your health, and what you can do about it all in plain, everyday language.",
 	},
 	{
 		q: "Does Genetiq recommend a diet based on my results?",
