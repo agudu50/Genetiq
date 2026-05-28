@@ -7,7 +7,6 @@ import {
 	ArrowRight,
 	Upload,
 	ScanLine,
-	Apple,
 	Salad,
 	Lock,
 	X,
