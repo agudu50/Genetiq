@@ -1,6 +1,5 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { paths } from "@/App/Routes/Paths";
-import { Upload } from "lucide-react";
 import styles from "./ConfigLayout.module.scss";
 
 export const ConfigLayout = () => {
@@ -16,15 +15,7 @@ export const ConfigLayout = () => {
 					<span className={styles.brandName}>Genetiq</span>
 				</button>
 
-				{/* Single action */}
-				<button
-					className={styles.uploadBtn}
-					onClick={() => navigate(paths.config.importOrUpload)}
-				>
-					<Upload size={15} />
-					Upload Results
-				</button>
-			</nav>
+	</nav>
 
 			{/* ── Page content ── */}
 			<main className={styles.main}>

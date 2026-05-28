@@ -1,11 +1,11 @@
 import { useState, useCallback, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { updateUserInfo } from "@/App/Redux/userSlice";
 import { paths } from "@/App/Routes/Paths";
 import {
 	Upload, FileText, ShieldCheck, Zap, User, ChevronRight,
-	X, CheckCircle, ArrowLeft, Loader2, Sparkles,
+	X, CheckCircle, ArrowLeft, Loader2, Sparkles, ChevronDown,
 } from "lucide-react";
 import styles from "./ImportOrUpload.module.scss";
 
@@ -28,12 +28,19 @@ const BLOOD_OPTIONS   = ["A+", "A−", "B+", "B−", "AB+", "AB−", "O+", "O−
 
 const ImportOrUpload = () => {
 	const navigate   = useNavigate();
+	const location   = useLocation();
 	const dispatch   = useDispatch();
-	const fileInputRef = useRef<HTMLInputElement>(null);
 
-	const [step, setStep] = useState<Step>("personal");
+	// If coming from the navbar "Upload Results" button, skip personal info
+	const skipToUpload = (location.state as { skipToUpload?: boolean } | null)?.skipToUpload;
+
+	const [expandedFinding, setExpandedFinding] = useState<string | null>(null);
+	const toggleFinding = (marker: string) =>
+		setExpandedFinding((prev) => (prev === marker ? null : marker));
+	const [step, setStep] = useState<Step>(skipToUpload ? "upload" : "personal");
 	const [files, setFiles] = useState<UploadedFile[]>([]);
 	const [dragging, setDragging] = useState(false);
+	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const [info, setInfo] = useState({
 		firstName: "", lastName: "", age: "",
@@ -132,17 +139,195 @@ const ImportOrUpload = () => {
 				</div>
 			)}
 
-			{/* ── Success screen ──────────────────────────────────────────── */}
+			{/* ── AI Results screen ─────────────────────────────────────── */}
 			{step === "done" && (
-				<div className={styles.successPage}>
-					<div className={styles.successCard}>
-						<div className={styles.successIcon}><CheckCircle size={40} /></div>
-						<h2>Analysis complete!</h2>
-						<p>Your health data has been processed. Your personalised plan is ready.</p>
+				<div className={styles.resultsPage}>
+
+					{/* ── Score hero ─────────────────────────────────────── */}
+					<div className={styles.resultsHero}>
+						{/* On desktop: just the ring. On mobile: ring + label below */}
+						<div className={styles.scoreMobileWrapper}>
+							<div className={styles.scoreRing}>
+								<svg viewBox="0 0 120 120" className={styles.ringsvg}>
+									<circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="8"/>
+									<circle cx="60" cy="60" r="52" fill="none" stroke="#00A69D" strokeWidth="8"
+										strokeDasharray="326.7" strokeDashoffset="81.7"
+										strokeLinecap="round" transform="rotate(-90 60 60)"/>
+								</svg>
+								<div className={styles.scoreInner}>
+									<span className={styles.scoreNum}>75</span>
+									<span className={styles.scoreLabel}>Health Score</span>
+								</div>
+							</div>
+							{/* Mobile-only label below ring */}
+							<span className={styles.scoreLabelMobile}>Health Score</span>
+						</div>
+
+						<div className={styles.heroText}>
+							<div className={styles.resultsBadge}>
+								<CheckCircle size={13}/> Analysis complete
+							</div>
+							<h1>Your results are <span className={styles.teal}>ready</span></h1>
+							<p>
+								We looked at your lab results and put everything into simple, easy-to-understand language.
+								Your score of <strong>75 out of 100</strong> means your health is generally good,
+								with a couple of things worth keeping an eye on.
+							</p>
+						</div>
+					</div>
+
+					{/* ── What your score means ──────────────────────────── */}
+					<div className={styles.scoreBreakdown}>
+						<div className={`${styles.scoreBar} ${styles.good}`}>
+							<span>0 – 50</span><span>Needs attention</span>
+						</div>
+						<div className={`${styles.scoreBar} ${styles.warning}`}>
+							<span>51 – 74</span><span>Room to improve</span>
+						</div>
+						<div className={`${styles.scoreBar} ${styles.great} ${styles.active}`}>
+							<span>75 – 89</span><span>Good — you're here ✓</span>
+						</div>
+						<div className={styles.scoreBar}>
+							<span>90 – 100</span><span>Excellent</span>
+						</div>
+					</div>
+
+					{/* ── Key findings ───────────────────────────────────── */}
+					<div className={styles.section}>
+						<div className={styles.sectionHead}>
+							<h2 className={styles.sectionTitle}>What we found</h2>
+							<p className={styles.sectionSub}>Each result explained in plain English — no medical jargon.</p>
+						</div>
+
+						<div className={styles.findingsList}>
+							{[
+								{
+									status: "good",
+									marker: "Blood Sugar (Glucose)",
+									value: "5.2 mmol/L",
+									summary: "Normal ✓",
+									note: "Your blood sugar is at a healthy level. This means your body is managing energy well. Keep eating balanced meals and staying active.",
+								},
+								{
+									status: "warning",
+									marker: "Bad Cholesterol (LDL)",
+									value: "3.8 mmol/L",
+									summary: "A little high",
+									note: "LDL is the type of cholesterol that can build up in your arteries over time. Yours is slightly above the ideal range. Try eating less fried food, butter, and red meat — and add more fish, nuts, and oats to your diet.",
+								},
+								{
+									status: "good",
+									marker: "Red Blood Cells (Haemoglobin)",
+									value: "14.2 g/dL",
+									summary: "Normal ✓",
+									note: "Your red blood cells are healthy. They carry oxygen around your body, and yours are doing a great job. No signs of anaemia.",
+								},
+								{
+									status: "warning",
+									marker: "Vitamin D",
+									value: "38 nmol/L",
+									summary: "Lower than ideal",
+									note: "Most people don't get enough Vitamin D, especially in winter. It helps your bones, mood, and immune system. Try 15 minutes of sunlight daily and consider a Vitamin D supplement (1000–2000 IU).",
+								},
+								{
+									status: "good",
+									marker: "Thyroid",
+									value: "2.1 mIU/L",
+									summary: "Normal ✓",
+									note: "Your thyroid gland — which controls your energy and metabolism — is working exactly as it should. Nothing to worry about here.",
+								},
+								{
+									status: "critical",
+									marker: "Iron Stores (Ferritin)",
+									value: "8 µg/L",
+									summary: "Low — see a doctor",
+									note: "Ferritin measures how much iron your body has stored. Yours is very low, which can cause tiredness, weakness, and difficulty concentrating. Please speak to your doctor soon — you may need an iron supplement.",
+								},
+							].map((f) => {
+								const isOpen = expandedFinding === f.marker;
+								return (
+									<div
+										key={f.marker}
+										className={`${styles.findingRow} ${styles[`status-${f.status}`]} ${isOpen ? styles.findingOpen : ""}`}
+										onClick={() => toggleFinding(f.marker)}
+									>
+										{/* Collapsed summary row */}
+										<div className={styles.findingSummary}>
+											<div className={styles.findingLeft}>
+												<div className={styles.findingMarker}>{f.marker}</div>
+												<div className={styles.findingValue}>{f.value}</div>
+											</div>
+											<div className={styles.findingSummaryRight}>
+												<span className={`${styles.findingBadge} ${styles[`badge-${f.status}`]}`}>
+													{f.summary}
+												</span>
+												<ChevronDown
+													size={16}
+													className={`${styles.findingChevron} ${isOpen ? styles.chevronOpen : ""}`}
+												/>
+											</div>
+										</div>
+
+										{/* Expanded explanation */}
+										<div className={`${styles.findingExpanded} ${isOpen ? styles.findingExpandedOpen : ""}`}>
+											<p className={styles.findingNote}>{f.note}</p>
+										</div>
+									</div>
+								);
+							})}
+						</div>
+					</div>
+
+					{/* ── What to do next ────────────────────────────────── */}
+					<div className={styles.section}>
+						<div className={styles.sectionHead}>
+							<h2 className={styles.sectionTitle}>What to do next</h2>
+							<p className={styles.sectionSub}>Simple steps based on your results.</p>
+						</div>
+						<div className={styles.recsList}>
+							{[
+								{ icon: "🥗", title: "Eat more iron-rich foods", body: "Add spinach, lentils, kidney beans, and lean red meat to your meals. Pair them with Vitamin C (like orange juice) to help your body absorb iron better." },
+								{ icon: "☀️", title: "Get more Vitamin D", body: "Spend 15–20 minutes outside in sunlight each day. If that's hard, a daily Vitamin D3 supplement (1000–2000 IU) is a simple fix." },
+								{ icon: "🐟", title: "Help your cholesterol", body: "Swap butter for olive oil, eat more oily fish (like salmon or mackerel) twice a week, and snack on nuts instead of crisps." },
+								{ icon: "🩺", title: "Book a doctor's appointment", body: "Your iron level needs medical attention. Your GP can confirm the cause and recommend the right treatment — this is the most important step right now." },
+							].map((r) => (
+								<div key={r.title} className={styles.recCard}>
+									<span className={styles.recIcon}>{r.icon}</span>
+									<div>
+										<div className={styles.recTitle}>{r.title}</div>
+										<div className={styles.recBody}>{r.body}</div>
+									</div>
+								</div>
+							))}
+						</div>
+					</div>
+
+					{/* ── Disclaimer ─────────────────────────────────────── */}
+					<div className={styles.disclaimer}>
+						<ShieldCheck size={14} />
+						<span>This analysis is for information only and does not replace professional medical advice. Always speak to a qualified doctor about your health.</span>
+					</div>
+
+					{/* ── CTAs ───────────────────────────────────────────── */}
+					<div className={styles.resultsCtas}>
 						<button className={styles.primaryBtn} onClick={() => navigate(paths.dashboard.root)}>
-							<Sparkles size={16} /> View my health plan
+							<Sparkles size={16} /> Go to my dashboard
+						</button>
+						<button className={styles.outlineBtn} onClick={() => navigate(paths.clinicalHistory)}>
+							<FileText size={16} /> View clinical history
+						</button>
+						<button
+							className={styles.ghostBtn}
+							onClick={() => {
+								setFiles([]);
+								setStep("upload");
+								window.scrollTo({ top: 0, behavior: "smooth" });
+							}}
+						>
+							<Upload size={14} /> Upload more results
 						</button>
 					</div>
+
 				</div>
 			)}
 

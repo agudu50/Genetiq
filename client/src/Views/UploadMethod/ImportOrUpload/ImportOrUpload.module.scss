@@ -445,16 +445,26 @@ $muted:  rgba(255,255,255,0.35);
 }
 
 .ghostBtn {
-	background: none;
-	border: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	background: transparent;
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	border-radius: 12px;
 	color: $muted;
-	font-size: 0.875rem;
+	font-size: 0.95rem;
+	font-weight: 600;
 	font-family: inherit;
 	cursor: pointer;
-	padding: 8px 4px;
-	transition: color 0.2s;
+	padding: 14px 24px;
+	transition: border-color 0.2s, color 0.2s, background 0.2s;
 
-	&:hover { color: $text; }
+	&:hover {
+		border-color: rgba(255, 255, 255, 0.3);
+		color: $text;
+		background: rgba(255, 255, 255, 0.04);
+	}
 }
 
 // ── Analyzing overlay ─────────────────────────────────────────────────────────
@@ -506,54 +516,509 @@ $muted:  rgba(255,255,255,0.35);
 	animation: spin 0.9s linear infinite;
 }
 
-// ── Success screen ────────────────────────────────────────────────────────────
+// ── Results page ──────────────────────────────────────────────────────────────
 
-.successPage {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	min-height: 100vh;
-	padding: 48px 20px;
+.resultsPage {
+	width: 100%;
+	padding: 48px 64px 80px;
 	box-sizing: border-box;
-}
-
-.successCard {
 	display: flex;
 	flex-direction: column;
+	gap: 40px;
+
+	@media (max-width: 1024px) { padding: 40px 40px 64px; }
+	@media (max-width: 640px)  { padding: 28px 20px 56px; gap: 28px; }
+}
+
+// Hero ─────────────────────────────────────────────────────────────────────────
+
+.resultsHero {
+	display: flex;
 	align-items: center;
-	gap: 16px;
-	padding: 56px 64px;
+	gap: 48px;
+	padding: 48px;
 	background: $card;
 	border: 1px solid $border;
 	border-radius: 24px;
-	max-width: 440px;
-	text-align: center;
 
-	h2 {
-		font-size: 1.6rem;
-		font-weight: 900;
-		margin: 0;
-		color: #fff;
-	}
-
-	p {
-		color: $muted;
-		margin: 0;
-		font-size: 0.9rem;
-		line-height: 1.6;
+	// On mobile: score ring + text sit side by side in a compact row
+	@media (max-width: 640px) {
+		flex-direction: row;
+		align-items: flex-start;
+		padding: 20px;
+		gap: 16px;
+		border-radius: 16px;
 	}
 }
 
-.successIcon {
-	width: 72px;
-	height: 72px;
-	border-radius: 50%;
-	background: rgba($teal, 0.1);
-	border: 1px solid rgba($teal, 0.2);
+.scoreRing {
+	position: relative;
+	width: 120px;
+	height: 120px;
+	flex-shrink: 0;
+
+	@media (max-width: 640px) {
+		width: 90px;
+		height: 90px;
+	}
+}
+
+.scoreMobileWrapper {
+	display: none;
+
+	@media (max-width: 640px) {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 4px;
+		flex-shrink: 0;
+	}
+}
+
+.ringsvg {
+	width: 100%;
+	height: 100%;
+}
+
+.scoreInner {
+	position: absolute;
+	inset: 0;
 	display: flex;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
+	gap: 2px;
+}
+
+.scoreNum {
+	font-size: 2rem;
+	font-weight: 900;
 	color: $teal;
+	line-height: 1;
+
+	@media (max-width: 640px) { font-size: 1.5rem; }
+}
+
+.scoreLabel {
+	font-size: 0.65rem;
+	font-weight: 600;
+	color: $muted;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+
+	// Hide label inside the ring on mobile — shown separately below
+	@media (max-width: 640px) { display: none; }
+}
+
+// Shown only on mobile, below the ring
+.scoreLabelMobile {
+	display: none;
+
+	@media (max-width: 640px) {
+		display: block;
+		font-size: 0.62rem;
+		font-weight: 600;
+		color: $muted;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		text-align: center;
+		white-space: nowrap;
+	}
+}
+
+.heroText {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	min-width: 0;
+
+	h1 {
+		font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+		font-weight: 900;
+		letter-spacing: -0.04em;
+		margin: 0;
+		color: #fff;
+		line-height: 1.1;
+
+		@media (max-width: 640px) {
+			font-size: 1.15rem;
+			letter-spacing: -0.02em;
+		}
+	}
+
+	p {
+		font-size: 1rem;
+		color: $muted;
+		margin: 0;
+		line-height: 1.7;
+		max-width: 600px;
+
+		@media (max-width: 640px) {
+			font-size: 0.82rem;
+			line-height: 1.55;
+			display: none; // hide long paragraph on mobile — score breakdown explains it
+		}
+	}
+}
+
+.resultsBadge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 5px 12px;
+	border-radius: 99px;
+	background: rgba($teal, 0.1);
+	border: 1px solid rgba($teal, 0.2);
+	color: $teal;
+	font-size: 0.78rem;
+	font-weight: 700;
+	width: fit-content;
+
+	@media (max-width: 640px) { font-size: 0.7rem; padding: 4px 10px; }
+}
+
+// Section ──────────────────────────────────────────────────────────────────────
+
+.section {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.sectionTitle {
+	font-size: 1.15rem;
+	font-weight: 800;
+	color: #fff;
+	margin: 0;
+	letter-spacing: -0.02em;
+
+	@media (max-width: 640px) { font-size: 1rem; }
+}
+
+// Section headers ──────────────────────────────────────────────────────────────
+
+.sectionHead {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.sectionSub {
+	font-size: 0.88rem;
+	color: $muted;
+	margin: 0;
+
+	@media (max-width: 640px) { font-size: 0.8rem; }
+}
+
+// Score breakdown bar ──────────────────────────────────────────────────────────
+
+.scoreBreakdown {
+	display: flex;
+	border-radius: 14px;
+	overflow: hidden;
+	border: 1px solid $border;
+
+	@media (max-width: 640px) {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		border-radius: 12px;
+	}
+}
+
+.scoreBar {
+	flex: 1;
+	padding: 14px 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	border-right: 1px solid $border;
+	opacity: 0.4;
+	transition: opacity 0.2s;
+
+	&:last-child { border-right: none; }
+
+	// On mobile grid: remove right border from even cells, add bottom border
+	@media (max-width: 640px) {
+		border-right: 1px solid $border;
+		border-bottom: 1px solid $border;
+		padding: 12px 14px;
+
+		&:nth-child(2) { border-right: none; }
+		&:nth-child(3) { border-right: 1px solid $border; border-bottom: none; }
+		&:nth-child(4) { border-right: none; border-bottom: none; }
+	}
+
+	span:first-child {
+		font-size: 0.7rem;
+		font-weight: 700;
+		color: $muted;
+		letter-spacing: 0.04em;
+	}
+
+	span:last-child {
+		font-size: 0.8rem;
+		font-weight: 600;
+		color: $text;
+
+		@media (max-width: 640px) { font-size: 0.75rem; }
+	}
+
+	&.active {
+		opacity: 1;
+		background: rgba($teal, 0.06);
+		span:last-child { color: $teal; }
+	}
+
+	&.good span:first-child    { color: #f87171; }
+	&.warning span:first-child { color: #fbbf24; }
+	&.great span:first-child   { color: $teal; }
+}
+
+// Findings list (row layout) ───────────────────────────────────────────────────
+
+.findingsList {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	width: 100%;
+}
+
+.findingRow {
+	display: flex;
+	flex-direction: column;
+	padding: 0;
+	background: $card;
+	border: 1px solid $border;
+	border-radius: 16px;
+	border-left: 4px solid $border;
+	cursor: pointer;
+	transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+	overflow: hidden;
+
+	&:hover { background: rgba(255,255,255,0.04); }
+
+	&.findingOpen {
+		box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+	}
+
+	&.status-good     { border-left-color: #22c55e; }
+	&.status-warning  { border-left-color: #f59e0b; }
+	&.status-critical { border-left-color: #ef4444; }
+}
+
+// The always-visible top row ───────────────────────────────────────────────────
+
+.findingSummary {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 18px 20px;
+	user-select: none;
+
+	@media (max-width: 540px) {
+		flex-wrap: wrap;
+		gap: 12px;
+	}
+}
+
+.findingSummaryRight {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-shrink: 0;
+}
+
+.findingLeft {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	flex: 1;
+	min-width: 0;
+
+	@media (max-width: 540px) {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 4px;
+	}
+}
+
+.findingMarker {
+	font-size: 0.88rem;
+	font-weight: 700;
+	color: $text;
+	line-height: 1.3;
+	min-width: 180px;
+
+	@media (max-width: 540px) { min-width: unset; }
+}
+
+.findingValue {
+	font-size: 1.2rem;
+	font-weight: 900;
+	color: #fff;
+	letter-spacing: -0.03em;
+	line-height: 1;
+}
+
+.findingBadge {
+	font-size: 0.72rem;
+	font-weight: 700;
+	padding: 4px 10px;
+	border-radius: 99px;
+	white-space: nowrap;
+
+	&.badge-good     { background: rgba(34,197,94,0.12);  color: #4ade80; }
+	&.badge-warning  { background: rgba(245,158,11,0.12); color: #fbbf24; }
+	&.badge-critical { background: rgba(239,68,68,0.12);  color: #f87171; }
+}
+
+.findingChevron {
+	color: $muted;
+	transition: transform 0.3s ease, color 0.2s;
+	flex-shrink: 0;
+
+	&.chevronOpen {
+		transform: rotate(180deg);
+		color: $teal;
+	}
+}
+
+// Expanded panel ───────────────────────────────────────────────────────────────
+
+.findingExpanded {
+	max-height: 0;
+	overflow: hidden;
+	transition: max-height 0.35s ease, padding 0.35s ease;
+	padding: 0 20px;
+	border-top: 0px solid $border;
+
+	&.findingExpandedOpen {
+		max-height: 200px;
+		padding: 0 20px 18px;
+		border-top: 1px solid $border;
+	}
+}
+
+.findingNote {
+	font-size: 0.875rem;
+	color: rgba(255,255,255,0.65);
+	margin: 16px 0 0;
+	line-height: 1.7;
+}
+
+// Disclaimer ───────────────────────────────────────────────────────────────────
+
+.disclaimer {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	padding: 14px 18px;
+	background: rgba(255,255,255,0.02);
+	border: 1px solid $border;
+	border-radius: 12px;
+	font-size: 0.78rem;
+	color: $muted;
+	line-height: 1.6;
+
+	svg { flex-shrink: 0; margin-top: 1px; color: rgba($teal, 0.5); }
+}
+
+// Recommendations ──────────────────────────────────────────────────────────────
+
+.recsList {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 14px;
+
+	@media (max-width: 640px) { grid-template-columns: 1fr; }
+}
+
+.recCard {
+	display: flex;
+	align-items: flex-start;
+	gap: 16px;
+	padding: 20px;
+	background: $card;
+	border: 1px solid $border;
+	border-radius: 16px;
+	transition: background 0.2s;
+
+	&:hover { background: rgba(255,255,255,0.05); }
+
+	@media (max-width: 640px) { padding: 16px; gap: 12px; border-radius: 12px; }
+}
+
+.recIcon {
+	font-size: 1.5rem;
+	line-height: 1;
+	flex-shrink: 0;
+
+	@media (max-width: 640px) { font-size: 1.25rem; }
+}
+
+.recTitle {
+	font-size: 0.9rem;
+	font-weight: 700;
+	color: $text;
+	margin-bottom: 4px;
+
+	@media (max-width: 640px) { font-size: 0.85rem; }
+}
+
+.recBody {
+	font-size: 0.83rem;
+	color: $muted;
+	line-height: 1.6;
+
+	@media (max-width: 640px) { font-size: 0.8rem; }
+}
+
+// Results CTAs ────────────────────────────────────────────────────────────────
+
+.resultsCtas {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	flex-wrap: wrap;
+
+	@media (max-width: 640px) {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 10px;
+
+		.primaryBtn, .outlineBtn, .ghostBtn {
+			width: 100%;
+			justify-content: center;
+			padding: 16px;
+			font-size: 0.95rem;
+		}
+	}
+}
+
+.outlineBtn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 14px 24px;
+	background: transparent;
+	color: $text;
+	border: 1px solid $border;
+	border-radius: 12px;
+	font-size: 0.95rem;
+	font-weight: 600;
+	font-family: inherit;
+	cursor: pointer;
+	transition: border-color 0.2s, color 0.2s, background 0.2s;
+
+	&:hover {
+		border-color: rgba($teal, 0.4);
+		color: $teal;
+		background: rgba($teal, 0.04);
+	}
 }
 
 // ── Keyframes ─────────────────────────────────────────────────────────────────
