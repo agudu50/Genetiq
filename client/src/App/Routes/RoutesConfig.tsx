@@ -98,133 +98,134 @@ const RoutesConfig: RouteObject[] = [
 					},
 				],
 			},
-			// Main application routes
-			{
-				element: <MainLayout />,
-				path: "",
-				children: [
-					{
-						element: (
-							<Lazy>
-								<Dashboard />
-							</Lazy>
-						),
-						path: paths.dashboard.root,
-					},
-					{
-						element: (
-							<Lazy>
-								<SystemOverview />
-							</Lazy>
-						),
-						path: paths.dashboard.system,
-					},
-					{
-						element: (
-							<Lazy>
-								<DetailedRisk />
-							</Lazy>
-						),
-						path: paths.dashboard.detailedRisk,
-					},
-					{
-						element: <ConfigLayout />,
-						path: paths.config.root,
-						children: [
-							{
-								element: (
-									<Lazy>
-										<Config />
-									</Lazy>
-								),
-								path: paths.config.root,
-							},
-							{
-								element: (
-									<Lazy>
-										<ImportOrUpload />
-									</Lazy>
-								),
-								path: paths.config.importOrUpload,
-							},
-							{
-								element: (
-									<Lazy>
-										<ConnectAppDevice />
-									</Lazy>
-								),
-								path: paths.config.connectApp,
-							},
-							{
-								element: (
-									<Lazy>
-										<Goals />
-									</Lazy>
-								),
-								path: paths.config.goals,
-							},
-							{
-								element: (
-									<Lazy>
-										<Reports />
-									</Lazy>
-								),
-								path: paths.config.reports,
-							},
-							{
-								element: (
-									<Lazy>
-										<Tests />
-									</Lazy>
-								),
-								path: paths.config.tests,
-							},
-							{
-								element: (
-									<Lazy>
-										<Genomics />
-									</Lazy>
-								),
-								path: paths.config.genomics,
-							},
-						],
-					},
-					{
-						element: (
-							<Lazy>
-								<LogVitals />
-							</Lazy>
-						),
-						path: paths.log.vitals,
-					},
-					{
-						element: (
-							<Lazy>
-								<TrackMeal />
-							</Lazy>
-						),
-						path: paths.log.meal,
-					},
-					{
-						element: (
-							<Lazy>
-								<LogExercise />
-							</Lazy>
-						),
-						path: paths.log.exercise,
-					},
-					{
-						element: (
-							<Lazy>
-								<AIAssistant />
-							</Lazy>
-						),
-						path: paths.aiAssistant,
-					},
-				],
-			},
-		],
-	},
+			// Main application routes (Dashboard, logs, etc.)
+		{
+			element: <MainLayout />,
+			path: "",
+			children: [
+				{
+					element: (
+						<Lazy>
+							<Dashboard />
+						</Lazy>
+					),
+					path: paths.dashboard.root,
+				},
+				{
+					element: (
+						<Lazy>
+							<SystemOverview />
+						</Lazy>
+					),
+					path: paths.dashboard.system,
+				},
+				{
+					element: (
+						<Lazy>
+							<DetailedRisk />
+						</Lazy>
+					),
+					path: paths.dashboard.detailedRisk,
+				},
+				{
+					element: (
+						<Lazy>
+							<LogVitals />
+						</Lazy>
+					),
+					path: paths.log.vitals,
+				},
+				{
+					element: (
+						<Lazy>
+							<TrackMeal />
+						</Lazy>
+					),
+					path: paths.log.meal,
+				},
+				{
+					element: (
+						<Lazy>
+							<LogExercise />
+						</Lazy>
+					),
+					path: paths.log.exercise,
+				},
+				{
+					element: (
+						<Lazy>
+							<AIAssistant />
+						</Lazy>
+					),
+					path: paths.aiAssistant,
+				},
+			],
+		},
+		// Config routes — own layout with its own navbar, no MainLayout
+		{
+			element: <ConfigLayout />,
+			path: paths.config.root,
+			children: [
+				{
+					element: (
+						<Lazy>
+							<Config />
+						</Lazy>
+					),
+					path: paths.config.root,
+				},
+				{
+					element: (
+						<Lazy>
+							<ImportOrUpload />
+						</Lazy>
+					),
+					path: paths.config.importOrUpload,
+				},
+				{
+					element: (
+						<Lazy>
+							<ConnectAppDevice />
+						</Lazy>
+					),
+					path: paths.config.connectApp,
+				},
+				{
+					element: (
+						<Lazy>
+							<Goals />
+						</Lazy>
+					),
+					path: paths.config.goals,
+				},
+				{
+					element: (
+						<Lazy>
+							<Reports />
+						</Lazy>
+					),
+					path: paths.config.reports,
+				},
+				{
+					element: (
+						<Lazy>
+							<Tests />
+						</Lazy>
+					),
+					path: paths.config.tests,
+				},
+				{
+					element: (
+						<Lazy>
+							<Genomics />
+						</Lazy>
+					),
+					path: paths.config.genomics,
+				},
+			],
+		},
+	],
+},
 ];
 
 export default RoutesConfig;

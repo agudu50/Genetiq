@@ -4,12 +4,11 @@
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-	padding: 64px 48px 120px;
+	padding: 48px 48px 0;
 	gap: 48px;
-	min-height: 100vh;
 	width: 100%;
 	box-sizing: border-box;
-	background: #0A0E1A;
+	background: transparent;
 	position: relative;
 	overflow-x: hidden;
 
@@ -27,7 +26,7 @@
 	}
 
 	@media (max-width: 768px) {
-		padding: 48px 20px 100px;
+		padding: 48px 20px 0;
 		gap: 36px;
 	}
 }
@@ -289,111 +288,138 @@
 	margin-top: 4px;
 }
 
-// ── Footer ────────────────────────────────────────────────────────────────────
+// ── Footer (mirrors landing page) ─────────────────────────────────────────────
 
 .configFooter {
 	width: 100%;
 	border-top: 1px solid rgba(#00A69D, 0.08);
-	padding-top: 48px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 32px;
+	margin-top: 16px;
+	background: rgba(10, 14, 26, 0.6);
 	position: relative;
 	z-index: 1;
 }
 
-// Camera / quick action bar
-.quickBar {
+.footerTop {
+	display: grid;
+	grid-template-columns: 2fr 3fr;
+	gap: 64px;
+	padding: 64px 48px 48px;
+
+	@media (max-width: 768px) {
+		grid-template-columns: 1fr;
+		gap: 40px;
+		padding: 48px 20px 32px;
+	}
+}
+
+.footerBrand {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.footerLogo {
 	display: flex;
 	align-items: center;
-	gap: 14px;
-	padding: 16px 28px;
-	background: rgba(255, 255, 255, 0.03);
-	border: 1px solid rgba(255, 255, 255, 0.07);
-	border-radius: 16px;
-	width: 100%;
+	gap: 10px;
 
-	svg {
-		color: $teal-primary;
-		flex-shrink: 0;
+	img {
+		width: 32px;
+		height: 32px;
+		border-radius: 8px;
+		border: 1px solid rgba(#00A69D, 0.3);
 	}
 
 	span {
-		font-size: 0.9rem;
-		color: rgba(255, 255, 255, 0.5);
-		flex: 1;
-	}
-
-	button {
-		display: flex;
-		align-items: center;
-		gap: 6px;
-		background: none;
-		border: none;
+		font-size: 1.3rem;
+		font-weight: 900;
 		color: $teal-primary;
-		font-size: 0.9rem;
-		font-weight: 700;
-		font-family: inherit;
-		cursor: pointer;
-		white-space: nowrap;
-		transition: color 0.2s;
-
-		&:hover { color: $cyan; }
+		letter-spacing: -0.03em;
 	}
 }
 
-// Help text
-.helpText {
+.footerDesc {
 	font-size: 0.875rem;
-	color: rgba(255, 255, 255, 0.25);
-	text-align: center;
+	color: rgba(255, 255, 255, 0.35);
+	line-height: 1.7;
+	max-width: 300px;
 	margin: 0;
-
-	a {
-		color: $teal-primary;
-		text-decoration: none;
-		font-weight: 600;
-		transition: color 0.2s;
-
-		&:hover { color: $cyan; }
-	}
 }
 
-// Trust badges strip
 .trustStrip {
 	display: flex;
-	align-items: center;
-	justify-content: center;
 	flex-wrap: wrap;
-	gap: 12px 24px;
-	padding-top: 8px;
-	padding-bottom: 16px;
+	gap: 8px;
+	margin-top: 4px;
 }
 
 .trustBadge {
-	display: flex;
+	display: inline-flex;
 	align-items: center;
-	gap: 8px;
-	font-size: 0.78rem;
+	gap: 5px;
+	font-size: 0.72rem;
 	font-weight: 600;
-	color: rgba(255, 255, 255, 0.3);
-	letter-spacing: 0.02em;
+	color: rgba(255, 255, 255, 0.35);
+	background: rgba(255, 255, 255, 0.04);
+	border: 1px solid rgba(255, 255, 255, 0.07);
+	border-radius: 99px;
+	padding: 4px 10px;
 
-	svg {
-		color: $teal-primary;
-		opacity: 0.7;
+	svg { color: $teal-primary; }
+}
+
+.footerLinks {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 32px;
+
+	@media (max-width: 640px) {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+.footerCol {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	h4 {
+		font-size: 0.72rem;
+		font-weight: 700;
+		color: rgba(255, 255, 255, 0.9);
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		margin: 0;
 	}
 
-	// Dot separator between badges
-	& + &::before {
-		content: "";
-		width: 3px;
-		height: 3px;
-		border-radius: 50%;
-		background: rgba(255, 255, 255, 0.12);
-		margin-right: 12px;
+	ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
 	}
+
+	a {
+		font-size: 0.875rem;
+		color: rgba(255, 255, 255, 0.35);
+		text-decoration: none;
+		cursor: pointer;
+		transition: color 0.2s;
+
+		&:hover { color: $teal-primary; }
+	}
+}
+
+.footerBottom {
+	border-top: 1px solid rgba(255, 255, 255, 0.05);
+	padding: 16px 48px;
+	font-size: 0.8rem;
+	color: rgba(255, 255, 255, 0.18);
+	text-align: center;
+
+	@media (max-width: 768px) { padding: 14px 20px; }
 }
 
 // ── Animations ────────────────────────────────────────────────────────────────
@@ -402,3 +428,4 @@
 	0%, 100% { opacity: 1; transform: scale(1); }
 	50%       { opacity: 0.5; transform: scale(0.85); }
 }
+

@@ -125,25 +125,8 @@ const Navbar = () => {
 					</nav>
 				)}
 
-				{!isMobile && isConfigFlow && (
-					<nav className={styles["config-nav-simple"]}>
-						<div className={styles["config-nav-link"]}>Buy Supplements</div>
+	
 
-						<div
-							className={`${styles["config-nav-link"]} ${location.pathname === paths.config.importOrUpload ? styles["active"] : ""}`}
-							onClick={() => navigate(paths.config.importOrUpload)}
-						>
-							Upload files
-						</div>
-
-						<div
-							className={`${styles["config-nav-link"]} ${location.pathname === paths.config.connectApp ? styles["active"] : ""}`}
-							onClick={() => navigate(paths.config.connectApp)}
-						>
-							Connect a device
-						</div>
-					</nav>
-				)}
 
 				{/* Secondary actions (only visible on Dashboard or if mobile) */}
 				{(isDashboardRoot || isMobile) && (

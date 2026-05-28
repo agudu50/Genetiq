@@ -3,13 +3,11 @@ import { paths } from "@/App/Routes/Paths";
 import { motion } from "framer-motion";
 import {
 	Upload,
-	Camera,
 	FileText,
 	LayoutDashboard,
 	ArrowRight,
 	CheckCircle2,
 	ShieldCheck,
-	Brain,
 } from "lucide-react";
 import styles from "./UploadMethod.module.scss";
 
@@ -130,48 +128,65 @@ const Config = () => {
 			</div>
 
 			{/* Footer */}
-		<motion.div
-			className={styles.configFooter}
-			initial={{ opacity: 0, y: 16 }}
-			animate={{ opacity: 1, y: 0 }}
-			transition={{ delay: 0.6 }}
-		>
-			{/* Camera quick action */}
-			<div className={styles.quickBar}>
-				<Camera size={18} />
-				<span>Got paper results in hand?</span>
-				<button onClick={() => navigate(paths.config.importOrUpload)}>
-					Snap a photo now <ArrowRight size={14} />
-				</button>
-			</div>
-
-			{/* Help text */}
-			<p className={styles.helpText}>
-				Need help?{" "}
-				<a href='#'>Contact our support team</a>
-				{" "}or check out our{" "}
-				<a href='#'>getting started guide</a>
-			</p>
-
-			{/* Trust badges */}
-			<div className={styles.trustStrip}>
-				{[
-					{ icon: <ShieldCheck size={14} />, label: "256-bit encryption" },
-					{ icon: <ShieldCheck size={14} />, label: "Bank-level security" },
-					{ icon: <CheckCircle2 size={14} />, label: "HIPAA compliant" },
-					{ icon: <CheckCircle2 size={14} />, label: "Healthcare standard" },
-					{ icon: <Brain size={14} />, label: "Instant analysis" },
-					{ icon: <Upload size={14} />, label: "Results in seconds" },
-				].map((b) => (
-					<div key={b.label} className={styles.trustBadge}>
-						{b.icon}
-						<span>{b.label}</span>
+			<footer className={styles.configFooter} style={{ marginTop: "80px" }}>
+				<div className={styles.footerTop}>
+					{/* Brand */}
+					<div className={styles.footerBrand}>
+						<div className={styles.footerLogo}>
+							<img src="/assets/genetiq_logo_v2.png" alt="Genetiq" />
+							<span>Genetiq</span>
+						</div>
+						<p className={styles.footerDesc}>
+							Upload your lab results. Get plain-English explanations. Receive a personal diet and health plan — all powered by AI.
+						</p>
+						<div className={styles.trustStrip}>
+							{[
+								{ icon: <ShieldCheck size={13} />, label: "256-bit encryption" },
+								{ icon: <ShieldCheck size={13} />, label: "Bank-level security" },
+								{ icon: <CheckCircle2 size={13} />, label: "HIPAA compliant" },
+							].map((b) => (
+								<span key={b.label} className={styles.trustBadge}>
+									{b.icon} {b.label}
+								</span>
+							))}
+						</div>
 					</div>
-				))}
-			</div>
-		</motion.div>
-	</div>
+
+					{/* Link columns */}
+					<div className={styles.footerLinks}>
+						<div className={styles.footerCol}>
+							<h4>Product</h4>
+							<ul>
+								<li><a onClick={() => navigate(paths.config.importOrUpload)}>Upload Results</a></li>
+								<li><a onClick={() => navigate(paths.clinicalHistory)}>Health History</a></li>
+							</ul>
+						</div>
+						<div className={styles.footerCol}>
+							<h4>Support</h4>
+							<ul>
+								<li><a href="mailto:support@genetiq.app">Contact Support</a></li>
+								<li><a href="#">Getting Started</a></li>
+								<li><a href="#">FAQs</a></li>
+							</ul>
+						</div>
+						<div className={styles.footerCol}>
+							<h4>Legal</h4>
+							<ul>
+								<li><a onClick={() => navigate(paths.privacy)}>Privacy Policy</a></li>
+								<li><a onClick={() => navigate(paths.terms)}>Terms of Service</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+
+				{/* Bottom bar */}
+				<div className={styles.footerBottom}>
+					© 2026 Genetiq · Making health data simple, one result at a time.
+				</div>
+			</footer>
+		</div>
 	);
 };
 
 export default Config;
+
