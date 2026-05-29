@@ -246,49 +246,39 @@
 .profile-btn {
 	display: flex;
 	align-items: center;
-	gap: 10px;
-	padding: 5px 16px 5px 5px;
-	border-radius: 50px;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	padding: 0;
+	border-radius: 50%;
 	border: 1px solid rgba(15, 23, 42, 0.08);
 	background: rgba(255, 255, 255, 0.8);
 	cursor: pointer;
 	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 	outline: none;
+	box-sizing: border-box;
 
 	html[data-theme="dark"] & {
 		background: rgba(255, 255, 255, 0.03);
 		border-color: rgba(255, 255, 255, 0.06);
 	}
 
-	@media (max-width: 768px) {
-		padding: 3px;
-		gap: 0;
-		border-radius: 50%;
-		background: transparent;
-		border: 1px solid transparent;
-		box-shadow: none !important;
-	}
-
 	&:hover, &.active {
-		border-color: rgba($teal-primary, 0.3);
+		border-color: rgba($teal-primary, 0.4);
 		background: #ffffff;
-		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+		box-shadow: 0 0 16px rgba($teal-primary, 0.2);
+		transform: scale(1.02);
 
 		html[data-theme="dark"] & {
 			background: rgba(255, 255, 255, 0.06);
-			border-color: rgba($teal-primary, 0.4);
-			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-		}
-
-		.dropdown-icon {
-			transform: translateY(1.5px);
-			color: $teal-primary;
+			border-color: rgba($teal-primary, 0.5);
+			box-shadow: 0 0 20px rgba($teal-primary, 0.3);
 		}
 	}
 
 	.avatar {
-		width: 34px;
-		height: 34px;
+		width: 36px;
+		height: 36px;
 		border-radius: 50%;
 		background: linear-gradient(135deg, $teal-primary 0%, $cyan 100%);
 		display: flex;
@@ -296,58 +286,10 @@
 		justify-content: center;
 		color: white;
 		font-weight: 750;
-		font-size: 13px;
+		font-size: 14px;
 		letter-spacing: 0.02em;
 		box-shadow: 0 2px 8px rgba($teal-primary, 0.25);
-
-		@media (max-width: 768px) {
-			width: 32px;
-			height: 32px;
-			font-size: 12px;
-		}
-	}
-
-	.user-info {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 1px;
-
-		@media (max-width: 768px) {
-			display: none;
-		}
-
-		.user-name {
-			font-size: 13.5px;
-			font-weight: 700;
-			color: #0f172a;
-			line-height: 1.25;
-
-			html[data-theme="dark"] & {
-				color: #ffffff;
-			}
-		}
-
-		.user-role {
-			font-size: 10px;
-			font-weight: 600;
-			color: #64748b;
-			line-height: 1.2;
-
-			html[data-theme="dark"] & {
-				color: #94a3b8;
-			}
-		}
-	}
-
-	.dropdown-icon {
-		color: #94a3b8;
-		transition: all 0.2s ease;
-		margin-left: 2px;
-
-		@media (max-width: 768px) {
-			display: none;
-		}
+		box-sizing: border-box;
 	}
 }
 

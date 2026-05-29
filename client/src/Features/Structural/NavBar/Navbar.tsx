@@ -225,25 +225,9 @@ const Navbar = () => {
 							<button
 								className={`${styles["profile-btn"]} ${isProfileOpen ? styles["active"] : ""}`}
 								onClick={() => setIsProfileOpen(!isProfileOpen)}
+								aria-label="User Profile"
 							>
 								<div className={styles["avatar"]}>{userInitials}</div>
-								<div className={styles["user-info"]}>
-									<span className={styles["user-name"]}>{userName}</span>
-									<span className={styles["user-role"]}>
-										{t("premium_member") || "Premium Member"}
-									</span>
-								</div>
-								<svg
-									className={styles["dropdown-icon"]}
-									width='16'
-									height='16'
-									viewBox='0 0 24 24'
-									fill='none'
-									stroke='currentColor'
-									strokeWidth='2'
-								>
-									<path d='m6 9 6 6 6-6' />
-								</svg>
 							</button>
 
 							{/* Profile Dropdown Hub */}
