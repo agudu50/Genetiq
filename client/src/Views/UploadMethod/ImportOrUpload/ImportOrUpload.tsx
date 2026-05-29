@@ -379,17 +379,23 @@ const ImportOrUpload = () => {
 									</div>
 									<div className={styles.field}>
 										<label>Gender</label>
-										<select value={info.gender} onChange={set("gender")}>
-											<option value="" disabled>Select</option>
-											{GENDER_OPTIONS.map((g) => <option key={g}>{g}</option>)}
-										</select>
+										<div className={styles.selectWrap}>
+											<select value={info.gender} onChange={set("gender")}>
+												<option value="" disabled>Select gender</option>
+												{GENDER_OPTIONS.map((g) => <option key={g}>{g}</option>)}
+											</select>
+											<ChevronDown size={16} className={styles.selectChevron} />
+										</div>
 									</div>
 									<div className={styles.field}>
 										<label>Blood type <span className={styles.optional}>(optional)</span></label>
-										<select value={info.bloodType} onChange={set("bloodType")}>
-											<option value="">Unknown</option>
-											{BLOOD_OPTIONS.map((b) => <option key={b}>{b}</option>)}
-										</select>
+										<div className={styles.selectWrap}>
+											<select value={info.bloodType} onChange={set("bloodType")}>
+												<option value="">Unknown</option>
+												{BLOOD_OPTIONS.map((b) => <option key={b}>{b}</option>)}
+											</select>
+											<ChevronDown size={16} className={styles.selectChevron} />
+										</div>
 									</div>
 								</div>
 

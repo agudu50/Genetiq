@@ -220,7 +220,7 @@ $muted:  rgba(255,255,255,0.35);
 		font-size: 0.9rem;
 		font-family: inherit;
 		outline: none;
-		transition: border-color 0.2s, box-shadow 0.2s;
+		transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
 		appearance: none;
 
 		&::placeholder { color: rgba(255,255,255,0.2); }
@@ -231,7 +231,24 @@ $muted:  rgba(255,255,255,0.35);
 		}
 	}
 
-	select option { background: #1a2035; }
+	// ── Custom select wrapper ────────────────────────────────────────────────
+
+	select {
+		padding-right: 42px; // room for the chevron
+		cursor: pointer;
+
+		&:hover:not(:focus) {
+			background: rgba(255,255,255,0.07);
+			border-color: rgba(255,255,255,0.12);
+		}
+
+		option {
+			background: #1a2035;
+			color: rgba(255,255,255,0.9);
+			padding: 10px 14px;
+			font-size: 0.9rem;
+		}
+	}
 }
 
 .optional {
@@ -240,6 +257,47 @@ $muted:  rgba(255,255,255,0.35);
 	letter-spacing: 0;
 	font-size: 0.75rem;
 	opacity: 0.6;
+}
+
+// ── Custom select wrapper ─────────────────────────────────────────────────────
+
+.selectWrap {
+	position: relative;
+	display: block;
+
+	// Teal gradient sheen behind the chevron icon
+	&::after {
+		content: '';
+		position: absolute;
+		top: 1px;
+		right: 1px;
+		bottom: 1px;
+		width: 44px;
+		border-radius: 0 9px 9px 0;
+		background: linear-gradient(to left, rgba($teal, 0.12) 0%, transparent 100%);
+		pointer-events: none;
+		transition: background 0.2s;
+	}
+
+	&:focus-within::after {
+		background: linear-gradient(to left, rgba($teal, 0.2) 0%, transparent 100%);
+	}
+}
+
+.selectChevron {
+	position: absolute;
+	right: 13px;
+	top: 50%;
+	transform: translateY(-50%) rotate(0deg);
+	color: $teal;
+	pointer-events: none;
+	transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s;
+	opacity: 0.7;
+
+	.selectWrap:focus-within & {
+		transform: translateY(-50%) rotate(180deg);
+		opacity: 1;
+	}
 }
 
 // ── Trust pills ───────────────────────────────────────────────────────────────

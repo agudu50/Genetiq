@@ -1,0 +1,71 @@
+// ── Scroll to Top button styles ──────────────────────────────────────────────
+
+$teal:   #00A69D;
+$border: rgba(255, 255, 255, 0.08);
+
+.scrollToTop {
+	position: fixed;
+	bottom: 32px;
+	right: 32px;
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	background: rgba(10, 14, 26, 0.8);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border: 1px solid rgba($teal, 0.3);
+	color: $teal;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	z-index: 1000;
+	outline: none;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 16px rgba($teal, 0.15);
+	
+	// Entrance/exit transitions
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(20px) scale(0.8);
+	transition: 
+		opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+		transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+		background-color 0.25s ease,
+		border-color 0.25s ease,
+		color 0.25s ease,
+		box-shadow 0.25s ease;
+
+	&.visible {
+		opacity: 1;
+		pointer-events: auto;
+		transform: translateY(0) scale(1);
+	}
+
+	&:hover {
+		background: $teal;
+		border-color: $teal;
+		color: #ffffff;
+		transform: translateY(-4px) scale(1.05);
+		box-shadow: 0 12px 40px rgba($teal, 0.45), 0 0 24px rgba($teal, 0.3);
+		
+		// Micro-animation for arrow icon inside
+		svg {
+			transform: translateY(-2px);
+		}
+	}
+
+	&:active {
+		transform: translateY(-2px) scale(0.98);
+	}
+
+	svg {
+		transition: transform 0.2s ease;
+	}
+
+	@media (max-width: 768px) {
+		bottom: 24px;
+		right: 24px;
+		width: 52px;
+		height: 52px;
+	}
+}
