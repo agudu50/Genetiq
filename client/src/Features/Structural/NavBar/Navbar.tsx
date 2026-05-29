@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { paths } from "@/App/Routes/Paths";
 import styles from "./Navbar.module.scss";
 import NotificationHub from "./Components/NotificationsHub/NotificationsHub";
-import ManageData from "./Components/ManageData/ManageData";
 import LanguageSwitcher from "@/Features/Structural/LanguageSwitcher/LanguageSwitcher";
 import ThemeSwitcher from "@/Features/Structural/ThemeSwitcher/ThemeSwitcher";
 import { useLanguage } from "@/App/i18n/LanguageContext";
@@ -11,7 +10,6 @@ import DashboardIcon from "@assets/Navbar/Icons/Dashboard.svg?react";
 import ReportsIcon from "@assets/Navbar/Icons/Reports.svg?react";
 import GoalsIcon from "@assets/Navbar/Icons/Goals.svg?react";
 import TestIcon from "@assets/Navbar/Icons/Test.svg?react";
-import { useSyncStatus } from "@/App/Hooks/useSyncStatus";
 import { HealthProfileWidget } from "@/Features/Dashboard/HealthProfileWidget/HealthProfileWidget";
 
 const Navbar = () => {
@@ -28,9 +26,6 @@ const Navbar = () => {
 		.split(" ")
 		.map((n) => n[0])
 		.join("");
-
-	const { isOnline, syncStatus } = useSyncStatus();
-
 	// Map paths to keys for active state
 	const pathToKey: Record<string, string> = {
 		[paths.dashboard.root]: "dashboard_nav",
@@ -88,7 +83,7 @@ const Navbar = () => {
 					onClick={() => navigate(paths.dashboard.root)}
 				>
 					<img
-						src='/assets/digital_twin_preview.png'
+						src='/assets/genetiq_logo_v2.png'
 						alt='Genetiq Logo'
 						className={styles.logoImage}
 					/>
@@ -131,21 +126,9 @@ const Navbar = () => {
 				{/* Secondary actions (only visible on Dashboard or if mobile) */}
 				{(isDashboardRoot || isMobile) && (
 					<div className={styles["actions-container"]}>
-						<LanguageSwitcher />
 						{/* Desktop: show inline | Mobile: hide behind "more" */}
 						{!isMobile && (
-							<>
-								<ThemeSwitcher />
-								<ManageData />
-								<div
-									className={`${styles["sync-badge"]} ${isOnline ? styles.online : styles.offline}`}
-								>
-									{syncStatus === "Syncing" && (
-										<span className={styles["sync-spinner"]}></span>
-									)}
-									<span>{syncStatus}</span>
-								</div>
-							</>
+							<ThemeSwitcher />
 						)}
 
 						{/* Mobile "more" menu for secondary actions */}
@@ -231,9 +214,6 @@ const Navbar = () => {
 										<div className={styles["more-item"]}>
 											<ThemeSwitcher />
 										</div>
-										<div className={styles["more-item"]}>
-											<ManageData />
-										</div>
 									</div>
 								)}
 							</div>
@@ -276,6 +256,7 @@ const Navbar = () => {
 									<div className={styles["profile-dropdown-divider"]} />
 
 									<div className={styles["profile-dropdown-footer"]}>
+										<LanguageSwitcher />
 										<button className={styles["footer-btn"]}>
 											<svg
 												width='18'
