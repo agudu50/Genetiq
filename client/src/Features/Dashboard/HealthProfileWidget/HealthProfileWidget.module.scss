@@ -1,58 +1,41 @@
+// ─── Health Profile Widget Redesign ──────────────────────────────────────────────
+// Premium design system leveraging glassmorphism, HSL tailored variables,
+// and state-of-the-art visual hover micro-interactions.
+
 .profileWidget {
-	background: var(--glass-bg);
-	backdrop-filter: blur(8px) saturate(180%);
-	-webkit-backdrop-filter: blur(8px) saturate(180%);
-	border: 1px solid var(--glass-border);
-	border-radius: 16px;
-	padding: 16px;
+	background: transparent;
 	display: flex;
 	flex-direction: column;
-	gap: 14px;
+	gap: 16px;
 	position: relative;
 	overflow: hidden;
-	transition:
-		transform 0.3s ease,
-		box-shadow 0.3s ease;
-
-	&::before {
-		content: "";
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		height: 3px;
-		background: linear-gradient(90deg, #6366f1, #8b5cf6, #a78bfa);
-		opacity: 0.8;
-	}
-
-	&:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 12px 40px rgba(99, 102, 241, 0.15);
-	}
+	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	box-sizing: border-box;
+	padding: 16px 20px 8px;
 
 	@media (max-width: 768px) {
-		padding: 16px;
-		gap: 14px;
-		border-radius: 14px;
+		padding: 12px 14px;
+		gap: 12px;
 	}
 }
 
-// ─── Header ───────────────────────────────────────
+// ─── Header Section ───
 .header {
 	display: flex;
 	align-items: center;
-	gap: 14px;
+	gap: 16px;
+	width: 100%;
 }
 
 .avatarRing {
 	position: relative;
-	width: 52px;
-	height: 52px;
+	width: 58px;
+	height: 58px;
 	flex-shrink: 0;
 	border-radius: 50%;
 	background: conic-gradient(
-		#6366f1 0deg,
-		#8b5cf6 var(--progress, 0deg),
+		$teal-primary 0deg,
+		$cyan var(--progress, 0deg),
 		rgba(255, 255, 255, 0.08) var(--progress, 0deg),
 		rgba(255, 255, 255, 0.08) 360deg
 	);
@@ -61,58 +44,91 @@
 	justify-content: center;
 	animation: pulseRing 3s ease-in-out infinite;
 
+	html[data-theme="light"] & {
+		background: conic-gradient(
+			$teal-primary 0deg,
+			$cyan var(--progress, 0deg),
+			rgba(15, 23, 42, 0.06) var(--progress, 0deg),
+			rgba(15, 23, 42, 0.06) 360deg
+		);
+	}
+
 	@media (max-width: 480px) {
-		width: 46px;
-		height: 46px;
+		width: 50px;
+		height: 50px;
 	}
 }
 
 @keyframes pulseRing {
-	0%,
-	100% {
-		box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.2);
+	0%, 100% {
+		box-shadow: 0 0 0 0 rgba($teal-primary, 0.25);
 	}
 	50% {
-		box-shadow: 0 0 0 6px rgba(99, 102, 241, 0);
+		box-shadow: 0 0 0 8px rgba($teal-primary, 0);
 	}
 }
 
 .avatar {
-	width: 44px;
-	height: 44px;
+	width: 48px;
+	height: 48px;
 	border-radius: 50%;
-	background: linear-gradient(135deg, #312e81, #1e1b4b);
+	background: linear-gradient(135deg, rgba($teal-primary, 0.15) 0%, rgba(10, 14, 26, 0.95) 100%);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-weight: 700;
+	font-weight: 800;
 	font-size: 16px;
-	color: #c7d2fe;
-	letter-spacing: 1px;
+	color: #ffffff;
+	letter-spacing: 0.5px;
+	border: 1px solid rgba(255, 255, 255, 0.05);
+
+	html[data-theme="light"] & {
+		background: linear-gradient(135deg, rgba($teal-primary, 0.1) 0%, #ffffff 100%);
+		color: $teal-dark;
+		border-color: rgba(15, 23, 42, 0.04);
+	}
 
 	@media (max-width: 480px) {
-		width: 38px;
-		height: 38px;
+		width: 42px;
+		height: 42px;
 		font-size: 14px;
+	}
+}
+
+.silhouetteIcon {
+	color: #94a3b8;
+	opacity: 0.85;
+
+	html[data-theme="light"] & {
+		color: $teal-primary;
 	}
 }
 
 .headerInfo {
 	flex: 1;
 	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
 }
 
 .name {
-	font-size: 17px;
-	font-weight: 700;
-	color: var(--text);
+	font-size: 18px;
+	font-weight: 800;
+	font-family: 'Outfit', sans-serif;
+	color: #ffffff;
 	margin: 0 0 4px;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	text-align: left;
+
+	html[data-theme="light"] & {
+		color: #0f172a;
+	}
 
 	@media (max-width: 480px) {
-		font-size: 15px;
+		font-size: 16px;
 	}
 }
 
@@ -123,25 +139,31 @@
 }
 
 .metaTag {
-	font-size: 11px;
-	font-weight: 600;
-	padding: 2px 8px;
+	font-size: 10px;
+	font-weight: 700;
+	padding: 2.5px 8px;
 	border-radius: 6px;
-	background: rgba(255, 255, 255, 0.06);
-	color: var(--text-secondary);
+	background: rgba(255, 255, 255, 0.05);
+	color: #94a3b8;
 	text-transform: capitalize;
-	letter-spacing: 0.3px;
+	letter-spacing: 0.02em;
+
+	html[data-theme="light"] & {
+		background: rgba(15, 23, 42, 0.03);
+		color: #64748b;
+	}
 }
 
 .conditionTag {
-	background: rgba(239, 68, 68, 0.12);
+	background: rgba(239, 68, 68, 0.1);
 	color: #fca5a5;
+	border: 1px solid rgba(239, 68, 68, 0.15);
 }
 
 .walletTag {
-	background: rgba(99, 102, 241, 0.12);
-	color: #818cf8;
-	border: 1px solid rgba(99, 102, 241, 0.2);
+	background: rgba($teal-primary, 0.08);
+	color: $teal-primary;
+	border: 1px solid rgba($teal-primary, 0.15);
 	display: flex;
 	align-items: center;
 	gap: 4px;
@@ -152,14 +174,16 @@
 	}
 }
 
-// ─── Vitals Grid ──────────────────────────────────
+// ─── Vitals Grid ───
 .vitalsGrid {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
-	gap: 10px;
+	gap: 8px;
+	width: 100%;
+	box-sizing: border-box;
 
 	@media (max-width: 480px) {
-		grid-template-columns: repeat(2, 1fr);
+		grid-template-columns: repeat(3, 1fr);
 	}
 }
 
@@ -167,180 +191,240 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 6px;
-	padding: 14px 8px;
-	border-radius: 12px;
-	background: rgba(255, 255, 255, 0.03);
-	border: 1px solid rgba(255, 255, 255, 0.06);
-	transition:
-		background 0.2s ease,
-		border-color 0.2s ease;
+	gap: 8px;
+	padding: 14px 6px;
+	border-radius: 14px;
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 255, 255, 0.04);
+	transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+	box-sizing: border-box;
+	text-decoration: none;
+
+	html[data-theme="light"] & {
+		background: rgba(15, 23, 42, 0.01);
+		border-color: rgba(15, 23, 42, 0.04);
+	}
 
 	&:hover {
-		background: rgba(255, 255, 255, 0.06);
-		border-color: rgba(99, 102, 241, 0.2);
+		background: rgba(255, 255, 255, 0.05);
+		border-color: rgba($teal-primary, 0.3);
+		transform: translateY(-2px);
+		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+
+		html[data-theme="light"] & {
+			background: rgba(255, 255, 255, 0.7);
+			border-color: rgba($teal-primary, 0.25);
+			box-shadow: 0 4px 15px rgba(15, 23, 42, 0.03);
+		}
+
+		.vitalIcon {
+			color: $cyan;
+			transform: scale(1.1);
+		}
 	}
 }
 
 .vitalIcon {
-	color: var(--accent);
+	color: $teal-primary;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+	svg {
+		stroke-width: 2.2;
+	}
 }
 
 .vitalData {
 	display: flex;
 	align-items: baseline;
-	gap: 3px;
+	justify-content: center;
+	gap: 2px;
+	width: 100%;
 }
 
 .vitalValue {
-	font-size: 20px;
-	font-weight: 700;
-	color: var(--text);
+	font-size: 19px;
+	font-weight: 850;
+	font-family: 'Outfit', sans-serif;
+	color: #ffffff;
 	line-height: 1;
+
+	html[data-theme="light"] & {
+		color: #0f172a;
+	}
 }
 
 .vitalUnit {
-	font-size: 11px;
-	font-weight: 500;
-	color: var(--text-secondary);
+	font-size: 10px;
+	font-weight: 600;
+	color: #64748b;
+
+	html[data-theme="light"] & {
+		color: #475569;
+	}
 }
 
 .vitalLabel {
-	font-size: 11px;
-	font-weight: 500;
-	color: var(--text-secondary);
+	font-size: 10px;
+	font-weight: 700;
+	color: #64748b;
 	text-transform: uppercase;
-	letter-spacing: 0.5px;
+	letter-spacing: 0.05em;
+
+	html[data-theme="light"] & {
+		color: #475569;
+	}
 }
 
 .bmiBadge {
-	font-size: 9px;
-	font-weight: 700;
-	padding: 2px 6px;
+	font-size: 8px;
+	font-weight: 800;
+	padding: 1.5px 5px;
 	border-radius: 4px;
 	text-transform: uppercase;
-	letter-spacing: 0.5px;
+	letter-spacing: 0.03em;
+	margin-left: 2px;
 
 	&.underweight {
-		background: rgba(96, 165, 250, 0.15);
-		color: #60a5fa;
+		background: rgba(96, 165, 250, 0.12);
+		color: #93c5fd;
+		border: 1px solid rgba(96, 165, 250, 0.2);
 	}
 	&.normal {
-		background: rgba(52, 211, 153, 0.15);
-		color: #34d399;
+		background: rgba($teal-primary, 0.12);
+		color: $teal-primary;
+		border: 1px solid rgba($teal-primary, 0.2);
 	}
 	&.overweight {
-		background: rgba(251, 191, 36, 0.15);
-		color: #fbbf24;
+		background: rgba(251, 191, 36, 0.12);
+		color: #fde047;
+		border: 1px solid rgba(251, 191, 36, 0.2);
 	}
 	&.obese {
-		background: rgba(239, 68, 68, 0.15);
-		color: #ef4444;
+		background: rgba(239, 68, 68, 0.12);
+		color: #fca5a5;
+		border: 1px solid rgba(239, 68, 68, 0.2);
 	}
 }
 
+// ─── Beautiful Empty Vitals State ───
 .isEmpty {
-	opacity: 0.6;
+	opacity: 0.5;
 	border-style: dashed !important;
+	border-color: rgba(255, 255, 255, 0.08) !important;
+
+	html[data-theme="light"] & {
+		border-color: rgba(15, 23, 42, 0.1) !important;
+	}
+
+	.vitalIcon {
+		color: #64748b !important;
+		opacity: 0.7;
+
+		html[data-theme="light"] & {
+			color: #94a3b8 !important;
+		}
+	}
+
+	&:hover {
+		opacity: 0.85;
+		border-color: rgba($teal-primary, 0.25) !important;
+
+		.vitalIcon {
+			color: $teal-primary !important;
+			opacity: 1;
+		}
+	}
 }
 
 .vitalPlaceholder {
 	font-size: 18px;
-	font-weight: 700;
-	color: rgba(255, 255, 255, 0.2);
-}
+	font-weight: 850;
+	color: rgba(255, 255, 255, 0.15);
+	font-family: 'Outfit', sans-serif;
+	line-height: 1;
 
-// ─── Empty State ──────────────────────────────────
-.emptyState {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 8px;
-	padding: 16px 14px;
-	text-align: center;
-}
-
-.emptyIcon {
-	color: rgba(255, 255, 255, 0.2);
-	margin-bottom: 4px;
-}
-
-.emptyText {
-	font-size: 13px;
-	color: var(--text-secondary);
-	margin: 0;
-	line-height: 1.5;
-}
-
-.importBtn {
-	background: linear-gradient(135deg, #6366f1, #8b5cf6);
-	color: white;
-	border: none;
-	padding: 8px 20px;
-	border-radius: 10px;
-	font-size: 13px;
-	font-weight: 600;
-	cursor: pointer;
-	transition: all 0.25s ease;
-
-	&:hover {
-		transform: scale(1.04);
-		box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+	html[data-theme="light"] & {
+		color: rgba(15, 23, 42, 0.2);
 	}
 }
 
-// ─── Footer ───────────────────────────────────────
+// ─── Footer Section ───
 .footer {
 	display: flex;
 	align-items: center;
-	gap: 12px;
-	padding-top: 4px;
+	justify-content: space-between;
+	gap: 16px;
+	width: 100%;
+	box-sizing: border-box;
+	padding-top: 6px;
 }
 
 .completeness {
 	flex: 1;
 	display: flex;
 	flex-direction: column;
+	align-items: flex-start;
 	gap: 4px;
 }
 
 .completenessBar {
 	height: 6px;
+	width: 100%;
 	border-radius: 6px;
-	background: rgba(255, 255, 255, 0.08);
+	background: rgba(255, 255, 255, 0.06);
 	overflow: hidden;
+
+	html[data-theme="light"] & {
+		background: rgba(15, 23, 42, 0.04);
+	}
 }
 
 .completenessProgress {
 	height: 100%;
 	border-radius: 4px;
-	background: linear-gradient(90deg, #6366f1, #8b5cf6);
-	transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+	background: linear-gradient(90deg, $teal-primary 0%, $cyan 100%);
+	transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+	box-shadow: 0 0 8px rgba($teal-primary, 0.2);
 }
 
 .completenessText {
 	font-size: 11px;
-	color: var(--text-secondary);
-	font-weight: 500;
+	color: #94a3b8;
+	font-weight: 700;
+
+	html[data-theme="light"] & {
+		color: #64748b;
+	}
 }
 
 .updateBtn {
-	background: rgba(255, 255, 255, 0.06);
-	color: var(--accent);
-	border: 1px solid rgba(99, 102, 241, 0.2);
-	padding: 6px 14px;
-	border-radius: 8px;
-	font-size: 12px;
-	font-weight: 600;
+	background: rgba($teal-primary, 0.08);
+	color: $teal-primary;
+	border: 1px solid rgba($teal-primary, 0.15);
+	padding: 8px 18px;
+	border-radius: 10px;
+	font-size: 12.5px;
+	font-weight: 700;
 	cursor: pointer;
-	transition: all 0.2s ease;
+	transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 	white-space: nowrap;
 
+	html[data-theme="light"] & {
+		background: rgba($teal-primary, 0.04);
+	}
+
 	&:hover {
-		background: rgba(99, 102, 241, 0.12);
-		border-color: rgba(99, 102, 241, 0.4);
+		background: linear-gradient(135deg, $teal-primary 0%, $cyan 100%);
+		color: white;
+		border-color: transparent;
+		transform: translateY(-1px);
+		box-shadow: 0 4px 12px rgba($teal-primary, 0.25);
+	}
+
+	&:active {
+		transform: translateY(0);
 	}
 }
