@@ -5,6 +5,7 @@ import triageReducer from "./triageSlice";
 import testReducer from "./testSlice";
 import goalReducer from "./goalSlice";
 import genomicsReducer from "./genomicsSlice";
+import uploadHistoryReducer from "./uploadHistorySlice";
 
 const store = configureStore({
 	reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
 		tests: testReducer,
 		goals: goalReducer,
 		genomics: genomicsReducer,
+		uploadHistory: uploadHistoryReducer,
 	},
 });
 

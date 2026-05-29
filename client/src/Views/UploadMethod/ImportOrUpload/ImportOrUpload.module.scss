@@ -774,198 +774,256 @@ $muted:  rgba(255,255,255,0.35);
 
 .scoreBreakdown {
 	display: flex;
-	border-radius: 14px;
-	overflow: hidden;
-	border: 1px solid $border;
+	gap: 12px;
+	width: 100%;
+	margin-top: 10px;
 
 	@media (max-width: 640px) {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		border-radius: 12px;
+		gap: 8px;
 	}
 }
 
 .scoreBar {
 	flex: 1;
-	padding: 14px 16px;
+	padding: 16px;
 	display: flex;
 	flex-direction: column;
-	gap: 3px;
-	border-right: 1px solid $border;
-	opacity: 0.4;
-	transition: opacity 0.2s;
+	gap: 4px;
+	border-radius: 14px;
+	background: rgba(255, 255, 255, 0.01);
+	border: 1px solid rgba(255, 255, 255, 0.04);
+	opacity: 0.55;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	position: relative;
 
-	&:last-child { border-right: none; }
-
-	// On mobile grid: remove right border from even cells, add bottom border
-	@media (max-width: 640px) {
-		border-right: 1px solid $border;
-		border-bottom: 1px solid $border;
-		padding: 12px 14px;
-
-		&:nth-child(2) { border-right: none; }
-		&:nth-child(3) { border-right: 1px solid $border; border-bottom: none; }
-		&:nth-child(4) { border-right: none; border-bottom: none; }
+	// Assign subtle colors based on class
+	&.good {
+		border-color: rgba(239, 68, 68, 0.1);
+		span:first-child { color: #f87171; }
+	}
+	&.warning {
+		border-color: rgba(245, 158, 11, 0.1);
+		span:first-child { color: #fbbf24; }
+	}
+	&.great {
+		border-color: rgba(34, 197, 94, 0.1);
+		span:first-child { color: #4ade80; }
+	}
+	&:not(.good):not(.warning):not(.great) {
+		border-color: rgba(6, 182, 212, 0.1); // Cyan/Teal for excellent
+		span:first-child { color: #22d3ee; }
 	}
 
 	span:first-child {
-		font-size: 0.7rem;
-		font-weight: 700;
-		color: $muted;
-		letter-spacing: 0.04em;
+		font-size: 0.72rem;
+		font-weight: 800;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
 	}
 
 	span:last-child {
-		font-size: 0.8rem;
+		font-size: 0.85rem;
 		font-weight: 600;
-		color: $text;
+		color: rgba(255, 255, 255, 0.7);
+		line-height: 1.3;
 
-		@media (max-width: 640px) { font-size: 0.75rem; }
+		@media (max-width: 640px) { font-size: 0.8rem; }
 	}
 
+	// Hover state
+	&:hover {
+		opacity: 0.8;
+		background: rgba(255, 255, 255, 0.02);
+		transform: translateY(-1px);
+	}
+
+	// Glowing active state
 	&.active {
 		opacity: 1;
-		background: rgba($teal, 0.06);
-		span:last-child { color: $teal; }
-	}
+		transform: translateY(-2px);
+		box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+		background: rgba(255, 255, 255, 0.03);
 
-	&.good span:first-child    { color: #f87171; }
-	&.warning span:first-child { color: #fbbf24; }
-	&.great span:first-child   { color: $teal; }
+		&.good {
+			border-color: rgba(239, 68, 68, 0.4);
+			box-shadow: 0 8px 24px rgba(239, 68, 68, 0.12), inset 0 0 12px rgba(239, 68, 68, 0.05);
+			span:last-child { color: #f87171; font-weight: 700; }
+		}
+
+		&.warning {
+			border-color: rgba(245, 158, 11, 0.4);
+			box-shadow: 0 8px 24px rgba(245, 158, 11, 0.12), inset 0 0 12px rgba(245, 158, 11, 0.05);
+			span:last-child { color: #fbbf24; font-weight: 700; }
+		}
+
+		&.great {
+			border-color: rgba(34, 197, 94, 0.4);
+			box-shadow: 0 8px 24px rgba(34, 197, 94, 0.12), inset 0 0 12px rgba(34, 197, 94, 0.05);
+			span:last-child { color: #4ade80; font-weight: 700; }
+		}
+
+		&:not(.good):not(.warning):not(.great) {
+			border-color: rgba(6, 182, 212, 0.4);
+			box-shadow: 0 8px 24px rgba(6, 182, 212, 0.12), inset 0 0 12px rgba(6, 182, 212, 0.05);
+			span:last-child { color: #22d3ee; font-weight: 700; }
+		}
+	}
 }
 
 // Findings list (row layout) ───────────────────────────────────────────────────
 
-.findingsList {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-	width: 100%;
-}
+// ── Findings card grid ────────────────────────────────────────────────────────
 
-.findingRow {
-	display: flex;
-	flex-direction: column;
-	padding: 0;
-	background: $card;
-	border: 1px solid $border;
-	border-radius: 16px;
-	border-left: 4px solid $border;
-	cursor: pointer;
-	transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
-	overflow: hidden;
-
-	&:hover { background: rgba(255,255,255,0.04); }
-
-	&.findingOpen {
-		box-shadow: 0 4px 24px rgba(0,0,0,0.2);
-	}
-
-	&.status-good     { border-left-color: #22c55e; }
-	&.status-warning  { border-left-color: #f59e0b; }
-	&.status-critical { border-left-color: #ef4444; }
-}
-
-// The always-visible top row ───────────────────────────────────────────────────
-
-.findingSummary {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
+.findingsGrid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
 	gap: 16px;
-	padding: 18px 20px;
-	user-select: none;
+	width: 100%;
 
-	@media (max-width: 540px) {
-		flex-wrap: wrap;
-		gap: 12px;
+	@media (max-width: 1100px) { grid-template-columns: repeat(2, 1fr); }
+	@media (max-width: 600px)  { grid-template-columns: 1fr; }
+}
+
+.findingCard {
+	display: flex;
+	flex-direction: column;
+	background: rgba(255,255,255,0.02);
+	border-radius: 18px;
+	overflow: hidden;
+	transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.2s;
+
+	// Permanent subtle colored border and shadow per status
+	&.card-good {
+		border: 1px solid rgba(34, 197, 94, 0.15);
+		box-shadow: 0 4px 20px rgba(34, 197, 94, 0.06);
+
+		&:hover {
+			border-color: rgba(34, 197, 94, 0.3);
+			box-shadow: 0 8px 32px rgba(34, 197, 94, 0.15);
+			transform: translateY(-3px);
+		}
+	}
+
+	&.card-warning {
+		border: 1px solid rgba(245, 158, 11, 0.15);
+		box-shadow: 0 4px 20px rgba(245, 158, 11, 0.06);
+
+		&:hover {
+			border-color: rgba(245, 158, 11, 0.3);
+			box-shadow: 0 8px 32px rgba(245, 158, 11, 0.15);
+			transform: translateY(-3px);
+		}
+	}
+
+	&.card-critical {
+		border: 1px solid rgba(239, 68, 68, 0.15);
+		box-shadow: 0 4px 20px rgba(239, 68, 68, 0.06);
+
+		&:hover {
+			border-color: rgba(239, 68, 68, 0.3);
+			box-shadow: 0 8px 32px rgba(239, 68, 68, 0.15);
+			transform: translateY(-3px);
+		}
 	}
 }
 
-.findingSummaryRight {
+.cardBody {
+	padding: 18px 20px 14px;
 	display: flex;
-	align-items: center;
+	flex-direction: column;
 	gap: 12px;
-	flex-shrink: 0;
-}
-
-.findingLeft {
-	display: flex;
-	align-items: center;
-	gap: 20px;
 	flex: 1;
-	min-width: 0;
-
-	@media (max-width: 540px) {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 4px;
-	}
 }
 
-.findingMarker {
-	font-size: 0.88rem;
-	font-weight: 700;
-	color: $text;
-	line-height: 1.3;
-	min-width: 180px;
-
-	@media (max-width: 540px) { min-width: unset; }
+// Top row: marker name + badge
+.cardTop {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 10px;
 }
 
-.findingValue {
-	font-size: 1.2rem;
-	font-weight: 900;
-	color: #fff;
-	letter-spacing: -0.03em;
-	line-height: 1;
+.cardNames {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
 }
 
-.findingBadge {
+.cardMarker {
+	font-size: 0.82rem;
+	font-weight: 800;
+	color: rgba(255,255,255,0.9);
+	line-height: 1.2;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+}
+
+.cardSub {
 	font-size: 0.72rem;
-	font-weight: 700;
-	padding: 4px 10px;
+	font-weight: 500;
+	color: rgba(255,255,255,0.38);
+	letter-spacing: 0.02em;
+}
+
+.cardBadge {
+	font-size: 0.65rem;
+	font-weight: 800;
+	padding: 3px 9px;
 	border-radius: 99px;
 	white-space: nowrap;
-
-	&.badge-good     { background: rgba(34,197,94,0.12);  color: #4ade80; }
-	&.badge-warning  { background: rgba(245,158,11,0.12); color: #fbbf24; }
-	&.badge-critical { background: rgba(239,68,68,0.12);  color: #f87171; }
-}
-
-.findingChevron {
-	color: $muted;
-	transition: transform 0.3s ease, color 0.2s;
 	flex-shrink: 0;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
 
-	&.chevronOpen {
-		transform: rotate(180deg);
-		color: $teal;
-	}
+	&.badge-good     { background: rgba(34,197,94,0.12);  color: #4ade80;  border: 1px solid rgba(34,197,94,0.2); }
+	&.badge-warning  { background: rgba(245,158,11,0.12); color: #fbbf24;  border: 1px solid rgba(245,158,11,0.2); }
+	&.badge-critical { background: rgba(239,68,68,0.12);  color: #f87171;  border: 1px solid rgba(239,68,68,0.2); }
 }
 
-// Expanded panel ───────────────────────────────────────────────────────────────
-
-.findingExpanded {
-	max-height: 0;
-	overflow: hidden;
-	transition: max-height 0.35s ease, padding 0.35s ease;
-	padding: 0 20px;
-	border-top: 0px solid $border;
-
-	&.findingExpandedOpen {
-		max-height: 200px;
-		padding: 0 20px 18px;
-		border-top: 1px solid $border;
-	}
+// Large value + unit
+.cardValue {
+	display: flex;
+	align-items: baseline;
+	gap: 5px;
 }
 
-.findingNote {
-	font-size: 0.875rem;
-	color: rgba(255,255,255,0.65);
-	margin: 16px 0 0;
-	line-height: 1.7;
+.cardNum {
+	font-size: 2.4rem;
+	font-weight: 900;
+	line-height: 1;
+	letter-spacing: -0.04em;
+	color: #fff;
+
+	.card-good &     { color: #4ade80; }
+	.card-warning &  { color: #fbbf24; }
+	.card-critical & { color: #f87171; }
 }
+
+.cardUnit {
+	font-size: 0.78rem;
+	font-weight: 600;
+	color: rgba(255,255,255,0.35);
+	letter-spacing: 0.02em;
+}
+
+// Thin divider between value and note
+.cardDivider {
+	height: 1px;
+	background: rgba(255,255,255,0.06);
+	margin: 4px 0 2px;
+}
+
+// Always-visible description text
+.cardNote {
+	font-size: 0.83rem;
+	line-height: 1.72;
+	color: rgba(255,255,255,0.58);
+	margin: 0;
+	flex: 1;
+}
+
 
 // Disclaimer ───────────────────────────────────────────────────────────────────
 

@@ -2,9 +2,11 @@ import { useState, useCallback, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { updateUserInfo } from "@/App/Redux/userSlice";
+import { addUploadRecord } from "@/App/Redux/uploadHistorySlice";
+import type { LabFinding, Recommendation } from "@/App/Redux/uploadHistorySlice";
 import { paths } from "@/App/Routes/Paths";
 import {
-	Upload, FileText, ShieldCheck, Zap, User, ChevronRight,
+	Upload, FileText, ShieldCheck, Zap, ChevronRight,
 	X, CheckCircle, ArrowLeft, Loader2, Sparkles, ChevronDown,
 } from "lucide-react";
 import styles from "./ImportOrUpload.module.scss";
@@ -34,9 +36,6 @@ const ImportOrUpload = () => {
 	// If coming from the navbar "Upload Results" button, skip personal info
 	const skipToUpload = (location.state as { skipToUpload?: boolean } | null)?.skipToUpload;
 
-	const [expandedFinding, setExpandedFinding] = useState<string | null>(null);
-	const toggleFinding = (marker: string) =>
-		setExpandedFinding((prev) => (prev === marker ? null : marker));
 	const [step, setStep] = useState<Step>(skipToUpload ? "upload" : "personal");
 	const [files, setFiles] = useState<UploadedFile[]>([]);
 	const [dragging, setDragging] = useState(false);
@@ -111,11 +110,42 @@ const ImportOrUpload = () => {
 
 	// ── Step 2: Analyze ───────────────────────────────────────────────────────
 
+	// The mock AI findings — in production these come from the real AI API
+	const MOCK_FINDINGS: LabFinding[] = [
+		{ id: "1", name: "Blood Sugar (Glucose)", marker: "Blood Sugar (Glucose)", value: "5.2 mmol/L", status: "normal", statusLabel: "Normal ✓", note: "Your blood sugar is at a healthy level. This means your body is managing energy well. Keep eating balanced meals and staying active." },
+		{ id: "2", name: "Bad Cholesterol (LDL)", marker: "Bad Cholesterol (LDL)", value: "3.8 mmol/L", status: "elevated", statusLabel: "A little high", note: "LDL is the type of cholesterol that can build up in your arteries over time. Yours is slightly above the ideal range. Try eating less fried food, butter, and red meat — and add more fish, nuts, and oats to your diet." },
+		{ id: "3", name: "Red Blood Cells (Haemoglobin)", marker: "Red Blood Cells (Haemoglobin)", value: "14.2 g/dL", status: "normal", statusLabel: "Normal ✓", note: "Your red blood cells are healthy. They carry oxygen around your body, and yours are doing a great job. No signs of anaemia." },
+		{ id: "4", name: "Vitamin D", marker: "Vitamin D", value: "38 nmol/L", status: "low", statusLabel: "Lower than ideal", note: "Most people don't get enough Vitamin D, especially in winter. It helps your bones, mood, and immune system. Try 15 minutes of sunlight daily and consider a Vitamin D supplement (1000–2000 IU)." },
+		{ id: "5", name: "Thyroid (TSH)", marker: "Thyroid", value: "2.1 mIU/L", status: "normal", statusLabel: "Normal ✓", note: "Your thyroid gland — which controls your energy and metabolism — is working exactly as it should. Nothing to worry about here." },
+		{ id: "6", name: "Iron Stores (Ferritin)", marker: "Iron Stores (Ferritin)", value: "8 µg/L", status: "action", statusLabel: "Low — see a doctor", note: "Ferritin measures how much iron your body has stored. Yours is very low, which can cause tiredness, weakness, and difficulty concentrating. Please speak to your doctor soon — you may need an iron supplement." },
+	];
+
+	const MOCK_RECS: Recommendation[] = [
+		{ icon: "🥗", title: "Eat more iron-rich foods", body: "Add spinach, lentils, kidney beans, and lean red meat to your meals. Pair them with Vitamin C (like orange juice) to help your body absorb iron better." },
+		{ icon: "☀️", title: "Get more Vitamin D", body: "Spend 15–20 minutes outside in sunlight each day. If that's hard, a daily Vitamin D3 supplement (1000–2000 IU) is a simple fix." },
+		{ icon: "🐟", title: "Help your cholesterol", body: "Swap butter for olive oil, eat more oily fish (like salmon or mackerel) twice a week, and snack on nuts instead of crisps." },
+		{ icon: "🩺", title: "Book a doctor's appointment", body: "Your iron level needs medical attention. Your GP can confirm the cause and recommend the right treatment — this is the most important step right now." },
+	];
+
 	const handleAnalyze = () => {
 		setStep("analyzing");
 		dispatch(updateUserInfo({ ...info, uploadStatus: "processing" }));
 		setTimeout(() => {
 			dispatch(updateUserInfo({ uploadStatus: "completed" }));
+			// Save the full upload record into Redux for the Clinical History page
+			dispatch(addUploadRecord({
+				id: crypto.randomUUID(),
+				uploadedAt: new Date().toISOString(),
+				fileName: files.map((f) => f.file.name).join(", "),
+				healthScore: 75,
+				findings: MOCK_FINDINGS,
+				recommendations: MOCK_RECS,
+				firstName: info.firstName,
+				lastName: info.lastName,
+				age: info.age,
+				gender: info.gender,
+				bloodType: info.bloodType,
+			}));
 			setStep("done");
 		}, 3000);
 	};
@@ -176,7 +206,7 @@ const ImportOrUpload = () => {
 						</div>
 					</div>
 
-					{/* ── What your score means ──────────────────────────── */}
+					{/* ── Score breakdown ────────────────────────────────── */}
 					<div className={styles.scoreBreakdown}>
 						<div className={`${styles.scoreBar} ${styles.good}`}>
 							<span>0 – 50</span><span>Needs attention</span>
@@ -199,82 +229,33 @@ const ImportOrUpload = () => {
 							<p className={styles.sectionSub}>Each result explained in plain English — no medical jargon.</p>
 						</div>
 
-						<div className={styles.findingsList}>
+						<div className={styles.findingsGrid}>
 							{[
-								{
-									status: "good",
-									marker: "Blood Sugar (Glucose)",
-									value: "5.2 mmol/L",
-									summary: "Normal ✓",
-									note: "Your blood sugar is at a healthy level. This means your body is managing energy well. Keep eating balanced meals and staying active.",
-								},
-								{
-									status: "warning",
-									marker: "Bad Cholesterol (LDL)",
-									value: "3.8 mmol/L",
-									summary: "A little high",
-									note: "LDL is the type of cholesterol that can build up in your arteries over time. Yours is slightly above the ideal range. Try eating less fried food, butter, and red meat — and add more fish, nuts, and oats to your diet.",
-								},
-								{
-									status: "good",
-									marker: "Red Blood Cells (Haemoglobin)",
-									value: "14.2 g/dL",
-									summary: "Normal ✓",
-									note: "Your red blood cells are healthy. They carry oxygen around your body, and yours are doing a great job. No signs of anaemia.",
-								},
-								{
-									status: "warning",
-									marker: "Vitamin D",
-									value: "38 nmol/L",
-									summary: "Lower than ideal",
-									note: "Most people don't get enough Vitamin D, especially in winter. It helps your bones, mood, and immune system. Try 15 minutes of sunlight daily and consider a Vitamin D supplement (1000–2000 IU).",
-								},
-								{
-									status: "good",
-									marker: "Thyroid",
-									value: "2.1 mIU/L",
-									summary: "Normal ✓",
-									note: "Your thyroid gland — which controls your energy and metabolism — is working exactly as it should. Nothing to worry about here.",
-								},
-								{
-									status: "critical",
-									marker: "Iron Stores (Ferritin)",
-									value: "8 µg/L",
-									summary: "Low — see a doctor",
-									note: "Ferritin measures how much iron your body has stored. Yours is very low, which can cause tiredness, weakness, and difficulty concentrating. Please speak to your doctor soon — you may need an iron supplement.",
-								},
-							].map((f) => {
-								const isOpen = expandedFinding === f.marker;
-								return (
-									<div
-										key={f.marker}
-										className={`${styles.findingRow} ${styles[`status-${f.status}`]} ${isOpen ? styles.findingOpen : ""}`}
-										onClick={() => toggleFinding(f.marker)}
-									>
-										{/* Collapsed summary row */}
-										<div className={styles.findingSummary}>
-											<div className={styles.findingLeft}>
-												<div className={styles.findingMarker}>{f.marker}</div>
-												<div className={styles.findingValue}>{f.value}</div>
+								{ status: "good", marker: "Blood Sugar", sub: "Glucose", value: "5.2", unit: "mmol/L", summary: "Normal ✓", note: "Your blood sugar is at a healthy level. This means your body is managing energy well. Keep eating balanced meals and staying active." },
+								{ status: "warning", marker: "Bad Cholesterol", sub: "LDL", value: "3.8", unit: "mmol/L", summary: "A little high", note: "LDL is the type of cholesterol that can build up in your arteries over time. Yours is slightly above the ideal range. Try eating less fried food, butter, and red meat — and add more fish, nuts, and oats to your diet." },
+								{ status: "good", marker: "Red Blood Cells", sub: "Haemoglobin", value: "14.2", unit: "g/dL", summary: "Normal ✓", note: "Your red blood cells are healthy. They carry oxygen around your body, and yours are doing a great job. No signs of anaemia." },
+								{ status: "warning", marker: "Vitamin D", sub: "25-OH", value: "38", unit: "nmol/L", summary: "Lower than ideal", note: "Most people don’t get enough Vitamin D, especially in winter. It helps your bones, mood, and immune system. Try 15 minutes of sunlight daily and consider a Vitamin D supplement (1000–2000 IU)." },
+								{ status: "good", marker: "Thyroid", sub: "TSH", value: "2.1", unit: "mIU/L", summary: "Normal ✓", note: "Your thyroid gland — which controls your energy and metabolism — is working exactly as it should. Nothing to worry about here." },
+								{ status: "critical", marker: "Iron Stores", sub: "Ferritin", value: "8", unit: "µg/L", summary: "Low — see a doctor", note: "Ferritin measures how much iron your body has stored. Yours is very low, which can cause tiredness, weakness, and difficulty concentrating. Please speak to your doctor soon — you may need an iron supplement." },
+							].map((f) => (
+								<div key={f.marker} className={`${styles.findingCard} ${styles[`card-${f.status}`]}`}>
+									<div className={styles.cardBody}>
+										<div className={styles.cardTop}>
+											<div className={styles.cardNames}>
+												<span className={styles.cardMarker}>{f.marker}</span>
+												<span className={styles.cardSub}>{f.sub}</span>
 											</div>
-											<div className={styles.findingSummaryRight}>
-												<span className={`${styles.findingBadge} ${styles[`badge-${f.status}`]}`}>
-													{f.summary}
-												</span>
-												<ChevronDown
-													size={16}
-													className={`${styles.findingChevron} ${isOpen ? styles.chevronOpen : ""}`}
-												/>
-											</div>
+											<span className={`${styles.cardBadge} ${styles[`badge-${f.status}`]}`}>{f.summary}</span>
 										</div>
-
-										{/* Expanded explanation */}
-										<div className={`${styles.findingExpanded} ${isOpen ? styles.findingExpandedOpen : ""}`}>
-											<p className={styles.findingNote}>{f.note}</p>
+										<div className={styles.cardValue}>
+											<span className={styles.cardNum}>{f.value}</span>
+											<span className={styles.cardUnit}>{f.unit}</span>
 										</div>
+										<div className={styles.cardDivider} />
+										<p className={styles.cardNote}>{f.note}</p>
 									</div>
-								);
-							})}
+								</div>
+							))}
 						</div>
 					</div>
 
