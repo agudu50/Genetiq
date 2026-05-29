@@ -14,6 +14,7 @@ import {
 	Lightbulb,
 	InboxIcon,
 	ShieldCheck,
+	ArrowUpDown,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -229,12 +230,13 @@ const EmptyState = ({ onUpload }: { onUpload: () => void }) => (
 	</div>
 );
 
-// ─── Main page ────────────────────────────────────────────────────────────────
 
 export const HealthHistory: React.FC = () => {
 	const navigate = useNavigate();
 	const records  = useSelector((state: RootState) => state.uploadHistory.records);
 	const user     = useSelector((state: RootState) => state.user);
+
+	const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
 
 	// Derive display name — use the most recent upload's name if user slice is empty
 	const displayName = user.firstName
@@ -246,6 +248,13 @@ export const HealthHistory: React.FC = () => {
 	const bloodType = user.bloodType || records[0]?.bloodType || "";
 	const age       = user.age       || records[0]?.age       || "";
 	const gender    = user.gender    || records[0]?.gender     || "";
+
+	// Sort records based on uploadedAt time
+	const sortedRecords = [...records].sort((a, b) => {
+		const timeA = new Date(a.uploadedAt).getTime();
+		const timeB = new Date(b.uploadedAt).getTime();
+		return sortOrder === "desc" ? timeB - timeA : timeA - timeB;
+	});
 
 	return (
 		<div className={styles.page}>
@@ -314,29 +323,38 @@ export const HealthHistory: React.FC = () => {
 						<div className={styles.historyHeaderLeft}>
 							<FileText size={18} />
 							<h2>Upload History</h2>
+							<span className={styles.historyCount}>
+								{records.length} record{records.length !== 1 ? "s" : ""}
+							</span>
 						</div>
-						<span className={styles.historyCount}>
-							{records.length} record{records.length !== 1 ? "s" : ""}
-						</span>
+						{records.length > 1 && (
+							<button
+								className={styles.sortToggleBtn}
+								onClick={() => setSortOrder((order) => (order === "desc" ? "asc" : "desc"))}
+								title={sortOrder === "desc" ? "Showing latest first" : "Showing oldest first"}
+							>
+								<ArrowUpDown size={13} />
+								<span>{sortOrder === "desc" ? "Latest first" : "Oldest first"}</span>
+							</button>
+						)}
 					</div>
 
 					{records.length === 0 ? (
 						<EmptyState onUpload={() => navigate(paths.config.importOrUpload)} />
 					) : (
 						<div className={styles.timeline}>
-							{records.map((record, i) => (
+							{sortedRecords.map((record, i) => (
 								<div key={record.id} className={styles.timelineEntry}>
 									<div className={styles.timelineLine}>
 										<div className={styles.timelineDot} />
-										{i < records.length - 1 && <div className={styles.timelineConnector} />}
+										{i < sortedRecords.length - 1 && <div className={styles.timelineConnector} />}
 									</div>
-									<RecordCard record={record} index={i} />
+									<RecordCard record={record} index={records.indexOf(record)} />
 								</div>
 							))}
 						</div>
 					)}
 				</section>
-
 				{/* ── Disclaimer ──────────────────────────────────────────── */}
 				{records.length > 0 && (
 					<div className={styles.disclaimer}>
