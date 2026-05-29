@@ -237,14 +237,12 @@ export const HealthHistory: React.FC = () => {
 	const user     = useSelector((state: RootState) => state.user);
 
 	const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
-
 	// Derive display name — use the most recent upload's name if user slice is empty
-	const displayName = user.firstName
-		? `${user.firstName} ${user.lastName}`.trim()
-		: records[0]
-			? `${records[0].firstName} ${records[0].lastName}`.trim()
-			: "Your";
-
+	const userFullName = `${user.firstName || ""} ${user.lastName || ""}`.trim();
+	const recordFullName = records[0]
+		? `${records[0].firstName || ""} ${records[0].lastName || ""}`.trim()
+		: "";
+	const displayName = userFullName || recordFullName || "Your";
 	const bloodType = user.bloodType || records[0]?.bloodType || "";
 	const age       = user.age       || records[0]?.age       || "";
 	const gender    = user.gender    || records[0]?.gender     || "";
@@ -285,9 +283,10 @@ export const HealthHistory: React.FC = () => {
 					<div className={styles.profileAvatar}>
 						<User size={24} />
 					</div>
-
 					<div className={styles.profileInfo}>
-						<h1 className={styles.profileName}>{displayName}'s Health Record</h1>
+						<h1 className={styles.profileName}>
+							{displayName === "Your" ? "Your Health Record" : `${displayName}'s Health Record`}
+						</h1>
 						<div className={styles.profilePills}>
 							{age     && <span className={styles.profilePill}>{age} years old</span>}
 							{gender  && <span className={styles.profilePill}>{gender}</span>}

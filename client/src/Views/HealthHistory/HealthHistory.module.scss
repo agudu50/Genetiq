@@ -186,23 +186,38 @@ $blue:    #3b82f6;
 .profileBanner {
 	display: flex;
 	align-items: center;
-	gap: 20px;
-	padding: 28px 32px;
-	background: $card;
-	border: 1px solid $border;
-	border-radius: 20px;
+	gap: 24px;
+	padding: 32px;
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	border-radius: 24px;
 	flex-wrap: wrap;
-	transition: all 0.3s ease;
+	box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5), 0 0 30px rgba($teal, 0.02);
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	position: relative;
+	overflow: hidden;
+
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: radial-gradient(circle at 10% 10%, rgba($teal, 0.04) 0%, transparent 50%);
+		pointer-events: none;
+	}
 
 	@media (min-width: 1025px) {
 		flex-direction: column;
 		align-items: center;
 		text-align: center;
-		padding: 36px 24px;
+		padding: 40px 24px 32px;
 		position: sticky;
 		top: 84px;
 		width: 100%;
 		box-sizing: border-box;
+
+		&::after {
+			background: radial-gradient(circle at 50% 0%, rgba($teal, 0.05) 0%, transparent 60%);
+		}
 	}
 
 	@media (max-width: 640px) {
@@ -217,21 +232,31 @@ $blue:    #3b82f6;
 	width: 56px;
 	height: 56px;
 	border-radius: 50%;
-	background: rgba($teal, 0.1);
-	border: 1px solid rgba($teal, 0.25);
+	background: linear-gradient(135deg, rgba($teal, 0.15) 0%, rgba($teal, 0.04) 100%);
+	border: 2px solid rgba($teal, 0.25);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: $teal;
+	color: #fff;
 	flex-shrink: 0;
+	box-shadow: 0 8px 24px -6px rgba($teal, 0.2), inset 0 2px 8px rgba($teal, 0.1);
+	transition: all 0.3s ease;
+
+	svg {
+		filter: drop-shadow(0 0 6px rgba($teal, 0.4));
+	}
 
 	@media (min-width: 1025px) {
-		width: 68px;
-		height: 68px;
-		margin-bottom: 8px;
+		width: 72px;
+		height: 72px;
+		margin-bottom: 12px;
+		border-width: 3px;
+		box-shadow: 0 10px 30px -6px rgba($teal, 0.3), inset 0 2px 10px rgba($teal, 0.15);
+
 		svg {
-			width: 28px;
-			height: 28px;
+			width: 30px;
+			height: 30px;
+			filter: drop-shadow(0 0 8px rgba($teal, 0.5));
 		}
 	}
 }
@@ -257,14 +282,16 @@ $blue:    #3b82f6;
 }
 
 .profileName {
-	font-size: 1.35rem;
+	font-size: 1.4rem;
 	font-weight: 800;
-	margin: 0 0 10px;
-	color: #fff;
+	margin: 0 0 8px;
+	background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.75) 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
 	letter-spacing: -0.02em;
 
 	@media (max-width: 640px) { 
-		font-size: 1.1rem; 
+		font-size: 1.15rem; 
 		margin-bottom: 6px;
 	}
 }
@@ -288,12 +315,12 @@ $blue:    #3b82f6;
 	align-items: center;
 	gap: 5px;
 	padding: 4px 12px;
-	background: rgba(255, 255, 255, 0.05);
-	border: 1px solid $border;
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 255, 255, 0.05);
 	border-radius: 99px;
 	font-size: 0.78rem;
 	font-weight: 600;
-	color: $muted;
+	color: rgba(255, 255, 255, 0.6);
 
 	@media (max-width: 640px) {
 		padding: 3px 8px;
@@ -302,45 +329,61 @@ $blue:    #3b82f6;
 }
 
 .bloodPill {
-	border-color: rgba($red, 0.2);
-	background: rgba($red, 0.06);
+	border-color: rgba($red, 0.15);
+	background: rgba($red, 0.05);
 	color: rgba($red, 0.85);
 
 	svg { color: $red; }
 }
 
 .profileScore {
-	text-align: center;
-	flex-shrink: 0;
+	background: rgba(0, 0, 0, 0.2);
+	border: 1px solid rgba(255, 255, 255, 0.04);
+	border-radius: 18px;
+	padding: 16px 24px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-width: 140px;
+	box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+	box-sizing: border-box;
 
 	@media (min-width: 1025px) {
 		width: 100%;
+		border: none;
 		border-top: 1px solid rgba(255, 255, 255, 0.05);
+		background: transparent;
+		box-shadow: none;
+		padding: 24px 0 0;
+		border-radius: 0;
 		margin-top: 24px;
-		padding-top: 24px;
 	}
 
 	@media (max-width: 640px) {
 		grid-column: 1 / span 2;
 		grid-row: 2;
 		display: flex;
+		flex-direction: row;
 		align-items: center;
 		justify-content: space-between;
-		background: rgba(255, 255, 255, 0.01);
-		border-top: 1px solid rgba(255, 255, 255, 0.05);
+		background: rgba(0, 0, 0, 0.15);
+		border: 1px solid rgba(255, 255, 255, 0.03);
+		border-radius: 14px;
 		margin-top: 8px;
-		padding-top: 14px;
+		padding: 12px 16px;
 		width: 100%;
 		text-align: left;
+		box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.2);
 	}
 }
 
 .profileScoreLabel {
-	font-size: 0.7rem;
-	font-weight: 700;
+	font-size: 0.65rem;
+	font-weight: 800;
 	text-transform: uppercase;
-	letter-spacing: 0.07em;
-	color: $muted;
+	letter-spacing: 0.08em;
+	color: rgba(255, 255, 255, 0.4);
 	margin-bottom: 4px;
 
 	@media (max-width: 640px) {
@@ -350,19 +393,22 @@ $blue:    #3b82f6;
 }
 
 .profileScoreNum {
-	font-size: 2.8rem;
+	font-size: 3.2rem;
 	font-weight: 900;
 	line-height: 1;
-	letter-spacing: -0.03em;
+	letter-spacing: -0.04em;
+	text-shadow: 0 0 24px currentColor;
 
 	@media (max-width: 640px) {
 		font-size: 1.8rem;
+		text-shadow: 0 0 12px currentColor;
 	}
 }
 
 .profileScoreSub {
-	font-size: 0.72rem;
-	color: $muted;
+	font-size: 0.7rem;
+	color: rgba(255, 255, 255, 0.3);
+	font-weight: 600;
 	margin-top: 2px;
 
 	@media (max-width: 640px) {
