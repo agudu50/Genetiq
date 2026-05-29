@@ -745,13 +745,13 @@ $muted:  rgba(255,255,255,0.35);
 }
 
 .sectionTitle {
-	font-size: 1.15rem;
+	font-size: 1.25rem;
 	font-weight: 800;
 	color: #fff;
 	margin: 0;
 	letter-spacing: -0.02em;
 
-	@media (max-width: 640px) { font-size: 1rem; }
+	@media (max-width: 640px) { font-size: 1.1rem; }
 }
 
 // Section headers ──────────────────────────────────────────────────────────────
@@ -759,15 +759,30 @@ $muted:  rgba(255,255,255,0.35);
 .sectionHead {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: 5px;
+	position: relative;
+	padding-left: 16px;
+
+	&::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 3px;
+		bottom: 3px;
+		width: 3px;
+		background: linear-gradient(180deg, $teal 0%, rgba($teal, 0.2) 100%);
+		border-radius: 99px;
+	}
 }
 
 .sectionSub {
 	font-size: 0.88rem;
-	color: $muted;
+	font-weight: 500;
+	color: rgba(255, 255, 255, 0.45);
 	margin: 0;
+	letter-spacing: -0.01em;
 
-	@media (max-width: 640px) { font-size: 0.8rem; }
+	@media (max-width: 640px) { font-size: 0.82rem; }
 }
 
 // Score breakdown bar ──────────────────────────────────────────────────────────
