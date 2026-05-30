@@ -1,6 +1,7 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/App/Redux/store";
 import { updateUserInfo } from "@/App/Redux/userSlice";
 import { addUploadRecord } from "@/App/Redux/uploadHistorySlice";
 import type { LabFinding, Recommendation } from "@/App/Redux/uploadHistorySlice";
@@ -41,9 +42,16 @@ const ImportOrUpload = () => {
 	const [dragging, setDragging] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
+	const user = useSelector((state: RootState) => state.user);
+
 	const [info, setInfo] = useState({
-		firstName: "", lastName: "", age: "",
-		gender: "", bloodType: "",
+		firstName: user.firstName || "",
+		lastName:  user.lastName  || "",
+		age:       user.age       || "",
+		gender:    user.gender    || "",
+		bloodType: user.bloodType || "",
+		height:    user.height    || "",
+		weight:    user.weight    || "",
 	});
 
 	// ── Step 1: Personal info submit ──────────────────────────────────────────
@@ -378,7 +386,51 @@ const ImportOrUpload = () => {
 											<ChevronDown size={16} className={styles.selectChevron} />
 										</div>
 									</div>
+									<div className={styles.field}>
+										<label>Height <span className={styles.optional}>(optional)</span></label>
+										<div className={styles.unitInput}>
+											<input
+												type="number" min="50" max="300"
+												placeholder="e.g. 175"
+												value={info.height}
+												onChange={set("height")}
+											/>
+											<span className={styles.unitLabel}>cm</span>
+										</div>
+									</div>
+									<div className={styles.field}>
+										<label>Weight <span className={styles.optional}>(optional)</span></label>
+										<div className={styles.unitInput}>
+											<input
+												type="number" min="10" max="500"
+												placeholder="e.g. 72"
+												value={info.weight}
+												onChange={set("weight")}
+											/>
+											<span className={styles.unitLabel}>kg</span>
+										</div>
+									</div>
 								</div>
+
+								{/* Live BMI preview */}
+								{(() => {
+									const h = Number(info.height);
+									const w = Number(info.weight);
+									if (!h || !w) return null;
+									const bmi = w / ((h / 100) * (h / 100));
+									const cat =
+										bmi < 18.5 ? { label: "Underweight", color: "#60a5fa" } :
+										bmi < 25   ? { label: "Normal",      color: "#00A69D" } :
+										bmi < 30   ? { label: "Overweight",  color: "#fbbf24" } :
+										             { label: "Obese",       color: "#ef4444" };
+									return (
+										<div className={styles.bmiPreview}>
+											<span className={styles.bmiPreviewLabel}>BMI</span>
+											<span className={styles.bmiPreviewValue} style={{ color: cat.color }}>{bmi.toFixed(1)}</span>
+											<span className={styles.bmiPreviewCat} style={{ color: cat.color }}>— {cat.label}</span>
+										</div>
+									);
+								})()}
 
 								<button type="submit" className={styles.primaryBtn}>
 									Continue <ChevronRight size={16} />

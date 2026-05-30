@@ -1157,3 +1157,91 @@ $muted:  rgba(255,255,255,0.35);
 @keyframes spin {
 	to { transform: rotate(360deg); }
 }
+
+// ── Height / Weight unit inputs ───────────────────────────────────────────────
+
+.unitInput {
+	display: flex;
+	align-items: center;
+	border: 1px solid $border;
+	border-radius: 12px;
+	background: rgba(255,255,255,0.02);
+	overflow: hidden;
+	transition: border-color 0.2s ease;
+
+	&:focus-within {
+		border-color: rgba($teal, 0.5);
+		box-shadow: 0 0 0 3px rgba($teal, 0.08);
+	}
+
+	input {
+		flex: 1;
+		background: transparent;
+		border: none;
+		outline: none;
+		padding: 12px 14px;
+		font-size: 1rem;
+		font-weight: 600;
+		color: $text;
+		font-family: inherit;
+		-moz-appearance: textfield;
+
+		&::placeholder { color: $muted; }
+
+		&::-webkit-outer-spin-button,
+		&::-webkit-inner-spin-button {
+			-webkit-appearance: none;
+			margin: 0;
+		}
+	}
+}
+
+.unitLabel {
+	padding: 0 14px;
+	font-size: 12px;
+	font-weight: 800;
+	color: $teal;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	border-left: 1px solid $border;
+	white-space: nowrap;
+	line-height: 46px;
+}
+
+// ── Live BMI preview strip ─────────────────────────────────────────────────────
+
+.bmiPreview {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 12px 16px;
+	border-radius: 12px;
+	background: rgba(255,255,255,0.02);
+	border: 1px solid $border;
+	animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+	from { opacity: 0; transform: translateY(4px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+
+.bmiPreviewLabel {
+	font-size: 11px;
+	font-weight: 800;
+	color: $muted;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+}
+
+.bmiPreviewValue {
+	font-size: 22px;
+	font-weight: 800;
+	line-height: 1;
+}
+
+.bmiPreviewCat {
+	font-size: 13px;
+	font-weight: 700;
+	margin-left: auto;
+}
