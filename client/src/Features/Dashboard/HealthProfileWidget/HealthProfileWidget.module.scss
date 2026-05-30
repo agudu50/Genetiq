@@ -251,6 +251,7 @@
 	transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 	box-sizing: border-box;
 	text-decoration: none;
+	cursor: pointer; // clickable to open edit
 
 	html[data-theme="light"] & {
 		background: rgba(15, 23, 42, 0.01);
@@ -453,10 +454,13 @@
 }
 
 .updateBtn {
+	display: flex;
+	align-items: center;
+	gap: 6px;
 	background: rgba($teal-primary, 0.08);
 	color: $teal-primary;
 	border: 1px solid rgba($teal-primary, 0.15);
-	padding: 8px 18px;
+	padding: 8px 16px;
 	border-radius: 10px;
 	font-size: 12.5px;
 	font-weight: 700;
@@ -474,6 +478,245 @@
 		border-color: transparent;
 		transform: translateY(-1px);
 		box-shadow: 0 4px 12px rgba($teal-primary, 0.25);
+	}
+
+	&:active {
+		transform: translateY(0);
+	}
+}
+
+// ─── Add hint on empty cards ───
+.addHint {
+	font-size: 9px;
+	font-weight: 800;
+	color: $teal-primary;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	opacity: 0.7;
+}
+
+// ─────────────────────────────────────────────
+// Edit panel (inline height / weight inputs)
+// ─────────────────────────────────────────────
+.editPanel {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 14px 16px;
+	border-radius: 14px;
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	animation: editSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+	html[data-theme="light"] & {
+		background: rgba(15, 23, 42, 0.02);
+		border-color: rgba(15, 23, 42, 0.06);
+	}
+}
+
+@keyframes editSlideIn {
+	from { opacity: 0; transform: translateY(6px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+
+.editPanelTitle {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 12px;
+	font-weight: 700;
+	color: #94a3b8;
+	margin: 0;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+
+	html[data-theme="light"] & {
+		color: #64748b;
+	}
+
+	svg {
+		color: $teal-primary;
+		flex-shrink: 0;
+	}
+}
+
+.inputGroup {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.inputLabel {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 11.5px;
+	font-weight: 700;
+	color: #94a3b8;
+
+	html[data-theme="light"] & {
+		color: #64748b;
+	}
+
+	svg {
+		color: $teal-primary;
+		flex-shrink: 0;
+	}
+}
+
+.inputRow {
+	display: flex;
+	align-items: center;
+	gap: 0;
+	border-radius: 10px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(255, 255, 255, 0.03);
+	overflow: hidden;
+	transition: border-color 0.2s ease;
+
+	html[data-theme="light"] & {
+		border-color: rgba(15, 23, 42, 0.1);
+		background: rgba(255, 255, 255, 0.8);
+	}
+
+	&:focus-within {
+		border-color: rgba($teal-primary, 0.5);
+		box-shadow: 0 0 0 3px rgba($teal-primary, 0.1);
+	}
+}
+
+.metricInput {
+	flex: 1;
+	background: transparent;
+	border: none;
+	outline: none;
+	padding: 10px 14px;
+	font-size: 15px;
+	font-weight: 700;
+	color: #ffffff;
+	width: 100%;
+	-moz-appearance: textfield;
+
+	html[data-theme="light"] & {
+		color: #0f172a;
+	}
+
+	&::placeholder {
+		color: rgba(255, 255, 255, 0.2);
+		font-weight: 500;
+		html[data-theme="light"] & {
+			color: rgba(15, 23, 42, 0.25);
+		}
+	}
+
+	&::-webkit-outer-spin-button,
+	&::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+}
+
+.inputUnit {
+	padding: 0 14px;
+	font-size: 12px;
+	font-weight: 800;
+	color: $teal-primary;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	border-left: 1px solid rgba(255, 255, 255, 0.06);
+	white-space: nowrap;
+
+	html[data-theme="light"] & {
+		border-color: rgba(15, 23, 42, 0.08);
+	}
+}
+
+// Live BMI preview strip
+.bmiPreview {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 14px;
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 255, 255, 0.05);
+
+	html[data-theme="light"] & {
+		background: rgba(15, 23, 42, 0.02);
+		border-color: rgba(15, 23, 42, 0.06);
+	}
+}
+
+.bmiPreviewLabel {
+	font-size: 11px;
+	font-weight: 700;
+	color: #64748b;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	flex-shrink: 0;
+}
+
+.bmiPreviewValue {
+	font-size: 18px;
+	font-weight: 800;
+	line-height: 1;
+	margin-left: auto;
+}
+
+// Edit action buttons
+.editActions {
+	display: flex;
+	gap: 8px;
+	margin-top: 4px;
+}
+
+.cancelBtn {
+	flex: 1;
+	padding: 9px 0;
+	border-radius: 10px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: transparent;
+	color: #94a3b8;
+	font-size: 13px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.2s ease;
+
+	html[data-theme="light"] & {
+		border-color: rgba(15, 23, 42, 0.1);
+		color: #64748b;
+	}
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.04);
+		color: #ffffff;
+		html[data-theme="light"] & {
+			background: rgba(15, 23, 42, 0.04);
+			color: #0f172a;
+		}
+	}
+}
+
+.saveBtn {
+	flex: 2;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 9px 0;
+	border-radius: 10px;
+	border: none;
+	background: linear-gradient(135deg, $teal-primary 0%, $cyan 100%);
+	color: white;
+	font-size: 13px;
+	font-weight: 800;
+	cursor: pointer;
+	transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+	box-shadow: 0 4px 14px rgba($teal-primary, 0.25);
+
+	&:hover {
+		transform: translateY(-1px);
+		box-shadow: 0 6px 20px rgba($teal-primary, 0.35);
 	}
 
 	&:active {
