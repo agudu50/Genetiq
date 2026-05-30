@@ -33,7 +33,6 @@ export default defineConfig({
 		port: 5173,
 		strictPort: false,
 		host: true,
-		origin: "http://localhost:5173",
 	},
 	preview: {
 		port: 4173,

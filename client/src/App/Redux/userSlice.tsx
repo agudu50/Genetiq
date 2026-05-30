@@ -25,6 +25,7 @@ export interface UserState {
 		diet: string;
 	};
 	isProfileComplete: boolean;
+	isPremium: boolean;
 	walletAddress: string;
 	isWalletConnected: boolean;
 	biologicalAge: string;
@@ -53,6 +54,7 @@ const initialState: UserState = {
 		diet: "",
 	},
 	isProfileComplete: false,
+	isPremium: false,
 	walletAddress: "",
 	isWalletConnected: false,
 	biologicalAge: "",

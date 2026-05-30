@@ -104,23 +104,33 @@
 	}
 }
 
-.headerInfo {
+// ─── Identity Banner ───
+.identityBanner {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	width: 100%;
+}
+
+.identityInfo {
 	flex: 1;
 	min-width: 0;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
+	gap: 8px;
 }
 
-.name {
+.displayName {
 	font-size: 18px;
 	font-weight: 800;
 	font-family: 'Outfit', sans-serif;
 	color: #ffffff;
-	margin: 0 0 4px;
+	margin: 0;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	max-width: 100%;
 	text-align: left;
 
 	html[data-theme="light"] & {
@@ -132,10 +142,52 @@
 	}
 }
 
-.metaRow {
+.badgeRow {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 6px;
+	align-items: center;
+}
+
+// ─── Member tier badge ───
+.memberBadge {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 10px;
+	font-weight: 800;
+	padding: 3px 10px;
+	border-radius: 20px;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.premiumBadge {
+	background: linear-gradient(135deg, rgba($teal-primary, 0.2) 0%, rgba($cyan, 0.15) 100%);
+	color: $cyan;
+	border: 1px solid rgba($teal-primary, 0.35);
+	box-shadow: 0 0 12px rgba($teal-primary, 0.15);
+
+	svg {
+		fill: $cyan;
+		color: $cyan;
+	}
+}
+
+.freeBadge {
+	background: rgba(255, 255, 255, 0.04);
+	color: #94a3b8;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+
+	html[data-theme="light"] & {
+		background: rgba(15, 23, 42, 0.03);
+		color: #64748b;
+		border-color: rgba(15, 23, 42, 0.08);
+	}
+
+	svg {
+		color: #64748b;
+	}
 }
 
 .metaTag {

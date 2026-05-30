@@ -9,7 +9,7 @@ export interface ModelProps {
 }
 
 export interface TextureSet {
-	diffuse: THREE.Texture;
+	diffuse?: THREE.Texture;
 	normal: THREE.Texture;
 	height?: THREE.Texture;
 }

@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "@/App/Redux/store";
 import { paths } from "@/App/Routes/Paths";
 import styles from "./Navbar.module.scss";
 import NotificationHub from "./Components/NotificationsHub/NotificationsHub";
@@ -21,11 +23,13 @@ const Navbar = () => {
 	const [isProfileOpen, setIsProfileOpen] = useState(false);
 	const moreRef = useRef<HTMLDivElement>(null);
 	const profileRef = useRef<HTMLDivElement>(null);
-	const userName = "John Doe";
-	const userInitials = userName
-		.split(" ")
-		.map((n) => n[0])
-		.join("");
+	const user = useSelector((state: RootState) => state.user);
+	const userInitials = useMemo(() => {
+		if (user.firstName && user.lastName)
+			return `${user.firstName[0]}${user.lastName[0]}`.toUpperCase();
+		if (user.firstName) return user.firstName[0].toUpperCase();
+		return "?";
+	}, [user.firstName, user.lastName]);
 	// Map paths to keys for active state
 	const pathToKey: Record<string, string> = {
 		[paths.dashboard.root]: "dashboard_nav",
