@@ -1038,3 +1038,32 @@ $blue:    #3b82f6;
 
 	svg { flex-shrink: 0; color: $teal; margin-top: 1px; }
 }
+
+.newUploadBannerBtn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	width: 100%;
+	margin-top: 24px;
+	padding: 10px 18px;
+	background: linear-gradient(135deg, var(--accent, #00A69D), #38bdf8);
+	border: none;
+	border-radius: 12px;
+	color: #ffffff;
+	font-size: 0.85rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.25s ease;
+	box-shadow: 0 4px 15px rgba(0, 166, 157, 0.3);
+	z-index: 1;
+
+	&:hover {
+		transform: translateY(-1px);
+		box-shadow: 0 6px 20px rgba(0, 166, 157, 0.45);
+	}
+
+	&:active {
+		transform: translateY(0);
+	}
+}

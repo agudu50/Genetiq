@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-	ArrowLeft,
 	User,
 	Upload,
 	ChevronDown,
@@ -256,27 +255,6 @@ export const HealthHistory: React.FC = () => {
 
 	return (
 		<div className={styles.page}>
-			{/* ── Top navbar ────────────────────────────────────────────────── */}
-			<header className={styles.topNav}>
-				<button className={styles.backBtn} onClick={() => navigate(-1)}>
-					<ArrowLeft size={16} />
-					<span>Back</span>
-				</button>
-
-				<div className={styles.navCenter}>
-					<ShieldCheck size={16} className={styles.navIcon} />
-					<span>Clinical History</span>
-				</div>
-
-				<button
-					className={styles.newUploadBtn}
-					onClick={() => navigate(paths.config.importOrUpload, { state: { skipToUpload: true } })}
-				>
-					<Upload size={14} />
-					New upload
-				</button>
-			</header>
-
 			<main className={styles.mainContent}>
 				{/* ── Patient profile banner ──────────────────────────────── */}
 				<section className={styles.profileBanner}>
@@ -314,6 +292,14 @@ export const HealthHistory: React.FC = () => {
 							<div className={styles.profileScoreSub}>out of 100</div>
 						</div>
 					)}
+
+					<button
+						className={styles.newUploadBannerBtn}
+						onClick={() => navigate(paths.config.importOrUpload, { state: { skipToUpload: true } })}
+					>
+						<Upload size={13} />
+						<span>New Upload</span>
+					</button>
 				</section>
 
 				{/* ── Upload history timeline ─────────────────────────────── */}

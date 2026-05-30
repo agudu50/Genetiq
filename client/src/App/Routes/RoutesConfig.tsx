@@ -1,37 +1,39 @@
 import { RouteObject } from "react-router-dom";
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
 import { paths } from "./Paths";
 import GlobalLayout from "../Layouts/GlobalLayout";
 import MainLayout from "../Layouts/MainLayout";
 import AuthLayout from "../Layouts/Auth/AuthLayout";
 import { ConfigLayout } from "../Layouts/ConfigLayout";
+import RouteErrorFallback from "./RouteErrorFallback";
+import { lazyWithRetry } from "./lazyWithRetry";
 
-const Landing = lazy(() => import("@/Views/Landing/Landing"));
-const Dashboard = lazy(() => import("@/Views/Dashboard/Dashboard"));
-const Login = lazy(() => import("@/Views/Auth/Login/Login"));
-const Register = lazy(() => import("@/Views/Auth/Register/Register"));
-const Config = lazy(() => import("@/Views/UploadMethod/UploadMethod"));
-const ImportOrUpload = lazy(
+const Landing = lazyWithRetry(() => import("@/Views/Landing/Landing"));
+const Dashboard = lazyWithRetry(() => import("@/Views/Dashboard/Dashboard"));
+const Login = lazyWithRetry(() => import("@/Views/Auth/Login/Login"));
+const Register = lazyWithRetry(() => import("@/Views/Auth/Register/Register"));
+const Config = lazyWithRetry(() => import("@/Views/UploadMethod/UploadMethod"));
+const ImportOrUpload = lazyWithRetry(
 	() => import("@/Views/UploadMethod/ImportOrUpload/ImportOrUpload"),
 );
-const ConnectAppDevice = lazy(
+const ConnectAppDevice = lazyWithRetry(
 	() => import("@/Views/UploadMethod/ConnectAppDevice/ConnectAppDevice"),
 );
-const Goals = lazy(() => import("@/Views/UploadMethod/Goals/Goals"));
-const Reports = lazy(() => import("@/Views/UploadMethod/Reports/Reports"));
-const Tests = lazy(() => import("@/Views/UploadMethod/Tests/Tests"));
-const Genomics = lazy(() => import("@/Views/UploadMethod/Genomics/Genomics"));
-const DetailedRisk = lazy(() => import("@/Views/DetailedRisk/DetailedRisk"));
-const SystemOverview = lazy(
+const Goals = lazyWithRetry(() => import("@/Views/UploadMethod/Goals/Goals"));
+const Reports = lazyWithRetry(() => import("@/Views/UploadMethod/Reports/Reports"));
+const Tests = lazyWithRetry(() => import("@/Views/UploadMethod/Tests/Tests"));
+const Genomics = lazyWithRetry(() => import("@/Views/UploadMethod/Genomics/Genomics"));
+const DetailedRisk = lazyWithRetry(() => import("@/Views/DetailedRisk/DetailedRisk"));
+const SystemOverview = lazyWithRetry(
 	() => import("@/Views/SystemOverview/SystemOverview"),
 );
-const LogVitals = lazy(() => import("@/Views/Dashboard/Logs/LogVitals"));
-const TrackMeal = lazy(() => import("@/Views/Dashboard/Logs/TrackMeal"));
-const LogExercise = lazy(() => import("@/Views/Dashboard/Logs/LogExercise"));
-const AIAssistant = lazy(() => import("@/Views/Dashboard/Logs/AIAssistant"));
-const HealthHistory = lazy(() => import("@/Views/HealthHistory/HealthHistory"));
-const Terms = lazy(() => import("@/Views/Legal/Terms/Terms"));
-const Privacy = lazy(() => import("@/Views/Legal/Privacy/Privacy"));
+const LogVitals = lazyWithRetry(() => import("@/Views/Dashboard/Logs/LogVitals"));
+const TrackMeal = lazyWithRetry(() => import("@/Views/Dashboard/Logs/TrackMeal"));
+const LogExercise = lazyWithRetry(() => import("@/Views/Dashboard/Logs/LogExercise"));
+const AIAssistant = lazyWithRetry(() => import("@/Views/Dashboard/Logs/AIAssistant"));
+const HealthHistory = lazyWithRetry(() => import("@/Views/HealthHistory/HealthHistory"));
+const Terms = lazyWithRetry(() => import("@/Views/Legal/Terms/Terms"));
+const Privacy = lazyWithRetry(() => import("@/Views/Legal/Privacy/Privacy"));
 
 const Lazy = ({ children }: { children: React.ReactNode }) => (
 	<Suspense fallback={null}>{children}</Suspense>
@@ -41,6 +43,7 @@ const RoutesConfig: RouteObject[] = [
 	{
 		element: <GlobalLayout />,
 		path: "",
+		errorElement: <RouteErrorFallback />,
 		children: [
 			// Standalone Landing page (no layout wrapper)
 			{
@@ -51,14 +54,7 @@ const RoutesConfig: RouteObject[] = [
 					</Lazy>
 				),
 			},
-			{
-				path: paths.clinicalHistory,
-				element: (
-					<Lazy>
-						<HealthHistory />
-					</Lazy>
-				),
-			},
+
 			{
 				path: paths.terms,
 				element: (
@@ -166,6 +162,14 @@ const RoutesConfig: RouteObject[] = [
 							</Lazy>
 						),
 						path: paths.config.goals,
+					},
+					{
+						element: (
+							<Lazy>
+								<HealthHistory />
+							</Lazy>
+						),
+						path: paths.clinicalHistory,
 					},
 				],
 			},

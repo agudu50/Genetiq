@@ -6,6 +6,12 @@ import { Provider } from "react-redux";
 import store from "./Redux/store";
 import { ToastContainer } from "react-toastify";
 import { LanguageProvider } from "./i18n/LanguageContext";
+import { reloadForStaleAssets } from "./Routes/lazyWithRetry";
+
+window.addEventListener("vite:preloadError", (event) => {
+	event.preventDefault();
+	reloadForStaleAssets();
+});
 
 createRoot(document.getElementById("root")!).render(
 	<Provider store={store}>
