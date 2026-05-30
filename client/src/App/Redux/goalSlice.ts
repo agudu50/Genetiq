@@ -37,12 +37,12 @@ const initialState: GoalState = {
 			title: "Hydration Target",
 			description: "Drink 3L of water daily.",
 			target_value: "3000",
-			current_value: "2100",
+			current_value: "0",
 			unit: "ml",
-			progress: 70,
+			progress: 0,
 			status: "In Progress",
 			trend: "improving",
-			streak: 14,
+			streak: 0,
 			completed: false,
 		},
 		{
@@ -51,14 +51,13 @@ const initialState: GoalState = {
 			title: "Zone 2 Training",
 			description: "45 min of low-intensity cardio.",
 			target_value: "45",
-			current_value: "45",
+			current_value: "0",
 			unit: "min",
-			progress: 100,
-			status: "Completed",
+			progress: 0,
+			status: "In Progress",
 			trend: "stable",
-			streak: 8,
-			completed: true,
-			suiMilestoneHash: "0x7a2...8f3c",
+			streak: 0,
+			completed: false,
 		},
 		{
 			id: "goal-3",
@@ -66,12 +65,12 @@ const initialState: GoalState = {
 			title: "Deep Sleep Window",
 			description: "Aim for 2 hours of deep sleep.",
 			target_value: "120",
-			current_value: "95",
+			current_value: "0",
 			unit: "min",
-			progress: 79,
+			progress: 0,
 			status: "In Progress",
 			trend: "stable",
-			streak: 3,
+			streak: 0,
 			completed: false,
 		},
 		{
@@ -80,23 +79,30 @@ const initialState: GoalState = {
 			title: "Meditation Burst",
 			description: "10 mins of mindfulness.",
 			target_value: "10",
-			current_value: "10",
+			current_value: "0",
 			unit: "min",
-			progress: 100,
-			status: "Completed",
+			progress: 0,
+			status: "In Progress",
 			trend: "improving",
-			streak: 21,
-			completed: true,
+			streak: 0,
+			completed: false,
 		},
 	],
-	streakCount: 12,
-	totalHealthScore: 88,
+	streakCount: 0,
+	totalHealthScore: 0,
 };
 
 const goalSlice = createSlice({
 	name: "goals",
 	initialState,
 	reducers: {
+		setGoals: (state, action: PayloadAction<HealthGoal[]>) => {
+			state.items = action.payload;
+			// Recalculate streak and health score based on completed items
+			const completedCount = action.payload.filter((g) => g.completed).length;
+			state.streakCount = completedCount > 0 ? 5 : 0; // simple mock streak
+			state.totalHealthScore = Math.round((completedCount / action.payload.length) * 100) || 0;
+		},
 		toggleGoal: (state, action: PayloadAction<string>) => {
 			const goal = state.items.find((g) => g.id === action.payload);
 			if (goal) {
@@ -105,12 +111,18 @@ const goalSlice = createSlice({
 					goal.streak += 1;
 					goal.progress = 100;
 					goal.status = "Completed";
+					goal.current_value = goal.target_value;
 				} else {
 					goal.streak = Math.max(0, goal.streak - 1);
 					goal.progress = 0;
 					goal.status = "In Progress";
+					goal.current_value = "0";
 				}
 			}
+			// Update dynamic health score
+			const completedCount = state.items.filter((g) => g.completed).length;
+			state.totalHealthScore = Math.round((completedCount / state.items.length) * 100) || 0;
+			state.streakCount = completedCount > 0 ? 5 : 0;
 		},
 		updateGoalProgress: (
 			state,
@@ -121,9 +133,15 @@ const goalSlice = createSlice({
 				goal.current_value = action.payload.current;
 				goal.progress = action.payload.progress;
 			}
+			// Update dynamic health score
+			const completedCount = state.items.filter((g) => g.completed).length;
+			state.totalHealthScore = Math.round((completedCount / state.items.length) * 100) || 0;
 		},
 		addGoal: (state, action: PayloadAction<HealthGoal>) => {
 			state.items.push(action.payload);
+			// Update dynamic health score
+			const completedCount = state.items.filter((g) => g.completed).length;
+			state.totalHealthScore = Math.round((completedCount / state.items.length) * 100) || 0;
 		},
 		mintMilestone: (
 			state,
@@ -137,6 +155,6 @@ const goalSlice = createSlice({
 	},
 });
 
-export const { toggleGoal, updateGoalProgress, addGoal, mintMilestone } =
+export const { setGoals, toggleGoal, updateGoalProgress, addGoal, mintMilestone } =
 	goalSlice.actions;
 export default goalSlice.reducer;
