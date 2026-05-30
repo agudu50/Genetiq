@@ -24,8 +24,6 @@ import {
 	Heart,
 	TrendingUp,
 	Target,
-	ShieldAlert,
-	ShieldCheck
 } from "lucide-react";
 import styles from "./Goals.module.scss";
 
@@ -104,7 +102,6 @@ const Goals = () => {
 	const handleToggle = useCallback(
 		async (id: string) => {
 			dispatch(toggleGoal(id));
-			const goal = goals.find((g) => g.id === id);
 			const updatedGoals = goals.map((g: HealthGoal) =>
 				g.id === id ? { ...g, completed: !g.completed, current_value: !g.completed ? g.target_value : "0", progress: !g.completed ? 100 : 0 } : g,
 			);

@@ -38,10 +38,6 @@ const Navbar = () => {
 		[paths.config.tests]: "tests_nav",
 	};
 
-	const isDashboardRoot = useMemo(() => {
-		return location.pathname === paths.dashboard.root;
-	}, [location.pathname]);
-
 	const isConfigFlow = useMemo(() => {
 		return [
 			paths.config.root,

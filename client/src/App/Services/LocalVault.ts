@@ -65,10 +65,10 @@ export const LocalVault = {
 	},
 
 	// Generic get
-	get: async (key: string) => {
+	get: async <T>(key: string): Promise<T | null> => {
 		try {
-			const value = await localforage.getItem(key);
-			return value;
+			const value = await localforage.getItem<T>(key);
+			return value ?? null;
 		} catch (err) {
 			console.error(`LocalVault: Error getting ${key}`, err);
 			return null;
