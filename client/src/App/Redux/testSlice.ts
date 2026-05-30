@@ -15,6 +15,7 @@ export interface LabTest {
 	order_date?: string;
 	price?: string;
 	tracking?: string;
+	suiHash?: string;
 	system: string; // The system to highlight on the Digital Twin
 }
 

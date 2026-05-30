@@ -4,6 +4,18 @@ import Navbar from "./Navbar";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { paths } from "@/App/Routes/Paths";
 
+// Mock react-redux
+vi.mock("react-redux", () => ({
+	useSelector: (fn: any) => fn({
+		user: {
+			firstName: "John",
+			lastName: "Doe",
+			isPremium: false,
+		}
+	}),
+	useDispatch: () => vi.fn(),
+}));
+
 const mockNavigate = vi.fn();
 
 vi.mock("react-router-dom", async () => {
@@ -36,8 +48,8 @@ describe("Navbar Component (Mobile)", () => {
 		fireEvent.click(screen.getByText("goals_nav"));
 		expect(mockNavigate).toHaveBeenCalledWith(paths.config.goals);
 
-		fireEvent.click(screen.getByText("reports_nav"));
-		expect(mockNavigate).toHaveBeenCalledWith(paths.config.reports);
+		fireEvent.click(screen.getByText("history_nav"));
+		expect(mockNavigate).toHaveBeenCalledWith(paths.clinicalHistory);
 
 		fireEvent.click(screen.getByText("tests_nav"));
 		expect(mockNavigate).toHaveBeenCalledWith(paths.config.tests);

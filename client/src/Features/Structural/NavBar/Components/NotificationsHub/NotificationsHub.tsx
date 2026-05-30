@@ -12,6 +12,7 @@ const NotificationHub: React.FC<NotificationHubProps> = ({
 	disabled = false,
 }) => {
 	const [isOpen, setIsOpen] = useState(false);
+	const [dismissedIds, setDismissedIds] = useState<number[]>([]);
 	const ref = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -24,6 +25,12 @@ const NotificationHub: React.FC<NotificationHubProps> = ({
 		return () => document.removeEventListener("mousedown", handleClick);
 	}, []);
 
+	const activeCount = 4 - dismissedIds.length;
+
+	const handleDismiss = (id: number) => {
+		setDismissedIds((prev) => [...prev, id]);
+	};
+
 	return (
 		<div className={styles["notification-wrapper"]} ref={ref}>
 			<button
@@ -32,7 +39,11 @@ const NotificationHub: React.FC<NotificationHubProps> = ({
 				disabled={disabled}
 				aria-label='Notifications'
 			>
-				{IsBadge ? <div className={styles["badge"]} /> : null}
+				{IsBadge && activeCount > 0 ? (
+					<div className={styles["badge-number"]}>
+						{activeCount}
+					</div>
+				) : null}
 				<svg
 					width='18'
 					height='18'
@@ -50,7 +61,10 @@ const NotificationHub: React.FC<NotificationHubProps> = ({
 
 			{isOpen && (
 				<div className={styles["notification-dropdown"]}>
-					<HealthInsights />
+					<HealthInsights 
+						dismissedIds={dismissedIds}
+						onDismiss={handleDismiss}
+					/>
 				</div>
 			)}
 		</div>

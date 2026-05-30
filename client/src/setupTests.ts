@@ -31,6 +31,9 @@ vi.mock("@assets/Navbar/Icons/Dashboard.svg?react", () => ({
 vi.mock("@assets/Navbar/Icons/Reports.svg?react", () => ({
 	default: () => "ReportsIcon",
 }));
+vi.mock("@assets/Navbar/Icons/History.svg?react", () => ({
+	default: () => "HistoryIcon",
+}));
 vi.mock("@assets/Navbar/Icons/Goals.svg?react", () => ({
 	default: () => "GoalsIcon",
 }));

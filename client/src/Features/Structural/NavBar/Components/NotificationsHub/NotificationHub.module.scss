@@ -50,22 +50,37 @@
 		transform: translateY(0);
 	}
 
-	.badge {
+	.badge-number {
 		position: absolute;
-		top: 7px;
-		right: 7px;
-		width: 7px;
-		height: 7px;
-		background: #ef4444;
+		top: -4px;
+		right: -4px;
+		min-width: 16px;
+		height: 16px;
+		padding: 0 4px;
+		background: linear-gradient(135deg, #f43f5e, #e11d48);
+		color: #ffffff;
+		font-size: 9.5px;
+		font-weight: 700;
 		border-radius: 50%;
-		border: 1.5px solid white;
+		border: 1.5px solid #ffffff;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		box-shadow: 0 2px 8px rgba(225, 29, 72, 0.4);
 		animation: badgePulse 2s infinite;
+		box-sizing: border-box;
+
+		html[data-theme="dark"] & {
+			border-color: #0b0f19;
+		}
 
 		@media (max-width: 768px) {
-			top: 5px;
-			right: 5px;
-			width: 6px;
-			height: 6px;
+			top: -3px;
+			right: -3px;
+			min-width: 14px;
+			height: 14px;
+			font-size: 8.5px;
+			border-width: 1px;
 		}
 	}
 }

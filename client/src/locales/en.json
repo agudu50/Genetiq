@@ -16,6 +16,7 @@
 	"dashboard_nav": "Dashboard",
 	"goals_nav": "Goals",
 	"reports_nav": "Reports",
+	"history_nav": "History",
 	"tests_nav": "Tests",
 	"manage_data": "Manage data",
 	"cta_new_insights": "New insights",

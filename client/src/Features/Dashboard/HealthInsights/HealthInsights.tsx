@@ -1,6 +1,14 @@
 import { useState } from "react";
 import styles from "./HealthInsights.module.scss";
 import { useLanguage } from "@/App/i18n/LanguageContext";
+import { 
+	Sparkles, 
+	CheckCircle2, 
+	Lightbulb, 
+	Calendar, 
+	X, 
+	ArrowRight 
+} from "lucide-react";
 
 interface Insight {
 	id: number;
@@ -11,10 +19,17 @@ interface Insight {
 	actionLabel?: string;
 }
 
-export const HealthInsights = () => {
+interface HealthInsightsProps {
+	dismissedIds?: number[];
+	onDismiss?: (id: number) => void;
+}
+
+export const HealthInsights = ({ dismissedIds: propDismissedIds, onDismiss }: HealthInsightsProps) => {
 	const { t } = useLanguage();
-	const [dismissedIds, setDismissedIds] = useState<number[]>([]);
+	const [localDismissedIds, setLocalDismissedIds] = useState<number[]>([]);
 	const [showAll, setShowAll] = useState(false);
+
+	const dismissedIds = propDismissedIds !== undefined ? propDismissedIds : localDismissedIds;
 
 	const insights: Insight[] = [
 		{
@@ -41,7 +56,7 @@ export const HealthInsights = () => {
 			type: "tip",
 			title: t("daily_tip") || "Daily Health Tip",
 			description:
-				t("tip_desc") || "A 10-min walk after meals improves digestion.",
+				t("tip_desc") || "Taking a 10-minute walk after meals can help improve digestion and blood sugar levels.",
 		},
 		{
 			id: 4,
@@ -58,47 +73,23 @@ export const HealthInsights = () => {
 	const hasMore = activeInsights.length > 3 && !showAll;
 
 	const dismissInsight = (id: number) => {
-		setDismissedIds((prev) => [...prev, id]);
+		if (onDismiss) {
+			onDismiss(id);
+		} else {
+			setLocalDismissedIds((prev) => [...prev, id]);
+		}
 	};
 
 	const getIcon = (type: string) => {
 		switch (type) {
 			case "warning":
-				return (
-					<svg width='20' height='20' viewBox='0 0 20 20' fill='currentColor'>
-						<path
-							fillRule='evenodd'
-							d='M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z'
-							clipRule='evenodd'
-						/>
-					</svg>
-				);
+				return <Sparkles className={styles.icon} size={16} />;
 			case "success":
-				return (
-					<svg width='20' height='20' viewBox='0 0 20 20' fill='currentColor'>
-						<path
-							fillRule='evenodd'
-							d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z'
-							clipRule='evenodd'
-						/>
-					</svg>
-				);
+				return <CheckCircle2 className={styles.icon} size={16} />;
 			case "tip":
-				return (
-					<svg width='20' height='20' viewBox='0 0 20 20' fill='currentColor'>
-						<path d='M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z' />
-					</svg>
-				);
+				return <Lightbulb className={styles.icon} size={16} />;
 			default:
-				return (
-					<svg width='20' height='20' viewBox='0 0 20 20' fill='currentColor'>
-						<path
-							fillRule='evenodd'
-							d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z'
-							clipRule='evenodd'
-						/>
-					</svg>
-				);
+				return <Calendar className={styles.icon} size={16} />;
 		}
 	};
 
@@ -107,9 +98,12 @@ export const HealthInsights = () => {
 	return (
 		<div className={styles.insightsContainer}>
 			<div className={styles.header}>
-				<h3 className={styles.title}>
-					{t("health_insights") || "Health Insights"}
-				</h3>
+				<div className={styles.titleWrapper}>
+					<h3 className={styles.title}>
+						{t("health_insights") || "Health Insights"}
+					</h3>
+					<span className={styles.pulseDot} />
+				</div>
 				<span className={styles.badge}>{activeInsights.length} new</span>
 			</div>
 			<div className={styles.insightsList}>
@@ -117,15 +111,17 @@ export const HealthInsights = () => {
 					<div
 						key={insight.id}
 						className={`${styles.insightCard} ${styles[insight.type]}`}
-						style={{ animationDelay: `${index * 0.1}s` }}
+						style={{ animationDelay: `${index * 0.08}s` }}
 					>
+						<div className={styles.cardGlow} />
 						<div className={styles.iconWrapper}>{getIcon(insight.type)}</div>
 						<div className={styles.content}>
 							<h4 className={styles.insightTitle}>{insight.title}</h4>
 							<p className={styles.insightDesc}>{insight.description}</p>
 							{insight.actionLabel && (
 								<button className={styles.actionBtn}>
-									{insight.actionLabel}
+									<span>{insight.actionLabel}</span>
+									<ArrowRight size={12} className={styles.arrowIcon} />
 								</button>
 							)}
 						</div>
@@ -134,14 +130,7 @@ export const HealthInsights = () => {
 							onClick={() => dismissInsight(insight.id)}
 							aria-label='Dismiss'
 						>
-							<svg
-								width='16'
-								height='16'
-								viewBox='0 0 16 16'
-								fill='currentColor'
-							>
-								<path d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z' />
-							</svg>
+							<X size={13} />
 						</button>
 					</div>
 				))}

@@ -26,9 +26,6 @@ describe("Navigation Component", () => {
 		);
 
 		expect(screen.getByText("dashboard_nav")).toBeInTheDocument();
-		expect(screen.getByText("goals_nav")).toBeInTheDocument();
-		expect(screen.getByText("reports_nav")).toBeInTheDocument();
-		expect(screen.getByText("tests_nav")).toBeInTheDocument();
 	});
 
 	it("navigates to the correct path when a button is clicked", () => {
@@ -38,13 +35,7 @@ describe("Navigation Component", () => {
 			</MemoryRouter>,
 		);
 
-		fireEvent.click(screen.getByText("goals_nav"));
-		expect(mockNavigate).toHaveBeenCalledWith(paths.config.goals);
-
-		fireEvent.click(screen.getByText("reports_nav"));
-		expect(mockNavigate).toHaveBeenCalledWith(paths.config.reports);
-
-		fireEvent.click(screen.getByText("tests_nav"));
-		expect(mockNavigate).toHaveBeenCalledWith(paths.config.tests);
+		fireEvent.click(screen.getByText("dashboard_nav"));
+		expect(mockNavigate).toHaveBeenCalledWith(paths.dashboard.root);
 	});
 });

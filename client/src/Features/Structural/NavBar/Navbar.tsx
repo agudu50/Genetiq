@@ -9,7 +9,7 @@ import LanguageSwitcher from "@/Features/Structural/LanguageSwitcher/LanguageSwi
 import ThemeSwitcher from "@/Features/Structural/ThemeSwitcher/ThemeSwitcher";
 import { useLanguage } from "@/App/i18n/LanguageContext";
 import DashboardIcon from "@assets/Navbar/Icons/Dashboard.svg?react";
-import ReportsIcon from "@assets/Navbar/Icons/Reports.svg?react";
+import HistoryIcon from "@assets/Navbar/Icons/History.svg?react";
 import GoalsIcon from "@assets/Navbar/Icons/Goals.svg?react";
 import TestIcon from "@assets/Navbar/Icons/Test.svg?react";
 import { HealthProfileWidget } from "@/Features/Dashboard/HealthProfileWidget/HealthProfileWidget";
@@ -34,7 +34,7 @@ const Navbar = () => {
 	const pathToKey: Record<string, string> = {
 		[paths.dashboard.root]: "dashboard_nav",
 		[paths.config.goals]: "goals_nav",
-		[paths.config.reports]: "reports_nav",
+		[paths.clinicalHistory]: "history_nav",
 		[paths.config.tests]: "tests_nav",
 	};
 
@@ -110,10 +110,10 @@ const Navbar = () => {
 							{t("goals_nav") || "Goals"}
 						</button>
 						<button
-							className={`${styles["nav-item"]} ${activeTab === "reports_nav" ? styles["nav-active"] : ""}`}
-							onClick={() => navigate(paths.config.reports)}
+							className={`${styles["nav-item"]} ${activeTab === "history_nav" ? styles["nav-active"] : ""}`}
+							onClick={() => navigate(paths.clinicalHistory)}
 						>
-							{t("reports_nav") || "Reports"}
+							{t("history_nav") || "History"}
 						</button>
 						<button
 							className={`${styles["nav-item"]} ${activeTab === "tests_nav" ? styles["nav-active"] : ""}`}
@@ -293,7 +293,7 @@ const Navbar = () => {
 				[
 					paths.dashboard.root,
 					paths.config.goals,
-					paths.config.reports,
+					paths.clinicalHistory,
 					paths.config.tests,
 				].includes(location.pathname) && (
 					<nav className={styles["bottom-tabs"]}>
@@ -320,14 +320,14 @@ const Navbar = () => {
 							</span>
 						</button>
 						<button
-							className={`${styles["tab-item"]} ${activeTab === "reports_nav" ? styles["tab-active"] : ""}`}
-							onClick={() => navigate(paths.config.reports)}
+							className={`${styles["tab-item"]} ${activeTab === "history_nav" ? styles["tab-active"] : ""}`}
+							onClick={() => navigate(paths.clinicalHistory)}
 						>
 							<span className={styles["tab-icon"]}>
-								<ReportsIcon />
+								<HistoryIcon />
 							</span>
 							<span className={styles["tab-label"]}>
-								{t("reports_nav") || "Reports"}
+								{t("history_nav") || "History"}
 							</span>
 						</button>
 						<button
