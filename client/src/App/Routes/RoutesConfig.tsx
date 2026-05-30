@@ -159,6 +159,14 @@ const RoutesConfig: RouteObject[] = [
 						),
 						path: paths.aiAssistant,
 					},
+					{
+						element: (
+							<Lazy>
+								<Goals />
+							</Lazy>
+						),
+						path: paths.config.goals,
+					},
 				],
 			},
 			// Config routes — own layout with its own navbar, no MainLayout
@@ -189,14 +197,6 @@ const RoutesConfig: RouteObject[] = [
 							</Lazy>
 						),
 						path: paths.config.connectApp,
-					},
-					{
-						element: (
-							<Lazy>
-								<Goals />
-							</Lazy>
-						),
-						path: paths.config.goals,
 					},
 					{
 						element: (

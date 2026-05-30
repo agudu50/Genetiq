@@ -127,8 +127,8 @@ const Navbar = () => {
 	
 
 
-				{/* Secondary actions (only visible on Dashboard or if mobile) */}
-				{(isDashboardRoot || isMobile) && (
+				{/* Secondary actions (only visible on main dashboard/goals/history views or if mobile) */}
+				{(!isConfigFlow || isMobile) && (
 					<div className={styles["actions-container"]}>
 						{/* Desktop: show inline | Mobile: hide behind "more" */}
 						{!isMobile && (
