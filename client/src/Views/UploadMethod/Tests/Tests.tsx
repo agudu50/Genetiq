@@ -634,6 +634,7 @@ const Tests = () => {
 													className={styles["resync-btn"]}
 													onClick={() => {
 														localStorage.removeItem("genetiq_last_tip_seed");
+														localStorage.removeItem("genetiq_tips_read_seed");
 														window.location.reload();
 													}}
 													title="Simulate 24h Rotation & Re-sync"
@@ -686,7 +687,15 @@ const Tests = () => {
 														<button
 															type="button"
 															className={styles["tip-readmore-btn"]}
-															onClick={() => setExpandedTipId(isExpanded ? null : tip.id)}
+															onClick={() => {
+																setExpandedTipId(isExpanded ? null : tip.id);
+																if (!isExpanded) {
+																	const today = new Date();
+																	const currentSeed = today.getFullYear() * 1000 + (today.getMonth() + 1) * 100 + today.getDate();
+																	localStorage.setItem("genetiq_tips_read_seed", String(currentSeed));
+																	window.dispatchEvent(new Event("genetiq_tips_read"));
+																}
+															}}
 														>
 															{isExpanded ? "Close Insight" : "Read More & Science Insight →"}
 														</button>
