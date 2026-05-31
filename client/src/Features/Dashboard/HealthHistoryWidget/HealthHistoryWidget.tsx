@@ -146,7 +146,7 @@ export const HealthHistoryWidget = () => {
 								<p className={styles.qrInstructions}>
 									Have your healthcare provider scan this code to grant
 									<strong> temporary read-only access</strong> to your encrypted
-									health records on Sui.
+									health records in your local secure enclave.
 								</p>
 								<div className={styles.accessLevel}>
 									<ShieldCheck size={16} />
