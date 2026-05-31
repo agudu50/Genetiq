@@ -416,6 +416,12 @@ const Tests = () => {
 	const [expandedBiomarkerId, setExpandedBiomarkerId] = useState<string | null>(null);
 	const [newRotationTriggered, setNewRotationTriggered] = useState(false);
 
+	const dailyActiveSystemId = useMemo(() => {
+		const today = new Date();
+		const seed = today.getFullYear() * 1000 + (today.getMonth() + 1) * 100 + today.getDate();
+		return EXAM_SYSTEMS[seed % EXAM_SYSTEMS.length].id;
+	}, []);
+
 	useEffect(() => {
 		const today = new Date();
 		const currentSeed = today.getFullYear() * 1000 + (today.getMonth() + 1) * 100 + today.getDate();
@@ -606,6 +612,17 @@ const Tests = () => {
 			setIsSubmitted(false);
 		} else {
 			setExamCompleted(true);
+			
+			// If this was today's active daily exam, mark it completed to clear the notification badge!
+			const today = new Date();
+			const seed = today.getFullYear() * 1000 + (today.getMonth() + 1) * 100 + today.getDate();
+			const activeExamIndex = seed % EXAM_SYSTEMS.length;
+			const dailyActiveId = EXAM_SYSTEMS[activeExamIndex].id;
+			
+			if (activeSystem.id === dailyActiveId) {
+				localStorage.setItem("genetiq_exam_completed_seed", String(seed));
+				window.dispatchEvent(new Event("genetiq_tips_read"));
+			}
 		}
 	}, [activeSystem, currentQIndex]);
 
@@ -790,30 +807,51 @@ const Tests = () => {
 									</div>
 
 									<div className={styles["systems-grid"]}>
-										{EXAM_SYSTEMS.map((sys) => (
-											<div key={sys.id} className={`${styles["system-card"]} ${styles[sys.colorClass]}`}>
-												<div className={styles["sys-card-header"]}>
-													<div className={styles["sys-icon-box"]}>
-														{sys.icon}
-													</div>
-													<div className={styles["sys-meta-badge"]}>{sys.questions.length} Questions</div>
-												</div>
-												<h3 className={styles["sys-title"]}>{sys.name}</h3>
-												<p className={styles["sys-desc"]}>{sys.description}</p>
-												
-												<div className={styles["sys-focus-line"]}>
-													<strong>Focus: </strong>{sys.focus}
-												</div>
-
-												<button
-													className={styles["sys-action-btn"]}
-													onClick={() => startExam(sys)}
+										{EXAM_SYSTEMS.map((sys) => {
+											const isDailyTarget = sys.id === dailyActiveSystemId;
+											const today = new Date();
+											const currentSeed = today.getFullYear() * 1000 + (today.getMonth() + 1) * 100 + today.getDate();
+											const hasCompletedToday = localStorage.getItem("genetiq_exam_completed_seed") === String(currentSeed);
+											
+											return (
+												<div 
+													key={sys.id} 
+													className={`${styles["system-card"]} ${styles[sys.colorClass]} ${
+														isDailyTarget ? styles["daily-target"] : styles["inactive-practice"]
+													}`}
 												>
-													Examine System
-													<ArrowRight size={14} />
-												</button>
-											</div>
-										))}
+													<div className={styles["sys-card-header"]}>
+														<div className={styles["sys-icon-box"]}>
+															{sys.icon}
+														</div>
+														<div className={styles["sys-meta-badges-row"]}>
+															{isDailyTarget && (
+																<span className={styles["sys-daily-target-badge"]}>
+																	🔥 Active Daily Target
+																</span>
+															)}
+															<div className={styles["sys-meta-badge"]}>{sys.questions.length} Questions</div>
+														</div>
+													</div>
+													<h3 className={styles["sys-title"]}>{sys.name}</h3>
+													<p className={styles["sys-desc"]}>{sys.description}</p>
+													
+													<div className={styles["sys-focus-line"]}>
+														<strong>Focus: </strong>{sys.focus}
+													</div>
+
+													<button
+														className={styles["sys-action-btn"]}
+														onClick={() => startExam(sys)}
+													>
+														{isDailyTarget 
+															? (hasCompletedToday ? "Retake Daily Exam" : "Examine Active Target") 
+															: "Practice System"}
+														<ArrowRight size={14} />
+													</button>
+												</div>
+											);
+										})}
 									</div>
 
 									{/* Advanced Molecular Insights Library */}
@@ -1003,14 +1041,22 @@ const Tests = () => {
 												<motion.div
 													initial={{ opacity: 0, y: 15 }}
 													animate={{ opacity: 1, y: 0 }}
-													className={styles["science-insight-panel"]}
+													className={`${styles["science-insight-panel"]} ${
+														selectedOption === currentQuestion.correct 
+															? styles["insight-correct"] 
+															: styles["insight-incorrect"]
+													}`}
 												>
 													<div className={styles["insight-title"]}>
 														<Sparkles size={16} />
-														<h4>🧬 Epigenetic Science Insight</h4>
+														<h4>
+															{selectedOption === currentQuestion.correct 
+																? "🎉 Correct Answer! +1 Point Earned" 
+																: `❌ Incorrect (Correct Option was ${currentQuestion.correct})`}
+														</h4>
 													</div>
 													<p className={styles["insight-text"]}>
-														{currentQuestion.insight}
+														<strong>Why it's correct:</strong> {currentQuestion.insight}
 													</p>
 												</motion.div>
 											)}

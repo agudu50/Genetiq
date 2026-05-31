@@ -2210,4 +2210,64 @@
 	}
 }
 
+.daily-target {
+	border-color: var(--accent, #00A69D) !important;
+	box-shadow: 0 0 20px rgba(0, 166, 157, 0.25) !important;
+	animation: pulseDailyCard 2.5s infinite ease-in-out;
+}
+
+.inactive-practice {
+	opacity: 0.95;
+}
+
+.sys-meta-badges-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.sys-daily-target-badge {
+	padding: 4px 10px;
+	border-radius: 50px;
+	font-size: 10px;
+	font-weight: 800;
+	background: linear-gradient(135deg, #f59e0b, #ef4444);
+	color: #ffffff;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	box-shadow: 0 2px 8px rgba(239, 68, 68, 0.35);
+}
+
+.insight-correct {
+	background: linear-gradient(135deg, rgba(16, 185, 129, 0.04) 0%, rgba(5, 150, 105, 0.01) 100%) !important;
+	border: 1px solid rgba(16, 185, 129, 0.15) !important;
+	border-left: 4px solid #10b981 !important;
+	
+	h4 {
+		color: #10b981 !important;
+	}
+}
+
+.insight-incorrect {
+	background: linear-gradient(135deg, rgba(239, 68, 68, 0.04) 0%, rgba(220, 38, 38, 0.01) 100%) !important;
+	border: 1px solid rgba(239, 68, 68, 0.15) !important;
+	border-left: 4px solid #ef4444 !important;
+	
+	h4 {
+		color: #ef4444 !important;
+	}
+}
+
+@keyframes pulseDailyCard {
+	0%, 100% {
+		border-color: var(--accent, #00A69D);
+		box-shadow: 0 0 20px rgba(0, 166, 157, 0.2);
+	}
+	50% {
+		border-color: #06b6d4;
+		box-shadow: 0 0 35px rgba(6, 182, 212, 0.35);
+	}
+}
+
 

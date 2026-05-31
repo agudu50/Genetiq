@@ -14,8 +14,14 @@ const Profile: React.FC<ProfileProps> = ({
 	const checkUnreadStatus = () => {
 		const today = new Date();
 		const currentSeed = today.getFullYear() * 1000 + (today.getMonth() + 1) * 100 + today.getDate();
-		const readSeed = localStorage.getItem("genetiq_tips_read_seed");
-		setHasUnreadTips(readSeed !== String(currentSeed));
+		
+		const tipsReadSeed = localStorage.getItem("genetiq_tips_read_seed");
+		const examCompletedSeed = localStorage.getItem("genetiq_exam_completed_seed");
+		
+		const tipsUnread = tipsReadSeed !== String(currentSeed);
+		const examUncomplete = examCompletedSeed !== String(currentSeed);
+		
+		setHasUnreadTips(tipsUnread || examUncomplete);
 	};
 
 	useEffect(() => {
@@ -38,10 +44,11 @@ const Profile: React.FC<ProfileProps> = ({
 
 	const handleNotificationClick = () => {
 		console.log("open profile");
-		// Clear badge when clicking notification bell directly
+		// Clear badge by marking both as completed today when clicking directly
 		const today = new Date();
 		const currentSeed = today.getFullYear() * 1000 + (today.getMonth() + 1) * 100 + today.getDate();
 		localStorage.setItem("genetiq_tips_read_seed", String(currentSeed));
+		localStorage.setItem("genetiq_exam_completed_seed", String(currentSeed));
 		setHasUnreadTips(false);
 		window.dispatchEvent(new Event("genetiq_tips_read"));
 	};
