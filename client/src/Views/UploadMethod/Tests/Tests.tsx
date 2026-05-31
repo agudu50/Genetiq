@@ -318,6 +318,57 @@ const EXAM_SYSTEMS: ExamSystem[] = [
 
 
 
+const BIOMARKERS = [
+	{
+		id: "bio-acetylcholine",
+		category: "Neuro",
+		categoryClass: "brain",
+		title: "Acetylcholine",
+		simpleTitle: "Brain Speed & Focus Chemical",
+		description: "The core neurotransmitter mediating synaptic transmission in neural pathways responsible for cognitive processing speed, working memory recall, and focus latency.",
+		range: "Balanced baseline level",
+		impact: "Enhances nerve-signal speed, memory retention, and mental focus.",
+		booster: "Cruciferous vegetables, egg yolks, and Alpha-GPC supplements.",
+		icon: <Brain size={12} />
+	},
+	{
+		id: "bio-apob",
+		category: "Cardio",
+		categoryClass: "heart",
+		title: "Apolipoprotein B (ApoB)",
+		simpleTitle: "Heart Plaque Particle Count",
+		description: "A precision metric that measures the absolute molecular count of all atherogenic lipid particles capable of traversing endothelial linings and causing arterial vascular plaque deposits.",
+		range: "Under 80 mg/dL",
+		impact: "Measures the absolute number of artery-clogging particles in your bloodstream.",
+		booster: "Soluble fiber (beans, oats), extra virgin olive oil, and wild salmon.",
+		icon: <Heart size={12} />
+	},
+	{
+		id: "bio-hba1c",
+		category: "Metabolic",
+		categoryClass: "metabolic",
+		title: "HbA1c Glycation",
+		simpleTitle: "3-Month Average Blood Sugar",
+		description: "Represents the percentage of circulating red blood cell hemoglobin chemically bonded with glucose molecules, providing a precise 90-day biological average of blood sugar homeostasis.",
+		range: "Under 5.3%",
+		impact: "Tracks how much sugar has bonded to your red blood cells over the last 90 days.",
+		booster: "Daily brisk walking, apple cider vinegar, and limiting refined carbohydrates.",
+		icon: <Flame size={12} />
+	},
+	{
+		id: "bio-butyrate",
+		category: "Microbiome",
+		categoryClass: "gut",
+		title: "Butyrate Synthesis",
+		simpleTitle: "Gut Shield & Fuel Chemical",
+		description: "A vital short-chain fatty acid metabolite produced via bacterial fermentation of fiber, fueling gut epithelium cells and locking tight junctions to seal the mucosal barrier.",
+		range: "High production levels",
+		impact: "Fuels the cells lining your colon and seals the gut barrier against leaks.",
+		booster: "Raw oats, chicory root, garlic, onions, and fermented foods.",
+		icon: <Layers size={12} />
+	}
+];
+
 const ShieldIcon = memo(() => (
 	<svg
 		width='12'
@@ -362,6 +413,7 @@ const Tests = () => {
 
 	// Daily Epigenetic Rotating Tips State & Curated Pool
 	const [expandedTipId, setExpandedTipId] = useState<string | null>(null);
+	const [expandedBiomarkerId, setExpandedBiomarkerId] = useState<string | null>(null);
 	const [newRotationTriggered, setNewRotationTriggered] = useState(false);
 
 	useEffect(() => {
@@ -710,29 +762,29 @@ const Tests = () => {
 										<div className={styles["stats-item"]}>
 											<span className={styles["stats-dot-active"]} />
 											<div className={styles["stats-text"]}>
-												<span className={styles["stats-label"]}>Secure Enclave Vault</span>
-												<strong className={styles["stats-val"]}>Active (AES-256)</strong>
+												<span className={styles["stats-label"]}>Personal Health Vault</span>
+												<strong className={styles["stats-val"]}>Fully Secured</strong>
 											</div>
 										</div>
 										<div className={styles["stats-item"]}>
 											<Shield size={16} className={styles["stats-icon-purple"]} />
 											<div className={styles["stats-text"]}>
-												<span className={styles["stats-label"]}>Integrity Protocol</span>
-												<strong className={styles["stats-val"]}>SHA-256 Verified</strong>
+												<span className={styles["stats-label"]}>Security Protection</span>
+												<strong className={styles["stats-val"]}>Verified Safe</strong>
 											</div>
 										</div>
 										<div className={styles["stats-item"]}>
 											<Trophy size={16} className={styles["stats-icon-gold"]} />
 											<div className={styles["stats-text"]}>
-												<span className={styles["stats-label"]}>Exams Available</span>
-												<strong className={styles["stats-val"]}>{EXAM_SYSTEMS.length} Systems</strong>
+												<span className={styles["stats-label"]}>Available Quizzes</span>
+												<strong className={styles["stats-val"]}>{EXAM_SYSTEMS.length} Body Systems</strong>
 											</div>
 										</div>
 										<div className={styles["stats-item"]}>
 											<Sparkles size={16} className={styles["stats-icon-teal"]} />
 											<div className={styles["stats-text"]}>
-												<span className={styles["stats-label"]}>Diagnostic Scope</span>
-												<strong className={styles["stats-val"]}>20 Advanced Questions</strong>
+												<span className={styles["stats-label"]}>Total Questions</span>
+												<strong className={styles["stats-val"]}>20 Health Questions</strong>
 											</div>
 										</div>
 									</div>
@@ -773,37 +825,69 @@ const Tests = () => {
 										</div>
 										
 										<div className={styles["insights-grid"]}>
-											<div className={styles["insight-card"]}>
-												<div className={styles["insight-header-row"]}>
-													<div className={`${styles["insight-badge"]} ${styles["brain"]}`}>Neuro</div>
-													<h3>Acetylcholine</h3>
-												</div>
-												<p>The core neurotransmitter mediating synaptic transmission in neural pathways responsible for cognitive processing speed, working memory recall, and focus latency.</p>
-											</div>
+											{BIOMARKERS.map((bio, index) => {
+												const isExpanded = expandedBiomarkerId === bio.id;
+												return (
+													<motion.div
+														key={bio.id}
+														initial={{ opacity: 0, y: 15 }}
+														animate={{ opacity: 1, y: 0 }}
+														transition={{ duration: 0.4, delay: index * 0.05 }}
+														className={`${styles["insight-card"]} ${isExpanded ? styles["expanded"] : ""}`}
+														whileHover={{ y: -4, transition: { duration: 0.2 } }}
+													>
+														<div className={styles["insight-header-row"]}>
+															<div className={styles["insight-meta-wrap"]}>
+																<span className={`${styles["insight-badge"]} ${styles[bio.categoryClass]}`}>
+																	{bio.icon}
+																	{bio.category}
+																</span>
+																<span className={styles["insight-simple-tag"]}>{bio.simpleTitle}</span>
+															</div>
+															<h3>{bio.title}</h3>
+														</div>
+														<p>{bio.description}</p>
 
-											<div className={styles["insight-card"]}>
-												<div className={styles["insight-header-row"]}>
-													<div className={`${styles["insight-badge"]} ${styles["heart"]}`}>Cardio</div>
-													<h3>Apolipoprotein B (ApoB)</h3>
-												</div>
-												<p>A precision metric that measures the absolute molecular count of all atherogenic lipid particles capable of traversing endothelial linings and causing arterial vascular plaque deposits.</p>
-											</div>
+														{/* Expanding Scientific Details Panel */}
+														<AnimatePresence>
+															{isExpanded && (
+																<motion.div
+																	initial={{ height: 0, opacity: 0 }}
+																	animate={{ height: "auto", opacity: 1 }}
+																	exit={{ height: 0, opacity: 0 }}
+																	transition={{ duration: 0.25 }}
+																	className={styles["insight-full-detail"]}
+																>
+																	<div className={styles["tip-divider"]} />
+																	<div className={styles["insight-detail-grid"]}>
+																		<div className={styles["detail-item"]}>
+																			<strong>Target Level</strong>
+																			<span>{bio.range}</span>
+																		</div>
+																		<div className={styles["detail-item"]}>
+																			<strong>Primary Role</strong>
+																			<span>{bio.impact}</span>
+																		</div>
+																		<div className={styles["detail-item"]}>
+																			<strong>How to Support</strong>
+																			<span>{bio.booster}</span>
+																		</div>
+																	</div>
+																</motion.div>
+															)}
+														</AnimatePresence>
 
-											<div className={styles["insight-card"]}>
-												<div className={styles["insight-header-row"]}>
-													<div className={`${styles["insight-badge"]} ${styles["metabolic"]}`}>Metabolic</div>
-													<h3>HbA1c Glycation</h3>
-												</div>
-												<p>Represents the percentage of circulating red blood cell hemoglobin chemically bonded with glucose molecules, providing a precise 90-day biological average of blood sugar homeostasis.</p>
-											</div>
-
-											<div className={styles["insight-card"]}>
-												<div className={styles["insight-header-row"]}>
-													<div className={`${styles["insight-badge"]} ${styles["gut"]}`}>Microbiome</div>
-													<h3>Butyrate Synthesis</h3>
-												</div>
-												<p>A vital short-chain fatty acid metabolite produced via bacterial fermentation of fiber, fueling gut epithelium cells and locking tight junctions to seal the mucosal barrier.</p>
-											</div>
+														<button
+															type="button"
+															className={styles["tip-readmore-btn"]}
+															onClick={() => setExpandedBiomarkerId(isExpanded ? null : bio.id)}
+															style={{ marginTop: "12px", alignSelf: "flex-start" }}
+														>
+															{isExpanded ? "Close Science Ranges" : "View Optimal Ranges & Boosters →"}
+														</button>
+													</motion.div>
+												);
+											})}
 										</div>
 									</div>
 								</motion.div>
