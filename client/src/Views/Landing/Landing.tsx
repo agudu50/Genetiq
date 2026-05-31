@@ -335,7 +335,7 @@ const InitializeModal = ({
 					<h2 className={styles.modalTitle}>Upload Your First Result — It's Free</h2>
 				</div>
 				<div className={styles.modalBody}>
-					<p>Take a photo of your lab results or upload a PDF. Our AI will read it and explain every value to you in plain English — plus give you a personalised diet and health plan.</p>
+					<p>Take a photo of your lab results or upload a PDF. Our AI will read it and explain every value to you in plain English plus give you a personalised diet and health plan.</p>
 					<p className={styles.securityNote}>🔒 Your results are private and belong only to you. We never share them.</p>
 				</div>
 				<div className={styles.modalActions}>
