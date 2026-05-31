@@ -19,9 +19,7 @@ const Navbar = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const [isMobile, setIsMobile] = useState(false);
-	const [moreOpen, setMoreOpen] = useState(false);
 	const [isProfileOpen, setIsProfileOpen] = useState(false);
-	const moreRef = useRef<HTMLDivElement>(null);
 	const profileRef = useRef<HTMLDivElement>(null);
 	const user = useSelector((state: RootState) => state.user);
 	const userInitials = useMemo(() => {
@@ -61,9 +59,6 @@ const Navbar = () => {
 	// Close dropdowns on outside click
 	useEffect(() => {
 		const handleClick = (e: MouseEvent) => {
-			if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
-				setMoreOpen(false);
-			}
 			if (
 				profileRef.current &&
 				!profileRef.current.contains(e.target as Node)
@@ -126,98 +121,9 @@ const Navbar = () => {
 				{/* Secondary actions (only visible on main dashboard/goals/history views or if mobile) */}
 				{(!isConfigFlow || isMobile) && (
 					<div className={styles["actions-container"]}>
-						{/* Desktop: show inline | Mobile: hide behind "more" */}
-						{!isMobile && (
-							<ThemeSwitcher />
-						)}
+						<ThemeSwitcher />
 
-						{/* Mobile "more" menu for secondary actions */}
-						{isMobile && (
-							<div className={styles["more-wrapper"]} ref={moreRef}>
-								<button
-									className={styles["more-btn"]}
-									onClick={() => setMoreOpen((v) => !v)}
-									aria-label='More options'
-								>
-									<svg
-										width='20'
-										height='20'
-										viewBox='0 0 24 24'
-										fill='none'
-										stroke='currentColor'
-										strokeWidth='2.5'
-										strokeLinecap='round'
-										strokeLinejoin='round'
-									>
-										<line x1='12' y1='5' x2='12' y2='19' />
-										<line x1='5' y1='12' x2='19' y2='12' />
-									</svg>
-								</button>
-								{moreOpen && (
-									<div className={styles["more-dropdown"]}>
-										<div className={styles["dropdown-section"]}>
-											<h4 className={styles["section-title"]}>
-												{t("quick_actions") || "Quick Actions"}
-											</h4>
-											<div className={styles["quick-actions-grid"]}>
-												<button
-													className={styles["menu-item"]}
-													onClick={() => {
-														navigate(paths.log.vitals);
-														setMoreOpen(false);
-													}}
-												>
-													<span className={styles["item-icon"]}>❤️</span>
-													<span className={styles["item-label"]}>
-														{t("log_vitals") || "Log Vitals"}
-													</span>
-												</button>
-												<button
-													className={styles["menu-item"]}
-													onClick={() => {
-														navigate(paths.log.meal);
-														setMoreOpen(false);
-													}}
-												>
-													<span className={styles["item-icon"]}>🥗</span>
-													<span className={styles["item-label"]}>
-														{t("track_meal") || "Track Meal"}
-													</span>
-												</button>
-												<button
-													className={styles["menu-item"]}
-													onClick={() => {
-														navigate(paths.log.exercise);
-														setMoreOpen(false);
-													}}
-												>
-													<span className={styles["item-icon"]}>🏃</span>
-													<span className={styles["item-label"]}>
-														{t("log_exercise") || "Log Exercise"}
-													</span>
-												</button>
-												<button
-													className={styles["menu-item"]}
-													onClick={() => {
-														navigate(paths.aiAssistant);
-														setMoreOpen(false);
-													}}
-												>
-													<span className={styles["item-icon"]}>🤖</span>
-													<span className={styles["item-label"]}>
-														{t("ai_assistant") || "AI Assistant"}
-													</span>
-												</button>
-											</div>
-										</div>
-										<div className={styles["dropdown-divider"]} />
-										<div className={styles["more-item"]}>
-											<ThemeSwitcher />
-										</div>
-									</div>
-								)}
-							</div>
-						)}
+
 
 						<NotificationHub IsBadge={true} />
 						{/* Enhanced Profile Button with Dropdown */}

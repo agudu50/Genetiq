@@ -1277,21 +1277,30 @@
 }
 
 /* NEW SECTION: Science Epigenetics FAQ Guidance */
+/* NEW SECTION: Science Epigenetics FAQ Guidance */
 .faq-panel {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
 	padding: 24px;
-	background: rgba(30, 41, 59, 0.25);
-	border: 1px solid rgba(255, 255, 255, 0.05);
+	background: linear-gradient(135deg, rgba(30, 41, 59, 0.35) 0%, rgba(15, 23, 42, 0.18) 100%);
+	border: 1px solid rgba(0, 166, 157, 0.15);
 	border-radius: 24px;
 	backdrop-filter: blur(12px);
 	-webkit-backdrop-filter: blur(12px);
 	margin-top: 12px;
+	box-shadow: 0 8px 32px 0 rgba(0, 166, 157, 0.04);
+	transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 
 	html[data-theme="light"] & {
-		background: rgba(255, 255, 255, 0.6);
-		border-color: rgba(15, 23, 42, 0.06);
+		background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(241, 245, 249, 0.4) 100%);
+		border-color: rgba(0, 166, 157, 0.12);
+		box-shadow: 0 8px 32px 0 rgba(0, 166, 157, 0.02);
+	}
+
+	&:hover {
+		border-color: rgba(0, 166, 157, 0.3);
+		box-shadow: 0 12px 40px 0 rgba(0, 166, 157, 0.08);
 	}
 }
 
@@ -1329,6 +1338,18 @@
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
+	background: rgba(255, 255, 255, 0.015);
+	border: 1px solid rgba(255, 255, 255, 0.03);
+	border-left: 3px solid rgba(0, 166, 157, 0.25);
+	border-radius: 16px;
+	padding: 18px 22px;
+	transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+	html[data-theme="light"] & {
+		background: rgba(15, 23, 42, 0.015);
+		border-color: rgba(15, 23, 42, 0.03);
+		border-left-color: rgba(0, 166, 157, 0.2);
+	}
 
 	h4 {
 		font-size: 13.5px;
@@ -1351,23 +1372,51 @@
 			color: #475569;
 		}
 	}
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.035);
+		border-left-color: var(--accent, #00A69D);
+		transform: translateY(-2px);
+		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+
+		html[data-theme="light"] & {
+			background: rgba(15, 23, 42, 0.03);
+			box-shadow: 0 6px 20px rgba(15, 23, 42, 0.04);
+		}
+	}
 }
 
 /* Vault Sync Footer */
 .offline-notice {
-	display: flex;
+	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+	align-self: center;
 	gap: 10px;
 	font-size: 11px;
 	font-weight: 700;
-	color: var(--text-secondary, #94a3b8);
+	color: #34d399; // Neon secure green
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
-	margin-top: 12px;
+	margin: 20px auto 0 auto;
+	padding: 10px 24px;
+	background: rgba(16, 185, 129, 0.06);
+	border: 1px solid rgba(16, 185, 129, 0.15);
+	border-radius: 50px;
+	box-shadow: 0 4px 12px rgba(16, 185, 129, 0.08);
+	transition: all 0.3s ease;
 
 	html[data-theme="light"] & {
-		color: #64748b;
+		color: #059669; // Solid deep green
+		background: rgba(16, 185, 129, 0.04);
+		border-color: rgba(16, 185, 129, 0.1);
+		box-shadow: 0 4px 12px rgba(16, 185, 129, 0.03);
+	}
+
+	&:hover {
+		transform: translateY(-1px);
+		box-shadow: 0 6px 16px rgba(16, 185, 129, 0.15);
+		border-color: rgba(16, 185, 129, 0.3);
 	}
 }
 

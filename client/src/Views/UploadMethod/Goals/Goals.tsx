@@ -620,11 +620,11 @@ const Goals = () => {
 					<div className={styles["faq-content"]}>
 						<div className={styles["faq-item"]}>
 							<h4>🧬 Gene-Environment Synergy (Epigenetics)</h4>
-							<p>Your genes are not your destiny. They act as blueprints that respond dynamically to daily activities, light, nutrition, and stress management. By ticking off goals, you actively regulate gene expression to promote cellular longevity.</p>
+							<p>Your genome is a dynamic software program, not a static script. Daily habits, optimized nutrition, circadian light alignment, and stress management serve as real-time molecular switches. By completing your targets, you actively modulate gene expression, promoting cellular regeneration and long-term vitality.</p>
 						</div>
 						<div className={styles["faq-item"]}>
-							<h4>🔗 Soulbound NFTs & zkLogin Verification</h4>
-							<p>Achieving a 7-day consistency streak validates your biological dedication. Genetiq secures these milestones by minting permanent, zero-knowledge verifiable health SBTs on SUI Blockchain, securing your credentials securely.</p>
+							<h4>🔗 Soulbound SBTs & zkLogin Verification</h4>
+							<p>Achieving a 7-day consistency streak validates your biological dedication. Genetiq cryptographically seals these milestones by minting zero-knowledge verifiable Soulbound Tokens (SBTs) on the SUI Blockchain—creating a secure, decentralized pedigree of your wellness journey while keeping your medical data private.</p>
 						</div>
 					</div>
 				</div>
@@ -635,7 +635,7 @@ const Goals = () => {
 						<div className={styles["status-dot"]} />
 						<div className={styles["status-pulse"]} />
 					</div>
-					<span>Vault Synced • Decentralized Health Record Protected</span>
+					<span>Vault Encrypted & Synced • Decentralized Health Record Protected</span>
 				</div>
 			</div>
 		</div>
