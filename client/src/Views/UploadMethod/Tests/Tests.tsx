@@ -325,7 +325,7 @@ const BIOMARKERS = [
 		categoryClass: "brain",
 		title: "Acetylcholine",
 		simpleTitle: "Brain Speed & Focus Chemical",
-		description: "The core neurotransmitter mediating synaptic transmission in neural pathways responsible for cognitive processing speed, working memory recall, and focus latency.",
+		description: "A key brain chemical that helps send signals between brain cells. It is responsible for how fast you think, focus, and remember things.",
 		range: "Balanced baseline level",
 		impact: "Enhances nerve-signal speed, memory retention, and mental focus.",
 		booster: "Cruciferous vegetables, egg yolks, and Alpha-GPC supplements.",
@@ -337,7 +337,7 @@ const BIOMARKERS = [
 		categoryClass: "heart",
 		title: "Apolipoprotein B (ApoB)",
 		simpleTitle: "Heart Plaque Particle Count",
-		description: "A precision metric that measures the absolute molecular count of all atherogenic lipid particles capable of traversing endothelial linings and causing arterial vascular plaque deposits.",
+		description: "The most accurate measure of the actual number of cholesterol particles in your blood. High numbers can build up in your blood vessels and block blood flow.",
 		range: "Under 80 mg/dL",
 		impact: "Measures the absolute number of artery-clogging particles in your bloodstream.",
 		booster: "Soluble fiber (beans, oats), extra virgin olive oil, and wild salmon.",
@@ -349,7 +349,7 @@ const BIOMARKERS = [
 		categoryClass: "metabolic",
 		title: "HbA1c Glycation",
 		simpleTitle: "3-Month Average Blood Sugar",
-		description: "Represents the percentage of circulating red blood cell hemoglobin chemically bonded with glucose molecules, providing a precise 90-day biological average of blood sugar homeostasis.",
+		description: "A simple marker that shows the average amount of sugar in your blood over the past 3 months. It helps you see your long-term blood sugar health.",
 		range: "Under 5.3%",
 		impact: "Tracks how much sugar has bonded to your red blood cells over the last 90 days.",
 		booster: "Daily brisk walking, apple cider vinegar, and limiting refined carbohydrates.",
@@ -361,7 +361,7 @@ const BIOMARKERS = [
 		categoryClass: "gut",
 		title: "Butyrate Synthesis",
 		simpleTitle: "Gut Shield & Fuel Chemical",
-		description: "A vital short-chain fatty acid metabolite produced via bacterial fermentation of fiber, fueling gut epithelium cells and locking tight junctions to seal the mucosal barrier.",
+		description: "A healthy fat made by good gut bacteria when you eat fiber. It acts as the primary fuel to repair, seal, and protect your stomach and intestinal lining.",
 		range: "High production levels",
 		impact: "Fuels the cells lining your colon and seals the gut barrier against leaks.",
 		booster: "Raw oats, chicory root, garlic, onions, and fermented foods.",
@@ -820,8 +820,8 @@ const Tests = () => {
 									<div className={styles["insights-library"]}>
 										<div className={styles["library-header"]}>
 											<Sparkles size={20} className={styles["sparkle-icon"]} />
-											<h2>Advanced Molecular Biomarker Library</h2>
-											<p>Genetiq dynamically tracks and models key chemical precursors, inflammation signals, and regulatory metabolites to provide clinical-grade insights.</p>
+											<h2>Your Personal Biomarker Library</h2>
+											<p>Learn about the key health markers that Genetiq tracks. This information is automatically calculated and compiled from your uploaded lab results, synced smart devices, and health history to give you personalized health insights.</p>
 										</div>
 										
 										<div className={styles["insights-grid"]}>
