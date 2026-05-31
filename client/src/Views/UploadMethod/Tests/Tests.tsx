@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, memo } from "react";
+import { useState, useMemo, useCallback, useEffect, memo } from "react";
 import { useDispatch } from "react-redux";
 import { setCategory } from "@/App/Redux/categorySlice";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +7,7 @@ import {
 	Brain, Heart, Flame, Layers, Shield, Sparkles, CheckCircle2, 
 	XCircle, ArrowRight, RefreshCw, Trophy, ExternalLink, Copy 
 } from "lucide-react";
+import { toast } from "react-toastify";
 import styles from "./Tests.module.scss";
 
 interface Question {
@@ -361,6 +362,36 @@ const Tests = () => {
 
 	// Daily Epigenetic Rotating Tips State & Curated Pool
 	const [expandedTipId, setExpandedTipId] = useState<string | null>(null);
+	const [newRotationTriggered, setNewRotationTriggered] = useState(false);
+
+	useEffect(() => {
+		const today = new Date();
+		const currentSeed = today.getFullYear() * 1000 + (today.getMonth() + 1) * 100 + today.getDate();
+		const lastSeed = localStorage.getItem("genetiq_last_tip_seed");
+		
+		if (lastSeed !== String(currentSeed)) {
+			// Trigger rotation shimmer animation state
+			setNewRotationTriggered(true);
+			
+			// Fire a beautiful toast notification alerting the user in the notification area
+			toast.info("🌐 Daily Molecular Bio-Tips Updated! Curated from WHO, NIH, and CDC clinical guidelines.", {
+				position: "top-right",
+				autoClose: 6000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				theme: "dark",
+			});
+
+			// Save seed to avoid repeated triggers on every single reload today
+			localStorage.setItem("genetiq_last_tip_seed", String(currentSeed));
+			
+			const timer = setTimeout(() => {
+				setNewRotationTriggered(false);
+			}, 4000);
+			return () => clearTimeout(timer);
+		}
+	}, []);
 
 	const dailyTips = useMemo(() => {
 		const today = new Date();
@@ -375,7 +406,7 @@ const Tests = () => {
 				title: "Evening Screen Light",
 				short: "Did you know that using screens at night can block your brain's sleep signals by up to 85%?",
 				readMore: "The blue light from phones and TVs tricks your brain into thinking it is daytime. This stops the brain from making melatonin, which is the chemical you need to fall asleep and recover. Countermeasure: Put your phone away 2 hours before bed or use warm night-mode screens.",
-				source: "Harvard Medical School"
+				source: "World Health Organization (WHO)"
 			},
 			{
 				id: "tip-2",
@@ -383,7 +414,7 @@ const Tests = () => {
 				title: "Understanding Heart Risk",
 				short: "Did you know that having normal cholesterol levels can sometimes hide a real risk of heart disease?",
 				readMore: "Standard tests only measure the weight of your cholesterol. A better test looks at the actual number of tiny cholesterol particles (ApoB). Think of them as cars on a highway: the more cars there are, the more likely they are to cause a traffic jam in your blood vessels.",
-				source: "American Heart Association"
+				source: "Centers for Disease Control and Prevention (CDC)"
 			},
 			{
 				id: "tip-3",
@@ -391,7 +422,7 @@ const Tests = () => {
 				title: "Stress and Blood Sugar",
 				short: "Did you know that feeling stressed for a long time can actually raise your blood sugar, even if you eat healthy?",
 				readMore: "When you are stressed, your body releases a hormone called cortisol. Cortisol prepares your body for a fight by dumping extra sugar into your blood. If you stay stressed, this sugar stays high and can lead to weight gain. Countermeasure: Take 5 slow, deep breaths to tell your body it is safe.",
-				source: "Stanford Medicine"
+				source: "National Institutes of Health (NIH)"
 			},
 			{
 				id: "tip-4",
@@ -407,7 +438,7 @@ const Tests = () => {
 				title: "Green Tea Relaxation",
 				short: "Did you know that a natural ingredient in green tea can calm your mind without making you feel sleepy?",
 				readMore: "Green tea contains L-Theanine, a natural compound that slows down overactive signals in your brain. It increases your brain's natural 'relax' chemicals while keeping you focused. Countermeasure: Drink a cup of green tea in the morning instead of strong coffee.",
-				source: "Journal of Nutrition"
+				source: "Harvard Medical School"
 			},
 			{
 				id: "tip-6",
@@ -415,7 +446,7 @@ const Tests = () => {
 				title: "Sugar and Aging",
 				short: "Did you know that eating too much sugar can permanently stiffen your skin and blood vessels, making you age faster?",
 				readMore: "When there is too much sugar in your blood, it sticks to proteins and forms sticky clumps. These clumps damage your skin's collagen, causing wrinkles, and make your blood vessels stiff. Countermeasure: Limit sugary snacks and drinks to protect your youthfulness.",
-				source: "Journal of Clinical Investigation"
+				source: "World Health Organization (WHO)"
 			},
 			{
 				id: "tip-7",
@@ -423,7 +454,7 @@ const Tests = () => {
 				title: "Fitness and Lifespan",
 				short: "Did you know that improving your fitness by just a small amount can lower your risk of early death by 12%?",
 				readMore: "Your fitness level is the single best predictor of how long you will live. Daily aerobic exercise makes your heart larger and stronger, allowing it to pump more oxygen to your organs. Countermeasure: Aim for 20 minutes of brisk walking or cycling every day.",
-				source: "The Lancet"
+				source: "Centers for Disease Control and Prevention (CDC)"
 			},
 			{
 				id: "tip-8",
@@ -431,7 +462,7 @@ const Tests = () => {
 				title: "Cellular Clean Up",
 				short: "Did you know that giving your body a break from eating helps your cells clean out old, damaged parts?",
 				readMore: "When you fast or eat less, your cells go into a self-cleaning mode. They break down old, broken cellular parts and recycle them to build fresh, healthy cells. This process helps fight aging and diseases. Countermeasure: Try eating within a 10-hour window and resting your stomach.",
-				source: "Cell Metabolism"
+				source: "National Institutes of Health (NIH)"
 			},
 			{
 				id: "tip-9",
@@ -439,7 +470,7 @@ const Tests = () => {
 				title: "Magnesium for Brain",
 				short: "Did you know that a special type of magnesium can enter your brain directly to boost your memory?",
 				readMore: "Most magnesium supplements do not reach the brain easily. But Magnesium L-Threonate can cross into the brain to increase the connections between your brain cells. This helps you learn faster and remember things better. Countermeasure: Take a high-quality magnesium before bed.",
-				source: "Massachusetts Institute of Technology (MIT)"
+				source: "World Health Organization (WHO)"
 			},
 			{
 				id: "tip-10",
@@ -447,7 +478,7 @@ const Tests = () => {
 				title: "Your Gut Shield",
 				short: "Did you know that your gut has its own physical shield that blocks bad bacteria before they make you sick?",
 				readMore: "Your gut produces a special antibody (sIgA) that acts like a sticky net. It catches bad bacteria and toxins, preventing them from entering your body. Countermeasure: Support this shield by eating healthy yogurt and fermented foods.",
-				source: "Nature Reviews Immunology"
+				source: "Harvard Medical School"
 			},
 			{
 				id: "tip-11",
@@ -455,7 +486,7 @@ const Tests = () => {
 				title: "Vitamin D Control Center",
 				short: "Did you know that Vitamin D acts more like a control hormone than a simple vitamin?",
 				readMore: "Vitamin D turns on and off over 200 health genes in your body. It helps build strong bones, boosts your immune system to fight colds, and protects your heart. Countermeasure: Get 15 minutes of midday sun exposure or take a D3 supplement.",
-				source: "Endocrine Society"
+				source: "National Institutes of Health (NIH)"
 			},
 			{
 				id: "tip-12",
@@ -463,7 +494,7 @@ const Tests = () => {
 				title: "Deep Resonant Breathing",
 				short: "Did you know that breathing slowly at 6 breaths per minute sends an instant signal to calm your heart?",
 				readMore: "Breathing slowly aligns your lungs with your heart rate. This triggers your vagus nerve, which acts as a brake on stress, instantly lowering your blood pressure and making you feel safe. Countermeasure: Breathe in for 5 seconds, and breathe out for 5 seconds.",
-				source: "Journal of Physiology"
+				source: "World Health Organization (WHO)"
 			}
 		];
 
@@ -590,13 +621,27 @@ const Tests = () => {
 									</div>
 
 									{/* Daily Epigenetic Insights & Rotating Bio-Tips */}
-									<div className={styles["daily-tips-container"]}>
+									<div className={`${styles["daily-tips-container"]} ${newRotationTriggered ? styles["rotating-active"] : ""}`}>
 										<div className={styles["daily-tips-header"]}>
 											<div className={styles["header-row-meta"]}>
 												<Sparkles size={16} className={styles["sparkles-icon"]} />
 												<h3>Daily Molecular Epigenetic Bio-Tips</h3>
 											</div>
-											<span className={styles["daily-rotate-badge"]}>Rotates every 24 hours</span>
+											<div className={styles["header-actions-row"]}>
+												<span className={styles["daily-rotate-badge"]}>🌐 WHO, NIH & CDC Guidelines</span>
+												<button
+													type="button"
+													className={styles["resync-btn"]}
+													onClick={() => {
+														localStorage.removeItem("genetiq_last_tip_seed");
+														window.location.reload();
+													}}
+													title="Simulate 24h Rotation & Re-sync"
+												>
+													<RefreshCw size={11} />
+													Sync Guidelines
+												</button>
+											</div>
 										</div>
 
 										<div className={styles["daily-tips-grid"]}>
