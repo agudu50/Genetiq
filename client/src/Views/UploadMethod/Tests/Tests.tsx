@@ -1,13 +1,11 @@
 import { useState, useMemo, useCallback, memo } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "@/App/Redux/store";
-import { setFilter } from "@/App/Redux/testSlice";
+import { useDispatch } from "react-redux";
 import { setCategory } from "@/App/Redux/categorySlice";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
 	Brain, Heart, Flame, Layers, Shield, Sparkles, CheckCircle2, 
-	XCircle, ArrowRight, RefreshCw, Trophy, ExternalLink, Copy, Database 
+	XCircle, ArrowRight, RefreshCw, Trophy, ExternalLink, Copy 
 } from "lucide-react";
 import styles from "./Tests.module.scss";
 
@@ -78,6 +76,30 @@ const EXAM_SYSTEMS: ExamSystem[] = [
 				},
 				correct: "B",
 				insight: "High HRV indicates healthy parasympathetic nervous system adaptability, resilience to stress, and efficient cardiovascular recovery."
+			},
+			{
+				id: "brain-4",
+				text: "Which molecular mechanism describes the physiological action of L-Theanine in the central nervous system?",
+				options: {
+					A: "Direct binding and activation of adrenergic alpha-1 receptors",
+					B: "Competitive inhibition of glutamate receptors and modulation of GABA/dopamine levels",
+					C: "Irreversible block of voltage-gated sodium channels in the cortex",
+					D: "Acceleration of monoamine oxidase enzymes in synapses"
+				},
+				correct: "B",
+				insight: "L-Theanine structurally resembles glutamate and competitively blocks glutamate receptors, while increasing brain levels of GABA, dopamine, and glycine, promoting relaxation without drowsiness."
+			},
+			{
+				id: "brain-5",
+				text: "What does the accumulation of beta-amyloid plaques and hyperphosphorylated tau proteins in brain tissues primarily indicate?",
+				options: {
+					A: "Advanced myelination and synaptic signaling speed",
+					B: "Optimal clearance of cellular waste by the glymphatic system",
+					C: "Pathological hallmarks of neurodegenerative decline and cognitive impairment",
+					D: "Elevated growth hormone secretion during deep slow-wave sleep"
+				},
+				correct: "C",
+				insight: "Beta-amyloid plaques and hyperphosphorylated tau proteins disrupt axonal transport and trigger neuroinflammation, which are primary biological hallmarks of cognitive decline and neurodegeneration."
 			}
 		]
 	},
@@ -124,6 +146,30 @@ const EXAM_SYSTEMS: ExamSystem[] = [
 				},
 				correct: "B",
 				insight: "hs-CRP is produced by the liver in response to inflammatory cytokines. Elevated levels strongly correlate with vascular lining inflammation, which can destabilize arterial plaques."
+			},
+			{
+				id: "heart-4",
+				text: "Which enzymatic process is directly inhibited by lipid-lowering statin medications in the liver?",
+				options: {
+					A: "Lipoprotein lipase hydrolyzation in peripheral tissues",
+					B: "HMG-CoA reductase catalysis of mevalonate synthesis",
+					C: "PCSK9 protein degradation of low-density lipoprotein receptors",
+					D: "Cholesteryl ester transfer protein (CETP) exchange of lipids"
+				},
+				correct: "B",
+				insight: "Statins are competitive inhibitors of HMG-CoA reductase, the rate-limiting enzyme in cholesterol biosynthesis. This leads to upregulation of LDL receptors and increased clearance of circulating ApoB particles."
+			},
+			{
+				id: "heart-5",
+				text: "What physiological outcome is caused by chronically high levels of angiotensin II in vascular tissues?",
+				options: {
+					A: "Systemic vasodilation and significant reduction in resting heart rate",
+					B: "Arterial vasoconstriction and increased aldosterone release, raising blood pressure",
+					C: "Enhanced cardiac nitric oxide release and arterial vessel elasticity",
+					D: "Inhibition of platelet aggregation and thrombus formation"
+				},
+				correct: "B",
+				insight: "Angiotensin II binds to AT1 receptors, triggering rapid arterial vasoconstriction and aldosterone secretion. This increases sodium retention, fluid volume, and blood pressure."
 			}
 		]
 	},
@@ -170,6 +216,30 @@ const EXAM_SYSTEMS: ExamSystem[] = [
 				},
 				correct: "B",
 				insight: "High fasting insulin indicates that body cells are resisting insulin signals, forcing the pancreas to work overtime and overproduce insulin to keep blood glucose normal."
+			},
+			{
+				id: "metabolic-4",
+				text: "What is the physiological purpose of GLP-1 (Glucagon-Like Peptide-1) secretion in metabolic homeostasis?",
+				options: {
+					A: "Stimulating glucagon release and increasing hepatic glucose output",
+					B: "Promoting insulin secretion, slowing gastric emptying, and suppressing appetite",
+					C: "Inhibiting glucose uptake in skeletal muscle tissues",
+					D: "Upregulating lipogenesis in visceral adipose tissue depots"
+				},
+				correct: "B",
+				insight: "GLP-1 is an incretin hormone secreted by L-cells in the intestine. It enhances glucose-dependent insulin secretion, inhibits glucagon release, delays stomach emptying, and signals satiety."
+			},
+			{
+				id: "metabolic-5",
+				text: "What biological markers are calculated in the HOMA-IR (Homeostatic Model Assessment of Insulin Resistance) equation?",
+				options: {
+					A: "Ratio of high-density lipoprotein to low-density lipoprotein",
+					B: "Fasting glucose and fasting insulin levels",
+					C: "Standard deviation of 24-hour continuous glucose monitoring",
+					D: "Clearance rate of creatinine in a 24-hour urine collection"
+				},
+				correct: "B",
+				insight: "HOMA-IR is an established clinical calculation ('(Fasting Insulin * Fasting Glucose) / 405' in mg/dL) used to estimate insulin sensitivity and early metabolic dysregulation before fasting glucose rises."
 			}
 		]
 	},
@@ -216,58 +286,36 @@ const EXAM_SYSTEMS: ExamSystem[] = [
 				},
 				correct: "B",
 				insight: "The vagus nerve is the biological superhighway that facilitates direct, bidirectional communication between the enteric nervous system of the gut and the central nervous system."
+			},
+			{
+				id: "gut-4",
+				text: "Which major bacterial phyla typically dominate the healthy human gut microbiome?",
+				options: {
+					A: "Proteobacteria and Cyanobacteria",
+					B: "Bacteroidetes and Firmicutes",
+					C: "Actinobacteria and Spirochaetes",
+					D: "Fusobacteria and Euryarchaeota"
+				},
+				correct: "B",
+				insight: "Over 90% of the gut microbiome is composed of Bacteroidetes and Firmicutes. A healthy ratio and high microbial diversity within these phyla are crucial for metabolic and immune homeostasis."
+			},
+			{
+				id: "gut-5",
+				text: "What is the physiological function of secretory Immunoglobulin A (sIgA) in the gut mucosal lining?",
+				options: {
+					A: "Initiating immediate systemic anaphylactic allergic reactions",
+					B: "Providing immune exclusion by binding pathogens and toxins to prevent mucosal adhesion",
+					C: "Catalyzing the enzymatic digestion of dietary disaccharides",
+					D: "Directly triggering systemic vascular inflammatory cytokines"
+				},
+				correct: "B",
+				insight: "Secretory IgA (sIgA) is the primary antibody in gut mucosal secretions. It neutralizes pathogens, prevents microbial adhesion, and maintains mucosal homeostasis without triggering inflammatory cascades."
 			}
 		]
 	}
 ];
 
-const DropletIcon = memo(() => (
-	<svg
-		width='14'
-		height='14'
-		viewBox='0 0 24 24'
-		fill='none'
-		stroke='currentColor'
-		strokeWidth='2.5'
-		strokeLinecap='round'
-		strokeLinejoin='round'
-	>
-		<path d='M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z' />
-	</svg>
-));
 
-const BrainIcon = memo(() => (
-	<svg
-		width='14'
-		height='14'
-		viewBox='0 0 24 24'
-		fill='none'
-		stroke='currentColor'
-		strokeWidth='2.5'
-		strokeLinecap='round'
-		strokeLinejoin='round'
-	>
-		<path d='M9.5 2A5 5 0 0 1 12 4a5 5 0 0 1 2.5-2 4.96 4.96 0 0 1 4 1c1.2.9 1.8 2.4 1.5 4a5 5 0 0 1-1 2.4l-7 7-7-7a5 5 0 0 1-1-2.4c-.3-1.6.3-3.1 1.5-4a4.96 4.96 0 0 1 4-1z' />
-		<path d='M12 4v4' />
-		<path d='M10 4s-1-.5-1-1.5' />
-		<path d='M14 4s1-.5 1-1.5' />
-	</svg>
-));
-
-const ActivityIcon = memo(() => (
-	<svg
-		width='14'
-		height='14'
-		viewBox='0 0 24 24'
-		fill='none'
-		stroke='currentColor'
-		strokeWidth='2.5'
-		strokeLinecap='round'
-		strokeLinejoin='round'
-	>
-		<polyline points='22 12 18 12 15 21 9 3 6 12 2 12' />
-	</svg>
-));
 
 const ShieldIcon = memo(() => (
 	<svg
@@ -303,58 +351,129 @@ const TwinIcon = memo(() => (
 	</svg>
 ));
 
-const CategoryIcon = memo(({ type }: { type: string }) => {
-	switch (type) {
-		case "Blood":
-			return <DropletIcon />;
-		case "Neuro":
-			return <BrainIcon />;
-		case "CGM":
-			return <ActivityIcon />;
-		default:
-			return (
-				<svg
-					width='14'
-					height='14'
-					viewBox='0 0 24 24'
-					fill='none'
-					stroke='currentColor'
-					strokeWidth='2'
-					strokeLinecap='round'
-					strokeLinejoin='round'
-				>
-					<path d='M12 2v20M2 12h20' />
-				</svg>
-			);
-	}
-});
+
 
 const Tests = () => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
-	// View toggle state: "exams" (interactive diagnostics) or "reports" (standard labs)
-	const [viewMode, setViewMode] = useState<"exams" | "reports">("exams");
 
-	// Lab reports selectors & filters
-	const { items, filter } = useSelector((state: RootState) => state.tests);
-	const filteredTests = useMemo(() => {
-		if (filter === "All") return items;
-		return items.filter((test) => test.status === filter);
-	}, [items, filter]);
 
-	const handleViewOnTwin = useCallback(
-		(system: string) => {
-			dispatch(setCategory(system));
-			navigate("/dashboard");
-		},
-		[dispatch, navigate],
-	);
+	// Daily Epigenetic Rotating Tips State & Curated Pool
+	const [expandedTipId, setExpandedTipId] = useState<string | null>(null);
 
-	const showProof = useCallback((hash?: string) => {
-		if (hash) {
-			alert(`Vault Integrity Seal (SHA-256): ${hash.toUpperCase()}\nData encrypted and locally protected inside secure enclave.`);
+	const dailyTips = useMemo(() => {
+		const today = new Date();
+		// Create a seed based on year, month, and day to ensure it rotates every 24 hours
+		const seed = today.getFullYear() * 1000 + (today.getMonth() + 1) * 100 + today.getDate();
+		
+		// Curated pool of 12 simplified health bio-tips
+		const pool = [
+			{
+				id: "tip-1",
+				category: "Circadian",
+				title: "Evening Screen Light",
+				short: "Did you know that using screens at night can block your brain's sleep signals by up to 85%?",
+				readMore: "The blue light from phones and TVs tricks your brain into thinking it is daytime. This stops the brain from making melatonin, which is the chemical you need to fall asleep and recover. Countermeasure: Put your phone away 2 hours before bed or use warm night-mode screens.",
+				source: "Harvard Medical School"
+			},
+			{
+				id: "tip-2",
+				category: "Cardio",
+				title: "Understanding Heart Risk",
+				short: "Did you know that having normal cholesterol levels can sometimes hide a real risk of heart disease?",
+				readMore: "Standard tests only measure the weight of your cholesterol. A better test looks at the actual number of tiny cholesterol particles (ApoB). Think of them as cars on a highway: the more cars there are, the more likely they are to cause a traffic jam in your blood vessels.",
+				source: "American Heart Association"
+			},
+			{
+				id: "tip-3",
+				category: "Endocrine",
+				title: "Stress and Blood Sugar",
+				short: "Did you know that feeling stressed for a long time can actually raise your blood sugar, even if you eat healthy?",
+				readMore: "When you are stressed, your body releases a hormone called cortisol. Cortisol prepares your body for a fight by dumping extra sugar into your blood. If you stay stressed, this sugar stays high and can lead to weight gain. Countermeasure: Take 5 slow, deep breaths to tell your body it is safe.",
+				source: "Stanford Medicine"
+			},
+			{
+				id: "tip-4",
+				category: "Microbiome",
+				title: "Feeding Your Gut",
+				short: "Did you know that not eating enough fiber forces gut bacteria to eat the protective lining of your stomach?",
+				readMore: "Your gut is full of friendly bacteria that need fiber to survive. If you do not eat enough fiber, they get hungry and start eating the natural mucus shield that protects your intestines. This can cause gut pain and bloating. Countermeasure: Eat more vegetables, beans, and oats.",
+				source: "Mayo Clinic"
+			},
+			{
+				id: "tip-5",
+				category: "Neuro",
+				title: "Green Tea Relaxation",
+				short: "Did you know that a natural ingredient in green tea can calm your mind without making you feel sleepy?",
+				readMore: "Green tea contains L-Theanine, a natural compound that slows down overactive signals in your brain. It increases your brain's natural 'relax' chemicals while keeping you focused. Countermeasure: Drink a cup of green tea in the morning instead of strong coffee.",
+				source: "Journal of Nutrition"
+			},
+			{
+				id: "tip-6",
+				category: "Metabolic",
+				title: "Sugar and Aging",
+				short: "Did you know that eating too much sugar can permanently stiffen your skin and blood vessels, making you age faster?",
+				readMore: "When there is too much sugar in your blood, it sticks to proteins and forms sticky clumps. These clumps damage your skin's collagen, causing wrinkles, and make your blood vessels stiff. Countermeasure: Limit sugary snacks and drinks to protect your youthfulness.",
+				source: "Journal of Clinical Investigation"
+			},
+			{
+				id: "tip-7",
+				category: "Mitochondria",
+				title: "Fitness and Lifespan",
+				short: "Did you know that improving your fitness by just a small amount can lower your risk of early death by 12%?",
+				readMore: "Your fitness level is the single best predictor of how long you will live. Daily aerobic exercise makes your heart larger and stronger, allowing it to pump more oxygen to your organs. Countermeasure: Aim for 20 minutes of brisk walking or cycling every day.",
+				source: "The Lancet"
+			},
+			{
+				id: "tip-8",
+				category: "Longevity",
+				title: "Cellular Clean Up",
+				short: "Did you know that giving your body a break from eating helps your cells clean out old, damaged parts?",
+				readMore: "When you fast or eat less, your cells go into a self-cleaning mode. They break down old, broken cellular parts and recycle them to build fresh, healthy cells. This process helps fight aging and diseases. Countermeasure: Try eating within a 10-hour window and resting your stomach.",
+				source: "Cell Metabolism"
+			},
+			{
+				id: "tip-9",
+				category: "Brain",
+				title: "Magnesium for Brain",
+				short: "Did you know that a special type of magnesium can enter your brain directly to boost your memory?",
+				readMore: "Most magnesium supplements do not reach the brain easily. But Magnesium L-Threonate can cross into the brain to increase the connections between your brain cells. This helps you learn faster and remember things better. Countermeasure: Take a high-quality magnesium before bed.",
+				source: "Massachusetts Institute of Technology (MIT)"
+			},
+			{
+				id: "tip-10",
+				category: "Gut",
+				title: "Your Gut Shield",
+				short: "Did you know that your gut has its own physical shield that blocks bad bacteria before they make you sick?",
+				readMore: "Your gut produces a special antibody (sIgA) that acts like a sticky net. It catches bad bacteria and toxins, preventing them from entering your body. Countermeasure: Support this shield by eating healthy yogurt and fermented foods.",
+				source: "Nature Reviews Immunology"
+			},
+			{
+				id: "tip-11",
+				category: "Gene Regulation",
+				title: "Vitamin D Control Center",
+				short: "Did you know that Vitamin D acts more like a control hormone than a simple vitamin?",
+				readMore: "Vitamin D turns on and off over 200 health genes in your body. It helps build strong bones, boosts your immune system to fight colds, and protects your heart. Countermeasure: Get 15 minutes of midday sun exposure or take a D3 supplement.",
+				source: "Endocrine Society"
+			},
+			{
+				id: "tip-12",
+				category: "Vagal Stimulation",
+				title: "Deep Resonant Breathing",
+				short: "Did you know that breathing slowly at 6 breaths per minute sends an instant signal to calm your heart?",
+				readMore: "Breathing slowly aligns your lungs with your heart rate. This triggers your vagus nerve, which acts as a brake on stress, instantly lowering your blood pressure and making you feel safe. Countermeasure: Breathe in for 5 seconds, and breathe out for 5 seconds.",
+				source: "Journal of Physiology"
+			}
+		];
+
+		// Derive 3 tips deterministically using the day seed
+		const result = [];
+		for (let i = 0; i < 3; i++) {
+			const index = (seed + i * 4) % pool.length;
+			result.push(pool[index]);
 		}
+		return result;
 	}, []);
 
 	// Active Diagnostic Exam States
@@ -449,32 +568,10 @@ const Tests = () => {
 							Analyze biomarkers, take interactive quizzes, and seal verified credentials in your secure vault.
 						</p>
 					</div>
-
-					{/* Navigation tabs between Interactive Exams and standard Lab Reports */}
-					<div className={styles["view-mode-tabs"]}>
-						<button
-							className={`${styles["mode-tab"]} ${viewMode === "exams" ? styles["active"] : ""}`}
-							onClick={() => {
-								setViewMode("exams");
-								setActiveSystem(null);
-								setExamCompleted(false);
-							}}
-						>
-							<Sparkles size={14} />
-							Interactive Exams
-						</button>
-						<button
-							className={`${styles["mode-tab"]} ${viewMode === "reports" ? styles["active"] : ""}`}
-							onClick={() => setViewMode("reports")}
-						>
-							<Database size={14} />
-							Lab Reports
-						</button>
-					</div>
 				</div>
 
 				{/* MODE 1: INTERACTIVE DIAGNOSTIC EXAMS */}
-				{viewMode === "exams" && (
+				{true && (
 					<div className={styles["exams-flow-container"]}>
 						<AnimatePresence mode='wait'>
 							
@@ -492,6 +589,100 @@ const Tests = () => {
 										<p>Choose which organ system or biological pathway you want to examine. Complete the exam with a perfect score to seal a cryptographically encrypted verification credential inside your secure health vault.</p>
 									</div>
 
+									{/* Daily Epigenetic Insights & Rotating Bio-Tips */}
+									<div className={styles["daily-tips-container"]}>
+										<div className={styles["daily-tips-header"]}>
+											<div className={styles["header-row-meta"]}>
+												<Sparkles size={16} className={styles["sparkles-icon"]} />
+												<h3>Daily Molecular Epigenetic Bio-Tips</h3>
+											</div>
+											<span className={styles["daily-rotate-badge"]}>Rotates every 24 hours</span>
+										</div>
+
+										<div className={styles["daily-tips-grid"]}>
+											{dailyTips.map((tip, index) => {
+												const isExpanded = expandedTipId === tip.id;
+												return (
+													<motion.div 
+														key={tip.id} 
+														initial={{ opacity: 0, x: -30 }}
+														animate={{ opacity: 1, x: 0 }}
+														transition={{ duration: 0.4, delay: index * 0.08 }}
+														className={`${styles["daily-tip-card"]} ${isExpanded ? styles["expanded"] : ""}`}
+														whileHover={{ y: -4, transition: { duration: 0.2 } }}
+													>
+														<div className={styles["tip-meta-row"]}>
+															<span className={`${styles["tip-badge"]} ${styles[tip.category.toLowerCase().replace(" ", "-")]}`}>{tip.category}</span>
+															<span className={styles["tip-tag"]}>Biomarker Insight</span>
+														</div>
+														<h4 className={styles["tip-title"]}>{tip.title}</h4>
+														<p className={styles["tip-short"]}>{tip.short}</p>
+
+														{/* Smooth height expand for full science insight */}
+														<AnimatePresence>
+															{isExpanded && (
+																<motion.div
+																	initial={{ height: 0, opacity: 0 }}
+																	animate={{ height: "auto", opacity: 1 }}
+																	exit={{ height: 0, opacity: 0 }}
+																	transition={{ duration: 0.25 }}
+																	className={styles["tip-full-science"]}
+																>
+																	<div className={styles["tip-divider"]} />
+																	<h5>🧬 Science Actions & Countermeasures</h5>
+																	<p>{tip.readMore}</p>
+																	<div className={styles["tip-source-row"]}>
+																		<span>Source: {tip.source}</span>
+																	</div>
+																</motion.div>
+															)}
+														</AnimatePresence>
+
+														<button
+															type="button"
+															className={styles["tip-readmore-btn"]}
+															onClick={() => setExpandedTipId(isExpanded ? null : tip.id)}
+														>
+															{isExpanded ? "Close Insight" : "Read More & Science Insight →"}
+														</button>
+													</motion.div>
+												);
+											})}
+										</div>
+									</div>
+
+									{/* Diagnostic Enclave Stats Bar */}
+									<div className={styles["diagnostic-stats-bar"]}>
+										<div className={styles["stats-item"]}>
+											<span className={styles["stats-dot-active"]} />
+											<div className={styles["stats-text"]}>
+												<span className={styles["stats-label"]}>Secure Enclave Vault</span>
+												<strong className={styles["stats-val"]}>Active (AES-256)</strong>
+											</div>
+										</div>
+										<div className={styles["stats-item"]}>
+											<Shield size={16} className={styles["stats-icon-purple"]} />
+											<div className={styles["stats-text"]}>
+												<span className={styles["stats-label"]}>Integrity Protocol</span>
+												<strong className={styles["stats-val"]}>SHA-256 Verified</strong>
+											</div>
+										</div>
+										<div className={styles["stats-item"]}>
+											<Trophy size={16} className={styles["stats-icon-gold"]} />
+											<div className={styles["stats-text"]}>
+												<span className={styles["stats-label"]}>Exams Available</span>
+												<strong className={styles["stats-val"]}>{EXAM_SYSTEMS.length} Systems</strong>
+											</div>
+										</div>
+										<div className={styles["stats-item"]}>
+											<Sparkles size={16} className={styles["stats-icon-teal"]} />
+											<div className={styles["stats-text"]}>
+												<span className={styles["stats-label"]}>Diagnostic Scope</span>
+												<strong className={styles["stats-val"]}>20 Advanced Questions</strong>
+											</div>
+										</div>
+									</div>
+
 									<div className={styles["systems-grid"]}>
 										{EXAM_SYSTEMS.map((sys) => (
 											<div key={sys.id} className={`${styles["system-card"]} ${styles[sys.colorClass]}`}>
@@ -499,7 +690,7 @@ const Tests = () => {
 													<div className={styles["sys-icon-box"]}>
 														{sys.icon}
 													</div>
-													<div className={styles["sys-meta-badge"]}>3 Questions</div>
+													<div className={styles["sys-meta-badge"]}>{sys.questions.length} Questions</div>
 												</div>
 												<h3 className={styles["sys-title"]}>{sys.name}</h3>
 												<p className={styles["sys-desc"]}>{sys.description}</p>
@@ -517,6 +708,49 @@ const Tests = () => {
 												</button>
 											</div>
 										))}
+									</div>
+
+									{/* Advanced Molecular Insights Library */}
+									<div className={styles["insights-library"]}>
+										<div className={styles["library-header"]}>
+											<Sparkles size={20} className={styles["sparkle-icon"]} />
+											<h2>Advanced Molecular Biomarker Library</h2>
+											<p>Genetiq dynamically tracks and models key chemical precursors, inflammation signals, and regulatory metabolites to provide clinical-grade insights.</p>
+										</div>
+										
+										<div className={styles["insights-grid"]}>
+											<div className={styles["insight-card"]}>
+												<div className={styles["insight-header-row"]}>
+													<div className={`${styles["insight-badge"]} ${styles["brain"]}`}>Neuro</div>
+													<h3>Acetylcholine</h3>
+												</div>
+												<p>The core neurotransmitter mediating synaptic transmission in neural pathways responsible for cognitive processing speed, working memory recall, and focus latency.</p>
+											</div>
+
+											<div className={styles["insight-card"]}>
+												<div className={styles["insight-header-row"]}>
+													<div className={`${styles["insight-badge"]} ${styles["heart"]}`}>Cardio</div>
+													<h3>Apolipoprotein B (ApoB)</h3>
+												</div>
+												<p>A precision metric that measures the absolute molecular count of all atherogenic lipid particles capable of traversing endothelial linings and causing arterial vascular plaque deposits.</p>
+											</div>
+
+											<div className={styles["insight-card"]}>
+												<div className={styles["insight-header-row"]}>
+													<div className={`${styles["insight-badge"]} ${styles["metabolic"]}`}>Metabolic</div>
+													<h3>HbA1c Glycation</h3>
+												</div>
+												<p>Represents the percentage of circulating red blood cell hemoglobin chemically bonded with glucose molecules, providing a precise 90-day biological average of blood sugar homeostasis.</p>
+											</div>
+
+											<div className={styles["insight-card"]}>
+												<div className={styles["insight-header-row"]}>
+													<div className={`${styles["insight-badge"]} ${styles["gut"]}`}>Microbiome</div>
+													<h3>Butyrate Synthesis</h3>
+												</div>
+												<p>A vital short-chain fatty acid metabolite produced via bacterial fermentation of fiber, fueling gut epithelium cells and locking tight junctions to seal the mucosal barrier.</p>
+											</div>
+										</div>
 									</div>
 								</motion.div>
 							)}
@@ -745,123 +979,6 @@ const Tests = () => {
 					</div>
 				)}
 
-				{/* MODE 2: VERIFIED LAB REPORTS LISTING */}
-				{viewMode === "reports" && (
-					<div className={styles["reports-flow-container"]}>
-						{/* Tab Filter buttons */}
-						<div className={styles["filter-tabs"]}>
-							{(["All", "Pending", "Completed", "Flagged"] as const).map((t) => (
-								<button
-									key={t}
-									className={`${styles["tab-btn"]} ${filter === t ? styles["active"] : ""}`}
-									onClick={() => dispatch(setFilter(t))}
-								>
-									{t}
-								</button>
-							))}
-						</div>
-
-						{/* Biomarkers Grid */}
-						<div className={styles["tests-grid"]}>
-							<AnimatePresence mode='popLayout'>
-								{filteredTests.map((test, index) => (
-									<motion.div
-										key={test.id}
-										layout
-										initial={{ opacity: 0, y: 20 }}
-										animate={{ opacity: 1, y: 0 }}
-										exit={{ opacity: 0, scale: 0.95 }}
-										transition={{ duration: 0.3, delay: index * 0.05 }}
-										className={styles["test-card"]}
-									>
-										<div className={styles["card-header"]}>
-											<div className={`${styles["test-icon"]} ${styles[test.type.toLowerCase()]}`}>
-												<CategoryIcon type={test.type} />
-											</div>
-											<div className={styles["header-right"]}>
-												{test.vaultSeal && (
-													<button
-														className={styles["proof-badge"]}
-														onClick={() => showProof(test.vaultSeal)}
-														title='Local Vault Encrypted'
-													>
-														<ShieldIcon />
-														Vault Secured
-													</button>
-												)}
-												<div className={`${styles["status-chip"]} ${styles[test.status.toLowerCase().replace(" ", "-")]}`}>
-													{test.status}
-												</div>
-											</div>
-										</div>
-
-										<div className={styles["test-body"]}>
-											<h3 className={styles["test-title"]}>{test.title}</h3>
-											<p className={styles["test-description"]}>{test.description}</p>
-										</div>
-
-										<div className={styles["test-meta"]}>
-											{test.price && (
-												<div className={styles["price"]}>
-													Price: <span>{test.price}</span>
-												</div>
-											)}
-											{(test.date || test.order_date) && (
-												<div className={styles["date"]}>
-													{test.status === "Completed" ? "Completed: " : "Ordered: "}
-													<span>
-														{new Date(test.date || test.order_date!).toLocaleDateString()}
-													</span>
-												</div>
-											)}
-											{test.tracking && (
-												<div className={styles["tracking"]}>
-													<svg
-														width='12'
-														height='12'
-														viewBox='0 0 24 24'
-														fill='none'
-														stroke='currentColor'
-														strokeWidth='2.5'
-														strokeLinecap='round'
-														strokeLinejoin='round'
-														style={{ marginRight: 6 }}
-													>
-														<path d='M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z' />
-														<polyline points='3.29 7 12 12 20.71 7' />
-														<line x1='12' y1='22' x2='12' y2='12' />
-													</svg>
-													<span>{test.tracking}</span>
-												</div>
-											)}
-										</div>
-
-										<div className={styles["card-actions"]}>
-											<button
-												className={styles["twin-btn"]}
-												onClick={() => handleViewOnTwin(test.system)}
-											>
-												<TwinIcon />
-												View on Twin
-											</button>
-											{test.status === "Available to Order" && (
-												<button className={styles["order-btn"]}>Order Kit</button>
-											)}
-										</div>
-									</motion.div>
-								))}
-							</AnimatePresence>
-						</div>
-
-						{/* Block privacy secure details */}
-						<div className={styles["info-panel"]}>
-							<div className={styles["info-badge"]}>At-Home Collection</div>
-							<p className={styles["info-text"]}>
-								Every test result is locally encrypted with AES-256 and signed with a cryptographic SHA-256 hash to ensure absolute data integrity and tampering protection.
-							</p>
-						</div>
-					</div>
-				)}
 
 			</div>
 

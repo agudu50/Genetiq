@@ -20,7 +20,7 @@ export interface HealthGoal {
 	trend: "improving" | "stable" | "declining";
 	streak: number;
 	completed: boolean;
-	suiMilestoneHash?: string;
+	vaultSealHash?: string;
 }
 
 interface GoalState {
@@ -143,18 +143,18 @@ const goalSlice = createSlice({
 			const completedCount = state.items.filter((g) => g.completed).length;
 			state.totalHealthScore = Math.round((completedCount / state.items.length) * 100) || 0;
 		},
-		mintMilestone: (
+		sealMilestone: (
 			state,
 			action: PayloadAction<{ id: string; hash: string }>,
 		) => {
 			const goal = state.items.find((g) => g.id === action.payload.id);
 			if (goal) {
-				goal.suiMilestoneHash = action.payload.hash;
+				goal.vaultSealHash = action.payload.hash;
 			}
 		},
 	},
 });
 
-export const { setGoals, toggleGoal, updateGoalProgress, addGoal, mintMilestone } =
+export const { setGoals, toggleGoal, updateGoalProgress, addGoal, sealMilestone } =
 	goalSlice.actions;
 export default goalSlice.reducer;

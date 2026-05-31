@@ -110,9 +110,9 @@ const Goals = () => {
 		[dispatch, goals],
 	);
 
-	const handleMintNFT = useCallback((id: string) => {
+	const handleSealMilestone = useCallback((id: string) => {
 		alert(
-			`Minting Soul-bound Health Milestone NFT for goal ${id} on Sui Blockchain...\nTransaction Hash pending approval from zkLogin.`,
+			`Sealing goal milestone for goal ${id} in your secure enclave vault...\nGenerating secure SHA-256 integrity seal.`,
 		);
 	}, []);
 
@@ -241,7 +241,7 @@ const Goals = () => {
 	// Analytics computations for added rich content
 	const totalGoalsCount = goals.length;
 	const completedGoalsCount = goals.filter((g) => g.completed).length;
-	const mintedNFTCount = goals.filter((g) => g.suiMilestoneHash).length;
+	const sealedMilestonesCount = goals.filter((g) => g.vaultSealHash).length;
 	const totalBioPoints = completedGoalsCount * 10;
 
 	return (
@@ -341,8 +341,8 @@ const Goals = () => {
 							<Trophy size={16} />
 						</div>
 						<div className={styles["analytic-info"]}>
-							<span className={styles["analytic-label"]}>Sui SBT Milestones</span>
-							<span className={styles["analytic-value"]}>{mintedNFTCount} Minted</span>
+							<span className={styles["analytic-label"]}>Enclave Milestones</span>
+							<span className={styles["analytic-value"]}>{sealedMilestonesCount} Sealed</span>
 						</div>
 					</div>
 				</div>
@@ -534,12 +534,12 @@ const Goals = () => {
 										</div>
 									</div>
 
-									{/* Web3 Milestone Minting */}
+									{/* Enclave Vault Milestone Sealing */}
 									{goal.completed && goal.streak >= 7 && (
 										<button
 											className={styles["mint-btn"]}
-											onClick={() => handleMintNFT(goal.id)}
-											title='Mint zkLogin Soul-Bound NFT'
+											onClick={() => handleSealMilestone(goal.id)}
+											title='Seal Milestone in Secure Vault'
 										>
 											<Trophy size={14} />
 										</button>
@@ -623,8 +623,8 @@ const Goals = () => {
 							<p>Your genome is a dynamic software program, not a static script. Daily habits, optimized nutrition, circadian light alignment, and stress management serve as real-time molecular switches. By completing your targets, you actively modulate gene expression, promoting cellular regeneration and long-term vitality.</p>
 						</div>
 						<div className={styles["faq-item"]}>
-							<h4>🔗 Soulbound SBTs & zkLogin Verification</h4>
-							<p>Achieving a 7-day consistency streak validates your biological dedication. Genetiq cryptographically seals these milestones by minting zero-knowledge verifiable Soulbound Tokens (SBTs) on the SUI Blockchain—creating a secure, decentralized pedigree of your wellness journey while keeping your medical data private.</p>
+							<h4>🔒 Secure Enclave & Biometric Vault Seals</h4>
+							<p>Achieving a 7-day consistency streak validates your biological dedication. Genetiq cryptographically seals these milestones inside your local hardware secure enclave using secure SHA-256 hashes—creating a tamper-proof, fully private pedigree of your wellness journey without sharing your clinical data.</p>
 						</div>
 					</div>
 				</div>
