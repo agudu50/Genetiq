@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import Thumb from "@assets/AgeWidget/Thumb.svg?react";
 import Circle from "@assets/AgeWidget/Circle.svg?react";
 import styles from "./AgeSlider.module.scss";
@@ -20,10 +21,14 @@ export const AgeSlider: React.FC<AgeSliderProps> = ({ ageData }) => {
 	const bioAgePercentage = ((minAge - rangeStart) * 100) / rangeLength + 1;
 	const chronoAgePercentage = ((maxAge - rangeStart) * 100) / rangeLength;
 
-	const axisLabels = Array.from(
-		{ length: rangeLength + 1 },
-		(_, i) => rangeStart + i,
-	);
+	const axisLabels = useMemo(() => {
+		const labels = [];
+		const step = 10;
+		for (let age = rangeStart; age <= rangeEnd; age += step) {
+			labels.push(age);
+		}
+		return labels;
+	}, [rangeStart, rangeEnd]);
 
 	return (
 		<div className={styles["AgeSlider-container"]}>
