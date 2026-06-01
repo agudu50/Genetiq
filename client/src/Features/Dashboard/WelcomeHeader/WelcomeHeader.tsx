@@ -171,6 +171,10 @@ export const WelcomeHeader = () => {
 
 	return (
 		<div className={styles.welcomeHeader}>
+			{/* High-fidelity visual background elements */}
+			<div className={styles.cardMeshBg} />
+			<div className={styles.cardGlowBlob} />
+
 			<div className={styles.greetingSection}>
 				<div className={styles.greeting}>
 					<h1 className={styles.greetingText}>
@@ -205,37 +209,42 @@ export const WelcomeHeader = () => {
 							} as React.CSSProperties
 						}
 					>
-						<div className={styles.statIcon} style={{ color: stat.color }}>
-							{stat.icon}
+						{/* Top Header Row: Icon on left, Trend badge on right */}
+						<div className={styles.statHeader}>
+							<div className={styles.statIcon} style={{ color: stat.color }}>
+								{stat.icon}
+							</div>
+							<div
+								className={`${styles.statTrend} ${styles[stat.trend || "stable"]}`}
+							>
+								{stat.trend === "up" && (
+									<svg
+										width='12'
+										height='12'
+										viewBox='0 0 16 16'
+										fill='currentColor'
+									>
+										<path d='M8 4l4 4H4l4-4z' />
+									</svg>
+								)}
+								{stat.trend === "down" && (
+									<svg
+										width='12'
+										height='12'
+										viewBox='0 0 16 16'
+										fill='currentColor'
+									>
+										<path d='M8 12l-4-4h8l-4 4z' />
+									</svg>
+								)}
+								<span>{stat.trendValue}</span>
+							</div>
 						</div>
-						<div className={styles.statContent}>
+
+						{/* Bottom Body Row: Large Value and Label stacked vertically */}
+						<div className={styles.statBody}>
 							<span className={styles.statValue}>{stat.value}</span>
 							<span className={styles.statLabel}>{stat.label}</span>
-						</div>
-						<div
-							className={`${styles.statTrend} ${styles[stat.trend || "stable"]}`}
-						>
-							{stat.trend === "up" && (
-								<svg
-									width='16'
-									height='16'
-									viewBox='0 0 16 16'
-									fill='currentColor'
-								>
-									<path d='M8 4l4 4H4l4-4z' />
-								</svg>
-							)}
-							{stat.trend === "down" && (
-								<svg
-									width='16'
-									height='16'
-									viewBox='0 0 16 16'
-									fill='currentColor'
-								>
-									<path d='M8 12l-4-4h8l-4 4z' />
-								</svg>
-							)}
-							<span>{stat.trendValue}</span>
 						</div>
 					</div>
 				))}
