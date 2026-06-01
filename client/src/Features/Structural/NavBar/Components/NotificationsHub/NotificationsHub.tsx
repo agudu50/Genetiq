@@ -14,6 +14,10 @@ const NotificationHub: React.FC<NotificationHubProps> = ({
 	const [isOpen, setIsOpen] = useState(false);
 	const [dismissedIds, setDismissedIds] = useState<number[]>([]);
 	const ref = useRef<HTMLDivElement>(null);
+	
+	// Live tracking of Tests page seeds for badge counting
+	const [unreadTips, setUnreadTips] = useState(false);
+	const [uncompleteExam, setUncompleteExam] = useState(false);
 
 	useEffect(() => {
 		const handleClick = (e: MouseEvent) => {
@@ -25,7 +29,38 @@ const NotificationHub: React.FC<NotificationHubProps> = ({
 		return () => document.removeEventListener("mousedown", handleClick);
 	}, []);
 
-	const activeCount = 4 - dismissedIds.length;
+	useEffect(() => {
+		const checkSeeds = () => {
+			const today = new Date();
+			const currentSeed = today.getFullYear() * 1000 + (today.getMonth() + 1) * 100 + today.getDate();
+			
+			const tipsReadSeed = localStorage.getItem("genetiq_tips_read_seed");
+			const examCompletedSeed = localStorage.getItem("genetiq_exam_completed_seed");
+			
+			setUnreadTips(tipsReadSeed !== String(currentSeed));
+			setUncompleteExam(examCompletedSeed !== String(currentSeed));
+		};
+
+		// Check on mount
+		checkSeeds();
+		
+		// Listener for dynamic badge decrements/increments
+		window.addEventListener("genetiq_tips_read", checkSeeds);
+		window.addEventListener("storage", checkSeeds);
+		
+		return () => {
+			window.removeEventListener("genetiq_tips_read", checkSeeds);
+			window.removeEventListener("storage", checkSeeds);
+		};
+	}, []);
+
+	// Determine overall active unread notification count
+	let totalCount = 4;
+	if (unreadTips && !dismissedIds.includes(101)) totalCount += 1;
+	if (uncompleteExam && !dismissedIds.includes(102)) totalCount += 1;
+
+	const dismissedStatic = dismissedIds.filter(id => id <= 4).length;
+	const activeCount = totalCount - dismissedStatic;
 
 	const handleDismiss = (id: number) => {
 		setDismissedIds((prev) => [...prev, id]);

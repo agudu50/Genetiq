@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./HealthInsights.module.scss";
 import { useLanguage } from "@/App/i18n/LanguageContext";
+import { useNavigate } from "react-router-dom";
 import { 
 	Sparkles, 
 	CheckCircle2, 
@@ -26,12 +27,69 @@ interface HealthInsightsProps {
 
 export const HealthInsights = ({ dismissedIds: propDismissedIds, onDismiss }: HealthInsightsProps) => {
 	const { t } = useLanguage();
+	const navigate = useNavigate();
 	const [localDismissedIds, setLocalDismissedIds] = useState<number[]>([]);
 	const [showAll, setShowAll] = useState(false);
+	
+	// Live tracking of Tests page daily unread/uncomplete seeds
+	const [unreadTips, setUnreadTips] = useState(false);
+	const [uncompleteExam, setUncompleteExam] = useState(false);
 
 	const dismissedIds = propDismissedIds !== undefined ? propDismissedIds : localDismissedIds;
 
-	const insights: Insight[] = [
+	useEffect(() => {
+		const checkSeeds = () => {
+			const today = new Date();
+			const currentSeed = today.getFullYear() * 1000 + (today.getMonth() + 1) * 100 + today.getDate();
+			
+			const tipsReadSeed = localStorage.getItem("genetiq_tips_read_seed");
+			const examCompletedSeed = localStorage.getItem("genetiq_exam_completed_seed");
+			
+			setUnreadTips(tipsReadSeed !== String(currentSeed));
+			setUncompleteExam(examCompletedSeed !== String(currentSeed));
+		};
+
+		// Check on mount
+		checkSeeds();
+		
+		// Event listeners to sync instantly when the user completes exams or reads tips
+		window.addEventListener("genetiq_tips_read", checkSeeds);
+		window.addEventListener("storage", checkSeeds);
+		
+		return () => {
+			window.removeEventListener("genetiq_tips_read", checkSeeds);
+			window.removeEventListener("storage", checkSeeds);
+		};
+	}, []);
+
+	const insights: Insight[] = [];
+
+	// 1. Prepend dynamic Daily Bio-Tips notification if unread today
+	if (unreadTips) {
+		insights.push({
+			id: 101,
+			type: "tip",
+			title: "🧬 Daily Bio-Tips Ready",
+			description: "Your personalized molecular daily health tips are ready. Read them to clear this alert.",
+			action: "/config/tests",
+			actionLabel: "Read Bio-Tips"
+		});
+	}
+
+	// 2. Prepend dynamic Active Target Exam notification if incomplete today
+	if (uncompleteExam) {
+		insights.push({
+			id: 102,
+			type: "warning",
+			title: "🎯 Active Target Quiz",
+			description: "Today's personalized biological exam is waiting. Challenge yourself to seal your credentials!",
+			action: "/config/tests",
+			actionLabel: "Start Exam"
+		});
+	}
+
+	// 3. Append static diagnostic/assistant insights
+	insights.push(
 		{
 			id: 1,
 			type: "warning",
@@ -65,8 +123,8 @@ export const HealthInsights = ({ dismissedIds: propDismissedIds, onDismiss }: He
 			description: t("checkup_desc") || "Annual screening due in 2 weeks.",
 			action: "/schedule",
 			actionLabel: t("schedule_now") || "Schedule Now",
-		},
-	];
+		}
+	);
 
 	const activeInsights = insights.filter((i) => !dismissedIds.includes(i.id));
 	const visibleInsights = showAll ? activeInsights : activeInsights.slice(0, 3);
@@ -110,8 +168,16 @@ export const HealthInsights = ({ dismissedIds: propDismissedIds, onDismiss }: He
 				{visibleInsights.map((insight, index) => (
 					<div
 						key={insight.id}
-						className={`${styles.insightCard} ${styles[insight.type]}`}
-						style={{ animationDelay: `${index * 0.08}s` }}
+						className={`${styles.insightCard} ${styles[insight.type]} ${insight.action ? styles.clickable : ""}`}
+						style={{ 
+							animationDelay: `${index * 0.08}s`,
+							cursor: insight.action ? "pointer" : "default"
+						}}
+						onClick={() => {
+							if (insight.action) {
+								navigate(insight.action);
+							}
+						}}
 					>
 						<div className={styles.cardGlow} />
 						<div className={styles.iconWrapper}>{getIcon(insight.type)}</div>
@@ -119,7 +185,15 @@ export const HealthInsights = ({ dismissedIds: propDismissedIds, onDismiss }: He
 							<h4 className={styles.insightTitle}>{insight.title}</h4>
 							<p className={styles.insightDesc}>{insight.description}</p>
 							{insight.actionLabel && (
-								<button className={styles.actionBtn}>
+								<button 
+									className={styles.actionBtn}
+									onClick={(e) => {
+										e.stopPropagation();
+										if (insight.action) {
+											navigate(insight.action);
+										}
+									}}
+								>
 									<span>{insight.actionLabel}</span>
 									<ArrowRight size={12} className={styles.arrowIcon} />
 								</button>
@@ -127,7 +201,10 @@ export const HealthInsights = ({ dismissedIds: propDismissedIds, onDismiss }: He
 						</div>
 						<button
 							className={styles.dismissBtn}
-							onClick={() => dismissInsight(insight.id)}
+							onClick={(e) => {
+								e.stopPropagation();
+								dismissInsight(insight.id);
+							}}
 							aria-label='Dismiss'
 						>
 							<X size={13} />

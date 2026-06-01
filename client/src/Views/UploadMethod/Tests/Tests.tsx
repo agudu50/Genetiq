@@ -416,11 +416,6 @@ const Tests = () => {
 	const [expandedBiomarkerId, setExpandedBiomarkerId] = useState<string | null>(null);
 	const [newRotationTriggered, setNewRotationTriggered] = useState(false);
 
-	const dailyActiveSystemId = useMemo(() => {
-		const today = new Date();
-		const seed = today.getFullYear() * 1000 + (today.getMonth() + 1) * 100 + today.getDate();
-		return EXAM_SYSTEMS[seed % EXAM_SYSTEMS.length].id;
-	}, []);
 
 	useEffect(() => {
 		const today = new Date();
@@ -432,14 +427,24 @@ const Tests = () => {
 			setNewRotationTriggered(true);
 			
 			// Fire a beautiful toast notification alerting the user in the notification area
-			toast.info("🌐 Daily Molecular Bio-Tips Updated! Curated from WHO, NIH, and CDC clinical guidelines.", {
-				position: "top-right",
-				autoClose: 6000,
-				hideProgressBar: false,
-				closeOnClick: true,
-				pauseOnHover: true,
-				theme: "dark",
-			});
+			toast.info(
+				<div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+					<span style={{ fontWeight: 800, letterSpacing: "-0.015em", fontSize: "13.5px" }}>
+						🌐 Daily Bio-Tips Updated!
+					</span>
+					<span style={{ fontSize: "12px", opacity: 0.9, lineHeight: 1.4 }}>
+						We put today's personalized health tips together using official clinical guidelines from the WHO, NIH, and CDC.
+					</span>
+				</div>,
+				{
+					position: "top-right",
+					autoClose: 7000,
+					hideProgressBar: false,
+					closeOnClick: true,
+					pauseOnHover: true,
+					theme: "dark",
+				}
+			);
 
 			// Save seed to avoid repeated triggers on every single reload today
 			localStorage.setItem("genetiq_last_tip_seed", String(currentSeed));
