@@ -5,6 +5,7 @@ import App from "./App";
 import { Provider } from "react-redux";
 import store from "./Redux/store";
 import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { LanguageProvider } from "./i18n/LanguageContext";
 import { reloadForStaleAssets } from "./Routes/lazyWithRetry";
 

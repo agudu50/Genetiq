@@ -171,6 +171,14 @@ const RoutesConfig: RouteObject[] = [
 						),
 						path: paths.clinicalHistory,
 					},
+					{
+						element: (
+							<Lazy>
+								<Tests />
+							</Lazy>
+						),
+						path: paths.config.tests,
+					},
 				],
 			},
 			// Config routes — own layout with its own navbar, no MainLayout
@@ -210,14 +218,7 @@ const RoutesConfig: RouteObject[] = [
 						),
 						path: paths.config.reports,
 					},
-					{
-						element: (
-							<Lazy>
-								<Tests />
-							</Lazy>
-						),
-						path: paths.config.tests,
-					},
+
 					{
 						element: (
 							<Lazy>

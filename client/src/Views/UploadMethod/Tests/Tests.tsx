@@ -318,57 +318,6 @@ const EXAM_SYSTEMS: ExamSystem[] = [
 
 
 
-const BIOMARKERS = [
-	{
-		id: "bio-acetylcholine",
-		category: "Neuro",
-		categoryClass: "brain",
-		title: "Acetylcholine",
-		simpleTitle: "Brain Speed & Focus Chemical",
-		description: "A key brain chemical that helps send signals between brain cells. It is responsible for how fast you think, focus, and remember things.",
-		range: "Balanced baseline level",
-		impact: "Enhances nerve-signal speed, memory retention, and mental focus.",
-		booster: "Cruciferous vegetables, egg yolks, and Alpha-GPC supplements.",
-		icon: <Brain size={12} />
-	},
-	{
-		id: "bio-apob",
-		category: "Cardio",
-		categoryClass: "heart",
-		title: "Apolipoprotein B (ApoB)",
-		simpleTitle: "Heart Plaque Particle Count",
-		description: "The most accurate measure of the actual number of cholesterol particles in your blood. High numbers can build up in your blood vessels and block blood flow.",
-		range: "Under 80 mg/dL",
-		impact: "Measures the absolute number of artery-clogging particles in your bloodstream.",
-		booster: "Soluble fiber (beans, oats), extra virgin olive oil, and wild salmon.",
-		icon: <Heart size={12} />
-	},
-	{
-		id: "bio-hba1c",
-		category: "Metabolic",
-		categoryClass: "metabolic",
-		title: "HbA1c Glycation",
-		simpleTitle: "3-Month Average Blood Sugar",
-		description: "A simple marker that shows the average amount of sugar in your blood over the past 3 months. It helps you see your long-term blood sugar health.",
-		range: "Under 5.3%",
-		impact: "Tracks how much sugar has bonded to your red blood cells over the last 90 days.",
-		booster: "Daily brisk walking, apple cider vinegar, and limiting refined carbohydrates.",
-		icon: <Flame size={12} />
-	},
-	{
-		id: "bio-butyrate",
-		category: "Microbiome",
-		categoryClass: "gut",
-		title: "Butyrate Synthesis",
-		simpleTitle: "Gut Shield & Fuel Chemical",
-		description: "A healthy fat made by good gut bacteria when you eat fiber. It acts as the primary fuel to repair, seal, and protect your stomach and intestinal lining.",
-		range: "High production levels",
-		impact: "Fuels the cells lining your colon and seals the gut barrier against leaks.",
-		booster: "Raw oats, chicory root, garlic, onions, and fermented foods.",
-		icon: <Layers size={12} />
-	}
-];
-
 const ShieldIcon = memo(() => (
 	<svg
 		width='12'
@@ -415,7 +364,131 @@ const Tests = () => {
 	const [expandedTipId, setExpandedTipId] = useState<string | null>(null);
 	const [expandedBiomarkerId, setExpandedBiomarkerId] = useState<string | null>(null);
 	const [newRotationTriggered, setNewRotationTriggered] = useState(false);
-
+	const dailyBiomarkers = useMemo(() => {
+		const today = new Date();
+		// Date-based seed for 24h automatic rotation
+		const seed = today.getFullYear() * 1000 + (today.getMonth() + 1) * 100 + today.getDate();
+		
+		const pool = [
+			{
+				id: "bio-acetylcholine",
+				category: "Neuro",
+				categoryClass: "brain",
+				title: "Acetylcholine",
+				simpleTitle: "Brain Speed & Focus Chemical",
+				description: "A key brain chemical that helps send signals between brain cells. It is responsible for how fast you think, focus, and remember things.",
+				range: "Balanced baseline level",
+				impact: "Enhances nerve-signal speed, memory retention, and mental focus.",
+				booster: "Cruciferous vegetables, egg yolks, and Alpha-GPC supplements.",
+				icon: <Brain size={12} />
+			},
+			{
+				id: "bio-apob",
+				category: "Cardio",
+				categoryClass: "heart",
+				title: "Apolipoprotein B (ApoB)",
+				simpleTitle: "Heart Plaque Particle Count",
+				description: "The most accurate measure of the actual number of cholesterol particles in your blood. High numbers can build up in your blood vessels and block blood flow.",
+				range: "Under 80 mg/dL",
+				impact: "Measures the absolute number of artery-clogging particles in your bloodstream.",
+				booster: "Soluble fiber (beans, oats), extra virgin olive oil, and wild salmon.",
+				icon: <Heart size={12} />
+			},
+			{
+				id: "bio-hba1c",
+				category: "Metabolic",
+				categoryClass: "metabolic",
+				title: "HbA1c Glycation",
+				simpleTitle: "3-Month Average Blood Sugar",
+				description: "A simple marker that shows the average amount of sugar in your blood over the past 3 months. It helps you see your long-term blood sugar health.",
+				range: "Under 5.3%",
+				impact: "Tracks how much sugar has bonded to your red blood cells over the last 90 days.",
+				booster: "Daily brisk walking, apple cider vinegar, and limiting refined carbohydrates.",
+				icon: <Flame size={12} />
+			},
+			{
+				id: "bio-butyrate",
+				category: "Microbiome",
+				categoryClass: "gut",
+				title: "Butyrate Synthesis",
+				simpleTitle: "Gut Shield & Fuel Chemical",
+				description: "A healthy fat made by good gut bacteria when you eat fiber. It acts as the primary fuel to repair, seal, and protect your stomach and intestinal lining.",
+				range: "High production levels",
+				impact: "Fuels the cells lining your colon and seals the gut barrier against leaks.",
+				booster: "Raw oats, chicory root, garlic, onions, and fermented foods.",
+				icon: <Layers size={12} />
+			},
+			{
+				id: "bio-vitd3",
+				category: "Hormone",
+				categoryClass: "metabolic",
+				title: "Vitamin D3 Control",
+				simpleTitle: "Immune & Bone Control Hormone",
+				description: "A vital compound that acts like a hormone, turning on and off over 200 health genes to support bone strength and defense against sickness.",
+				range: "50 - 80 ng/mL",
+				impact: "Regulates immune cell response, calcium absorption, and vascular health.",
+				booster: "Midday sun exposure, wild-caught salmon, and D3 supplementation.",
+				icon: <Flame size={12} />
+			},
+			{
+				id: "bio-hrv",
+				category: "Vagal",
+				categoryClass: "brain",
+				title: "Heart Rate Variability (HRV)",
+				simpleTitle: "Nervous System Recovery Tracker",
+				description: "A measure of the tiny variations in time between each heartbeat. A higher score means your nervous system is relaxed and highly resilient to stress.",
+				range: "High baseline adaptability",
+				impact: "Indicates high parasympathetic tone, stress adaptability, and efficient cardiac recovery.",
+				booster: "Deep resonant breathing (6 breaths/min), cold showers, and quality sleep.",
+				icon: <Brain size={12} />
+			},
+			{
+				id: "bio-insulin",
+				category: "Metabolic",
+				categoryClass: "metabolic",
+				title: "Fasting Insulin",
+				simpleTitle: "Metabolic Speed & Energy Sensor",
+				description: "The amount of insulin in your blood when you haven't eaten. A low level means your body clears sugar easily and burns fat efficiently.",
+				range: "Under 6.0 uIU/mL",
+				impact: "Determines muscle glucose absorption speed and adipose tissue fat burning capacity.",
+				booster: "Brisk walking after meals, strength training, and eating fiber first.",
+				icon: <Flame size={12} />
+			},
+			{
+				id: "bio-hscrp",
+				category: "Cardio",
+				categoryClass: "heart",
+				title: "High-Sensitivity C-Reactive Protein (hs-CRP)",
+				simpleTitle: "Vessel Inflammation Signal",
+				description: "A protein made by the liver that rises when there is hidden swelling or stress in your blood vessels, helping you track vascular safety.",
+				range: "Under 1.0 mg/L",
+				impact: "Tracks vascular endothelium irritation and systemic inflammatory status.",
+				booster: "Extra virgin olive oil, regular low-intensity cardio, and quality sleep.",
+				icon: <Heart size={12} />
+			}
+		];
+		
+		const result = [];
+		for (let i = 0; i < 4; i++) {
+			const index = (seed + i * 3) % pool.length;
+			result.push(pool[index]);
+		}
+		
+		const uniqueMap = new Map();
+		result.forEach(item => uniqueMap.set(item.id, item));
+		
+		const uniqueList = Array.from(uniqueMap.values());
+		let poolIndex = 0;
+		while (uniqueList.length < 4 && poolIndex < pool.length) {
+			const candidate = pool[poolIndex];
+			if (!uniqueList.some(item => item.id === candidate.id)) {
+				uniqueList.push(candidate);
+			}
+			poolIndex++;
+		}
+		
+		return uniqueList.slice(0, 4);
+	}, []);
 
 	useEffect(() => {
 		const today = new Date();
@@ -863,7 +936,7 @@ const Tests = () => {
 										</div>
 										
 										<div className={styles["insights-grid"]}>
-											{BIOMARKERS.map((bio, index) => {
+											{dailyBiomarkers.map((bio, index) => {
 												const isExpanded = expandedBiomarkerId === bio.id;
 												return (
 													<motion.div
