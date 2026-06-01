@@ -574,7 +574,7 @@ const Tests = () => {
 	const [score, setScore] = useState<number>(0);
 
 	// Secure Enclave vault proof states
-	const [isMinting, setIsMinting] = useState<boolean>(false);
+	const [isSealing, setIsSealing] = useState<boolean>(false);
 	const [showReceipt, setShowReceipt] = useState<boolean>(false);
 	const [receiptTx, setReceiptTx] = useState<{ hash: string; keySize: string; timestamp: string } | null>(null);
 
@@ -628,7 +628,7 @@ const Tests = () => {
 
 	const triggerSealCredentials = useCallback(() => {
 		if (!activeSystem) return;
-		setIsMinting(true);
+		setIsSealing(true);
 		
 		// Simulate local hardware enclave AES-GCM 256-bit credentials sealing
 		setTimeout(() => {
@@ -641,7 +641,7 @@ const Tests = () => {
 				keySize: "AES-GCM 256-bit",
 				timestamp: new Date().toLocaleString()
 			});
-			setIsMinting(false);
+			setIsSealing(false);
 			setShowReceipt(true);
 		}, 2000);
 	}, [activeSystem]);
@@ -1108,11 +1108,11 @@ const Tests = () => {
 									<div className={styles["complete-actions"]}>
 										{score === activeSystem.questions.length ? (
 											<button
-												className={`${styles["seal-vault-btn"]} ${isMinting ? styles["loading"] : ""}`}
+												className={`${styles["seal-vault-btn"]} ${isSealing ? styles["loading"] : ""}`}
 												onClick={triggerSealCredentials}
-												disabled={isMinting || showReceipt}
+												disabled={isSealing || showReceipt}
 											>
-												{isMinting ? (
+												{isSealing ? (
 													<>
 														<RefreshCw size={16} className={styles["spin-icon"]} />
 														Sealing in local vault...

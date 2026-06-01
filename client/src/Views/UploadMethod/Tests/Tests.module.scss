@@ -308,8 +308,6 @@
 
 // Brain (Purple)
 .brain {
-	border-left: 4px solid #8b5cf6;
-
 	.sys-icon-box {
 		background: linear-gradient(135deg, #a78bfa, #7c3aed);
 		box-shadow: 0 4px 12px rgba(124, 58, 237, 0.35);
@@ -339,12 +337,15 @@
 			box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
 		}
 	}
+
+	&:hover {
+		border-color: rgba(124, 58, 237, 0.25) !important;
+		box-shadow: 0 12px 32px rgba(124, 58, 237, 0.15) !important;
+	}
 }
 
 // Heart (Rose)
 .heart {
-	border-left: 4px solid #f43f5e;
-
 	.sys-icon-box {
 		background: linear-gradient(135deg, #fb7185, #e11d48);
 		box-shadow: 0 4px 12px rgba(225, 29, 72, 0.35);
@@ -374,12 +375,15 @@
 			box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3);
 		}
 	}
+
+	&:hover {
+		border-color: rgba(225, 29, 72, 0.25) !important;
+		box-shadow: 0 12px 32px rgba(225, 29, 72, 0.15) !important;
+	}
 }
 
 // Metabolic (Amber/Flame)
 .metabolic {
-	border-left: 4px solid #f59e0b;
-
 	.sys-icon-box {
 		background: linear-gradient(135deg, #fbbf24, #d97706);
 		box-shadow: 0 4px 12px rgba(217, 119, 6, 0.35);
@@ -409,12 +413,15 @@
 			box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
 		}
 	}
+
+	&:hover {
+		border-color: rgba(217, 119, 6, 0.25) !important;
+		box-shadow: 0 12px 32px rgba(217, 119, 6, 0.15) !important;
+	}
 }
 
 // Gut (Teal/Layers)
 .gut {
-	border-left: 4px solid var(--accent, #00A69D);
-
 	.sys-icon-box {
 		background: linear-gradient(135deg, #38bdf8, var(--accent, #00A69D));
 		box-shadow: 0 4px 12px rgba(0, 166, 157, 0.35);
@@ -443,6 +450,11 @@
 			color: #ffffff;
 			box-shadow: 0 4px 12px rgba(0, 166, 157, 0.3);
 		}
+	}
+
+	&:hover {
+		border-color: rgba(0, 166, 157, 0.25) !important;
+		box-shadow: 0 12px 32px rgba(0, 166, 157, 0.15) !important;
 	}
 }
 
@@ -720,9 +732,9 @@
 // ─── Science Insight Panel & Action buttons ───
 .science-insight-panel {
 	background: linear-gradient(135deg, rgba(245, 158, 11, 0.03) 0%, rgba(251, 191, 36, 0.01) 100%);
-	border: 1px solid rgba(245, 158, 11, 0.15);
-	border-left: 4px solid #f59e0b;
-	border-radius: 16px;
+	border: 1px solid rgba(245, 158, 11, 0.2);
+	box-shadow: 0 6px 20px rgba(245, 158, 11, 0.05);
+	border-radius: 18px;
 	padding: 20px 24px;
 	display: flex;
 	flex-direction: column;
@@ -730,7 +742,7 @@
 
 	html[data-theme="dark"] & {
 		background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(251, 191, 36, 0.01) 100%);
-		border-color: rgba(245, 158, 11, 0.2);
+		border-color: rgba(245, 158, 11, 0.25);
 	}
 }
 
@@ -2241,8 +2253,8 @@
 
 .insight-correct {
 	background: linear-gradient(135deg, rgba(16, 185, 129, 0.04) 0%, rgba(5, 150, 105, 0.01) 100%) !important;
-	border: 1px solid rgba(16, 185, 129, 0.15) !important;
-	border-left: 4px solid #10b981 !important;
+	border: 1px solid rgba(16, 185, 129, 0.25) !important;
+	box-shadow: 0 6px 20px rgba(16, 185, 129, 0.08) !important;
 	
 	h4 {
 		color: #10b981 !important;
@@ -2251,8 +2263,8 @@
 
 .insight-incorrect {
 	background: linear-gradient(135deg, rgba(239, 68, 68, 0.04) 0%, rgba(220, 38, 38, 0.01) 100%) !important;
-	border: 1px solid rgba(239, 68, 68, 0.15) !important;
-	border-left: 4px solid #ef4444 !important;
+	border: 1px solid rgba(239, 68, 68, 0.25) !important;
+	box-shadow: 0 6px 20px rgba(239, 68, 68, 0.08) !important;
 	
 	h4 {
 		color: #ef4444 !important;
