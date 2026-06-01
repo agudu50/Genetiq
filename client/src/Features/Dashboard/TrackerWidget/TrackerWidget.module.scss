@@ -1,101 +1,197 @@
 .TrackerWidget-container {
 	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 12px;
-	padding: 10px 18px 10px 10px;
-	background: var(--glass-bg);
-	backdrop-filter: blur(8px) saturate(180%);
-	-webkit-backdrop-filter: blur(8px) saturate(180%);
-	border-radius: 20px;
-	border: 1px solid var(--glass-border);
-	box-shadow: var(--card-shadow);
-	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	flex-direction: column;
+	align-items: stretch;
+	gap: 18px;
+	padding: 24px 28px;
+	background: rgba(30, 41, 59, 0.35);
+	backdrop-filter: blur(20px) saturate(180%);
+	-webkit-backdrop-filter: blur(20px) saturate(180%);
+	border-radius: 24px;
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+	transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+	position: relative;
+	overflow: hidden;
+	box-sizing: border-box;
+	width: 100%;
+
+	html[data-theme="light"] & {
+		background: rgba(255, 255, 255, 0.7);
+		border-color: rgba(15, 23, 42, 0.05);
+		box-shadow: 0 8px 32px rgba(15, 23, 42, 0.02);
+	}
 
 	&:hover {
-		box-shadow: 0 4px 16px rgba(102, 126, 234, 0.12);
-		border-color: rgba(102, 126, 234, 0.3);
+		transform: translateY(-2px);
+		border-color: rgba(0, 166, 157, 0.3);
+		box-shadow: 0 12px 32px rgba(0, 166, 157, 0.08);
+
+		.TrackerWidget-icon {
+			transform: scale(1.05) rotate(15deg);
+		}
 	}
 
-	@media (max-width: 1248px) {
-		flex-direction: column;
-		align-items: flex-start;
+	@media (max-width: 768px) {
+		padding: 20px;
 		gap: 16px;
-		padding: 12px;
-	}
-}
-
-.TrackerWidget-icon-container {
-	width: 24px;
-	height: 24px;
-	gap: 8px;
-	border-radius: 24px;
-	background: conic-gradient(
-		from 0deg at 50% 50%,
-		#0974fb 0deg,
-		#12b6ff 45deg,
-		#ff7bd2 90deg,
-		#12b6ff 135deg,
-		#0974fb 180deg,
-		#12b6ff 225deg,
-		#ff7bd2 270deg,
-		#0974fb 315deg,
-		#12b6ff 360deg
-	);
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
-.TrackerWidget-icon {
-	animation: rotateLogo 2s ease-out;
-	transform: rotate(0deg);
-}
-
-@keyframes rotateLogo {
-	0% {
-		transform: rotate(-90deg);
-	}
-	100% {
-		transform: rotate(0deg);
+		border-radius: 20px;
 	}
 }
 
 .TrackerWidget-Head {
 	display: flex;
-	flex-direction: row;
-	gap: 8px;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	gap: 16px;
+	z-index: 1;
 
-	@media (max-width: 1248px) {
-		width: 100%;
-		justify-content: flex-start;
+	@media (max-width: 480px) {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 12px;
 	}
 }
 
-.TrackerWidget-text {
-	font-size: 13px;
-	font-weight: 600;
-	line-height: 16px;
-	text-align: left;
-	color: var(--text-secondary);
-	margin: auto;
-	text-wrap: nowrap;
-	letter-spacing: -0.01em;
+.TrackerWidget-info {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	flex: 1;
+	min-width: 0;
+}
 
-	@media (max-width: 1248px) {
-		margin: auto 0;
+.TrackerWidget-icon-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 42px;
+	height: 42px;
+	border-radius: 12px;
+	background: color-mix(in srgb, var(--accent, #00A69D) 12%, transparent);
+	border: 1px solid rgba(0, 166, 157, 0.25);
+	color: var(--accent, #00A69D);
+	flex-shrink: 0;
+	transition: all 0.3s ease;
+
+	@media (max-width: 768px) {
+		width: 38px;
+		height: 38px;
+		border-radius: 10px;
+	}
+}
+
+.TrackerWidget-icon {
+	width: 20px;
+	height: 20px;
+	transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.TrackerWidget-text {
+	font-size: 15px;
+	font-weight: 700;
+	color: var(--text-secondary, #94a3b8);
+	line-height: 1.4;
+	margin: 0;
+	letter-spacing: -0.015em;
+	min-width: 0;
+
+	html[data-theme="light"] & {
+		color: #475569;
 	}
 
-	@media (max-width: 720px) {
-		text-wrap: wrap;
+	@media (max-width: 768px) {
+		font-size: 14px;
 	}
 }
 
 .TrackerWidget-text-highlight {
-	color: var(--text);
-	font-weight: 700;
+	color: var(--text, #ffffff);
+	font-weight: 800;
+
+	html[data-theme="light"] & {
+		color: #0f172a;
+	}
 }
 
-.TrackerWidget-progressbar {
-	width: 240px;
+// ─── Status Capsule Tag ───
+.TrackerWidget-status-tag {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 11px;
+	font-weight: 800;
+	padding: 6px 14px;
+	border-radius: 100px;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	white-space: nowrap;
+	
+	&.processing {
+		color: #fbbf24; // Amber Gold
+		background: rgba(245, 158, 11, 0.08);
+		border: 1px solid rgba(245, 158, 11, 0.2);
+		animation: pulseStatus 2s infinite alternate;
+	}
+
+	&.completed {
+		color: #34d399; // Emerald green
+		background: rgba(16, 185, 129, 0.08);
+		border: 1px solid rgba(16, 185, 129, 0.2);
+	}
+
+	&.idle {
+		color: #60a5fa; // Blue
+		background: rgba(59, 130, 246, 0.08);
+		border: 1px solid rgba(59, 130, 246, 0.2);
+	}
+}
+
+@keyframes pulseStatus {
+	0% { opacity: 0.85; box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.15); }
+	100% { opacity: 1; box-shadow: 0 0 12px 2px rgba(245, 158, 11, 0.08); }
+}
+
+// ─── Bar Wrapper ───
+.TrackerWidget-bar-wrapper {
+	width: 100%;
+	z-index: 1;
+}
+
+// ─── Footer Details ───
+.TrackerWidget-footer {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	z-index: 1;
+
+	.calendar-icon {
+		color: var(--accent, #00A69D);
+		opacity: 0.85;
+		flex-shrink: 0;
+	}
+
+	.footer-text {
+		font-size: 12.5px;
+		font-weight: 600;
+		color: var(--text-secondary, #94a3b8);
+		margin: 0;
+		letter-spacing: -0.01em;
+
+		html[data-theme="light"] & {
+			color: #64748b;
+		}
+
+		@media (max-width: 768px) {
+			font-size: 12px;
+		}
+	}
+
+	.expected-badge {
+		font-weight: 800;
+		color: var(--accent, #00A69D);
+		letter-spacing: -0.015em;
+	}
 }
