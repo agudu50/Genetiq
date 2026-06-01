@@ -55,7 +55,15 @@ export const ActivityChart = () => {
 	const avgValue = Math.round(totalValue / weekData.length);
 
 	return (
-		<div className={styles.chartContainer}>
+		<div
+			className={styles.chartContainer}
+			style={{
+				"--active-metric-color": metrics.find((m) => m.key === activeMetric)?.color
+			} as React.CSSProperties}
+		>
+			<div className={styles["cardMeshBg"]} />
+			<div className={styles["cardGlowBlob"]} />
+
 			<div className={styles.header}>
 				<div className={styles.titleSection}>
 					<h3 className={styles.title}>
