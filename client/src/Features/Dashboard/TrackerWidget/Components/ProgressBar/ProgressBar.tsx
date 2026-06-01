@@ -9,6 +9,15 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ progress }) => {
 
 	return (
 		<div className={styles["ProgressBar-container"]}>
+			{/* Segmented ticks for technical telemetry aesthetic */}
+			<div className={styles["gauge-ticks"]}>
+				<span className={styles["tick"]} />
+				<span className={styles["tick"]} />
+				<span className={styles["tick"]} />
+				<span className={styles["tick"]} />
+				<span className={styles["tick"]} />
+			</div>
+
 			<div
 				className={`${styles["ProgressBar-fill"]} ${styles["animate-fill"]}`}
 				style={{ "--progress": `${validProgress}%` } as React.CSSProperties}
@@ -16,7 +25,9 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ progress }) => {
 			<div
 				className={`${styles["ProgressBar-slider"]} ${styles["animate-slider"]}`}
 				style={{ "--progress": `${validProgress}%` } as React.CSSProperties}
-			></div>
+			>
+				<span className={styles["slider-glow-bead"]} />
+			</div>
 		</div>
 	);
 };

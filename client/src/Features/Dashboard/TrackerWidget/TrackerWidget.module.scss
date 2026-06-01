@@ -5,11 +5,11 @@
 	gap: 18px;
 	padding: 24px 28px;
 	background: rgba(30, 41, 59, 0.35);
-	backdrop-filter: blur(20px) saturate(180%);
-	-webkit-backdrop-filter: blur(20px) saturate(180%);
+	backdrop-filter: blur(24px) saturate(180%);
+	-webkit-backdrop-filter: blur(24px) saturate(180%);
 	border-radius: 24px;
 	border: 1px solid rgba(255, 255, 255, 0.06);
-	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 	transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 	position: relative;
 	overflow: hidden;
@@ -19,16 +19,21 @@
 	html[data-theme="light"] & {
 		background: rgba(255, 255, 255, 0.7);
 		border-color: rgba(15, 23, 42, 0.05);
-		box-shadow: 0 8px 32px rgba(15, 23, 42, 0.02);
+		box-shadow: 0 10px 40px rgba(15, 23, 42, 0.02), inset 0 1px 0 rgba(255, 255, 255, 0.6);
 	}
 
 	&:hover {
-		transform: translateY(-2px);
-		border-color: rgba(0, 166, 157, 0.3);
-		box-shadow: 0 12px 32px rgba(0, 166, 157, 0.08);
+		transform: translateY(-3px);
+		border-color: rgba(0, 166, 157, 0.25);
+		box-shadow: 0 16px 40px rgba(0, 166, 157, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
 		.TrackerWidget-icon {
-			transform: scale(1.05) rotate(15deg);
+			transform: scale(1.08) rotate(10deg);
+		}
+
+		.cardGlowBlob {
+			transform: translate(-10%, -10%) scale(1.15);
+			opacity: 0.35;
 		}
 	}
 
@@ -37,6 +42,48 @@
 		gap: 16px;
 		border-radius: 20px;
 	}
+}
+
+// ─── High-Fidelity Background Telemetry Grid ───
+.cardMeshBg {
+	position: absolute;
+	inset: 0;
+	background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+	background-size: 8px 8px;
+	opacity: 0.6;
+	mask-image: radial-gradient(circle at 10% 10%, black, transparent 75%);
+	-webkit-mask-image: radial-gradient(circle at 10% 10%, black, transparent 75%);
+	pointer-events: none;
+	z-index: 0;
+
+	html[data-theme="light"] & {
+		background-image: radial-gradient(rgba(15, 23, 42, 0.03) 1px, transparent 1px);
+		opacity: 0.8;
+	}
+}
+
+.cardGlowBlob {
+	position: absolute;
+	top: -50px;
+	left: -50px;
+	width: 180px;
+	height: 180px;
+	background: radial-gradient(circle, rgba(0, 166, 157, 0.18) 0%, transparent 70%);
+	filter: blur(35px);
+	border-radius: 50%;
+	pointer-events: none;
+	z-index: 0;
+	transition: all 0.6s ease;
+	animation: pulseGlow 10s infinite alternate ease-in-out;
+
+	html[data-theme="light"] & {
+		background: radial-gradient(circle, rgba(0, 166, 157, 0.12) 0%, transparent 70%);
+	}
+}
+
+@keyframes pulseGlow {
+	0% { transform: scale(1); opacity: 0.8; }
+	100% { transform: scale(1.15); opacity: 1; }
 }
 
 .TrackerWidget-Head {
@@ -74,6 +121,24 @@
 	color: var(--accent, #00A69D);
 	flex-shrink: 0;
 	transition: all 0.3s ease;
+	position: relative;
+	box-shadow: 0 0 12px rgba(0, 166, 157, 0.15);
+
+	&::after {
+		content: "";
+		position: absolute;
+		inset: -2px;
+		border-radius: 14px;
+		border: 1px solid rgba(0, 166, 157, 0.25);
+		opacity: 0;
+		transform: scale(0.9);
+		transition: all 0.4s ease;
+	}
+
+	&:hover::after {
+		opacity: 1;
+		transform: scale(1);
+	}
 
 	@media (max-width: 768px) {
 		width: 38px;
@@ -106,20 +171,21 @@
 	}
 }
 
-.TrackerWidget-text-highlight {
-	color: var(--text, #ffffff);
+.TrackerWidget-target-badge {
+	display: inline-block;
+	background: linear-gradient(135deg, var(--accent, #00A69D) 0%, #38bdf8 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
 	font-weight: 800;
-
-	html[data-theme="light"] & {
-		color: #0f172a;
-	}
+	letter-spacing: -0.01em;
+	filter: drop-shadow(0 2px 8px rgba(0, 166, 157, 0.12));
 }
 
 // ─── Status Capsule Tag ───
 .TrackerWidget-status-tag {
 	display: inline-flex;
 	align-items: center;
-	gap: 6px;
+	gap: 8px;
 	font-size: 11px;
 	font-weight: 800;
 	padding: 6px 14px;
@@ -132,7 +198,7 @@
 		color: #fbbf24; // Amber Gold
 		background: rgba(245, 158, 11, 0.08);
 		border: 1px solid rgba(245, 158, 11, 0.2);
-		animation: pulseStatus 2s infinite alternate;
+		animation: pulseStatus 2.5s infinite alternate ease-in-out;
 	}
 
 	&.completed {
@@ -148,9 +214,41 @@
 	}
 }
 
+// ─── Blinking LED Status Dots ───
+.status-dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	display: inline-block;
+	flex-shrink: 0;
+
+	&.processing {
+		background-color: #fbbf24;
+		box-shadow: 0 0 8px #fbbf24, 0 0 12px rgba(245, 158, 11, 0.4);
+		animation: ledPulse 1.2s infinite ease-in-out;
+	}
+
+	&.completed {
+		background-color: #34d399;
+		box-shadow: 0 0 8px #34d399;
+	}
+
+	&.idle {
+		background-color: #60a5fa;
+		box-shadow: 0 0 8px #60a5fa, 0 0 12px rgba(59, 130, 246, 0.4);
+		animation: ledPulse 2s infinite ease-in-out;
+	}
+}
+
+@keyframes ledPulse {
+	0% { opacity: 0.4; transform: scale(0.9); }
+	50% { opacity: 1; transform: scale(1.15); }
+	100% { opacity: 0.4; transform: scale(0.9); }
+}
+
 @keyframes pulseStatus {
-	0% { opacity: 0.85; box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.15); }
-	100% { opacity: 1; box-shadow: 0 0 12px 2px rgba(245, 158, 11, 0.08); }
+	0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.1); }
+	100% { box-shadow: 0 0 14px 2px rgba(245, 158, 11, 0.06); }
 }
 
 // ─── Bar Wrapper ───
@@ -169,7 +267,7 @@
 
 	.calendar-icon {
 		color: var(--accent, #00A69D);
-		opacity: 0.85;
+		opacity: 0.75;
 		flex-shrink: 0;
 	}
 
@@ -179,6 +277,10 @@
 		color: var(--text-secondary, #94a3b8);
 		margin: 0;
 		letter-spacing: -0.01em;
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 6px;
 
 		html[data-theme="light"] & {
 			color: #64748b;
@@ -190,8 +292,27 @@
 	}
 
 	.expected-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
+		padding: 3px 8px;
+		border-radius: 6px;
+		background: rgba(0, 166, 157, 0.08);
+		border: 1px solid rgba(0, 166, 157, 0.15);
 		font-weight: 800;
 		color: var(--accent, #00A69D);
-		letter-spacing: -0.015em;
+		letter-spacing: -0.01em;
+		font-size: 11.5px;
+		vertical-align: middle;
+
+		html[data-theme="light"] & {
+			background: rgba(0, 166, 157, 0.05);
+		}
+
+		.clock-icon {
+			color: var(--accent, #00A69D);
+			opacity: 0.9;
+			flex-shrink: 0;
+		}
 	}
 }

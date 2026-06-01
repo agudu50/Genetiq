@@ -1,7 +1,7 @@
 .quickActionsContainer {
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: 14px;
 	width: 100%;
 	max-width: 100%;
 	box-sizing: border-box;
@@ -11,22 +11,78 @@
 	}
 }
 
+.headerRow {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	padding: 0 4px;
+}
+
 .title {
 	font-size: 16px;
 	font-weight: 700;
-	color: var(--text);
+	color: var(--text, #ffffff);
 	margin: 0;
 	letter-spacing: -0.01em;
+
+	html[data-theme="light"] & {
+		color: #0f172a;
+	}
 
 	@media (max-width: 480px) {
 		font-size: 14px;
 	}
 }
 
+// ─── Direct Telemetry Signal Status ───
+.telemetryStatus {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 8px;
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.04);
+
+	html[data-theme="light"] & {
+		background: rgba(15, 23, 42, 0.02);
+		border-color: rgba(15, 23, 42, 0.04);
+	}
+}
+
+.pulseBeacon {
+	width: 5px;
+	height: 5px;
+	border-radius: 50%;
+	background-color: #10b981;
+	box-shadow: 0 0 8px #10b981, 0 0 12px rgba(16, 185, 129, 0.4);
+	animation: beaconPulse 1.8s infinite ease-in-out;
+}
+
+@keyframes beaconPulse {
+	0% { opacity: 0.45; transform: scale(0.9); }
+	50% { opacity: 1; transform: scale(1.2); }
+	100% { opacity: 0.45; transform: scale(0.9); }
+}
+
+.telemetryLabel {
+	font-size: 9px;
+	font-weight: 800;
+	color: var(--text-secondary, #94a3b8);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	line-height: 1;
+
+	html[data-theme="light"] & {
+		color: #64748b;
+	}
+}
+
 .actionsGrid {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
-	gap: 10px;
+	gap: 12px;
 
 	@media (max-width: 1200px) {
 		grid-template-columns: repeat(2, 1fr);
@@ -38,47 +94,93 @@
 	}
 }
 
+// ─── Quick Action Glass Buttons ───
 .actionBtn {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	gap: 8px;
-	padding: 16px 12px;
-	background: var(--surface);
-	border: 1px solid var(--border);
-	border-radius: 16px;
+	gap: 10px;
+	padding: 18px 12px;
+	background: rgba(30, 41, 59, 0.3);
+	backdrop-filter: blur(16px) saturate(180%);
+	-webkit-backdrop-filter: blur(16px) saturate(180%);
+	border: 1px solid rgba(255, 255, 255, 0.05);
+	border-radius: 20px;
 	cursor: pointer;
-	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 	animation: fadeInScale 0.4s ease-out both;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+	position: relative;
+	overflow: hidden;
+
+	html[data-theme="light"] & {
+		background: rgba(255, 255, 255, 0.65);
+		border-color: rgba(15, 23, 42, 0.05);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+	}
+
+	&::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(135deg, var(--action-color) 8%, transparent 40%);
+		opacity: 0;
+		transition: opacity 0.4s ease;
+		pointer-events: none;
+	}
 
 	@media (max-width: 480px) {
-		padding: 10px 8px;
+		padding: 12px 6px;
 		gap: 6px;
-		border-radius: 12px;
+		border-radius: 14px;
 	}
 
 	&:hover {
 		transform: translateY(-4px);
-		box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-		border-color: var(--action-color);
+		box-shadow: 0 12px 32px color-mix(in srgb, var(--action-color) 20%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+		border-color: color-mix(in srgb, var(--action-color) 50%, rgba(255, 255, 255, 0.1));
+		background: rgba(30, 41, 59, 0.4);
+
+		html[data-theme="light"] & {
+			background: rgba(255, 255, 255, 0.95);
+			box-shadow: 0 12px 32px color-mix(in srgb, var(--action-color) 12%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+			border-color: color-mix(in srgb, var(--action-color) 40%, rgba(15, 23, 42, 0.05));
+		}
+
+		&::before {
+			opacity: 0.12;
+		}
 
 		.iconWrapper {
-			transform: scale(1.1);
+			transform: scale(1.08) translateY(-2px);
 			background: var(--action-color);
-			color: white;
+			color: #ffffff;
+			box-shadow: 0 4px 16px color-mix(in srgb, var(--action-color) 45%, transparent);
+
+			svg {
+				stroke-width: 2.5px;
+			}
+		}
+
+		.label {
+			color: var(--text, #ffffff);
+
+			html[data-theme="light"] & {
+				color: #0f172a;
+			}
 		}
 	}
 
 	&:active {
-		transform: translateY(-2px);
+		transform: translateY(-1px);
 	}
 }
 
 @keyframes fadeInScale {
 	from {
 		opacity: 0;
-		transform: scale(0.9);
+		transform: scale(0.94);
 	}
 	to {
 		opacity: 1;
@@ -90,33 +192,47 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 52px;
-	height: 52px;
+	width: 48px;
+	height: 48px;
 	border-radius: 14px;
 	background: color-mix(in srgb, var(--action-color) 12%, transparent);
 	color: var(--action-color);
-	transition: all 0.3s ease;
+	transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+	svg {
+		width: 20px;
+		height: 20px;
+		transition: stroke-width 0.3s ease;
+	}
 
 	@media (max-width: 480px) {
-		width: 40px;
-		height: 40px;
+		width: 38px;
+		height: 38px;
 		border-radius: 10px;
 
 		svg {
-			width: 20px;
-			height: 20px;
+			width: 18px;
+			height: 18px;
 		}
 	}
 }
 
 .label {
-	font-size: 12px;
-	font-weight: 700;
-	color: var(--text-secondary);
+	font-size: 11.5px;
+	font-weight: 750;
+	color: var(--text-secondary, #94a3b8);
 	text-align: center;
-	line-height: 1.2;
+	line-height: 1.25;
+	transition: color 0.3s ease;
+	letter-spacing: -0.015em;
+
+	html[data-theme="light"] & {
+		color: #475569;
+	}
 
 	@media (max-width: 480px) {
-		font-size: 11px;
+		font-size: 10px;
+		font-weight: 700;
 	}
 }

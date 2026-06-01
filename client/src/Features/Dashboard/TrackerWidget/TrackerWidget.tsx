@@ -42,6 +42,10 @@ export const TrackerWidget = () => {
 
 	return (
 		<div className={styles["TrackerWidget-container"]}>
+			{/* Decorative high-fidelity background layers */}
+			<div className={styles["cardMeshBg"]} />
+			<div className={styles["cardGlowBlob"]} />
+
 			{/* Top Header Row: Info on left, Status badge capsule on right */}
 			<div className={styles["TrackerWidget-Head"]}>
 				<div className={styles["TrackerWidget-info"]}>
@@ -52,13 +56,14 @@ export const TrackerWidget = () => {
 						{uploadStatus === "completed"
 							? t("analysis_complete") || "Analysis complete"
 							: t("stay_tuned_checking") || "Stay tuned, we are checking your"}{" "}
-						<span className={styles["TrackerWidget-text-highlight"]}>
+						<span className={styles["TrackerWidget-target-badge"]}>
 							{t(tracker.target) || "Cholesterol"}
 						</span>
 					</p>
 				</div>
 
 				<div className={`${styles["TrackerWidget-status-tag"]} ${styles[statusClass]}`}>
+					<span className={`${styles["status-dot"]} ${styles[statusClass]}`} />
 					{statusLabel}
 				</div>
 			</div>
@@ -93,6 +98,20 @@ export const TrackerWidget = () => {
 						<>
 							{t("results_expected_in") || "Results expected in"}{" "}
 							<span className={styles["expected-badge"]}>
+								<svg
+									className={styles["clock-icon"]}
+									width="11"
+									height="11"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									strokeWidth="3"
+									strokeLinecap="round"
+									strokeLinejoin="round"
+								>
+									<circle cx="12" cy="12" r="10" />
+									<polyline points="12 6 12 12 16 14" />
+								</svg>
 								{tracker.expected_days} {t("days") || "days"}
 							</span>
 						</>

@@ -19,7 +19,7 @@ export const QuickActions = () => {
 		{
 			id: "take-quiz",
 			label: t("take_quiz") || "Take Quiz",
-			color: "#6366f1",
+			color: "#a78bfa", // Vibrant Amethyst Purple
 			path: "/config",
 			icon: (
 				<svg
@@ -28,7 +28,7 @@ export const QuickActions = () => {
 					viewBox='0 0 24 24'
 					fill='none'
 					stroke='currentColor'
-					strokeWidth='2'
+					strokeWidth='2.2'
 				>
 					<path d='M9 11l3 3L22 4' />
 					<path d='M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11' />
@@ -38,7 +38,7 @@ export const QuickActions = () => {
 		{
 			id: "care-navigator",
 			label: t("care_navigator") || "Care Navigator",
-			color: "#8b5cf6",
+			color: "#8b5cf6", // Royal Violet
 			path: "/ai-assistant",
 			icon: (
 				<svg
@@ -47,7 +47,7 @@ export const QuickActions = () => {
 					viewBox='0 0 24 24'
 					fill='none'
 					stroke='currentColor'
-					strokeWidth='2'
+					strokeWidth='2.2'
 				>
 					<path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z' />
 					<circle cx='12' cy='11' r='3' />
@@ -57,7 +57,7 @@ export const QuickActions = () => {
 		{
 			id: "log-vitals",
 			label: t("log_vitals") || "Log Vitals",
-			color: "#ef4444",
+			color: "#f43f5e", // Coral Rose Red
 			path: "/log/vitals",
 			icon: (
 				<svg
@@ -66,7 +66,7 @@ export const QuickActions = () => {
 					viewBox='0 0 24 24'
 					fill='none'
 					stroke='currentColor'
-					strokeWidth='2'
+					strokeWidth='2.2'
 				>
 					<path
 						d='M22 12h-4l-3 9L9 3l-3 9H2'
@@ -79,7 +79,7 @@ export const QuickActions = () => {
 		{
 			id: "track-meal",
 			label: t("track_meal") || "Track Meal",
-			color: "#10b981",
+			color: "#10b981", // Vibrant Emerald Green
 			path: "/log/meal",
 			icon: (
 				<svg
@@ -88,7 +88,7 @@ export const QuickActions = () => {
 					viewBox='0 0 24 24'
 					fill='none'
 					stroke='currentColor'
-					strokeWidth='2'
+					strokeWidth='2.2'
 				>
 					<path
 						d='M18 8h1a4 4 0 0 1 0 8h-1M8 8H7a4 4 0 0 0 0 8h1M8 8l3-4M16 8l-3-4M8 8v8M16 8v8M12 8v8'
@@ -101,7 +101,7 @@ export const QuickActions = () => {
 		{
 			id: "log-exercise",
 			label: t("log_exercise") || "Log Exercise",
-			color: "#3b82f6",
+			color: "#3b82f6", // Electric Royal Blue
 			path: "/log/exercise",
 			icon: (
 				<svg
@@ -110,7 +110,7 @@ export const QuickActions = () => {
 					viewBox='0 0 24 24'
 					fill='none'
 					stroke='currentColor'
-					strokeWidth='2'
+					strokeWidth='2.2'
 				>
 					<path
 						d='M6.5 6.5l11 11M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z'
@@ -126,7 +126,7 @@ export const QuickActions = () => {
 		{
 			id: "view-reports",
 			label: t("view_reports") || "View Reports",
-			color: "#8b5cf6",
+			color: "#06b6d4", // Cyber Cyan/Teal
 			path: "/reports",
 			icon: (
 				<svg
@@ -135,7 +135,7 @@ export const QuickActions = () => {
 					viewBox='0 0 24 24'
 					fill='none'
 					stroke='currentColor'
-					strokeWidth='2'
+					strokeWidth='2.2'
 				>
 					<path
 						d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'
@@ -160,7 +160,7 @@ export const QuickActions = () => {
 		{
 			id: "connect-device",
 			label: t("connect_device") || "Connect Device",
-			color: "#f59e0b",
+			color: "#fbbf24", // Amber Gold
 			path: "/config/connect-app",
 			icon: (
 				<svg
@@ -169,7 +169,7 @@ export const QuickActions = () => {
 					viewBox='0 0 24 24'
 					fill='none'
 					stroke='currentColor'
-					strokeWidth='2'
+					strokeWidth='2.2'
 				>
 					<rect
 						x='5'
@@ -188,7 +188,7 @@ export const QuickActions = () => {
 		{
 			id: "specialist-access",
 			label: t("specialist_access") || "Specialist Access",
-			color: "#667eea",
+			color: "#ec4899", // Magenta Pink
 			path: "/ai-assistant",
 			icon: (
 				<svg
@@ -197,7 +197,7 @@ export const QuickActions = () => {
 					viewBox='0 0 24 24'
 					fill='none'
 					stroke='currentColor'
-					strokeWidth='2'
+					strokeWidth='2.2'
 				>
 					<path d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2' />
 					<circle cx='9' cy='7' r='4' />
@@ -218,7 +218,13 @@ export const QuickActions = () => {
 
 	return (
 		<div className={styles.quickActionsContainer}>
-			<h3 className={styles.title}>{t("quick_actions") || "Quick Actions"}</h3>
+			<div className={styles.headerRow}>
+				<h3 className={styles.title}>{t("quick_actions") || "Quick Actions"}</h3>
+				<div className={styles.telemetryStatus}>
+					<span className={styles.pulseBeacon} />
+					<span className={styles.telemetryLabel}>Direct Telemetry</span>
+				</div>
+			</div>
 			<div className={styles.actionsGrid}>
 				{actions.map((action, index) => (
 					<button
@@ -227,7 +233,7 @@ export const QuickActions = () => {
 						style={
 							{
 								"--action-color": action.color,
-								"animationDelay": `${index * 0.05}s`,
+								"animationDelay": `${index * 0.04}s`,
 							} as React.CSSProperties
 						}
 						onClick={() => handleAction(action)}
