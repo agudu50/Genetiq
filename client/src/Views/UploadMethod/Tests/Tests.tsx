@@ -655,6 +655,15 @@ const Tests = () => {
 
 	return (
 		<div className={styles["tests-container"]}>
+			{/* Futuristic geometric mesh background overlay */}
+			<div className={styles["bg-grid-overlay"]} />
+
+			{/* Drifting premium ambient background blobs */}
+			<div className={styles["bg-glow-blob-1"]} />
+			<div className={styles["bg-glow-blob-2"]} />
+			<div className={styles["bg-glow-blob-3"]} />
+			<div className={styles["bg-glow-blob-4"]} />
+			
 			<div className={styles["tests-content"]}>
 				
 				{/* Header Info Panel */}
@@ -808,28 +817,16 @@ const Tests = () => {
 
 									<div className={styles["systems-grid"]}>
 										{EXAM_SYSTEMS.map((sys) => {
-											const isDailyTarget = sys.id === dailyActiveSystemId;
-											const today = new Date();
-											const currentSeed = today.getFullYear() * 1000 + (today.getMonth() + 1) * 100 + today.getDate();
-											const hasCompletedToday = localStorage.getItem("genetiq_exam_completed_seed") === String(currentSeed);
-											
 											return (
 												<div 
 													key={sys.id} 
-													className={`${styles["system-card"]} ${styles[sys.colorClass]} ${
-														isDailyTarget ? styles["daily-target"] : styles["inactive-practice"]
-													}`}
+													className={`${styles["system-card"]} ${styles[sys.colorClass]}`}
 												>
 													<div className={styles["sys-card-header"]}>
 														<div className={styles["sys-icon-box"]}>
 															{sys.icon}
 														</div>
 														<div className={styles["sys-meta-badges-row"]}>
-															{isDailyTarget && (
-																<span className={styles["sys-daily-target-badge"]}>
-																	🔥 Active Daily Target
-																</span>
-															)}
 															<div className={styles["sys-meta-badge"]}>{sys.questions.length} Questions</div>
 														</div>
 													</div>
@@ -839,14 +836,12 @@ const Tests = () => {
 													<div className={styles["sys-focus-line"]}>
 														<strong>Focus: </strong>{sys.focus}
 													</div>
-
+ 
 													<button
 														className={styles["sys-action-btn"]}
 														onClick={() => startExam(sys)}
 													>
-														{isDailyTarget 
-															? (hasCompletedToday ? "Retake Daily Exam" : "Examine Active Target") 
-															: "Practice System"}
+														Examine System
 														<ArrowRight size={14} />
 													</button>
 												</div>
