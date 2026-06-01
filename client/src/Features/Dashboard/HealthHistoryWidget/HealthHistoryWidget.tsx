@@ -59,6 +59,10 @@ export const HealthHistoryWidget = () => {
 
 	return (
 		<div className={styles.container}>
+			{/* High-fidelity background mesh and drifts */}
+			<div className={styles["cardMeshBg"]} />
+			<div className={styles["cardGlowBlob"]} />
+
 			<div className={styles.header}>
 				<div className={styles.titleGroup}>
 					<Clipboard className={styles.titleIcon} size={20} />
@@ -108,6 +112,7 @@ export const HealthHistoryWidget = () => {
 										{ "--status-color": item.color } as React.CSSProperties
 									}
 								>
+									<span className={styles["status-dot"]} style={{ "--dot-color": item.color } as React.CSSProperties} />
 									{item.status}
 								</span>
 							</div>
