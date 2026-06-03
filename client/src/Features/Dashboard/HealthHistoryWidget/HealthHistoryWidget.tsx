@@ -14,40 +14,48 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
 import { paths } from "@/App/Routes/Paths";
+import { useLanguage } from "@/App/i18n/LanguageContext";
 import styles from "./HealthHistoryWidget.module.scss";
 
 // Relative time formatting utility
-const formatRelativeTime = (isoString: string) => {
+const formatRelativeTime = (
+	isoString: string,
+	t: (key: string) => string,
+	lang: string
+) => {
 	try {
 		const date = new Date(isoString);
 		const now = new Date();
 		const diffMs = now.getTime() - date.getTime();
 		
-		if (diffMs < 30000) return "Just now";
+		if (diffMs < 30000) return t("just_now");
 		
 		const diffMins = Math.floor(diffMs / 60000);
 		if (diffMins < 60) {
-			return `${diffMins} min${diffMins > 1 ? "s" : ""} ago`;
+			const label = diffMins === 1 ? t("min_ago") : t("mins_ago");
+			return label.includes("{n}") ? label.replace("{n}", String(diffMins)) : `${diffMins} ${label}`;
 		}
 		
 		const diffHours = Math.floor(diffMs / 3600000);
 		if (diffHours < 24) {
-			return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+			const label = diffHours === 1 ? t("hour_ago") : t("hours_ago");
+			return label.includes("{n}") ? label.replace("{n}", String(diffHours)) : `${diffHours} ${label}`;
 		}
 		
 		const diffDays = Math.floor(diffMs / 86400000);
-		if (diffDays === 1) return "Yesterday";
+		if (diffDays === 1) return t("yesterday");
 		if (diffDays < 7) {
-			return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+			const label = diffDays === 1 ? t("day_ago") : t("days_ago");
+			return label.includes("{n}") ? label.replace("{n}", String(diffDays)) : `${diffDays} ${label}`;
 		}
 		
-		return date.toLocaleDateString("en-US", {
+		return date.toLocaleDateString(lang === "en" ? "en-US" : lang === "es" ? "es-ES" : lang, {
 			month: "short",
 			day: "numeric",
 			year: "numeric",
 		});
 	} catch (e) {
-		return "Recent";
+		return t("recent");
 	}
 };
 
@@ -94,6 +102,7 @@ const DEFAULT_MOCK_ITEMS = [
 
 export const HealthHistoryWidget = () => {
 	const navigate = useNavigate();
+	const { t, lang } = useLanguage();
 	const [showQR, setShowQR] = useState(false);
 	const [quizHistory, setQuizHistory] = useState<any[]>([]);
 
@@ -149,8 +158,12 @@ export const HealthHistoryWidget = () => {
 		// Sort real items newest first
 		realItems.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 		
-		// Combine with mock items
-		const allItems = [...realItems, ...DEFAULT_MOCK_ITEMS];
+		// Combine with mock items (filter out duplicate mock lab results if real uploads exist)
+		const mockItems = mappedUploads.length > 0
+			? DEFAULT_MOCK_ITEMS.filter((item) => item.id !== "mock-1")
+			: DEFAULT_MOCK_ITEMS;
+
+		const allItems = [...realItems, ...mockItems];
 		
 		// Sort everything newest first
 		allItems.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -183,20 +196,20 @@ export const HealthHistoryWidget = () => {
 			<div className={styles.header}>
 				<div className={styles.titleGroup}>
 					<Clipboard className={styles.titleIcon} size={20} />
-					<h3 className={styles.title}>Clinical History</h3>
+					<h3 className={styles.title}>{t("clinical_history")}</h3>
 				</div>
 				<div className={styles.headerActions}>
 					<button
 						className={styles.handoverBtn}
 						onClick={() => setShowQR(true)}
 					>
-						<QrCode size={14} /> Clinical Handover
+						<QrCode size={14} /> {t("clinical_handover")}
 					</button>
 					<button
 						className={styles.viewAll}
 						onClick={() => navigate(paths.clinicalHistory)}
 					>
-						View All
+						{t("view_all")}
 					</button>
 				</div>
 			</div>
@@ -218,10 +231,10 @@ export const HealthHistoryWidget = () => {
 						</div>
 						<div className={styles.content}>
 							<div className={styles.row}>
-								<span className={styles.itemType}>{item.type}</span>
-								<span className={styles.itemDate}>{formatRelativeTime(item.date)}</span>
+								<span className={styles.itemType}>{t(item.type)}</span>
+								<span className={styles.itemDate}>{formatRelativeTime(item.date, t, lang)}</span>
 							</div>
-							<h4 className={styles.itemTitle}>{item.title}</h4>
+							<h4 className={styles.itemTitle}>{t(item.title)}</h4>
 							<div className={styles.statusRow}>
 								<span
 									className={styles.statusBadge}
@@ -230,7 +243,7 @@ export const HealthHistoryWidget = () => {
 									}
 								>
 									<span className={styles["status-dot"]} style={{ "--dot-color": item.color } as React.CSSProperties} />
-									{item.status}
+									{t(item.status)}
 								</span>
 							</div>
 						</div>
@@ -255,7 +268,7 @@ export const HealthHistoryWidget = () => {
 							onClick={(e) => e.stopPropagation()}
 						>
 							<div className={styles.modalHeader}>
-								<h3>Clinical Handover</h3>
+								<h3>{t("clinical_handover")}</h3>
 								<button onClick={() => setShowQR(false)}>
 									<X size={20} />
 								</button>
@@ -266,18 +279,16 @@ export const HealthHistoryWidget = () => {
 									<div className={styles.qrScanLine} />
 								</div>
 								<p className={styles.qrInstructions}>
-									Have your healthcare provider scan this code to grant
-									<strong> temporary read-only access</strong> to your encrypted
-									health records in your local secure enclave.
+									{t("clinical_handover_instructions")}
 								</p>
 								<div className={styles.accessLevel}>
 									<ShieldCheck size={16} />
-									<span>Level 2: Comprehensive Background Access</span>
+									<span>{t("clinical_access_level")}</span>
 								</div>
 							</div>
 							<div className={styles.modalFooter}>
 								<button className={styles.btnShare}>
-									<Share2 size={18} /> Share Secure Link
+									<Share2 size={18} /> {t("share_secure_link")}
 								</button>
 							</div>
 						</motion.div>
