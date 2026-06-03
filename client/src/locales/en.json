@@ -34,7 +34,7 @@
 	"Follow-up Care": "Follow-up Care",
 	"Supplements": "Supplements",
 	"plan_activated": "Plan Activated Successfully!",
-	"concern_activation_success": "Your selected actions, supplements, and follow-up care have been activated in your schedule.",
+	"concern_activation_success": "Your selected actions, supplements, and follow-up care for {concern} have been activated in your schedule.",
 	"activating_plan": "Activating Action Plan...",
 	"syncing_clinical": "Syncing selected items with your clinical profile...",
 	"confirm_actions": "Activate Selected",

@@ -153,8 +153,9 @@ export const SuggestionsModal: React.FC<SuggestionsModalProps> = ({ concern, onC
 							</div>
 							<h3>{t("plan_activated") || "Plan Activated Successfully!"}</h3>
 							<p>
-								{t("concern_activation_success") ||
-									`Your selected actions, supplements, and follow-up care for ${t(concern.title)} have been activated in your schedule.`}
+								{t("concern_activation_success").includes("{concern}")
+									? t("concern_activation_success").replace("{concern}", t(concern.title))
+									: `Your selected actions, supplements, and follow-up care for ${t(concern.title)} have been activated in your schedule.`}
 							</p>
 							<button className={styles.closeSuccessBtn} onClick={onClose}>
 								{t("close") || "Close"}

@@ -34,7 +34,7 @@
 	"Follow-up Care": "Cuidado de seguimiento",
 	"Supplements": "Suplementos",
 	"plan_activated": "¡Plan activado con éxito!",
-	"concern_activation_success": "Las acciones, suplementos y cuidados de seguimiento seleccionados se han activado en tu agenda.",
+	"concern_activation_success": "Las acciones, suplementos y cuidados de seguimiento seleccionados para {concern} se han activado en tu agenda.",
 	"activating_plan": "Activando plan de acción...",
 	"syncing_clinical": "Sincronizando los elementos seleccionados con tu perfil clínico...",
 	"confirm_actions": "Activar seleccionados",
