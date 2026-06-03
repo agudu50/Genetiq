@@ -48,8 +48,12 @@ export const SuggestionsModal: React.FC<SuggestionsModalProps> = ({ concern, onC
 				.filter((sec) => sec.title !== "Action Plan")
 				.flatMap((sec) => sec.data.map((item) => item.name));
 			setSelectedActions(items);
+			setActivationSuccess(false);
+			setIsActivating(false);
 		} else {
 			setSelectedActions([]);
+			setActivationSuccess(false);
+			setIsActivating(false);
 		}
 	}, [concern]);
 
@@ -126,8 +130,14 @@ export const SuggestionsModal: React.FC<SuggestionsModalProps> = ({ concern, onC
 		return styles.severityLow;
 	};
 
+	const handleClose = () => {
+		setActivationSuccess(false);
+		setIsActivating(false);
+		onClose();
+	};
+
 	return ReactDOM.createPortal(
-		<div className={styles.overlay} onClick={onClose}>
+		<div className={styles.overlay} onClick={handleClose}>
 			<div className={styles.modal} onClick={(e) => e.stopPropagation()}>
 				{/* Header */}
 				<div className={styles.header}>
@@ -138,7 +148,7 @@ export const SuggestionsModal: React.FC<SuggestionsModalProps> = ({ concern, onC
 						</div>
 						<h2>{t(concern.title)}</h2>
 					</div>
-					<button className={styles.closeBtn} onClick={onClose} aria-label="Close modal">
+					<button className={styles.closeBtn} onClick={handleClose} aria-label="Close modal">
 						<X size={20} />
 					</button>
 				</div>
@@ -157,7 +167,7 @@ export const SuggestionsModal: React.FC<SuggestionsModalProps> = ({ concern, onC
 									? t("concern_activation_success").replace("{concern}", t(concern.title))
 									: `Your selected actions, supplements, and follow-up care for ${t(concern.title)} have been activated in your schedule.`}
 							</p>
-							<button className={styles.closeSuccessBtn} onClick={onClose}>
+							<button className={styles.closeSuccessBtn} onClick={handleClose}>
 								{t("close") || "Close"}
 							</button>
 						</div>
