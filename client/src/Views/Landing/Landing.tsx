@@ -25,7 +25,7 @@ import styles from "./Landing.module.scss";
 const PILLARS = [
 	{
 		title: "Snap or Upload Your Results",
-		desc: "Got a paper copy of your lab results? Take a photo. Got a PDF from your clinic? Upload it. Genetiq reads any format — no typing needed.",
+		desc: "Got a paper copy of your lab results? Take a photo. Got a PDF from your clinic? Upload it. Genetiq reads any format no typing needed.",
 		icon: <Upload size={32} />,
 	},
 	{
@@ -532,7 +532,7 @@ export default function Landing() {
 						<Typewriter words={HERO_WORDS} />
 					</h1>
 					<p className={styles.heroSub}>
-						Confused by your lab results? Just snap a photo or upload the PDF. Genetiq's AI reads every value and tells you exactly what it means — plus what to eat, what to change, and what to watch out for.
+						Confused by your lab results? Just snap a photo or upload the PDF. Genetiq's AI reads every value and tells you exactly what it means plus what to eat, what to change, and what to watch out for.
 					</p>
 					<div className={styles.heroCtas}>
 						<button className={styles.btnPrimary} onClick={() => setIsModalOpen(true)}>

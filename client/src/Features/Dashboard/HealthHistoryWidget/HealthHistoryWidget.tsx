@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
 	Activity,
@@ -11,44 +11,83 @@ import {
 	Share2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "@/App/Redux/store";
 import { paths } from "@/App/Routes/Paths";
 import styles from "./HealthHistoryWidget.module.scss";
 
-const HISTORY_ITEMS = [
+// Relative time formatting utility
+const formatRelativeTime = (isoString: string) => {
+	try {
+		const date = new Date(isoString);
+		const now = new Date();
+		const diffMs = now.getTime() - date.getTime();
+		
+		if (diffMs < 30000) return "Just now";
+		
+		const diffMins = Math.floor(diffMs / 60000);
+		if (diffMins < 60) {
+			return `${diffMins} min${diffMins > 1 ? "s" : ""} ago`;
+		}
+		
+		const diffHours = Math.floor(diffMs / 3600000);
+		if (diffHours < 24) {
+			return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+		}
+		
+		const diffDays = Math.floor(diffMs / 86400000);
+		if (diffDays === 1) return "Yesterday";
+		if (diffDays < 7) {
+			return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+		}
+		
+		return date.toLocaleDateString("en-US", {
+			month: "short",
+			day: "numeric",
+			year: "numeric",
+		});
+	} catch (e) {
+		return "Recent";
+	}
+};
+
+const now = new Date();
+
+const DEFAULT_MOCK_ITEMS = [
 	{
-		id: 1,
+		id: "mock-1",
 		type: "Lab Results",
 		title: "Blood Marker Analysis",
-		date: "2 hours ago",
+		date: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
 		status: "Verified",
-		icon: <Beaker size={18} />,
+		icon: "beaker",
 		color: "#a855f7",
 	},
 	{
-		id: 2,
+		id: "mock-2",
 		type: "AI Insights",
 		title: "Inflammation Risk Alert",
-		date: "Yesterday",
+		date: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
 		status: "Review Needed",
-		icon: <Brain size={18} />,
+		icon: "brain",
 		color: "#f59e0b",
 	},
 	{
-		id: 3,
+		id: "mock-3",
 		type: "Clinical",
 		title: "Doctor Access Granted",
-		date: "Mar 21, 2026",
+		date: new Date(now.getTime() - 72 * 60 * 60 * 1000).toISOString(), // 3 days ago
 		status: "Active",
-		icon: <ShieldCheck size={18} />,
+		icon: "shield",
 		color: "#10b981",
 	},
 	{
-		id: 4,
+		id: "mock-4",
 		type: "Wearables",
 		title: "Telehealth Vitals Sync",
-		date: "Mar 20, 2026",
+		date: new Date(now.getTime() - 96 * 60 * 60 * 1000).toISOString(), // 4 days ago
 		status: "Stable",
-		icon: <Activity size={18} />,
+		icon: "activity",
 		color: "#34d399",
 	},
 ];
@@ -56,6 +95,84 @@ const HISTORY_ITEMS = [
 export const HealthHistoryWidget = () => {
 	const navigate = useNavigate();
 	const [showQR, setShowQR] = useState(false);
+	const [quizHistory, setQuizHistory] = useState<any[]>([]);
+
+	// Read PDF upload records from Redux state
+	const uploadRecords = useSelector((state: RootState) => state.uploadHistory.records);
+
+	const loadQuizHistory = useCallback(() => {
+		try {
+			const saved = localStorage.getItem("genetiq_quiz_history");
+			if (saved) {
+				setQuizHistory(JSON.parse(saved));
+			}
+		} catch (e) {
+			console.error("Failed to read quiz history from localStorage", e);
+		}
+	}, []);
+
+	useEffect(() => {
+		loadQuizHistory();
+		window.addEventListener("genetiq_history_updated", loadQuizHistory);
+		return () => {
+			window.removeEventListener("genetiq_history_updated", loadQuizHistory);
+		};
+	}, [loadQuizHistory]);
+
+	// Map upload records from Redux
+	const mappedUploads = useMemo(() => {
+		return uploadRecords.map((rec) => ({
+			id: rec.id,
+			type: "Lab Results",
+			title: rec.fileName || "Blood Marker Analysis",
+			date: rec.uploadedAt,
+			status: "Verified",
+			icon: "beaker",
+			color: "#a855f7",
+		}));
+	}, [uploadRecords]);
+
+	// Combine upload history, quiz history, and fallback mocks
+	const combinedItems = useMemo(() => {
+		const mappedQuizzes = quizHistory.map((q) => ({
+			id: q.id,
+			type: "AI Insights",
+			title: q.title,
+			date: q.date,
+			status: q.status || "Completed",
+			icon: "brain",
+			color: q.color || "#8b5cf6",
+		}));
+
+		const realItems = [...mappedUploads, ...mappedQuizzes];
+		
+		// Sort real items newest first
+		realItems.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+		
+		// Combine with mock items
+		const allItems = [...realItems, ...DEFAULT_MOCK_ITEMS];
+		
+		// Sort everything newest first
+		allItems.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+		
+		// Limit to top 4 items for display
+		return allItems.slice(0, 4);
+	}, [mappedUploads, quizHistory]);
+
+	const renderIcon = (iconName: string) => {
+		switch (iconName) {
+			case "beaker":
+				return <Beaker size={18} />;
+			case "brain":
+				return <Brain size={18} />;
+			case "shield":
+				return <ShieldCheck size={18} />;
+			case "activity":
+				return <Activity size={18} />;
+			default:
+				return <Activity size={18} />;
+		}
+	};
 
 	return (
 		<div className={styles.container}>
@@ -85,7 +202,7 @@ export const HealthHistoryWidget = () => {
 			</div>
 
 			<div className={styles.timeline}>
-				{HISTORY_ITEMS.map((item, i) => (
+				{combinedItems.map((item, i) => (
 					<motion.div
 						key={item.id}
 						className={styles.historyItem}
@@ -97,12 +214,12 @@ export const HealthHistoryWidget = () => {
 							className={styles.iconContainer}
 							style={{ "--accent-color": item.color } as React.CSSProperties}
 						>
-							{item.icon}
+							{renderIcon(item.icon)}
 						</div>
 						<div className={styles.content}>
 							<div className={styles.row}>
 								<span className={styles.itemType}>{item.type}</span>
-								<span className={styles.itemDate}>{item.date}</span>
+								<span className={styles.itemDate}>{formatRelativeTime(item.date)}</span>
 							</div>
 							<h4 className={styles.itemTitle}>{item.title}</h4>
 							<div className={styles.statusRow}>

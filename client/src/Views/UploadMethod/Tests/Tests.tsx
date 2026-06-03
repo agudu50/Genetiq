@@ -691,6 +691,25 @@ const Tests = () => {
 		} else {
 			setExamCompleted(true);
 			
+			// Record completed quiz in local storage history
+			try {
+				const currentHistory = localStorage.getItem("genetiq_quiz_history");
+				const historyList = currentHistory ? JSON.parse(currentHistory) : [];
+				const finalScore = score;
+				const newQuizRecord = {
+					id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2),
+					type: "Quiz Completed",
+					title: `${activeSystem.name} Exam`,
+					date: new Date().toISOString(),
+					status: `Score: ${finalScore}/${activeSystem.questions.length}`,
+					color: "#8b5cf6", // Purple/Violet
+				};
+				localStorage.setItem("genetiq_quiz_history", JSON.stringify([newQuizRecord, ...historyList].slice(0, 10)));
+				window.dispatchEvent(new Event("genetiq_history_updated"));
+			} catch (e) {
+				console.error("Failed to store quiz record in local history", e);
+			}
+
 			// If this was today's active daily exam, mark it completed to clear the notification badge!
 			const today = new Date();
 			const seed = today.getFullYear() * 1000 + (today.getMonth() + 1) * 100 + today.getDate();
@@ -702,7 +721,7 @@ const Tests = () => {
 				window.dispatchEvent(new Event("genetiq_tips_read"));
 			}
 		}
-	}, [activeSystem, currentQIndex]);
+	}, [activeSystem, currentQIndex, score]);
 
 	const triggerSealCredentials = useCallback(() => {
 		if (!activeSystem) return;
