@@ -81,15 +81,6 @@ const DEFAULT_MOCK_ITEMS = [
 		color: "#f59e0b",
 	},
 	{
-		id: "mock-3",
-		type: "Clinical",
-		title: "Doctor Access Granted",
-		date: new Date(now.getTime() - 72 * 60 * 60 * 1000).toISOString(), // 3 days ago
-		status: "Active",
-		icon: "shield",
-		color: "#10b981",
-	},
-	{
 		id: "mock-4",
 		type: "Wearables",
 		title: "Telehealth Vitals Sync",
@@ -130,15 +121,27 @@ export const HealthHistoryWidget = () => {
 
 	// Map upload records from Redux
 	const mappedUploads = useMemo(() => {
-		return uploadRecords.map((rec) => ({
-			id: rec.id,
-			type: "Lab Results",
-			title: rec.fileName || "Blood Marker Analysis",
-			date: rec.uploadedAt,
-			status: "Verified",
-			icon: "beaker",
-			color: "#a855f7",
-		}));
+		return uploadRecords.map((rec) => {
+			let displayTitle = "Blood Marker Analysis";
+			if (rec.fileName) {
+				const dotIdx = rec.fileName.lastIndexOf(".");
+				const nameWithoutExt = dotIdx !== -1 ? rec.fileName.substring(0, dotIdx) : rec.fileName;
+				displayTitle = nameWithoutExt
+					.replace(/[_-]/g, " ")
+					.split(" ")
+					.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+					.join(" ");
+			}
+			return {
+				id: rec.id,
+				type: "Lab Results",
+				title: displayTitle,
+				date: rec.uploadedAt,
+				status: "Verified",
+				icon: "beaker",
+				color: "#a855f7",
+			};
+		});
 	}, [uploadRecords]);
 
 	// Combine upload history, quiz history, and fallback mocks
