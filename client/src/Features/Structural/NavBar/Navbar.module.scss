@@ -122,6 +122,85 @@
 	}
 }
 
+.cart-wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	border-radius: 50%;
+	border: 1px solid rgba(15, 23, 42, 0.08);
+	background: rgba(255, 255, 255, 0.8);
+	color: #475569;
+	cursor: pointer;
+	position: relative;
+	transition: all 0.3s ease;
+
+	html[data-theme="dark"] & {
+		background: rgba(255, 255, 255, 0.03);
+		border-color: rgba(255, 255, 255, 0.06);
+		color: #cbd5e1;
+	}
+
+	&:hover {
+		border-color: rgba(0, 166, 157, 0.4);
+		background: #ffffff;
+		color: #00A69D;
+		box-shadow: 0 0 16px rgba(0, 166, 157, 0.2);
+		transform: scale(1.02);
+
+		html[data-theme="dark"] & {
+			background: rgba(255, 255, 255, 0.06);
+			border-color: rgba(0, 166, 157, 0.5);
+			box-shadow: 0 0 20px rgba(0, 166, 157, 0.3);
+		}
+	}
+
+	@media (max-width: 768px) {
+		width: 36px;
+		height: 36px;
+	}
+}
+
+.cart-icon {
+	width: 18px;
+	height: 18px;
+
+	@media (max-width: 768px) {
+		width: 16px;
+		height: 16px;
+	}
+}
+
+.cart-badge {
+	position: absolute;
+	top: 4px;
+	right: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 8.5px;
+	font-weight: 850;
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	background: #10b981;
+	color: #ffffff;
+	border: 1.5px solid #ffffff;
+
+	html[data-theme="dark"] & {
+		border-color: #0a0e1a;
+	}
+
+	@media (max-width: 768px) {
+		top: 0px;
+		right: 0px;
+		width: 12px;
+		height: 12px;
+		font-size: 8px;
+	}
+}
+
 // ─── Desktop Navigation Capsule Tab Switcher ───
 .desktop-nav {
 	display: flex;

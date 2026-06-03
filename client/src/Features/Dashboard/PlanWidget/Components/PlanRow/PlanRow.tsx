@@ -32,6 +32,10 @@ const iconMap: Record<string, string> = {
 	apple,
 };
 
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/App/Redux/store";
+import { addToCart, removeFromCart } from "@/App/Redux/cartSlice";
+
 export const PlanRow = ({
 	item,
 	setActiveTab,
@@ -40,6 +44,10 @@ export const PlanRow = ({
 	setActiveTab: (tab: string) => void;
 }) => {
 	const { t } = useLanguage();
+	const dispatch = useDispatch();
+	const cartItems = useSelector((state: RootState) => state.cart.items);
+	const isInCart = cartItems.some((c) => c.name === item.name);
+
 	const iconSrc = iconMap[item.icon] || item.icon;
 
 	const handleClick = () => {
@@ -47,6 +55,22 @@ export const PlanRow = ({
 			setActiveTab(item.link);
 		}
 	};
+
+	const handleCartClick = (e: React.MouseEvent) => {
+		e.stopPropagation();
+		if (isInCart) {
+			dispatch(removeFromCart(item.name));
+		} else {
+			dispatch(addToCart({
+				id: item.name,
+				name: item.name,
+				description: item.description,
+				icon: item.icon,
+				price: "$49",
+			}));
+		}
+	};
+
 	return (
 		<div className={styles["PlanRow-row"]} onClick={handleClick}>
 			<div className={styles["PlanRow-icon"]}>
@@ -79,8 +103,11 @@ export const PlanRow = ({
 						<ChevronHollow />
 					</div>
 				) : (
-					<button className={styles["PlanRow-cart"]}>
-						<p>{t("add_to_cart")}</p>
+					<button
+						className={`${styles["PlanRow-cart"]} ${isInCart ? styles["PlanRow-cart-added"] : ""}`}
+						onClick={handleCartClick}
+					>
+						<p>{isInCart ? `${t("added") || "Added"} ✓` : t("add_to_cart")}</p>
 						<Cart />
 					</button>
 				)}

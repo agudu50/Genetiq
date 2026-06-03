@@ -6,6 +6,7 @@ import testReducer from "./testSlice";
 import goalReducer from "./goalSlice";
 import genomicsReducer from "./genomicsSlice";
 import uploadHistoryReducer from "./uploadHistorySlice";
+import cartReducer from "./cartSlice";
 
 const store = configureStore({
 	reducer: {
@@ -16,6 +17,7 @@ const store = configureStore({
 		goals: goalReducer,
 		genomics: genomicsReducer,
 		uploadHistory: uploadHistoryReducer,
+		cart: cartReducer,
 	},
 });
 

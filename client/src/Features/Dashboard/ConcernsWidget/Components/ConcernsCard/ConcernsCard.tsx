@@ -1,62 +1,83 @@
 import styles from "./ConcernsCard.module.scss";
 import { Concern } from "../../helpers/concernsMockData";
-import Heart from "@assets/ConcernsWidget/Heart.svg";
-import Diab from "@assets/ConcernsWidget/Diab.svg";
 import Question from "@assets/ConcernsWidget/Question.svg?react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setCategory } from "@/App/Redux/categorySlice";
 import { useLanguage } from "@/App/i18n/LanguageContext";
+import { Globe, Coins, Brain as BrainIcon, Heart as HeartIcon, HelpCircle } from "lucide-react";
 
 interface ConcernsCardProps {
 	concern: Concern;
 	backgroundColor?: string;
+	onClick?: () => void;
 }
 
 export const ConcernsCard: React.FC<ConcernsCardProps> = ({
 	concern,
 	backgroundColor,
+	onClick,
 }) => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const { t } = useLanguage();
 
-	const iconMap: Record<string, string> = {
-		Heart,
-		Diab,
+	const renderConcernIcon = (iconName: string) => {
+		switch (iconName) {
+			case "Globe":
+				return <Globe size={18} strokeWidth={2.5} />;
+			case "Financial":
+				return <Coins size={18} strokeWidth={2.5} />;
+			case "Brain":
+				return <BrainIcon size={18} strokeWidth={2.5} />;
+			case "Heart":
+				return <HeartIcon size={18} strokeWidth={2.5} />;
+			default:
+				return <HelpCircle size={18} strokeWidth={2.5} />;
+		}
 	};
 
-	const iconSrc = iconMap[concern.icon] || Heart;
+	const getStatusClass = (status: string) => {
+		if (status === "High") return styles["status-high"];
+		if (status === "Medium") return styles["status-medium"];
+		return styles["status-low"];
+	};
+
+	const getAccentColor = (status: string) => {
+		if (status === "High") return "#ef4444"; // Red
+		if (status === "Medium") return "#f59e0b"; // Orange/Amber
+		return "#10b981"; // Green/Emerald
+	};
 
 	const handleClick = (concernName: string) => {
-		dispatch(setCategory("cardiovascular"));
-		setTimeout(() => {
-			navigate(`/dashboard/cardiovascular/${concernName}`);
-		}, 100);
+		if (onClick) {
+			onClick();
+		} else {
+			dispatch(setCategory("cardiovascular"));
+			setTimeout(() => {
+				navigate(`/dashboard/cardiovascular/${concernName}`);
+			}, 100);
+		}
 	};
 
 	return (
 		<div
 			className={`${styles["ConcernsCard-card"]} ${
-				concern.link && styles["ConcernsCard-card-link"]
-			} ${backgroundColor === "blue" && styles["ConcernsCard-card-blue"]} ${
+				concern.link ? styles["ConcernsCard-card-link"] : ""
+			} ${backgroundColor === "blue" ? styles["ConcernsCard-card-blue"] : ""} ${
 				concern.status === "High" ? styles["ConcernsCard-card-high"] : ""
-			}`}
+			} ${concern.status === "Medium" ? styles["ConcernsCard-card-medium"] : ""}`}
+			style={{ "--concern-accent": getAccentColor(concern.status) } as React.CSSProperties}
 			onClick={() => handleClick(concern.title)}
 		>
+			{/* High fidelity card mesh overlay */}
+			<div className={styles["cardMeshBg"]} />
+
 			<div className={styles["ConcernsCard-head"]}>
 				<div className={styles["ConcernsCard-icon-container"]}>
-					<img src={iconSrc} alt={`${t(concern.title)} icon`} />
+					{renderConcernIcon(concern.icon)}
 				</div>
-				<div
-					className={`${styles["ConcernsCard-status"]} ${
-						concern.status === "High"
-							? styles["ConcernsCard-status-red"]
-							: concern.status === "Medium"
-								? styles["ConcernsCard-status-orange"]
-								: styles["ConcernsCard-status-green"]
-					}`}
-				>
+				<div className={`${styles["ConcernsCard-status"]} ${getStatusClass(concern.status)}`}>
 					<div className={styles["ConcernsCard-status-exclamation"]}>!</div>
 					<div className={styles["ConcernsCard-status-text"]}>
 						{t(concern.status)}
@@ -68,15 +89,7 @@ export const ConcernsCard: React.FC<ConcernsCardProps> = ({
 					{t(concern.title)}
 				</div>
 				<div className={styles["ConcernsCard-body-description"]}>
-					<span
-						className={`${styles["ConcernsCard-highlight"]} ${
-							concern.status === "High"
-								? styles["ConcernsCard-highlight-red"]
-								: concern.status === "Medium"
-									? styles["ConcernsCard-highlight-orange"]
-									: styles["ConcernsCard-highlight-green"]
-						}`}
-					>
+					<span className={`${styles["ConcernsCard-highlight"]} ${getStatusClass(concern.status)}`}>
 						{t(concern.factors[0])}
 					</span>
 					{concern.factors.length > 1 && (
@@ -86,9 +99,11 @@ export const ConcernsCard: React.FC<ConcernsCardProps> = ({
 					)}
 				</div>
 			</div>
-			<div className={styles["DetailsCard-question-container"]}>
-				<Question className={styles["DetailsCard-question"]} />
-			</div>
+			{concern.link && (
+				<div className={styles["DetailsCard-question-container"]}>
+					<Question className={styles["DetailsCard-question"]} />
+				</div>
+			)}
 		</div>
 	);
 };

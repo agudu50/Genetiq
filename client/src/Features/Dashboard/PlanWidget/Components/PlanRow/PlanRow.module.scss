@@ -235,4 +235,14 @@
 	&:hover {
 		transform: scale(1.025);
 	}
+
+	&-added {
+		background-color: #10b981 !important;
+		color: #ffffff !important;
+		border-color: #10b981 !important;
+
+		svg path {
+			fill: #ffffff !important;
+		}
+	}
 }

@@ -3,6 +3,7 @@ import { Detail } from "../../helpers/detailedSystemConcerns";
 import styles from "./DetailsCard.module.scss";
 import Check from "@assets/ConcernsWidget/Check.svg?react";
 import Question from "@assets/ConcernsWidget/Question.svg?react";
+import { useLanguage } from "@/App/i18n/LanguageContext";
 
 interface DetailsCardProps {
 	detail: Detail;
@@ -15,6 +16,7 @@ export const DetailsCard: React.FC<DetailsCardProps> = ({
 	detailIndex,
 	setDetailIndex,
 }) => {
+	const { t } = useLanguage();
 	return (
 		<div
 			className={`${styles["DetailsCard-card"]} ${detail.id === detailIndex && styles["DetailsCard-card-active"]}`}
@@ -60,10 +62,12 @@ export const DetailsCard: React.FC<DetailsCardProps> = ({
 										: styles["DetailsCard-highlight-green"]
 							}`}
 						>
-							{detail.factors[0]}
+							{t(detail.factors[0])}
 						</span>
 						{detail.factors.length > 1 && (
-							<span> level and other {detail.factors.length - 1} factors</span>
+							<span>
+								{detail.factors[0].toLowerCase().endsWith("level") ? "" : ` ${t("level")}`} {t("and_other")} {detail.factors.length - 1} {t("factors")}
+							</span>
 						)}
 					</>
 				</div>

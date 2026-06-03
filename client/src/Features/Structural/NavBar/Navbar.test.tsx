@@ -11,6 +11,9 @@ vi.mock("react-redux", () => ({
 			firstName: "John",
 			lastName: "Doe",
 			isPremium: false,
+		},
+		cart: {
+			items: []
 		}
 	}),
 	useDispatch: () => vi.fn(),
