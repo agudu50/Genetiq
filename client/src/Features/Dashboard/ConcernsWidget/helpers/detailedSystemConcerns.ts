@@ -3,13 +3,8 @@ import Graph from "@assets/ConcernsWidget/Graph.svg";
 // import Gene from "@assets/ConcernsWidget/Gene.svg";
 // import Vitals from "@assets/ConcernsWidget/Vitals.svg";
 import {
-	AtrialFibrillationPlanMockData,
-	CoronaryArteryDiseasePlanMockData,
-	HeartFailurePlanMockData,
-	HypertensionPlanMockData,
 	planMockData,
 	PlanSection,
-	StrokePlanMockData,
 } from "../../PlanWidget/helpers/planMockData";
 
 export interface Detail {
@@ -162,7 +157,7 @@ export const detailedSystemConcerns: SystemConcerns[] = [
 						"Fatigue or weakness",
 					],
 				},
-				plan: AtrialFibrillationPlanMockData,
+				plan: planMockData,
 
 				frame:
 					"https://human.biodigital.com/viewer/?id=5v3G&ui-anatomy-descriptions=true&ui-anatomy-pronunciations=true&ui-anatomy-labels=false&ui-audio=true&ui-chapter-list=false&ui-fullscreen=false&ui-help=false&ui-info=false&ui-label-list=true&ui-layers=false&ui-skin-layers=false&ui-loader=circle&ui-media-controls=none&ui-menu=false&ui-nav=false&ui-search=false&ui-tools=false&ui-tutorial=false&ui-undo=false&ui-whiteboard=false&initial.none=true&disable-scroll=false&dk=57a9053995a029ade6a11d83c8a64a4fedef2b19&paid=o_27f525a0",
@@ -276,7 +271,7 @@ export const detailedSystemConcerns: SystemConcerns[] = [
 						"Severe headache with no known cause",
 					],
 				},
-				plan: StrokePlanMockData,
+				plan: planMockData,
 
 				frame:
 					"https://human.biodigital.com/viewer/?id=5v3G&ui-anatomy-descriptions=true&ui-anatomy-pronunciations=true&ui-anatomy-labels=false&ui-audio=true&ui-chapter-list=false&ui-fullscreen=false&ui-help=false&ui-info=false&ui-label-list=true&ui-layers=false&ui-skin-layers=false&ui-loader=circle&ui-media-controls=none&ui-menu=false&ui-nav=false&ui-search=false&ui-tools=false&ui-tutorial=false&ui-undo=false&ui-whiteboard=false&initial.none=true&disable-scroll=false&dk=57a9053995a029ade6a11d83c8a64a4fedef2b19&paid=o_27f525a0",
@@ -385,7 +380,7 @@ export const detailedSystemConcerns: SystemConcerns[] = [
 						"Nausea",
 					],
 				},
-				plan: CoronaryArteryDiseasePlanMockData,
+				plan: planMockData,
 				frame:
 					"https://human.biodigital.com/viewer/?id=5v3G&ui-anatomy-descriptions=true&ui-anatomy-pronunciations=true&ui-anatomy-labels=false&ui-audio=true&ui-chapter-list=false&ui-fullscreen=false&ui-help=false&ui-info=false&ui-label-list=true&ui-layers=false&ui-skin-layers=false&ui-loader=circle&ui-media-controls=none&ui-menu=false&ui-nav=false&ui-search=false&ui-tools=false&ui-tutorial=false&ui-undo=false&ui-whiteboard=false&initial.none=true&disable-scroll=false&dk=57a9053995a029ade6a11d83c8a64a4fedef2b19&paid=o_27f525a0",
 			},
@@ -493,7 +488,7 @@ export const detailedSystemConcerns: SystemConcerns[] = [
 						"Vision problems",
 					],
 				},
-				plan: HypertensionPlanMockData,
+				plan: planMockData,
 				frame:
 					"https://human.biodigital.com/viewer/?id=5v3G&ui-anatomy-descriptions=true&ui-anatomy-pronunciations=true&ui-anatomy-labels=false&ui-audio=true&ui-chapter-list=false&ui-fullscreen=false&ui-help=false&ui-info=false&ui-label-list=true&ui-layers=false&ui-skin-layers=false&ui-loader=circle&ui-media-controls=none&ui-menu=false&ui-nav=false&ui-search=false&ui-tools=false&ui-tutorial=false&ui-undo=false&ui-whiteboard=false&initial.none=true&disable-scroll=false&dk=57a9053995a029ade6a11d83c8a64a4fedef2b19&paid=o_27f525a0",
 			},
@@ -601,7 +596,7 @@ export const detailedSystemConcerns: SystemConcerns[] = [
 						"Sometimes preceded by chest pain, shortness of breath, or dizziness",
 					],
 				},
-				plan: HeartFailurePlanMockData,
+				plan: planMockData,
 				frame:
 					"https://human.biodigital.com/viewer/?id=5v3G&ui-anatomy-descriptions=true&ui-anatomy-pronunciations=true&ui-anatomy-labels=false&ui-audio=true&ui-chapter-list=false&ui-fullscreen=false&ui-help=false&ui-info=false&ui-label-list=true&ui-layers=false&ui-skin-layers=false&ui-loader=circle&ui-media-controls=none&ui-menu=false&ui-nav=false&ui-search=false&ui-tools=false&ui-tutorial=false&ui-undo=false&ui-whiteboard=false&initial.none=true&disable-scroll=false&dk=57a9053995a029ade6a11d83c8a64a4fedef2b19&paid=o_27f525a0",
 			},

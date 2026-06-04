@@ -7,6 +7,8 @@
 	gap: 20px;
 	opacity: 0;
 	animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	z-index: 1;
+	position: relative;
 
 	@media (max-width: 768px) {
 		gap: 16px;
@@ -34,43 +36,70 @@
 .PlanAggregate-title {
 	display: flex;
 	align-items: center;
-	gap: 8px;
-	font-size: 16px;
-	font-weight: 700;
-	color: var(--text);
+	gap: 10px;
+	font-size: 17.5px;
+	font-weight: 750;
+	color: var(--text, #ffffff);
 	margin: 0;
+	letter-spacing: -0.015em;
+
+	svg {
+		filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.4));
+		path {
+			stroke: #8b5cf6;
+		}
+	}
+
+	html[data-theme="light"] & {
+		color: #0f172a;
+	}
 }
 
 .PlanAggregate-note {
-	color: var(--text-secondary);
-	font-size: 13px;
-	font-weight: 500;
+	color: var(--text-secondary, #94a3b8);
+	font-size: 13.5px;
+	font-weight: 600;
+
+	html[data-theme="light"] & {
+		color: #64748b;
+	}
 }
 
 .PlanAggregate-table {
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	gap: 20px;
 	width: 100%;
 }
 
 .PlanAggregate-section {
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
-	background: var(--surface);
-	border: 1px solid var(--border);
-	border-radius: 16px;
-	padding: 16px;
-	transition:
-		transform 0.3s ease,
-		box-shadow 0.3s ease,
-		border-color 0.3s ease;
+	gap: 16px;
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 255, 255, 0.04);
+	border-radius: 20px;
+	padding: 20px;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+	transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+	html[data-theme="light"] & {
+		background: rgba(255, 255, 255, 0.55);
+		border-color: rgba(15, 23, 42, 0.04);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+	}
 
 	&:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-		border-color: var(--group-color);
+		background: rgba(30, 41, 59, 0.45);
+		border-color: color-mix(in srgb, var(--group-color) 45%, rgba(255, 255, 255, 0.1));
+		transform: translateY(-3px);
+		box-shadow: 0 16px 36px color-mix(in srgb, var(--group-color) 12%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+		html[data-theme="light"] & {
+			background: rgba(255, 255, 255, 0.95);
+			border-color: color-mix(in srgb, var(--group-color) 35%, rgba(15, 23, 42, 0.05));
+			box-shadow: 0 16px 36px color-mix(in srgb, var(--group-color) 8%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+		}
 	}
 }
 
@@ -79,119 +108,160 @@
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
-	padding-bottom: 8px;
+	padding-bottom: 12px;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+	html[data-theme="light"] & {
+		border-bottom-color: rgba(15, 23, 42, 0.06);
+	}
 }
 
 .PlanAggregate-section-title-wrap {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: 10px;
 }
 
 .PlanAggregate-section-icon {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 28px;
-	height: 28px;
-	border-radius: 8px;
+	width: 34px;
+	height: 34px;
+	border-radius: 10px;
 	background: var(--group-bg);
 	color: var(--group-color);
+	border: 1px solid color-mix(in srgb, var(--group-color) 25%, transparent);
 
 	svg {
-		width: 16px;
-		height: 16px;
+		width: 18px;
+		height: 18px;
 	}
 }
 
 .PlanAggregate-section-title {
-	font-size: 14px;
-	font-weight: 700;
-	color: var(--text);
+	font-size: 15px;
+	font-weight: 750;
+	color: var(--text, #ffffff);
+
+	html[data-theme="light"] & {
+		color: #0f172a;
+	}
 }
 
 .PlanAggregate-section-count {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: 2px 6px;
-	border-radius: 12px;
+	padding: 3px 8px;
+	border-radius: 99px;
 	background: rgba(255, 255, 255, 0.06);
-	color: var(--text-secondary);
+	color: var(--text-secondary, #94a3b8);
 	font-size: 11px;
-	font-weight: 700;
+	font-weight: 800;
 	line-height: 1;
+
+	html[data-theme="light"] & {
+		background: rgba(15, 23, 42, 0.06);
+		color: #475569;
+	}
 }
 
 .PlanAggregate-section-arrow {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 28px;
-	height: 28px;
+	width: 32px;
+	height: 32px;
 	border-radius: 50%;
 	background: transparent;
 	border: none;
 	cursor: pointer;
-	transition: all 0.2s ease;
+	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 
 	svg {
 		width: 16px;
 		height: 16px;
 		path {
-			fill: var(--text-secondary);
-			transition: fill 0.2s ease;
+			fill: var(--text-secondary, #94a3b8);
+			transition: fill 0.3s ease;
+		}
+	}
+
+	html[data-theme="light"] & {
+		svg path {
+			fill: #64748b;
 		}
 	}
 
 	&:hover {
 		background: rgba(255, 255, 255, 0.08);
-		transform: translateX(2px);
+		transform: translateX(4px);
+
 		svg path {
 			fill: var(--group-color);
+		}
+
+		html[data-theme="light"] & {
+			background: rgba(15, 23, 42, 0.08);
 		}
 	}
 }
 
 .PlanAggregate-rows {
 	display: flex;
-	flex-direction: row; // changed
-	gap: 12px;
+	flex-direction: row;
+	gap: 14px;
 	overflow-x: auto;
-	padding-bottom: 8px;
+	padding: 4px;
+	padding-bottom: 12px;
 	scroll-snap-type: x mandatory;
+	-webkit-overflow-scrolling: touch;
 
 	&::-webkit-scrollbar {
-		height: 4px;
+		height: 5px;
 	}
 	&::-webkit-scrollbar-track {
 		background: transparent;
 	}
 	&::-webkit-scrollbar-thumb {
-		background: rgba(99, 102, 241, 0.3);
-		border-radius: 4px;
+		background: rgba(139, 92, 246, 0.2);
+		border-radius: 10px;
 	}
 }
 
 .PlanAggregate-row {
 	display: flex;
-	flex-direction: column; // changed
+	flex-direction: column;
 	align-items: flex-start;
 	justify-content: space-between;
 	gap: 12px;
-	padding: 14px;
-	border-radius: 14px;
-	min-width: 160px;
-	max-width: 160px;
+	padding: 16px;
+	border-radius: 16px;
+	min-width: 175px;
+	max-width: 175px;
 	scroll-snap-align: start;
-	background: rgba(255, 255, 255, 0.03);
-	border: 1px solid rgba(255, 255, 255, 0.06);
-	transition: all 0.2s ease;
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 255, 255, 0.04);
+	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+
+	html[data-theme="light"] & {
+		background: rgba(255, 255, 255, 0.6);
+		border-color: rgba(15, 23, 42, 0.04);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+	}
 
 	&:hover {
 		background: rgba(255, 255, 255, 0.06);
-		border-color: rgba(255, 255, 255, 0.1);
+		border-color: var(--group-color);
+		transform: translateY(-2px) scale(1.02);
+		box-shadow: 0 8px 24px color-mix(in srgb, var(--group-color) 12%, transparent);
+
+		html[data-theme="light"] & {
+			background: rgba(255, 255, 255, 0.95);
+			box-shadow: 0 8px 24px color-mix(in srgb, var(--group-color) 8%, transparent);
+		}
 	}
 }
 
@@ -199,7 +269,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: 10px;
+	gap: 12px;
 	min-width: 0;
 	width: 100%;
 }
@@ -208,23 +278,31 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 32px;
-	height: 32px;
-	border-radius: 8px;
-	background: var(--surface);
+	width: 34px;
+	height: 34px;
+	border-radius: 10px;
+	background: rgba(30, 41, 59, 0.5);
 	flex-shrink: 0;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+	border: 1px solid rgba(255, 255, 255, 0.06);
+
+	html[data-theme="light"] & {
+		background: #ffffff;
+		border-color: rgba(15, 23, 42, 0.08);
+		box-shadow: 0 4px 10px rgba(15, 23, 42, 0.05);
+	}
 
 	img {
-		width: 16px;
-		height: 16px;
+		width: 18px;
+		height: 18px;
+		object-fit: contain;
 	}
 }
 
 .PlanAggregate-row-name {
-	font-size: 13px;
-	font-weight: 600;
-	color: var(--text);
+	font-size: 13.5px;
+	font-weight: 700;
+	color: var(--text, #ffffff);
 	line-height: 1.4;
 	display: -webkit-box;
 	-webkit-line-clamp: 3;
@@ -233,20 +311,29 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: normal;
+
+	html[data-theme="light"] & {
+		color: #0f172a;
+	}
 }
 
 .PlanAggregate-row-type {
 	font-size: 10px;
-	font-weight: 600;
-	padding: 2px 6px;
-	border-radius: 4px;
+	font-weight: 800;
+	padding: 3px 8px;
+	border-radius: 6px;
 	background: rgba(255, 255, 255, 0.06);
-	color: var(--text-secondary);
+	color: var(--text-secondary, #94a3b8);
 	text-transform: uppercase;
-	letter-spacing: 0.2px;
+	letter-spacing: 0.5px;
 	flex-shrink: 0;
 	align-self: flex-start;
 	margin-top: 4px;
+
+	html[data-theme="light"] & {
+		background: rgba(15, 23, 42, 0.06);
+		color: #475569;
+	}
 }
 
 // ─── Divider ──────────────────────────────────────
@@ -254,7 +341,7 @@
 	display: flex;
 	align-items: center;
 	width: 100%;
-	margin: 8px 0;
+	margin: 12px 0;
 
 	&::before,
 	&::after {
@@ -269,13 +356,29 @@
 		);
 	}
 
+	html[data-theme="light"] & {
+		&::before,
+		&::after {
+			background: linear-gradient(
+				90deg,
+				transparent,
+				rgba(15, 23, 42, 0.08),
+				transparent
+			);
+		}
+	}
+
 	.PlanAggregate-or {
-		padding: 0 16px;
+		padding: 0 20px;
 		font-size: 12px;
-		font-weight: 600;
-		color: var(--text-secondary);
+		font-weight: 800;
+		color: var(--text-secondary, #94a3b8);
 		text-transform: uppercase;
-		letter-spacing: 1px;
+		letter-spacing: 1.5px;
+
+		html[data-theme="light"] & {
+			color: #64748b;
+		}
 	}
 }
 
@@ -284,44 +387,57 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 20px;
-	border-radius: 16px;
+	padding: 24px;
+	border-radius: 20px;
 	background: linear-gradient(
 		135deg,
-		rgba(99, 102, 241, 0.1) 0%,
-		rgba(139, 92, 246, 0.05) 100%
+		rgba(99, 102, 241, 0.08) 0%,
+		rgba(139, 92, 246, 0.04) 100%
 	);
-	border: 1px solid rgba(99, 102, 241, 0.2);
-	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-	transition: all 0.3s ease;
+	border: 1px solid rgba(99, 102, 241, 0.15);
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+	transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+	html[data-theme="light"] & {
+		background: linear-gradient(
+			135deg,
+			rgba(99, 102, 241, 0.05) 0%,
+			rgba(139, 92, 246, 0.02) 100%
+		);
+		border-color: rgba(99, 102, 241, 0.1);
+	}
 
 	&:hover {
-		border-color: rgba(99, 102, 241, 0.4);
-		box-shadow: 0 12px 32px rgba(99, 102, 241, 0.15);
+		border-color: rgba(99, 102, 241, 0.35);
+		box-shadow: 0 16px 40px rgba(99, 102, 241, 0.12);
 		transform: translateY(-2px);
 	}
 
-	@media (max-width: 600px) {
+	@media (max-width: 768px) {
 		flex-direction: column;
 		align-items: stretch;
-		gap: 16px;
+		gap: 20px;
 	}
 }
 
 .PlanAggregate-cta-content {
 	display: flex;
 	align-items: center;
-	gap: 16px;
+	gap: 20px;
 }
 
 .PlanAggregate-cta-icon-container {
-	width: 56px;
-	height: 56px;
-	border-radius: 14px;
+	width: 60px;
+	height: 60px;
+	border-radius: 16px;
 	overflow: hidden;
 	flex-shrink: 0;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
 	border: 2px solid rgba(255, 255, 255, 0.1);
+
+	html[data-theme="light"] & {
+		border-color: rgba(15, 23, 42, 0.05);
+	}
 
 	img {
 		width: 100%;
@@ -333,38 +449,47 @@
 .PlanAggregate-cta-body {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: 6px;
 }
 
 .PlanAggregate-cta-title {
-	font-size: 16px;
-	font-weight: 700;
-	color: #fff;
-	letter-spacing: -0.01em;
+	font-size: 16.5px;
+	font-weight: 800;
+	color: var(--text, #ffffff);
+	letter-spacing: -0.015em;
+
+	html[data-theme="light"] & {
+		color: #0f172a;
+	}
 }
 
 .PlanAggregate-cta-desc {
 	font-size: 13px;
-	color: rgba(255, 255, 255, 0.7);
-	line-height: 1.4;
-	max-width: 380px;
+	color: var(--text-secondary, rgba(255, 255, 255, 0.7));
+	line-height: 1.5;
+	max-width: 420px;
+
+	html[data-theme="light"] & {
+		color: #475569;
+	}
 }
 
 .PlanAggregate-cta-button {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 8px;
-	padding: 10px 20px;
-	border-radius: 12px;
+	gap: 10px;
+	padding: 12px 24px;
+	border-radius: 14px;
 	background: linear-gradient(135deg, #6366f1, #8b5cf6);
 	color: white;
 	border: none;
-	font-weight: 600;
-	font-size: 14px;
+	font-weight: 750;
+	font-size: 14.5px;
 	cursor: pointer;
-	transition: all 0.25s ease;
+	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 	flex-shrink: 0;
+	box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);
 
 	.PlanAggregate-cta-schedule-icon {
 		width: 18px;
@@ -375,7 +500,7 @@
 	}
 
 	&:hover {
-		transform: scale(1.05);
-		box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+		transform: scale(1.03) translateY(-1px);
+		box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
 	}
 }

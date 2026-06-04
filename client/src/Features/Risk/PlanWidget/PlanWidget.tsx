@@ -43,6 +43,8 @@ export const PlanWidget = () => {
 				setActiveTab={handleTabChange}
 			/>
 			<div className={styles["PlanWidget-content"]}>
+				<div className={styles.cardMeshBg} />
+				<div className={styles.cardGlowBlob} />
 				{activeTab === "Action Plan" && activeSection ? (
 					<PlanAggregate section={activeSection} setActiveTab={setActiveTab} />
 				) : (

@@ -4,56 +4,109 @@
 	display: flex;
 	flex-direction: row;
 	align-items: stretch;
-	gap: 2px;
+	gap: 0;
 	width: 100%;
 	max-width: 100%;
 	box-sizing: border-box;
+
+	background: rgba(30, 41, 59, 0.25);
+	border: 1px solid rgba(255, 255, 255, 0.05);
+	border-radius: 24px;
+	overflow: hidden;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+
+	html[data-theme="light"] & {
+		background: rgba(255, 255, 255, 0.55);
+		border-color: rgba(15, 23, 42, 0.05);
+		box-shadow: 0 10px 30px rgba(15, 23, 42, 0.02);
+	}
+
+	@media (max-width: 900px) {
+		flex-direction: column;
+	}
 }
 
 .CtaBlock-left {
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	justify-content: flex-start;
 	align-items: flex-start;
-	gap: 8px;
-	padding: 12px;
-	width: 26.5%;
-	border-top-left-radius: 8px;
-	border-bottom-left-radius: 8px;
-	background: linear-gradient(90deg, #21262e 0%, #363c47 100%);
+	gap: 16px;
+	padding: 24px;
+	width: 32%;
+	box-sizing: border-box;
+	background: linear-gradient(135deg, rgba(99, 102, 241, 0.06) 0%, rgba(139, 92, 246, 0.03) 100%);
+	border-right: 1px solid rgba(255, 255, 255, 0.06);
+
+	html[data-theme="light"] & {
+		background: rgba(15, 23, 42, 0.01);
+		border-right-color: rgba(15, 23, 42, 0.05);
+	}
+
+	@media (max-width: 900px) {
+		width: 100%;
+		border-right: none;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+		
+		html[data-theme="light"] & {
+			border-bottom-color: rgba(15, 23, 42, 0.05);
+		}
+	}
 }
 
 .CtaBlock-head {
 	display: flex;
 	justify-content: space-between;
-	align-items: flex-start;
+	align-items: center;
 	width: 100%;
 }
 
-.CtaBlock-bottle-icon {
-	width: 32px;
-	height: 32px;
+.CtaBlock-bottle-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	border-radius: 12px;
+	background: rgba(139, 92, 246, 0.16);
+	color: #8b5cf6;
+	border: 1px solid rgba(139, 92, 246, 0.25);
+	box-shadow: 0 4px 10px rgba(139, 92, 246, 0.15);
+
+	svg {
+		width: 22px;
+		height: 22px;
+		path {
+			fill: currentColor;
+		}
+	}
 }
 
 .CtaBlock-more {
-	color: #3b8df5;
-	font-size: 12px;
-	font-weight: 600;
-	line-height: 16px;
+	color: #8b5cf6;
+	font-size: 13px;
+	font-weight: 850;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
 }
 
 .CtaBlock-title {
-	color: rgba(239, 240, 241, 1);
-	font-size: 20px;
-	font-weight: 600;
-	line-height: 28px;
+	color: var(--text, #ffffff);
+	font-size: 18.5px;
+	font-weight: 800;
+	line-height: 1.3;
+	letter-spacing: -0.015em;
+
+	html[data-theme="light"] & {
+		color: #0f172a;
+	}
 }
 
 .CtaBlock-list {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: 4px;
+	gap: 6px;
 	margin: 0;
 	padding-left: 0;
 	width: 100%;
@@ -61,47 +114,46 @@
 
 .CtaBlock-list-item {
 	display: flex;
-	padding: 4px 8px;
+	padding: 8px 16px;
 	align-items: center;
 	gap: 8px;
 	align-self: stretch;
 	position: relative;
-	border-radius: 100px;
+	border-radius: 12px;
 	overflow: hidden;
-	transition: all 0.3s ease;
+	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 	cursor: pointer;
+	border: 1px solid transparent;
 
-	color: rgba(108, 117, 132, 1);
+	color: var(--text-secondary, #94a3b8);
 	text-overflow: ellipsis;
-	font-size: 12px;
-	font-weight: 400;
+	font-size: 13px;
+	font-weight: 700;
 	line-height: 14px;
 
-	padding-left: 21px;
-
-	&::before {
-		content: "";
-		position: absolute;
-		left: 8px;
-		top: 50%;
-		transform: translateY(-50%);
-		width: 5px;
-		height: 5px;
-		border-radius: 50%;
-		background-color: rgba(241, 241, 242, 0.16);
+	html[data-theme="light"] & {
+		color: #475569;
 	}
 
 	&:hover:not(.CtaBlock-list-item-active) {
-		background-color: rgba(59, 141, 245, 0.08);
-		color: rgba(239, 240, 241, 0.6);
+		background-color: rgba(139, 92, 246, 0.06);
+		color: var(--text, #ffffff);
+
+		html[data-theme="light"] & {
+			color: #0f172a;
+		}
 	}
 
 	&-active {
-		background-color: rgba(59, 141, 245, 0.24);
-		color: rgba(239, 240, 241, 1);
+		background-color: rgba(139, 92, 246, 0.12);
+		color: #8b5cf6;
+		border-color: rgba(139, 92, 246, 0.25);
+		font-weight: 800;
 
-		&::before {
-			background-color: #13161d;
+		html[data-theme="light"] & {
+			background-color: rgba(139, 92, 246, 0.08);
+			color: #7c3aed;
+			border-color: rgba(139, 92, 246, 0.2);
 		}
 	}
 }
@@ -109,18 +161,20 @@
 .CtaBlock-right {
 	display: flex;
 	flex-direction: row;
-	gap: 4px;
-	padding: 12px;
+	gap: 20px;
+	padding: 24px;
 	flex: 1;
-	border-top-right-radius: 8px;
-	border-bottom-right-radius: 8px;
-	background: linear-gradient(90deg, #363c47 0%, #21262e 100%);
+	box-sizing: border-box;
+
+	@media (max-width: 600px) {
+		flex-direction: column;
+	}
 }
 
 .CtaBlock-content {
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	gap: 16px;
 	width: 100%;
 	flex: 1;
 }
@@ -129,84 +183,112 @@
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: 4px;
-	flex: 1 0 0;
+	gap: 6px;
+	flex: 1;
 }
 
 .CtaBlock-right-head {
-	color: #fff;
-	font-size: 14px;
-	font-weight: 600;
-	line-height: 20px;
+	color: var(--text, #ffffff);
+	font-size: 13.5px;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+
+	html[data-theme="light"] & {
+		color: #0f172a;
+	}
 }
 
 .CtaBlock-description {
-	color: rgba(164, 169, 177, 1);
-	font-size: 12px;
-	font-weight: 400;
-	line-height: 16px;
+	color: var(--text-secondary, #94a3b8);
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.5;
+
+	html[data-theme="light"] & {
+		color: #475569;
+	}
 }
 
 .CtaBlock-box {
 	display: flex;
-	padding: 8px;
+	padding: 12px 18px;
 	align-items: center;
 	justify-content: space-between;
-	gap: 8px;
+	gap: 12px;
 
-	border-radius: 8px 100px 100px 8px;
-	background: rgba(59, 141, 245, 0.08);
+	border-radius: 16px;
+	background: rgba(139, 92, 246, 0.06);
+	border: 1px solid rgba(139, 92, 246, 0.15);
+
+	html[data-theme="light"] & {
+		background: rgba(139, 92, 246, 0.04);
+		border-color: rgba(139, 92, 246, 0.1);
+	}
 }
 
 .CtaBlock-box-left {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	gap: 8px;
+	gap: 12px;
 	width: 100%;
 }
 
 .CtaBlock-icon-container {
 	display: flex;
-	width: 32px;
-	height: 32px;
+	width: 36px;
+	height: 36px;
 	justify-content: center;
 	align-items: center;
-	gap: 8px;
-	border-radius: 8px;
-	background: rgba(59, 141, 245, 0.24);
+	border-radius: 10px;
+	background: rgba(139, 92, 246, 0.16);
+	border: 1px solid rgba(139, 92, 246, 0.25);
+	flex-shrink: 0;
+
+	img {
+		width: 20px;
+		height: 20px;
+	}
 }
 
 .CtaBlock-supplements {
-	width: 60%;
 	margin: 0;
-	color: rgba(164, 169, 177, 1);
-	font-size: 12px;
-	font-weight: 400;
-	line-height: 16px;
+	color: var(--text-secondary, #94a3b8);
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.4;
+
+	html[data-theme="light"] & {
+		color: #475569;
+	}
 }
 
 .CtaBlock-supplement {
-	width: fit-content;
-	text-align: left;
 	display: inline-flex;
 	opacity: 0;
-	animation: fadeIn 2s ease forwards;
+	animation: ctaFadeIn 0.8s ease forwards;
 }
 
-@keyframes fadeIn {
+@keyframes ctaFadeIn {
 	0% {
 		opacity: 0;
+		transform: translateY(4px);
 	}
 	100% {
 		opacity: 1;
+		transform: translateY(0);
 	}
 }
 
 .CtaBlock-amount {
-	color: rgba(239, 240, 241, 1);
-	white-space: nowrap;
+	color: var(--text, #ffffff);
+	font-weight: 850;
 	margin-right: 4px;
+
+	html[data-theme="light"] & {
+		color: #0f172a;
+	}
 }
 
 .CtaBlock-name {
@@ -219,32 +301,43 @@
 }
 
 .CtaBlock-cart-icon {
-	padding: 8px;
+	padding: 10px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	border-radius: 999px;
-	background: rgba(59, 141, 245, 1);
-	transition: all 0.3s ease;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #6366f1, #8b5cf6);
+	border: none;
+	cursor: pointer;
+	box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	flex-shrink: 0;
 
 	svg {
+		width: 16px;
+		height: 16px;
 		path {
 			fill: #ffffff;
 		}
 	}
 
 	&:hover {
-		transform: scale(1.05);
+		transform: scale(1.08);
+		box-shadow: 0 6px 16px rgba(99, 102, 241, 0.45);
 	}
 }
 
 .CtaBlock-image-container {
 	flex-shrink: 1;
-	width: 30%;
+	width: 25%;
 	position: relative;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+
+	@media (max-width: 600px) {
+		display: none;
+	}
 }
 
 .CtaBlock-image {
@@ -253,7 +346,7 @@
 	justify-content: center;
 	align-items: center;
 	object-fit: contain;
-	height: 100%;
+	height: 105%;
 	margin: 0 auto;
 	box-sizing: border-box;
 }
