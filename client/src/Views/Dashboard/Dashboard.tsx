@@ -128,7 +128,7 @@ const Dashboard = () => {
 				<ActivityChart />
 			</div>
 			<div className={styles["span-1"]}>
-				<QuickActions />
+				<QuickActions onToggleChatbot={() => setIsChatbotOpen((prev) => !prev)} />
 			</div>
 
 			{/* Tertiary Analytics & Risk Models */}

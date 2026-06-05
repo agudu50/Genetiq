@@ -11,7 +11,11 @@ interface QuickAction {
 	onClick?: () => void;
 }
 
-export const QuickActions = () => {
+export const QuickActions = ({
+	onToggleChatbot,
+}: {
+	onToggleChatbot?: () => void;
+}) => {
 	const { t } = useLanguage();
 	const navigate = useNavigate();
 
@@ -206,13 +210,33 @@ export const QuickActions = () => {
 				</svg>
 			),
 		},
+		{
+			id: "symptom-triage",
+			label: t("ai_assistant") || "AI Assistant",
+			color: "#00A69D", // Brand Teal
+			onClick: onToggleChatbot,
+			icon: (
+				<svg
+					width='24'
+					height='24'
+					viewBox='0 0 24 24'
+					fill='none'
+					stroke='currentColor'
+					strokeWidth='2.2'
+				>
+					<rect x='3' y='11' width='18' height='10' rx='2' />
+					<circle cx='12' cy='5' r='2' />
+					<path d='M12 7v4M8 15h.01M16 15h.01M9 18h6' />
+				</svg>
+			),
+		},
 	];
 
 	const handleAction = (action: QuickAction) => {
-		if (action.path) {
-			navigate(action.path);
-		} else if (action.onClick) {
+		if (action.onClick) {
 			action.onClick();
+		} else if (action.path) {
+			navigate(action.path);
 		}
 	};
 

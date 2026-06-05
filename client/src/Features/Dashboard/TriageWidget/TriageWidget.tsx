@@ -1,25 +1,44 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/App/Redux/store";
 import {
 	setSymptomsInput,
+	appendSymptom,
 	addAlert,
 	addMessage,
+	clearMessages,
+	clearAlerts,
+	setAnalyzing,
 } from "@/App/Redux/triageSlice";
-import { Send, Bot, AlertTriangle } from "lucide-react";
+import { Send, Bot, AlertTriangle, RefreshCw } from "lucide-react";
 import styles from "./TriageWidget.module.scss";
 
 export const TriageWidget: React.FC = () => {
 	const dispatch = useDispatch();
+	const chatEndRef = useRef<HTMLDivElement>(null);
+
 	const { symptomsInput, messages, isAnalyzing } = useSelector(
 		(state: RootState) => state.triage,
 	);
+
+	// Auto-scroll to bottom of chat when new messages or typing state changes
+	useEffect(() => {
+		chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+	}, [messages, isAnalyzing]);
+
+	const quickSymptoms = [
+		{ label: "🫁 Breathless", text: "Shortness of breath" },
+		{ label: "🫀 Chest Pain", text: "Chest pain and high heart rate" },
+		{ label: "🧠 Migraine", text: "Severe headache and dizziness" },
+		{ label: "🤢 Nausea", text: "Nausea and stomach ache" },
+	];
 
 	const handleAnalyze = () => {
 		if (!symptomsInput.trim()) return;
 
 		const userInput = symptomsInput.trim();
 
+		// Add User Message
 		dispatch(
 			addMessage({
 				id: `usr-${Date.now()}`,
@@ -27,6 +46,10 @@ export const TriageWidget: React.FC = () => {
 				text: userInput,
 			}),
 		);
+
+		// Start Analyzing Spinner / Typing dots
+		dispatch(setAnalyzing(true));
+		dispatch(setSymptomsInput(""));
 
 		let system = "General";
 		let condition = "Symptom Analysis Complete";
@@ -91,10 +114,9 @@ export const TriageWidget: React.FC = () => {
 			requiresAction,
 		};
 
-		dispatch(addAlert(newAlert));
-
 		// Mock delay for AI reasoning
 		setTimeout(() => {
+			dispatch(addAlert(newAlert));
 			dispatch(
 				addMessage({
 					id: `bot-${Date.now()}`,
@@ -102,24 +124,44 @@ export const TriageWidget: React.FC = () => {
 					text: `I've analyzed your symptoms. It looks like a ${condition} related to your ${system} system. ${recommendation}`,
 				}),
 			);
-		}, 600);
+			dispatch(setAnalyzing(false));
+		}, 1200);
+	};
 
-		dispatch(setSymptomsInput(""));
+	const handleReset = () => {
+		dispatch(clearMessages());
+		dispatch(clearAlerts());
+	};
+
+	const handleChipClick = (text: string) => {
+		dispatch(appendSymptom(text));
 	};
 
 	return (
 		<div className={styles.widgetContainer}>
+			{/* ── Header ── */}
 			<div className={styles.header}>
 				<div className={styles.titleArea}>
 					<div className={styles.botIconWrapper}>
 						<Bot size={20} />
+						<div className={styles.onlineDot} />
 					</div>
 					<div>
 						<h3 className={styles.title}>AI Symptom Triage</h3>
+						<span className={styles.statusLabel}>AI Physician Assistant</span>
 					</div>
 				</div>
+				<button 
+					onClick={handleReset} 
+					className={styles.resetButton}
+					title="Clear Chat History"
+				>
+					<RefreshCw size={14} />
+					<span>Reset</span>
+				</button>
 			</div>
 
+			{/* ── Chat Feed ── */}
 			<div className={styles.chatArea}>
 				{messages.map((msg) => (
 					<div
@@ -134,8 +176,35 @@ export const TriageWidget: React.FC = () => {
 						<p>{msg.text}</p>
 					</div>
 				))}
+
+				{/* ── Bouncing Typing Dots when Analyzing ── */}
+				{isAnalyzing && (
+					<div className={styles.botMessage}>
+						<Bot size={16} className={styles.inlineBotIcon} />
+						<div className={styles.typingIndicator}>
+							<span />
+							<span />
+							<span />
+						</div>
+					</div>
+				)}
+				<div ref={chatEndRef} />
 			</div>
 
+			{/* ── Quick Symptom Suggestions ── */}
+			<div className={styles.suggestionGrid}>
+				{quickSymptoms.map((chip, idx) => (
+					<button
+						key={idx}
+						onClick={() => handleChipClick(chip.text)}
+						className={styles.suggestionChip}
+					>
+						{chip.label}
+					</button>
+				))}
+			</div>
+
+			{/* ── Chat Input ── */}
 			<div className={styles.chatInputWrapper}>
 				<input
 					type='text'
@@ -156,13 +225,14 @@ export const TriageWidget: React.FC = () => {
 					{isAnalyzing ? (
 						<div className={styles.loader} />
 					) : (
-						<Send size={18} color='#ffffff' strokeWidth={2.5} />
+						<Send size={16} color='#ffffff' strokeWidth={2.5} />
 					)}
 				</button>
 			</div>
 
+			{/* ── Disclaimer ── */}
 			<div className={styles.disclaimer}>
-				<AlertTriangle size={12} />
+				<AlertTriangle size={12} className={styles.warningIcon} />
 				<span>
 					AI assessments are not medical diagnoses. Always consult a healthcare
 					professional.
