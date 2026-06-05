@@ -365,13 +365,13 @@
 	}
 
 	@media (max-width: 768px) {
-		// Push above the bottom tab bar (56px + safe area)
-		bottom: calc(64px + env(safe-area-inset-bottom, 4px));
+		// Push above the bottom tab bar (72px + 16px margin)
+		bottom: calc(88px + env(safe-area-inset-bottom, 4px));
 		right: 16px;
 	}
 
 	@media (max-width: 480px) {
-		bottom: calc(64px + env(safe-area-inset-bottom, 4px));
+		bottom: calc(88px + env(safe-area-inset-bottom, 4px));
 		right: 14px;
 		border-radius: 16px;
 		padding: 5px;
