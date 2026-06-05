@@ -123,7 +123,8 @@
 	max-width: 520px;
 
 	html[data-theme="light"] & {
-		color: #475569;
+		color: #1e293b;
+		font-weight: 700;
 	}
 
 	@media (max-width: 480px) {
@@ -292,7 +293,8 @@
 	width: 100%;
 
 	html[data-theme="light"] & {
-		color: #64748b;
+		color: #1e293b;
+		font-weight: 850;
 	}
 }
 

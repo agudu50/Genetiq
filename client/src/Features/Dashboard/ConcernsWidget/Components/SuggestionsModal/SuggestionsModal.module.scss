@@ -73,7 +73,8 @@
 		letter-spacing: -0.015em;
 
 		html[data-theme="light"] & {
-			color: #0f172a;
+			color: #000000;
+			font-weight: 850;
 		}
 	}
 }
@@ -141,7 +142,8 @@
 	html[data-theme="light"] & {
 		background: rgba(15, 23, 42, 0.02);
 		border-color: rgba(15, 23, 42, 0.05);
-		color: #475569;
+		color: #1e293b;
+		font-weight: 750;
 	}
 
 	svg {
@@ -183,7 +185,8 @@
 	font-weight: 600;
 
 	html[data-theme="light"] & {
-		color: #475569;
+		color: #1e293b;
+		font-weight: 700;
 	}
 }
 
@@ -238,7 +241,8 @@
 		color: var(--text, #ffffff);
 
 		html[data-theme="light"] & {
-			color: #0f172a;
+			color: #000000;
+			font-weight: 800;
 		}
 	}
 
@@ -249,7 +253,8 @@
 		line-height: 1.45;
 
 		html[data-theme="light"] & {
-			color: #475569;
+			color: #1e293b;
+			font-weight: 700;
 		}
 	}
 }
@@ -323,7 +328,8 @@
 	font-weight: 600;
 
 	html[data-theme="light"] & {
-		color: #475569;
+		color: #1e293b;
+		font-weight: 700;
 	}
 
 	.price {
@@ -332,7 +338,8 @@
 		color: var(--text, #ffffff);
 
 		html[data-theme="light"] & {
-			color: #0f172a;
+			color: #000000;
+			font-weight: 850;
 		}
 	}
 }
@@ -412,7 +419,8 @@
 	color: var(--text, #ffffff);
 
 	html[data-theme="light"] & {
-		color: #0f172a;
+		color: #000000;
+		font-weight: 850;
 	}
 }
 
@@ -424,7 +432,8 @@
 	max-width: 320px;
 
 	html[data-theme="light"] & {
-		color: #475569;
+		color: #1e293b;
+		font-weight: 700;
 	}
 }
 

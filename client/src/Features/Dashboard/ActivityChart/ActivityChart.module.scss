@@ -104,7 +104,8 @@
 	letter-spacing: -0.015em;
 
 	html[data-theme="light"] & {
-		color: #0f172a;
+		color: #000000;
+		font-weight: 850;
 	}
 
 	@media (max-width: 480px) {
@@ -143,7 +144,8 @@
 	letter-spacing: 0.06em;
 
 	html[data-theme="light"] & {
-		color: #64748b;
+		color: #1e293b;
+		font-weight: 850;
 	}
 }
 
@@ -156,8 +158,9 @@
 	text-shadow: 0 0 12px color-mix(in srgb, var(--active-metric-color, #00A69D) 30%, transparent);
 
 	html[data-theme="light"] & {
-		color: #0f172a;
+		color: #000000;
 		text-shadow: 0 0 8px color-mix(in srgb, var(--active-metric-color, #00A69D) 15%, transparent);
+		font-weight: 850;
 	}
 }
 
@@ -193,14 +196,15 @@
 	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 
 	html[data-theme="light"] & {
-		color: #475569;
+		color: #1e293b;
+		font-weight: 750;
 	}
 
 	&:hover {
 		color: var(--text, #ffffff);
 
 		html[data-theme="light"] & {
-			color: #0f172a;
+			color: #000000;
 		}
 	}
 
@@ -244,7 +248,8 @@
 	html[data-theme="light"] & {
 		background: rgba(15, 23, 42, 0.02);
 		border-color: rgba(15, 23, 42, 0.05);
-		color: #475569;
+		color: #1e293b;
+		font-weight: 750;
 	}
 
 	@media (max-width: 480px) {
@@ -267,7 +272,7 @@
 		color: var(--text, #ffffff);
 
 		html[data-theme="light"] & {
-			color: #0f172a;
+			color: #000000;
 		}
 	}
 
@@ -279,7 +284,8 @@
 
 		html[data-theme="light"] & {
 			background: color-mix(in srgb, var(--metric-color) 6%, transparent);
-			color: #0f172a;
+			color: #000000;
+			font-weight: 850;
 		}
 
 		.metricDot {
@@ -325,7 +331,8 @@
 		letter-spacing: -0.01em;
 
 		html[data-theme="light"] & {
-			color: #64748b;
+			color: #1e293b;
+			font-weight: 750;
 		}
 	}
 
@@ -474,7 +481,8 @@
 	letter-spacing: -0.01em;
 
 	html[data-theme="light"] & {
-		color: #64748b;
+		color: #1e293b;
+		font-weight: 750;
 	}
 
 	&.today {

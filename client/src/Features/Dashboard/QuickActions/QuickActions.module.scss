@@ -75,7 +75,8 @@
 	line-height: 1;
 
 	html[data-theme="light"] & {
-		color: #64748b;
+		color: #1e293b;
+		font-weight: 850;
 	}
 }
 
@@ -228,7 +229,8 @@
 	letter-spacing: -0.015em;
 
 	html[data-theme="light"] & {
-		color: #475569;
+		color: #000000;
+		font-weight: 850;
 	}
 
 	@media (max-width: 480px) {

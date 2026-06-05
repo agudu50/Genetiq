@@ -51,7 +51,7 @@
 	}
 
 	html[data-theme="light"] & {
-		color: #0f172a;
+		color: #000000;
 	}
 }
 
@@ -61,7 +61,8 @@
 	font-weight: 600;
 
 	html[data-theme="light"] & {
-		color: #64748b;
+		color: #000000;
+		font-weight: 750;
 	}
 }
 
@@ -145,7 +146,7 @@
 	color: var(--text, #ffffff);
 
 	html[data-theme="light"] & {
-		color: #0f172a;
+		color: #000000;
 	}
 }
 
@@ -163,7 +164,8 @@
 
 	html[data-theme="light"] & {
 		background: rgba(15, 23, 42, 0.06);
-		color: #475569;
+		color: #000000;
+		font-weight: 850;
 	}
 }
 
@@ -190,7 +192,7 @@
 
 	html[data-theme="light"] & {
 		svg path {
-			fill: #64748b;
+			fill: #1e293b;
 		}
 	}
 
@@ -313,7 +315,7 @@
 	white-space: normal;
 
 	html[data-theme="light"] & {
-		color: #0f172a;
+		color: #000000;
 	}
 }
 
@@ -332,7 +334,8 @@
 
 	html[data-theme="light"] & {
 		background: rgba(15, 23, 42, 0.06);
-		color: #475569;
+		color: #000000;
+		font-weight: 850;
 	}
 }
 
@@ -377,7 +380,8 @@
 		letter-spacing: 1.5px;
 
 		html[data-theme="light"] & {
-			color: #64748b;
+			color: #1e293b;
+			font-weight: 850;
 		}
 	}
 }
@@ -475,7 +479,7 @@
 
 	html[data-theme="light"] & {
 		background: rgba(139, 92, 246, 0.08);
-		color: #7c3aed;
+		color: #5b21b6;
 		border-color: rgba(139, 92, 246, 0.25);
 	}
 }
@@ -488,7 +492,7 @@
 	letter-spacing: -0.015em;
 
 	html[data-theme="light"] & {
-		color: #0f172a;
+		color: #000000;
 	}
 }
 
@@ -499,7 +503,8 @@
 	max-width: 420px;
 
 	html[data-theme="light"] & {
-		color: #475569;
+		color: #1e293b;
+		font-weight: 700;
 	}
 }
 
@@ -543,14 +548,15 @@
 
 		html[data-theme="light"] & {
 			background: rgba(15, 23, 42, 0.03) !important;
-			color: #64748b !important;
+			color: #1e293b !important;
 			border-color: rgba(15, 23, 42, 0.06) !important;
+			font-weight: 850 !important;
 		}
 
 		.PlanAggregate-cta-schedule-icon path {
 			fill: var(--text-secondary, #94a3b8) !important;
 			html[data-theme="light"] & {
-				fill: #64748b !important;
+				fill: #1e293b !important;
 			}
 		}
 	}

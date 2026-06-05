@@ -101,7 +101,7 @@
 	color: var(--text, #ffffff);
 
 	html[data-theme="light"] & {
-		color: #0f172a;
+		color: #000000;
 	}
 
 	@media (max-width: 768px) {
@@ -121,7 +121,8 @@
 	color: var(--text-secondary, #94a3b8);
 
 	html[data-theme="light"] & {
-		color: #475569;
+		color: #1e293b;
+		font-weight: 700;
 	}
 }
 
@@ -149,9 +150,9 @@
 	white-space: nowrap;
 
 	html[data-theme="light"] & {
-		border-color: rgba(15, 23, 42, 0.06);
+		border-color: rgba(15, 23, 42, 0.1);
 		background: rgba(15, 23, 42, 0.03);
-		color: #475569;
+		color: #1e293b;
 	}
 }
 
@@ -182,8 +183,8 @@
 
 	html[data-theme="light"] & {
 		background: rgba(15, 23, 42, 0.04);
-		border-color: rgba(15, 23, 42, 0.06);
-		color: #475569;
+		border-color: rgba(15, 23, 42, 0.1);
+		color: #1e293b;
 	}
 
 	p {

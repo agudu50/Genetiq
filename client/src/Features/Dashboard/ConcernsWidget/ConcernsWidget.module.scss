@@ -30,6 +30,11 @@
 	align-items: center;
 	gap: 8px;
 
+	html[data-theme="light"] & {
+		color: #000000;
+		font-weight: 850;
+	}
+
 	// Add an icon before the text
 	&::before {
 		content: "";
@@ -60,9 +65,24 @@
 	border: 1px solid rgba(255, 255, 255, 0.08);
 	transition: all 0.2s ease;
 
+	html[data-theme="light"] & {
+		background: rgba(255, 255, 255, 0.75);
+		backdrop-filter: blur(16px) saturate(180%);
+		-webkit-backdrop-filter: blur(16px) saturate(180%);
+		border-color: rgba(200, 210, 240, 0.5);
+		box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+	}
+
 	&:hover {
 		background: rgba(255, 255, 255, 0.08);
 		border-color: rgba(255, 255, 255, 0.15);
+
+		html[data-theme="light"] & {
+			background: rgba(255, 255, 255, 0.95);
+			border-color: rgba(99, 102, 241, 0.3);
+			box-shadow: 0 4px 14px rgba(99, 102, 241, 0.08), inset 0 1px 0 rgba(255, 255, 255, 1);
+			transform: translateY(-1px);
+		}
 	}
 }
 
@@ -73,8 +93,17 @@
 	margin: 0;
 	transition: color 0.2s ease;
 
+	html[data-theme="light"] & {
+		color: #1e293b;
+		font-weight: 750;
+	}
+
 	.ConcernWidget-more:hover & {
 		color: var(--text);
+
+		html[data-theme="light"] & {
+			color: #000000;
+		}
 	}
 }
 
@@ -92,10 +121,18 @@
 	path {
 		fill: var(--text-secondary);
 		transition: fill 0.2s ease;
+
+		html[data-theme="light"] & {
+			fill: #1e293b;
+		}
 	}
 
 	.ConcernWidget-more:hover & path {
 		fill: var(--text);
+
+		html[data-theme="light"] & {
+			fill: #000000;
+		}
 	}
 }
 

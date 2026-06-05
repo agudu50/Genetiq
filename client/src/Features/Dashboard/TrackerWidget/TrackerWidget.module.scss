@@ -163,7 +163,8 @@
 	min-width: 0;
 
 	html[data-theme="light"] & {
-		color: #475569;
+		color: #000000;
+		font-weight: 800;
 	}
 
 	@media (max-width: 768px) {
@@ -283,7 +284,8 @@
 		gap: 6px;
 
 		html[data-theme="light"] & {
-			color: #64748b;
+			color: #1e293b;
+			font-weight: 750;
 		}
 
 		@media (max-width: 768px) {
