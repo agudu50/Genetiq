@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import styles from "./Dropdown.module.scss";
 
 interface DropdownOption {
@@ -25,6 +25,7 @@ interface DropdownProps {
 
 const Dropdown = ({ value, onChange, onModelChange }: DropdownProps) => {
 	const [isOpen, setIsOpen] = useState(false);
+	const dropdownRef = useRef<HTMLDivElement>(null);
 
 	const selected =
 		options.find((option) => option.value === value) || options[0];
@@ -41,6 +42,22 @@ const Dropdown = ({ value, onChange, onModelChange }: DropdownProps) => {
 			modelType: "cardio" as const,
 		},
 	};
+
+	// Close dropdown when clicking outside
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				dropdownRef.current &&
+				!dropdownRef.current.contains(event.target as Node)
+			) {
+				setIsOpen(false);
+			}
+		};
+		if (isOpen) {
+			document.addEventListener("mousedown", handleClickOutside);
+		}
+		return () => document.removeEventListener("mousedown", handleClickOutside);
+	}, [isOpen]);
 
 	const handleSelect = (option: DropdownOption) => {
 		if (option.value === value) {
@@ -60,14 +77,34 @@ const Dropdown = ({ value, onChange, onModelChange }: DropdownProps) => {
 		}
 	};
 
+	const getOptionIcon = (optionValue: string) => {
+		if (optionValue === "total") {
+			return (
+				<span
+					className={`${styles.optionIcon} ${styles.optionIconTotal}`}
+				>
+					⬡
+				</span>
+			);
+		}
+		return (
+			<span
+				className={`${styles.optionIcon} ${styles.optionIconCardio}`}
+			>
+				♥
+			</span>
+		);
+	};
+
 	return (
-		<div className={styles.dropdown}>
+		<div className={styles.dropdown} ref={dropdownRef}>
 			<button
 				className={`${styles.trigger} ${value === "cardio" ? styles.active : ""}`}
 				onClick={() => setIsOpen(!isOpen)}
 				type='button'
 			>
 				<div className={styles.labelContainer}>
+					<span className={styles.statusDot} />
 					<div
 						className={`${styles.label} ${value === "cardio" ? styles.activeLabel : ""}`}
 					>
@@ -75,12 +112,12 @@ const Dropdown = ({ value, onChange, onModelChange }: DropdownProps) => {
 					</div>
 					<div className={styles.divider} />
 					<svg
-						width='16'
-						height='16'
+						width='14'
+						height='14'
 						viewBox='0 0 24 24'
 						fill='none'
 						stroke='currentColor'
-						strokeWidth='2'
+						strokeWidth='2.5'
 						strokeLinecap='round'
 						strokeLinejoin='round'
 						className={`${styles.icon} ${isOpen ? styles.rotated : ""}`}
@@ -99,7 +136,13 @@ const Dropdown = ({ value, onChange, onModelChange }: DropdownProps) => {
 							onClick={() => handleSelect(option)}
 							type='button'
 						>
+							{getOptionIcon(option.value)}
 							{option.label}
+							<span
+								className={`${styles.checkMark} ${option.value === value ? styles.visible : ""}`}
+							>
+								✓
+							</span>
 						</button>
 					))}
 				</div>
