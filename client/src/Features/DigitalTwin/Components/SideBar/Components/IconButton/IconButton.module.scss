@@ -20,15 +20,33 @@
 		0 8px 16px rgba(0, 0, 0, 0.2),
 		inset 0 0 0 1px rgba(255, 255, 255, 0.05);
 
+	html[data-theme="light"] & {
+		background: rgba(255, 255, 255, 0.85);
+		border-color: rgba(0, 166, 157, 0.15);
+		color: #475569 !important;
+		box-shadow:
+			0 8px 16px rgba(0, 166, 157, 0.05),
+			inset 0 1px 0 rgba(255, 255, 255, 0.95);
+	}
+
 	&:hover:not(.disabled) {
 		transform: scale(1.15) !important;
 		background: rgba(15, 23, 42, 0.95);
 		color: #ffffff !important;
-		border-color: rgba(52, 120, 246, 0.4);
+		border-color: rgba(0, 166, 157, 0.45);
 		box-shadow:
 			0 12px 32px rgba(0, 0, 0, 0.4),
-			0 0 15px rgba(52, 120, 246, 0.2);
+			0 0 15px rgba(0, 166, 157, 0.25);
 		z-index: 10;
+
+		html[data-theme="light"] & {
+			background: #ffffff;
+			color: #00A69D !important;
+			border-color: rgba(0, 166, 157, 0.4);
+			box-shadow:
+				0 12px 24px rgba(0, 166, 157, 0.08),
+				0 0 12px rgba(0, 166, 157, 0.15);
+		}
 
 		// Show tooltip on hover
 		&[data-tooltip]::after,
@@ -40,12 +58,12 @@
 
 	&.active {
 		transform: scale(1.35) !important;
-		background: linear-gradient(135deg, #3478f6 0%, #8b5cf6 100%) !important;
+		background: linear-gradient(135deg, #00A69D 0%, #008f87 100%) !important;
 		color: #ffffff !important;
 		border: none !important;
 		box-shadow:
-			0 15px 35px rgba(52, 120, 246, 0.4),
-			0 0 25px rgba(139, 92, 246, 0.3);
+			0 15px 35px rgba(0, 166, 157, 0.4),
+			0 0 25px rgba(0, 166, 157, 0.3);
 		z-index: 11;
 
 		&::after {
@@ -53,7 +71,7 @@
 			position: absolute;
 			inset: -3px;
 			border-radius: 50%;
-			background: linear-gradient(135deg, #3478f6, #8b5cf6);
+			background: linear-gradient(135deg, #00A69D, #008f87);
 			opacity: 0.4;
 			filter: blur(8px);
 			z-index: -1;
@@ -71,6 +89,11 @@
 		filter: grayscale(1);
 		color: rgba(255, 255, 255, 0.95) !important;
 		border: 1px solid rgba(255, 255, 255, 0.08);
+
+		html[data-theme="light"] & {
+			color: #94a3b8 !important;
+			border-color: rgba(148, 163, 184, 0.15);
+		}
 	}
 
 	svg {

@@ -411,10 +411,10 @@
 
 	// Active state
 	&.dock-btn-active {
-		background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%);
-		color: var(--accent-contrast);
+		background: linear-gradient(135deg, #00A69D 0%, #008f87 100%);
+		color: #ffffff;
 		box-shadow:
-			0 4px 14px rgba(52, 120, 246, 0.35),
+			0 4px 14px rgba(0, 166, 157, 0.35),
 			0 2px 4px rgba(0, 0, 0, 0.08);
 
 		svg {

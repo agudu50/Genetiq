@@ -23,8 +23,8 @@
 		background: linear-gradient(
 			to bottom,
 			transparent,
-			rgba(52, 120, 246, 0.4) 15%,
-			rgba(139, 92, 246, 0.4) 85%,
+			rgba(0, 166, 157, 0.4) 15%,
+			rgba(0, 143, 135, 0.4) 85%,
 			transparent
 		);
 		transform: translateX(-50%);
@@ -42,40 +42,71 @@
 
 .segment-control {
 	display: flex;
-	background: rgba(15, 23, 42, 0.8);
-	backdrop-filter: blur(8px);
+	background: rgba(15, 23, 42, 0.75);
+	backdrop-filter: blur(12px) saturate(180%);
+	-webkit-backdrop-filter: blur(12px) saturate(180%);
 	padding: 4px;
 	border-radius: 20px;
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	gap: 4px;
-	margin-bottom: 8px;
-	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	gap: 6px;
+	margin-bottom: 12px;
+	box-shadow: 
+		0 8px 24px rgba(0, 0, 0, 0.25),
+		inset 0 1px 0 rgba(255, 255, 255, 0.03);
+
+	html[data-theme="light"] & {
+		background: rgba(240, 253, 252, 0.8);
+		border-color: rgba(0, 166, 157, 0.18);
+		box-shadow: 
+			0 8px 24px rgba(0, 166, 157, 0.04),
+			0 2px 6px rgba(15, 23, 42, 0.02),
+			inset 0 1px 0 rgba(255, 255, 255, 0.95);
+	}
 }
 
 .segment-tab {
-	width: 28px;
-	height: 28px;
+	width: 30px;
+	height: 30px;
 	border-radius: 50%;
 	border: none;
 	background: transparent;
 	color: rgba(255, 255, 255, 0.5);
-	font-size: 11px;
-	font-weight: 700;
+	font-size: 12px;
+	font-weight: 800;
 	cursor: pointer;
-	transition: all 0.3s ease;
+	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 
+	html[data-theme="light"] & {
+		color: #475569;
+	}
+
 	&:hover {
 		color: #ffffff;
 		background: rgba(255, 255, 255, 0.05);
+
+		html[data-theme="light"] & {
+			color: #00A69D;
+			background: rgba(0, 166, 157, 0.06);
+		}
 	}
 
 	&.active {
-		background: linear-gradient(135deg, #3478f6 0%, #8b5cf6 100%);
+		background: linear-gradient(135deg, #00A69D 0%, #008f87 100%);
 		color: #ffffff;
-		box-shadow: 0 4px 10px rgba(52, 120, 246, 0.3);
+		box-shadow: 
+			0 4px 12px rgba(0, 166, 157, 0.35),
+			inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+		html[data-theme="light"] & {
+			color: #ffffff;
+			background: linear-gradient(135deg, #00A69D 0%, #008f87 100%);
+			box-shadow: 
+				0 4px 12px rgba(0, 166, 157, 0.3),
+				inset 0 1px 0 rgba(255, 255, 255, 0.2);
+		}
 	}
 }
 
@@ -103,6 +134,15 @@
 		transparent
 	);
 	margin: 4px 0;
+
+	html[data-theme="light"] & {
+		background: linear-gradient(
+			to right,
+			transparent,
+			rgba(0, 166, 157, 0.25),
+			transparent
+		);
+	}
 }
 
 .separator {
@@ -110,6 +150,10 @@
 	height: 1px;
 	background: rgba(255, 255, 255, 0.1);
 	margin-bottom: 4px;
+
+	html[data-theme="light"] & {
+		background: rgba(0, 166, 157, 0.18);
+	}
 }
 
 .SideBar-count {
