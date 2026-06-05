@@ -51,7 +51,7 @@ export const PlanTable = ({
 						)}
 						<div className={styles["PlanTable-rows"]}>
 							{groupedData[groupKey].map((item, id) => (
-								<PlanRow key={id} item={item} setActiveTab={setActiveTab} />
+								<PlanRow key={id} index={id} item={item} setActiveTab={setActiveTab} />
 							))}
 						</div>
 					</div>

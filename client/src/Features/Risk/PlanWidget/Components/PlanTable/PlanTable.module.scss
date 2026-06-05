@@ -55,19 +55,26 @@
 		margin: 0 -16px;
 		padding-left: 16px;
 		padding-right: 16px;
+		/* GPU compositing for smooth scroll */
+		will-change: scroll-position;
+		transform: translateZ(0);
+		contain: layout style;
 
 		&::-webkit-scrollbar {
 			height: 4px;
 		}
 
 		&::-webkit-scrollbar-track {
-			background: #f1f1f1;
+			background: transparent;
 			border-radius: 4px;
 		}
 
 		&::-webkit-scrollbar-thumb {
-			background: #c1c1c1;
+			background: rgba(0, 166, 157, 0.25);
 			border-radius: 4px;
+			&:hover {
+				background: rgba(0, 166, 157, 0.45);
+			}
 		}
 
 		> * {
@@ -83,12 +90,12 @@
 	line-height: 14px;
 	letter-spacing: 0.02em;
 	text-transform: uppercase;
-	color: rgba(81, 89, 103, 1);
+	color: var(--text-secondary);
 	margin: 16px 0;
 }
 
 .PlanTable-rows {
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	gap: 10px;
 }

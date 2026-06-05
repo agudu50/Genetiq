@@ -1,140 +1,215 @@
 @use "@/App/Styles/_mixins" as mixins;
-
+ 
 .PlanRow-row {
-	display: flex;
-	flex-direction: row;
+	display: grid;
+	grid-template-columns: 52px 1fr auto;
 	align-items: center;
-	gap: 16px;
-	padding: 16px 20px;
-	background: rgba(255, 255, 255, 0.02);
-	border: 1px solid rgba(255, 255, 255, 0.04);
-	border-radius: 16px;
+	gap: 0;
+	border-radius: 18px;
 	position: relative;
 	box-sizing: border-box;
-	transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+	/* Only animate composited properties — no layout */
+	transition:
+		transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+		box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+		border-color 0.28s ease,
+		background-color 0.28s ease;
 	cursor: pointer;
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+	overflow: hidden;
+	/* Solid — no backdrop-filter (destroys scroll perf) */
+	background: rgba(30, 41, 59, 0.55);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+	/* Own GPU compositing layer */
+	transform: translateZ(0);
+	will-change: transform;
 
 	html[data-theme="light"] & {
-		background: rgba(255, 255, 255, 0.55);
-		border-color: rgba(15, 23, 42, 0.04);
-		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+		background: linear-gradient(135deg, #ffffff 0%, rgba(240, 253, 252, 0.8) 100%);
+		border: 1px solid rgba(0, 166, 157, 0.14);
+		border-left: 4px solid #00A69D;
+		box-shadow:
+			0 4px 12px rgba(0, 166, 157, 0.04),
+			0 1px 3px rgba(15, 23, 42, 0.02),
+			inset 0 1px 0 rgba(255, 255, 255, 0.9);
 	}
 
 	@media (max-width: 768px) {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 12px;
-		padding: 18px;
-		background: rgba(255, 255, 255, 0.02);
-		border-radius: 16px;
-		border: 1px solid rgba(255, 255, 255, 0.04);
-		min-width: 240px;
-
-		html[data-theme="light"] & {
-			background: rgba(255, 255, 255, 0.55);
-			border-color: rgba(15, 23, 42, 0.04);
-		}
+		grid-template-columns: 44px 1fr auto;
+		min-width: 260px;
 	}
 
+	// Hover lift + teal accent reveal
 	&:hover {
-		background: rgba(30, 41, 59, 0.45);
-		border-color: rgba(139, 92, 246, 0.25);
-		transform: translateX(6px);
-		box-shadow: 0 10px 30px rgba(139, 92, 246, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+		transform: translateY(-2px) translateZ(0);
+		background: rgba(0, 166, 157, 0.08);
+		border-color: rgba(0, 166, 157, 0.3);
+		box-shadow:
+			0 6px 20px rgba(0, 166, 157, 0.14),
+			0 2px 6px rgba(0, 0, 0, 0.06);
 
 		html[data-theme="light"] & {
-			background: rgba(255, 255, 255, 0.95);
-			border-color: rgba(139, 92, 246, 0.2);
-			box-shadow: 0 10px 30px rgba(139, 92, 246, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+			background: linear-gradient(135deg, #f0fdfb 0%, rgba(204, 251, 241, 0.9) 100%);
+			border-color: rgba(0, 166, 157, 0.35);
+			border-left-color: #008f87;
+			box-shadow:
+				0 10px 24px rgba(0, 166, 157, 0.12),
+				0 2px 8px rgba(0, 0, 0, 0.03),
+				inset 0 1px 0 rgba(255, 255, 255, 1);
+		}
+
+		.PlanRow-step {
+			background: linear-gradient(135deg, #00A69D, #00c4b8);
+			color: #ffffff;
+			border-color: transparent;
+			box-shadow: 0 4px 14px rgba(0, 166, 157, 0.4);
+		}
+
+		.PlanRow-arrow {
+			opacity: 1;
+			transform: translateX(0) translateZ(0);
 		}
 
 		.PlanRow-misc {
-			display: none;
-		}
-
-		.PlanRow-buttons {
-			display: flex;
+			opacity: 0;
+			pointer-events: none;
 		}
 	}
 }
 
-.PlanRow-icon {
+// ─── Step index column ─────────────────────────────────────────────────────────
+.PlanRow-step {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 36px;
-	height: 36px;
-	border-radius: 10px;
-	background: rgba(255, 255, 255, 0.03);
-	border: 1px solid rgba(255, 255, 255, 0.06);
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	font-size: 13px;
+	font-weight: 850;
+	color: #00A69D;
+	background: rgba(0, 166, 157, 0.1);
+	border: 1.5px solid rgba(0, 166, 157, 0.3);
 	flex-shrink: 0;
+	margin: 0 auto;
+	transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+	letter-spacing: -0.02em;
 
 	html[data-theme="light"] & {
-		background: rgba(15, 23, 42, 0.03);
-		border-color: rgba(15, 23, 42, 0.06);
-	}
-
-	img {
-		width: 20px;
-		height: 20px;
-		object-fit: contain;
-	}
-
-	@media (max-width: 768px) {
-		width: 32px;
-		height: 32px;
+		background: #ffffff;
+		border-color: rgba(0, 166, 157, 0.22);
+		color: #007a74;
+		box-shadow: 0 2px 6px rgba(0, 166, 157, 0.08);
 	}
 }
 
+// ─── Body (center column) ──────────────────────────────────────────────────────
 .PlanRow-body {
 	display: flex;
 	flex-direction: column;
-	width: 100%;
-	gap: 6px;
+	gap: 5px;
+	padding: 16px 14px 16px 4px;
+	min-width: 0;
 }
 
+// ─── Title ─────────────────────────────────────────────────────────────────────
 .PlanRow-name {
 	font-weight: 750;
-	font-size: 14.5px;
-	line-height: 1.3;
-	color: var(--text, #ffffff);
+	font-size: 13.5px;
+	line-height: 1.35;
+	color: var(--text, rgba(255, 255, 255, 0.92));
+	letter-spacing: -0.015em;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 
 	html[data-theme="light"] & {
-		color: #000000;
+		color: #0f172a;
 		font-weight: 800;
 	}
 
 	@media (max-width: 768px) {
-		font-size: 13.5px;
+		font-size: 13px;
+		white-space: normal;
 	}
 }
 
 .PlanRow-count {
-	color: #6366f1;
-	font-weight: 800;
+	color: #00A69D;
+	font-weight: 900;
 }
 
+// ─── Benefit / description line ─────────────────────────────────────────────────
 .PlanRow-desc {
+	font-size: 11.5px;
 	font-weight: 600;
-	font-size: 12.5px;
 	line-height: 1.4;
-	color: var(--text-secondary, #94a3b8);
+	color: var(--text-secondary, #64748b);
+	display: flex;
+	align-items: center;
+	gap: 6px;
 
 	html[data-theme="light"] & {
-		color: #1e293b;
-		font-weight: 700;
+		color: #64748b;
 	}
+
+	// Green sparkle prefix dot
+	&::before {
+		content: "";
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: linear-gradient(135deg, #00A69D, #34d399);
+		flex-shrink: 0;
+		box-shadow: 0 0 6px rgba(0, 166, 157, 0.4);
+	}
+}
+
+// ─── Right side: misc pills OR arrow ──────────────────────────────────────────
+.PlanRow-misc-wrap {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	padding: 16px 18px 16px 8px;
+	gap: 8px;
+	flex-shrink: 0;
+	position: relative;
+	min-width: 60px;
 }
 
 .PlanRow-misc {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	gap: 8px;
+	gap: 6px;
+	transition: opacity 0.25s ease;
 
 	@media (max-width: 768px) {
 		flex-wrap: wrap;
+	}
+}
+
+// Type badge — now called "Activity"
+.PlanRow-type-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 4px 10px;
+	border-radius: 99px;
+	font-size: 10.5px;
+	font-weight: 800;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+	background: rgba(0, 166, 157, 0.08);
+	color: #00A69D;
+	border: 1px solid rgba(0, 166, 157, 0.18);
+	white-space: nowrap;
+	line-height: 1.4;
+
+	html[data-theme="light"] & {
+		background: rgba(0, 166, 157, 0.06);
+		color: #007a74;
+		border-color: rgba(0, 166, 157, 0.15);
 	}
 }
 
@@ -142,21 +217,48 @@
 .PlanRow-frequency {
 	padding: 4px 10px;
 	border-radius: 99px;
-	border: 1px solid rgba(255, 255, 255, 0.06);
-	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(255, 255, 255, 0.04);
 	color: var(--text-secondary, #94a3b8);
-	font-weight: 700;
+	font-weight: 750;
 	font-size: 11px;
 	line-height: 1.2;
 	white-space: nowrap;
 
 	html[data-theme="light"] & {
-		border-color: rgba(15, 23, 42, 0.1);
-		background: rgba(15, 23, 42, 0.03);
-		color: #1e293b;
+		border-color: rgba(0, 166, 157, 0.15);
+		background: rgba(0, 166, 157, 0.05);
+		color: #047857;
+		font-weight: 750;
 	}
 }
 
+// ─── Hover reveal arrow ────────────────────────────────────────────────────────
+.PlanRow-arrow {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	right: 0;
+	width: 34px;
+	height: 34px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #00A69D, #00c4b8);
+	box-shadow: 0 4px 12px rgba(0, 166, 157, 0.35);
+	opacity: 0;
+	transform: translateX(6px);
+	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	flex-shrink: 0;
+
+	svg {
+		width: 16px;
+		height: 16px;
+		stroke: #ffffff;
+		stroke-width: 2.2px;
+	}
+}
+
+// ─── Buttons (why / chevron / cart) — shown on hover ──────────────────────────
 .PlanRow-buttons {
 	display: none;
 	flex-direction: row;
@@ -176,35 +278,32 @@
 	border-radius: 99px;
 	padding: 8px 14px;
 	background: rgba(255, 255, 255, 0.04);
-	border: 1px solid rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.08);
 	color: var(--text-secondary, #94a3b8);
 	font-weight: 750;
 	font-size: 12px;
 	line-height: 1.2;
+	transition: all 0.25s ease;
 
 	html[data-theme="light"] & {
-		background: rgba(15, 23, 42, 0.04);
-		border-color: rgba(15, 23, 42, 0.1);
-		color: #1e293b;
+		background: rgba(0, 166, 157, 0.05);
+		border-color: rgba(0, 166, 157, 0.15);
+		color: #007a74;
 	}
 
-	p {
-		margin: 0;
-
-		@media (max-width: 480px) {
-			font-size: 11px;
-		}
+	&:hover {
+		background: rgba(0, 166, 157, 0.1);
+		border-color: rgba(0, 166, 157, 0.25);
+		color: #00A69D;
 	}
+
+	p { margin: 0; }
 
 	svg {
 		width: 14px;
 		height: 14px;
-		path {
-			fill: var(--text-secondary, #94a3b8);
-		}
-		html[data-theme="light"] & path {
-			fill: #475569;
-		}
+		path { fill: var(--text-secondary, #94a3b8); }
+		html[data-theme="light"] & path { fill: #007a74; }
 	}
 }
 
@@ -213,27 +312,28 @@
 	align-items: center;
 	justify-content: center;
 	rotate: (-90deg);
-	background: rgba(255, 255, 255, 0.03);
-	border: 1px solid rgba(255, 255, 255, 0.06);
+	background: rgba(0, 166, 157, 0.08);
+	border: 1px solid rgba(0, 166, 157, 0.2);
 	border-radius: 50%;
 	padding: 8px;
-	transition: all 0.3s ease;
+	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 
 	html[data-theme="light"] & {
-		background: rgba(15, 23, 42, 0.03);
-		border-color: rgba(15, 23, 42, 0.06);
+		background: rgba(0, 166, 157, 0.06);
+		border-color: rgba(0, 166, 157, 0.18);
 	}
 
 	&:hover {
-		transform: scale(1.08);
-		background: rgba(139, 92, 246, 0.12);
-		border-color: rgba(139, 92, 246, 0.3);
+		transform: scale(1.1) translateX(2px);
+		background: rgba(0, 166, 157, 0.18);
+		border-color: rgba(0, 166, 157, 0.4);
+		box-shadow: 0 0 12px rgba(0, 166, 157, 0.2);
 	}
 
 	svg {
 		width: 16px;
 		height: 16px;
-		stroke: #8b5cf6;
+		stroke: #00A69D;
 	}
 }
 
@@ -245,30 +345,27 @@
 	gap: 8px;
 	border-radius: 99px;
 	padding: 8px 16px;
-	background: linear-gradient(135deg, #6366f1, #8b5cf6);
+	background: linear-gradient(135deg, #00A69D, #00c4b8);
 	color: #ffffff;
 	border: none;
 	font-weight: 750;
 	font-size: 12px;
 	line-height: 1.2;
 	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-	box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+	box-shadow: 0 4px 12px rgba(0, 166, 157, 0.3);
+	cursor: pointer;
 
-	p {
-		margin: 0;
-	}
+	p { margin: 0; }
 
 	svg {
 		width: 14px;
 		height: 14px;
-		path {
-			fill: #ffffff;
-		}
+		path { fill: #ffffff; }
 	}
 
 	&:hover {
 		transform: scale(1.04) translateY(-0.5px);
-		box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+		box-shadow: 0 6px 18px rgba(0, 166, 157, 0.45);
 	}
 
 	&-added {
@@ -277,12 +374,8 @@
 		border-color: #10b981 !important;
 		box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25) !important;
 
-		svg path {
-			fill: #ffffff !important;
-		}
+		svg path { fill: #ffffff !important; }
 
-		&:hover {
-			box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4) !important;
-		}
+		&:hover { box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4) !important; }
 	}
 }

@@ -55,21 +55,25 @@
 		margin: 0 -16px;
 		padding-left: 16px;
 		padding-right: 16px;
+		/* GPU compositing for smooth scroll */
+		will-change: scroll-position;
+		transform: translateZ(0);
+		contain: layout style;
 
 		&::-webkit-scrollbar {
 			height: 4px;
 		}
 
 		&::-webkit-scrollbar-track {
-			background: var(--surface);
+			background: transparent;
 			border-radius: 4px;
 		}
 
 		&::-webkit-scrollbar-thumb {
-			background: var(--glass-border);
+			background: rgba(0, 166, 157, 0.25);
 			border-radius: 4px;
 			&:hover {
-				background: var(--accent);
+				background: rgba(0, 166, 157, 0.45);
 			}
 		}
 
@@ -93,5 +97,5 @@
 .PlanTable-rows {
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	gap: 10px;
 }
