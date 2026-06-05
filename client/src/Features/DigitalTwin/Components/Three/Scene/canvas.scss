@@ -238,13 +238,13 @@
 	transition: all 0.3s ease;
 
 	@media (max-width: 1024px) {
-		right: 12px;
-		bottom: 140px; // Clear the floating dock which is at bottom: 24px
+		right: 16px;
+		bottom: 190px; // Clear the floating dock
 	}
 
 	@media (max-width: 768px) {
-		right: 12px;
-		bottom: 130px;
+		right: 16px;
+		bottom: 200px; // Clear the floating dock + bottom navigation tabs + safe area inset
 	}
 
 	.control-btn {
