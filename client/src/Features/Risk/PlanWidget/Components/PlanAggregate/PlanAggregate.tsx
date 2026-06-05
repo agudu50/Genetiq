@@ -93,17 +93,22 @@ export const PlanAggregate = ({
 					<img src={doctor} alt='Doctor icon' />
 				</div>
 				<div className={styles["PlanAggregate-cta-body"]}>
-					<div className={styles["PlanAggregate-cta-title"]}>
-						Check-in with our Physician first
-						<Shape className={styles["PlanAggregate-cta-shape"]} />
+					<div className={styles["PlanAggregate-cta-title-wrap"]}>
+						<div className={styles["PlanAggregate-cta-title"]}>
+							Check-in with our Physician first
+							<Shape className={styles["PlanAggregate-cta-shape"]} />
+						</div>
+						<span className={styles["PlanAggregate-cta-badge"]}>
+							Coming Soon
+						</span>
 					</div>
 					<div className={styles["PlanAggregate-cta-desc"]}>
 						Consult our specialist if you are not sure or concerned about your
 						results.
 					</div>
 				</div>
-				<button className={styles["PlanAggregate-cta-button"]}>
-					<p className={styles["PlanAggregate-cta-schedule"]}>Schedule Call</p>
+				<button className={`${styles["PlanAggregate-cta-button"]} ${styles["coming-soon"]}`} disabled>
+					<p className={styles["PlanAggregate-cta-schedule"]}>Coming Soon</p>
 					<div className={styles["PlanAggregate-cta-schedule-icon"]}>
 						<Calendar />
 					</div>

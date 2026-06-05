@@ -6,7 +6,7 @@ import styles from "./Login.module.scss";
 import { ShieldCheck, Upload, Brain } from "lucide-react";
 
 const FEATURES = [
-	{ icon: <Upload size={18} />, text: "Upload any lab result — paper or PDF" },
+	{ icon: <Upload size={18} />, text: "Upload any lab result paper or PDF" },
 	{ icon: <Brain size={18} />, text: "AI explains every value in plain English" },
 	{ icon: <ShieldCheck size={18} />, text: "Your data is private and encrypted" },
 ];
@@ -26,10 +26,10 @@ const Login = () => {
 
 					<div className={styles.leftContent}>
 						<h2 className={styles.leftHeading}>
-							Understand your health results — finally.
+							Understand your health results finally.
 						</h2>
 						<p className={styles.leftSub}>
-							Upload your lab tests, get plain-English explanations, and receive a personalised health plan — all in under 30 seconds.
+							Upload your lab tests, get plain-English explanations, and receive a personalised health plan all in under 30 seconds.
 						</p>
 
 						<ul className={styles.featureList}>

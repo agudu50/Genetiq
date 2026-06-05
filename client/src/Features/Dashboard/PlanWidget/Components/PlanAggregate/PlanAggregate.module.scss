@@ -452,10 +452,39 @@
 	gap: 6px;
 }
 
+.PlanAggregate-cta-title-wrap {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.PlanAggregate-cta-badge {
+	display: inline-flex;
+	align-items: center;
+	padding: 3px 8px;
+	border-radius: 6px;
+	background: rgba(139, 92, 246, 0.15);
+	color: #a78bfa;
+	border: 1px solid rgba(139, 92, 246, 0.3);
+	font-size: 10px;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	line-height: 1;
+
+	html[data-theme="light"] & {
+		background: rgba(139, 92, 246, 0.08);
+		color: #7c3aed;
+		border-color: rgba(139, 92, 246, 0.25);
+	}
+}
+
 .PlanAggregate-cta-title {
 	font-size: 16.5px;
 	font-weight: 800;
 	color: var(--text, #ffffff);
+	margin: 0;
 	letter-spacing: -0.015em;
 
 	html[data-theme="light"] & {
@@ -502,5 +531,27 @@
 	&:hover {
 		transform: scale(1.03) translateY(-1px);
 		box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+	}
+
+	&.coming-soon {
+		background: rgba(255, 255, 255, 0.05) !important;
+		color: var(--text-secondary, #94a3b8) !important;
+		border: 1px solid rgba(255, 255, 255, 0.06) !important;
+		box-shadow: none !important;
+		cursor: not-allowed;
+		pointer-events: none;
+
+		html[data-theme="light"] & {
+			background: rgba(15, 23, 42, 0.03) !important;
+			color: #64748b !important;
+			border-color: rgba(15, 23, 42, 0.06) !important;
+		}
+
+		.PlanAggregate-cta-schedule-icon path {
+			fill: var(--text-secondary, #94a3b8) !important;
+			html[data-theme="light"] & {
+				fill: #64748b !important;
+			}
+		}
 	}
 }
