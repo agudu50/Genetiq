@@ -11,7 +11,6 @@ import { WelcomeHeader } from "@/Features/Dashboard/WelcomeHeader/WelcomeHeader"
 import { QuickActions } from "@/Features/Dashboard/QuickActions/QuickActions";
 import { ActivityChart } from "@/Features/Dashboard/ActivityChart/ActivityChart";
 import { TriageWidget } from "@/Features/Dashboard/TriageWidget/TriageWidget";
-import { motion, useDragControls } from "framer-motion";
 import { HealthHistoryWidget } from "@/Features/Dashboard/HealthHistoryWidget/HealthHistoryWidget";
 import { useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
@@ -22,7 +21,6 @@ const Dashboard = () => {
 	const [isMobile, setIsMobile] = useState(false);
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-	const dragControls = useDragControls();
 	const selectedCategory = useSelector(
 		(state: RootState) => state.category.selectedCategory,
 	);
@@ -161,47 +159,6 @@ const Dashboard = () => {
 									}
 									isPaused={!isModelVisible || (isMobile && isDrawerOpen)}
 								/>
-								{/* Chatbot Action Button over the 3D twin */}
-								<motion.div
-									className={styles["chatbot-wrapper"]}
-									drag
-									dragControls={dragControls}
-									dragListener={false}
-									dragMomentum={false}
-									style={{ touchAction: "none" }}
-								>
-									<div
-										className={`${styles["chatbot-popup"]} ${isChatbotOpen ? styles["popup-open"] : ""}`}
-									>
-										<TriageWidget />
-									</div>
-
-									<button
-										className={`${styles["chatbot-fab"]} ${isChatbotOpen ? styles["active"] : ""}`}
-										onPointerDown={(e) => dragControls.start(e)}
-										onClick={() => setIsChatbotOpen(!isChatbotOpen)}
-										aria-label='Toggle AI Triage Chatbot'
-										style={{ cursor: "grab" }}
-									>
-										{isChatbotOpen ? (
-											<svg
-												width='24'
-												height='24'
-												viewBox='0 0 24 24'
-												fill='none'
-												stroke='currentColor'
-												strokeWidth='2.5'
-												strokeLinecap='round'
-												strokeLinejoin='round'
-											>
-												<line x1='18' y1='6' x2='6' y2='18'></line>
-												<line x1='6' y1='6' x2='18' y2='18'></line>
-											</svg>
-										) : (
-											<span style={{ fontSize: "28px" }}>🤖</span>
-										)}
-									</button>
-								</motion.div>
 							</div>
 						</div>
 					</div>
@@ -309,6 +266,19 @@ const Dashboard = () => {
 				)}
 			</CameraProvider>
 			<CtaModal />
+			{isChatbotOpen && (
+				<div className={styles["chatbot-modal-overlay"]} onClick={() => setIsChatbotOpen(false)}>
+					<div className={styles["chatbot-modal-content"]} onClick={(e) => e.stopPropagation()}>
+						<button className={styles["chatbot-modal-close"]} onClick={() => setIsChatbotOpen(false)} aria-label="Close AI Assistant">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+								<line x1="18" y1="6" x2="6" y2="18"></line>
+								<line x1="6" y1="6" x2="18" y2="18"></line>
+							</svg>
+						</button>
+						<TriageWidget />
+					</div>
+				</div>
+			)}
 		</div>
 	);
 };

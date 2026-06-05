@@ -40,69 +40,6 @@ export const QuickActions = ({
 			),
 		},
 		{
-			id: "care-navigator",
-			label: t("care_navigator") || "Care Navigator",
-			color: "#8b5cf6", // Royal Violet
-			path: "/ai-assistant",
-			icon: (
-				<svg
-					width='24'
-					height='24'
-					viewBox='0 0 24 24'
-					fill='none'
-					stroke='currentColor'
-					strokeWidth='2.2'
-				>
-					<path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z' />
-					<circle cx='12' cy='11' r='3' />
-				</svg>
-			),
-		},
-		{
-			id: "log-vitals",
-			label: t("log_vitals") || "Log Vitals",
-			color: "#f43f5e", // Coral Rose Red
-			path: "/log/vitals",
-			icon: (
-				<svg
-					width='24'
-					height='24'
-					viewBox='0 0 24 24'
-					fill='none'
-					stroke='currentColor'
-					strokeWidth='2.2'
-				>
-					<path
-						d='M22 12h-4l-3 9L9 3l-3 9H2'
-						strokeLinecap='round'
-						strokeLinejoin='round'
-					/>
-				</svg>
-			),
-		},
-		{
-			id: "track-meal",
-			label: t("track_meal") || "Track Meal",
-			color: "#10b981", // Vibrant Emerald Green
-			path: "/log/meal",
-			icon: (
-				<svg
-					width='24'
-					height='24'
-					viewBox='0 0 24 24'
-					fill='none'
-					stroke='currentColor'
-					strokeWidth='2.2'
-				>
-					<path
-						d='M18 8h1a4 4 0 0 1 0 8h-1M8 8H7a4 4 0 0 0 0 8h1M8 8l3-4M16 8l-3-4M8 8v8M16 8v8M12 8v8'
-						strokeLinecap='round'
-						strokeLinejoin='round'
-					/>
-				</svg>
-			),
-		},
-		{
 			id: "log-exercise",
 			label: t("log_exercise") || "Log Exercise",
 			color: "#3b82f6", // Electric Royal Blue
