@@ -19,7 +19,7 @@ const CtaModal = () => {
 		>
 			<div className={styles["CtaModal-head"]}>
 				<div className={styles["CtaModal-head-text"]}>
-					<div className={styles["CtaModal-number"]}>16</div>
+					<div className={styles["CtaModal-number"]}>6</div>
 					<div className={styles["CtaModal-title"]}>
 						{t("cta_new_insights")}
 					</div>
