@@ -27,6 +27,25 @@ const Dashboard = () => {
 	const [category, setCategory] = useState(selectedCategory || "total");
 
 	const [isModelVisible, setIsModelVisible] = useState(true);
+	const [isScrolling, setIsScrolling] = useState(false);
+
+	// Scroll detection to temporarily disable pointer-events and raycasting for buttery smooth scrolling
+	useEffect(() => {
+		let timeout: ReturnType<typeof setTimeout>;
+		const handleScroll = () => {
+			setIsScrolling(true);
+			clearTimeout(timeout);
+			timeout = setTimeout(() => {
+				setIsScrolling(false);
+			}, 120);
+		};
+
+		window.addEventListener("scroll", handleScroll, { passive: true, capture: true });
+		return () => {
+			window.removeEventListener("scroll", handleScroll, { capture: true });
+			clearTimeout(timeout);
+		};
+	}, []);
 
 	// Detect mobile viewport
 	useEffect(() => {
@@ -143,7 +162,7 @@ const Dashboard = () => {
 	);
 
 	return (
-		<div className={styles["Dashboard-layout"]}>
+		<div className={`${styles["Dashboard-layout"]} ${isScrolling ? styles["is-scrolling"] : ""}`}>
 			<CameraProvider>
 				<div className={styles["Dashboard-content"]}>
 					{/* 3D Model - fullscreen on mobile */}
