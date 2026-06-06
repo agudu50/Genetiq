@@ -7,16 +7,29 @@ const GlobalLayout = () => {
 	const [isVisible, setIsVisible] = useState(false);
 
 	useEffect(() => {
-		const toggleVisibility = () => {
+		let timeout: ReturnType<typeof setTimeout>;
+
+		const handleScroll = () => {
 			if (window.scrollY > 300) {
 				setIsVisible(true);
 			} else {
 				setIsVisible(false);
 			}
+
+			if (!document.body.classList.contains("is-scrolling")) {
+				document.body.classList.add("is-scrolling");
+			}
+			clearTimeout(timeout);
+			timeout = setTimeout(() => {
+				document.body.classList.remove("is-scrolling");
+			}, 120);
 		};
 
-		window.addEventListener("scroll", toggleVisibility, { passive: true });
-		return () => window.removeEventListener("scroll", toggleVisibility);
+		window.addEventListener("scroll", handleScroll, { passive: true, capture: true });
+		return () => {
+			window.removeEventListener("scroll", handleScroll, { capture: true });
+			clearTimeout(timeout);
+		};
 	}, []);
 
 	const scrollToTop = () => {

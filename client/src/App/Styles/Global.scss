@@ -113,3 +113,14 @@ button:hover {
 .Toastify__toast-container {
 	z-index: 100001 !important;
 }
+
+// Global scroll optimization: disable pointer events on heavy/WebGL elements to prevent raycasting/render lag during active scroll
+body.is-scrolling {
+	iframe,
+	canvas,
+	video,
+	embed,
+	object {
+		pointer-events: none !important;
+	}
+}
