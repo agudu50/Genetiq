@@ -14,7 +14,7 @@ import {
 	createCardioMaterial,
 	createBodyMaterial,
 } from "./Utils/materialUtils";
-import { useModelTransforms } from "./Hooks/useModelTransforms";
+
 import {
 	createGlowingMaterial,
 	painAreaMaterial,
@@ -171,8 +171,13 @@ function Model({
 	const [opacity, setOpacity] = useState(isNew ? 0 : 1);
 	const [shouldRender, setShouldRender] = useState(!isNew);
 	const [hasFadedOut, setHasFadedOut] = useState(false);
-	const { currentPosition, currentScale, updateTransforms } =
-		useModelTransforms(position, scale);
+	// Initialize position and scale directly on the ref on mount or modelType changes
+	useEffect(() => {
+		if (groupRef.current) {
+			groupRef.current.position.set(position[0], position[1], position[2]);
+			groupRef.current.scale.set(scale[0], scale[1], scale[2]);
+		}
+	}, [modelType, position, scale]);
 
 	const [pointerDownTime, setPointerDownTime] = useState(0);
 
@@ -374,7 +379,17 @@ function Model({
 	useFrame((state) => {
 		if (isPaused) return;
 
-		updateTransforms(position, scale);
+		// Smoothly interpolate position and scale directly on the WebGL object ref
+		// This avoids triggering synchronous React state updates on every frame.
+		if (groupRef.current) {
+			groupRef.current.position.x += (position[0] - groupRef.current.position.x) * 0.1;
+			groupRef.current.position.y += (position[1] - groupRef.current.position.y) * 0.1;
+			groupRef.current.position.z += (position[2] - groupRef.current.position.z) * 0.1;
+
+			groupRef.current.scale.x += (scale[0] - groupRef.current.scale.x) * 0.1;
+			groupRef.current.scale.y += (scale[1] - groupRef.current.scale.y) * 0.1;
+			groupRef.current.scale.z += (scale[2] - groupRef.current.scale.z) * 0.1;
+		}
 
 		// 1. Optimized Opacity & Visibility Handling (using refs)
 		let currentOpacity = opacity;
@@ -456,9 +471,9 @@ function Model({
 					textures={bodyTextures}
 					isHidden={isHidden}
 					shouldRender={shouldRender}
-					position={currentPosition}
+					position={[0, 0, 0]}
 					rotation={rotation}
-					scale={currentScale}
+					scale={[1, 1, 1]}
 					handlePointerDown={handlePointerDown}
 					handlePointerUp={handlePointerUp}
 					groupRef={groupRef}
@@ -469,9 +484,9 @@ function Model({
 					textures={cardioTextures}
 					isHidden={isHidden}
 					shouldRender={shouldRender}
-					position={currentPosition}
+					position={[0, 0, 0]}
 					rotation={rotation}
-					scale={currentScale}
+					scale={[1, 1, 1]}
 					handlePointerDown={handlePointerDown}
 					handlePointerUp={handlePointerUp}
 					groupRef={groupRef}

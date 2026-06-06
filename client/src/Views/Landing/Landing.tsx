@@ -150,7 +150,8 @@ function ParticleCanvas() {
 		let W = (canvas.width = window.innerWidth);
 		let H = (canvas.height = window.innerHeight * 2.5);
 
-		const NUM = 120;
+		const isMobile = window.innerWidth < 768;
+		const NUM = isMobile ? 40 : 80;
 		type Particle = {
 			x: number; y: number; vx: number; vy: number;
 			r: number; alpha: number; color: string;
@@ -172,15 +173,19 @@ function ParticleCanvas() {
 			ctx.clearRect(0, 0, W, H);
 
 			// draw connection lines
+			const maxDistSq = 140 * 140;
 			for (let i = 0; i < particles.length; i++) {
+				const pi = particles[i];
 				for (let j = i + 1; j < particles.length; j++) {
-					const dx = particles[i].x - particles[j].x;
-					const dy = particles[i].y - particles[j].y;
-					const dist = Math.sqrt(dx * dx + dy * dy);
-					if (dist < 140) {
+					const pj = particles[j];
+					const dx = pi.x - pj.x;
+					const dy = pi.y - pj.y;
+					const distSq = dx * dx + dy * dy;
+					if (distSq < maxDistSq) {
+						const dist = Math.sqrt(distSq); // Only calculate sqrt when drawing connection
 						ctx.beginPath();
-						ctx.moveTo(particles[i].x, particles[i].y);
-						ctx.lineTo(particles[j].x, particles[j].y);
+						ctx.moveTo(pi.x, pi.y);
+						ctx.lineTo(pj.x, pj.y);
 						ctx.strokeStyle = `rgba(0,166,157,${0.15 * (1 - dist / 140)})`;
 						ctx.lineWidth = 0.5;
 						ctx.stroke();
@@ -192,8 +197,6 @@ function ParticleCanvas() {
 			particles.forEach((p) => {
 				ctx.beginPath();
 				ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-				ctx.fillStyle = p.color.replace(")", `,${p.alpha})`).replace("rgb", "rgba").replace("#", "");
-				// simpler approach:
 				ctx.globalAlpha = p.alpha;
 				ctx.fillStyle = p.color;
 				ctx.fill();
