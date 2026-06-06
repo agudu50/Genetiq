@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useTransition } from "react";
 import styles from "./Dashboard.module.scss";
 import { TrackerWidget } from "@/Features/Dashboard/TrackerWidget/TrackerWidget";
 import { AgeWidget } from "@/Features/Dashboard/AgeWidget/AgeWidget";
@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
 
 const Dashboard = () => {
+	const [, startTransition] = useTransition();
 	const [isChatbotOpen, setIsChatbotOpen] = useState(false);
 	const [isNotFirstAnimation, setIsNotFirstAnimation] = useState(false);
 	const [isMobile, setIsMobile] = useState(false);
@@ -27,25 +28,6 @@ const Dashboard = () => {
 	const [category, setCategory] = useState(selectedCategory || "total");
 
 	const [isModelVisible, setIsModelVisible] = useState(true);
-	const [isScrolling, setIsScrolling] = useState(false);
-
-	// Scroll detection to temporarily disable pointer-events and raycasting for buttery smooth scrolling
-	useEffect(() => {
-		let timeout: ReturnType<typeof setTimeout>;
-		const handleScroll = () => {
-			setIsScrolling(true);
-			clearTimeout(timeout);
-			timeout = setTimeout(() => {
-				setIsScrolling(false);
-			}, 120);
-		};
-
-		window.addEventListener("scroll", handleScroll, { passive: true, capture: true });
-		return () => {
-			window.removeEventListener("scroll", handleScroll, { capture: true });
-			clearTimeout(timeout);
-		};
-	}, []);
 
 	// Detect mobile viewport
 	useEffect(() => {
@@ -97,15 +79,19 @@ const Dashboard = () => {
 	}, [isDrawerOpen, isMobile]);
 
 	const toggleDrawer = useCallback(() => {
-		setIsDrawerOpen((prev) => !prev);
-		// Close sidebar when opening drawer
-		if (!isDrawerOpen) setIsSidebarOpen(false);
+		startTransition(() => {
+			setIsDrawerOpen((prev) => !prev);
+			// Close sidebar when opening drawer
+			if (!isDrawerOpen) setIsSidebarOpen(false);
+		});
 	}, [isDrawerOpen]);
 
 	const toggleSidebar = useCallback(() => {
-		setIsSidebarOpen((prev) => !prev);
-		// Close drawer when opening sidebar
-		if (!isSidebarOpen) setIsDrawerOpen(false);
+		startTransition(() => {
+			setIsSidebarOpen((prev) => !prev);
+			// Close drawer when opening sidebar
+			if (!isSidebarOpen) setIsDrawerOpen(false);
+		});
 	}, [isSidebarOpen]);
 
 	useEffect(() => {
@@ -162,7 +148,7 @@ const Dashboard = () => {
 	);
 
 	return (
-		<div className={`${styles["Dashboard-layout"]} ${isScrolling ? styles["is-scrolling"] : ""}`}>
+		<div className={styles["Dashboard-layout"]}>
 			<CameraProvider>
 				<div className={styles["Dashboard-content"]}>
 					{/* 3D Model - fullscreen on mobile */}

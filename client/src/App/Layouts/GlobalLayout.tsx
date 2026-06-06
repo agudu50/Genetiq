@@ -3,19 +3,45 @@ import { Outlet } from "react-router-dom";
 import { ChevronUp } from "lucide-react";
 import styles from "./GlobalLayout.module.scss";
 
-const GlobalLayout = () => {
+const ScrollToTopButton = () => {
 	const [isVisible, setIsVisible] = useState(false);
 
 	useEffect(() => {
-		let timeout: ReturnType<typeof setTimeout>;
-
-		const handleScroll = () => {
+		const toggleVisibility = () => {
 			if (window.scrollY > 300) {
 				setIsVisible(true);
 			} else {
 				setIsVisible(false);
 			}
+		};
 
+		window.addEventListener("scroll", toggleVisibility, { passive: true });
+		return () => window.removeEventListener("scroll", toggleVisibility);
+	}, []);
+
+	const scrollToTop = () => {
+		window.scrollTo({
+			top: 0,
+			behavior: "smooth",
+		});
+	};
+
+	return (
+		<button
+			className={`${styles.scrollToTop} ${isVisible ? styles.visible : ""}`}
+			onClick={scrollToTop}
+			aria-label="Scroll to top"
+		>
+			<ChevronUp size={28} strokeWidth={3} />
+		</button>
+	);
+};
+
+const GlobalLayout = () => {
+	useEffect(() => {
+		let timeout: ReturnType<typeof setTimeout>;
+
+		const handleScroll = () => {
 			if (!document.body.classList.contains("is-scrolling")) {
 				document.body.classList.add("is-scrolling");
 			}
@@ -32,23 +58,10 @@ const GlobalLayout = () => {
 		};
 	}, []);
 
-	const scrollToTop = () => {
-		window.scrollTo({
-			top: 0,
-			behavior: "smooth",
-		});
-	};
-
 	return (
 		<>
 			<Outlet />
-			<button
-				className={`${styles.scrollToTop} ${isVisible ? styles.visible : ""}`}
-				onClick={scrollToTop}
-				aria-label="Scroll to top"
-			>
-			<ChevronUp size={28} strokeWidth={3} />
-			</button>
+			<ScrollToTopButton />
 		</>
 	);
 };

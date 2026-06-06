@@ -180,6 +180,8 @@ function Model({
 	}, [modelType, position, scale]);
 
 	const [pointerDownTime, setPointerDownTime] = useState(0);
+	const prevIsHiddenRef = useRef(isHidden);
+	const prevShouldRenderRef = useRef(shouldRender);
 
 	const activeMaterialKey = useMemo(() => {
 		const mapping: Record<string, string> = {
@@ -379,6 +381,11 @@ function Model({
 	useFrame((state) => {
 		if (isPaused) return;
 
+		const isHiddenChanged = prevIsHiddenRef.current !== isHidden;
+		const isShouldRenderChanged = prevShouldRenderRef.current !== shouldRender;
+		prevIsHiddenRef.current = isHidden;
+		prevShouldRenderRef.current = shouldRender;
+
 		// Smoothly interpolate position and scale directly on the WebGL object ref
 		// This avoids triggering synchronous React state updates on every frame.
 		if (groupRef.current) {
@@ -416,8 +423,8 @@ function Model({
 			setOpacity(currentOpacity);
 		}
 
-		// Direct material update via ref (avoids traverse)
-		if (groupRef.current) {
+		// Direct material update via ref (avoids traverse on every frame, only executes when properties change)
+		if ((currentOpacity !== opacity || isHiddenChanged || isShouldRenderChanged) && groupRef.current) {
 			groupRef.current.traverse((child) => {
 				if (child instanceof THREE.Mesh && child.material) {
 					const mat = child.material as THREE.Material;
