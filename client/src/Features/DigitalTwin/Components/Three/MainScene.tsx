@@ -75,6 +75,8 @@ const MainScene = (props: { useSideBar?: boolean }) => {
 			<div className='canvas-wrapper'>
 				<Canvas
 					orthographic
+					dpr={[1, 1.5]}
+					gl={{ powerPreference: "high-performance", antialias: true, stencil: false }}
 					camera={{
 						near: 0.0001,
 						far: 20000,
