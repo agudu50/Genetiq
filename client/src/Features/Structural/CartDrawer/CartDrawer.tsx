@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
 import { removeFromCart, clearCart } from "@/App/Redux/cartSlice";
 import { useLanguage } from "@/App/i18n/LanguageContext";
-import { ShoppingCart, X, Trash2, CheckCircle, CreditCard, Sparkles, ShoppingBag } from "lucide-react";
+import { ShoppingCart, X, Trash2, CheckCircle, CreditCard, Sparkles } from "lucide-react";
 import styles from "./CartDrawer.module.scss";
 
 interface CartDrawerProps {

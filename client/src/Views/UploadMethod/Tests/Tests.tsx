@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
 	Brain, Heart, Flame, Layers, Shield, Sparkles, CheckCircle2, 
-	XCircle, ArrowRight, RefreshCw, Trophy, ExternalLink, Copy 
+	XCircle, ArrowRight, RefreshCw, Trophy, ExternalLink, Copy,
+	Globe
 } from "lucide-react";
 import { toast } from "react-toastify";
 import styles from "./Tests.module.scss";
@@ -501,13 +502,17 @@ const Tests = () => {
 			
 			// Fire a beautiful toast notification alerting the user in the notification area
 			toast.info(
-				<div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
-					<span style={{ fontWeight: 800, letterSpacing: "-0.015em", fontSize: "13.5px" }}>
-						🌐 Daily Bio-Tips Updated!
-					</span>
-					<span style={{ fontSize: "12px", opacity: 0.9, lineHeight: 1.4 }}>
-						We put today's personalized health tips together using official clinical guidelines from the WHO, NIH, and CDC.
-					</span>
+				<div className={styles["toast-guidelines-update"]}>
+					<div className={styles["toast-icon-wrap"]}>
+						<Globe size={16} className={styles["toast-globe-icon"]} />
+						<span className={styles["toast-pulse-dot"]} />
+					</div>
+					<div className={styles["toast-content"]}>
+						<span className={styles["toast-title"]}>Daily Bio-Tips Updated!</span>
+						<span className={styles["toast-desc"]}>
+							We put today's personalized health tips together using official clinical guidelines from the WHO, NIH, and CDC.
+						</span>
+					</div>
 				</div>,
 				{
 					position: "top-right",
@@ -819,6 +824,31 @@ const Tests = () => {
 												</button>
 											</div>
 										</div>
+
+										{/* Premium dynamic guidelines banner */}
+										<motion.div 
+											initial={{ opacity: 0, y: -12 }}
+											animate={{ opacity: 1, y: 0 }}
+											transition={{ duration: 0.5, delay: 0.1 }}
+											className={styles["daily-tips-announcement"]}
+										>
+											<div className={styles["announcement-glow"]} />
+											<div className={styles["announcement-content"]}>
+												<div className={styles["announcement-icon-wrap"]}>
+													<Globe size={18} className={styles["announcement-globe-icon"]} />
+													<span className={styles["announcement-pulse-dot"]} />
+												</div>
+												<div className={styles["announcement-text"]}>
+													<h4>Daily Bio-Tips Updated!</h4>
+													<p>
+														We put today's personalized health tips together using official clinical guidelines from the 
+														<span className={styles["guideline-badge"]} title="World Health Organization">WHO</span>, 
+														<span className={styles["guideline-badge"]} title="National Institutes of Health">NIH</span>, and 
+														<span className={styles["guideline-badge"]} title="Centers for Disease Control and Prevention">CDC</span>.
+													</p>
+												</div>
+											</div>
+										</motion.div>
 
 										<div className={styles["daily-tips-grid"]}>
 											{dailyTips.map((tip, index) => {
