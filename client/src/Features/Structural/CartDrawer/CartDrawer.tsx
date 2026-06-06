@@ -73,19 +73,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
 							<h3>{t("processing_order") || "Processing Order..."}</h3>
 							<p>{t("processing_secure") || "Establishing encrypted secure checkout pipeline..."}</p>
 						</div>
-					) : cartItems.length === 0 ? (
-						/* Empty State */
-						<div className={styles.emptyState}>
-							<ShoppingBag size={48} className={styles.emptyIcon} />
-							<h3>{t("cart_empty") || "Your cart is empty"}</h3>
-							<p>
-								{t("cart_empty_desc") ||
-									"Explore your personalized health recommendations and add items to your cart to check out."}
-							</p>
-							<button className={styles.exploreBtn} onClick={onClose}>
-								{t("explore_recs") || "Explore Recommendations"}
-							</button>
-						</div>
+
 					) : (
 						/* Cart Items List */
 						<div className={styles.itemsList}>

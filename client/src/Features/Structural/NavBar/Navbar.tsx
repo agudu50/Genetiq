@@ -13,8 +13,6 @@ import HistoryIcon from "@assets/Navbar/Icons/History.svg?react";
 import GoalsIcon from "@assets/Navbar/Icons/Goals.svg?react";
 import TestIcon from "@assets/Navbar/Icons/Test.svg?react";
 import { HealthProfileWidget } from "@/Features/Dashboard/HealthProfileWidget/HealthProfileWidget";
-import { ShoppingCart } from "lucide-react";
-import { CartDrawer } from "@/Features/Structural/CartDrawer/CartDrawer";
 
 const Navbar = () => {
 	const { t } = useLanguage();
@@ -22,10 +20,8 @@ const Navbar = () => {
 	const location = useLocation();
 	const [isMobile, setIsMobile] = useState(false);
 	const [isProfileOpen, setIsProfileOpen] = useState(false);
-	const [isCartOpen, setIsCartOpen] = useState(false);
 	const profileRef = useRef<HTMLDivElement>(null);
 	const user = useSelector((state: RootState) => state.user);
-	const cartItems = useSelector((state: RootState) => state.cart.items);
 	const userInitials = useMemo(() => {
 		if (user.firstName && user.lastName)
 			return `${user.firstName[0]}${user.lastName[0]}`.toUpperCase();
@@ -119,8 +115,6 @@ const Navbar = () => {
 					</nav>
 				)}
 
-	
-
 
 				{/* Secondary actions (only visible on main dashboard/goals/history views or if mobile) */}
 				{(!isConfigFlow || isMobile) && (
@@ -131,13 +125,6 @@ const Navbar = () => {
 
 						<NotificationHub IsBadge={true} />
 
-						{/* Shopping Cart Trigger */}
-						<div className={styles["cart-wrapper"]} onClick={() => setIsCartOpen(true)}>
-							<ShoppingCart size={18} className={styles["cart-icon"]} />
-							{cartItems.length > 0 && (
-								<span className={styles["cart-badge"]}>{cartItems.length}</span>
-							)}
-						</div>
 
 						{/* Enhanced Profile Button with Dropdown */}
 						<div className={styles["profile-wrapper"]} ref={profileRef}>
@@ -258,7 +245,6 @@ const Navbar = () => {
 						</button>
 					</nav>
 				)}
-			<CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
 		</>
 	);
 };
