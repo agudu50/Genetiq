@@ -641,40 +641,40 @@
 	position: relative;
 	overflow: hidden;
 	display: flex;
-	align-items: flex-start;
-	gap: 16px;
+	flex-direction: column;
 	padding: 20px;
-	background: rgba(30, 41, 59, 0.35);
+	background: rgba(30, 41, 59, 0.45);
 	border: 1px solid rgba(255, 255, 255, 0.06);
 	border-radius: 24px;
-	box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
-	transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+	box-shadow: 0 4px 30px rgba(0, 0, 0, 0.12);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+	box-sizing: border-box;
 
 	html[data-theme="light"] & {
-		background: rgba(255, 255, 255, 0.8);
-		border-color: rgba(15, 23, 42, 0.05);
-		box-shadow: 0 4px 24px rgba(15, 23, 42, 0.02);
+		background: rgba(255, 255, 255, 0.85);
+		border-color: rgba(15, 23, 42, 0.06);
+		box-shadow: 0 4px 30px rgba(15, 23, 42, 0.02);
 	}
 
 	&:hover {
 		transform: translateY(-2px);
-		box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
-		border-color: rgba(255, 255, 255, 0.12);
+		border-color: rgba(0, 166, 157, 0.3);
+		box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2);
 
 		html[data-theme="light"] & {
-			box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
-			border-color: rgba(15, 23, 42, 0.1);
+			border-color: rgba(0, 166, 157, 0.25);
+			box-shadow: 0 12px 36px rgba(15, 23, 42, 0.05);
 		}
 
-		.card-outline-glow {
-			opacity: 0.1;
+		.card-glow-border {
+			opacity: 0.15;
 		}
 	}
 }
 
-.card-outline-glow {
+.card-glow-border {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -684,105 +684,66 @@
 	opacity: 0;
 	transition: opacity 0.3s ease;
 	border-radius: inherit;
+	border: 1px solid var(--accent, #00A69D);
 	z-index: 0;
 }
 
-.card-mesh-bg {
-	position: absolute;
-	top: -80px;
-	right: -80px;
-	width: 200px;
-	height: 200px;
-	border-radius: 50%;
-	filter: blur(35px);
-	opacity: 0.04;
-	pointer-events: none;
-	z-index: 0;
-	transition: all 0.3s ease;
-
-	.goal-card:hover & {
-		opacity: 0.08;
-		transform: scale(1.05);
-	}
+.goal-card-header {
+	display: flex;
+	align-items: flex-start;
+	gap: 14px;
+	width: 100%;
+	z-index: 1;
 }
 
-/* Custom Interactive Checkbox */
-.checkbox {
-	width: 24px;
-	height: 24px;
-	border-radius: 50%;
-	border: 2px solid rgba(255, 255, 255, 0.18);
+.goal-icon-badge {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	cursor: pointer;
-	transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	width: 38px;
+	height: 38px;
+	border-radius: 12px;
 	flex-shrink: 0;
-	z-index: 1;
-	background: transparent;
-	color: transparent;
-	margin-top: 2px;
+	transition: all 0.3s ease;
+	border: 1px solid transparent;
 
-	html[data-theme="light"] & {
-		border-color: rgba(15, 23, 42, 0.15);
-	}
-
-	&:hover {
-		transform: scale(1.08);
-		border-color: rgba(0, 166, 157, 0.5);
-
-		html[data-theme="light"] & {
-			border-color: rgba(0, 166, 157, 0.5);
-		}
-	}
-
-	&.checked {
-		background: #10b981;
-		border-color: #10b981;
-		color: #ffffff;
-		transform: scale(1.03);
-		box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
-
-		html[data-theme="light"] & {
-			background: #10b981;
-			border-color: #10b981;
-		}
-	}
-}
-
-/* Completed Card Styling */
-.completed {
-	background: linear-gradient(135deg, rgba(16, 185, 129, 0.06), rgba(30, 41, 59, 0.3));
-	border-color: rgba(16, 185, 129, 0.2);
-
-	html[data-theme="light"] & {
-		background: linear-gradient(135deg, rgba(16, 185, 129, 0.03), rgba(255, 255, 255, 0.8));
+	/* Category variations */
+	.nutrition & {
+		background: rgba(16, 185, 129, 0.08);
 		border-color: rgba(16, 185, 129, 0.15);
+		color: #10b981;
 	}
-
-	.goal-title {
-		text-decoration: line-through;
-		color: var(--text-secondary, #94a3b8);
-		opacity: 0.55;
-
-		html[data-theme="light"] & {
-			color: #64748b;
-		}
+	.activity & {
+		background: rgba(56, 189, 248, 0.08);
+		border-color: rgba(56, 189, 248, 0.15);
+		color: #38bdf8;
+	}
+	.sleep & {
+		background: rgba(139, 92, 246, 0.08);
+		border-color: rgba(139, 92, 246, 0.15);
+		color: #8b5cf6;
+	}
+	.mind & {
+		background: rgba(245, 158, 11, 0.08);
+		border-color: rgba(245, 158, 11, 0.15);
+		color: #f59e0b;
 	}
 }
 
-.goal-info {
+.goal-header-text {
 	flex: 1;
-	z-index: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
 }
 
 .goal-title {
-	font-size: 14.5px;
+	font-size: 15px;
 	font-weight: 700;
 	color: var(--text, #f8fafc);
-	margin: 0 0 4px 0;
+	margin: 0;
 	letter-spacing: -0.01em;
-	transition: all 0.25s ease;
 
 	html[data-theme="light"] & {
 		color: #0f172a;
@@ -790,27 +751,90 @@
 }
 
 .goal-desc {
-	font-size: 12.5px;
+	font-size: 12px;
 	color: var(--text-secondary, #94a3b8);
-	line-height: 1.4;
-	margin: 0 0 12px 0;
+	line-height: 1.45;
+	margin: 0;
 
 	html[data-theme="light"] & {
 		color: #64748b;
 	}
 }
 
-/* Dynamic Logging Progress Stepper inside Card */
-.stepper-container {
+/* Custom Interactive Checkbox */
+.checkbox {
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	border: 1.5px solid rgba(255, 255, 255, 0.2);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	flex-shrink: 0;
+	background: transparent;
+	color: transparent;
+
+	html[data-theme="light"] & {
+		border-color: rgba(15, 23, 42, 0.2);
+	}
+
+	&:hover {
+		transform: scale(1.08);
+		border-color: var(--accent, #00A69D);
+	}
+
+	&.checked {
+		background: #10b981;
+		border-color: #10b981;
+		color: #ffffff;
+		transform: scale(1.03);
+		box-shadow: 0 0 12px rgba(16, 185, 129, 0.35);
+	}
+}
+
+.checkbox-dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: transparent;
+	transition: background 0.2s;
+
+	.checkbox:hover & {
+		background: rgba(0, 166, 157, 0.35);
+	}
+}
+
+/* Completed Card Styling */
+.completed {
+	background: linear-gradient(135deg, rgba(16, 185, 129, 0.04), rgba(30, 41, 59, 0.35));
+	border-color: rgba(16, 185, 129, 0.15);
+
+	html[data-theme="light"] & {
+		background: linear-gradient(135deg, rgba(16, 185, 129, 0.02), rgba(255, 255, 255, 0.85));
+		border-color: rgba(16, 185, 129, 0.12);
+	}
+
+	.goal-title {
+		text-decoration: line-through;
+		color: var(--text-secondary, #94a3b8);
+		opacity: 0.6;
+	}
+}
+
+/* Card Body Section */
+.goal-body {
+	margin-top: 16px;
 	display: flex;
 	flex-direction: column;
-	gap: 6px;
-	margin-bottom: 12px;
-	padding: 10px 12px;
+	gap: 10px;
+	padding: 12px 14px;
 	background: rgba(255, 255, 255, 0.02);
 	border: 1px solid rgba(255, 255, 255, 0.04);
-	border-radius: 12px;
+	border-radius: 16px;
 	box-sizing: border-box;
+	z-index: 1;
 
 	html[data-theme="light"] & {
 		background: rgba(15, 23, 42, 0.01);
@@ -818,64 +842,19 @@
 	}
 }
 
-.stepper-label {
-	font-size: 9.5px;
-	font-weight: 700;
+.progress-info {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	width: 100%;
+}
+
+.progress-fraction {
+	font-size: 13px;
 	color: var(--text-secondary, #94a3b8);
-	text-transform: uppercase;
-	letter-spacing: 0.03em;
 
 	html[data-theme="light"] & {
 		color: #64748b;
-	}
-}
-
-.stepper-controls {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 10px;
-}
-
-.step-btn {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 22px;
-	height: 22px;
-	padding: 0;
-	background: rgba(255, 255, 255, 0.04);
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	border-radius: 6px;
-	color: var(--text, #f8fafc);
-	cursor: pointer;
-	transition: all 0.2s ease;
-
-	html[data-theme="light"] & {
-		background: #ffffff;
-		border-color: rgba(15, 23, 42, 0.12);
-		color: #0f172a;
-	}
-
-	&:hover:not(:disabled) {
-		background: rgba(0, 166, 157, 0.15);
-		border-color: var(--accent, #00A69D);
-		color: var(--accent, #00A69D);
-		transform: scale(1.05);
-	}
-
-	&:disabled {
-		opacity: 0.3;
-		cursor: not-allowed;
-	}
-}
-
-.stepper-value {
-	font-size: 12.5px;
-	color: var(--text-secondary, #cbd5e1);
-
-	html[data-theme="light"] & {
-		color: #334155;
 	}
 
 	strong {
@@ -888,18 +867,17 @@
 	}
 }
 
-/* Linear Progress Bar Details */
-.progress-bar-details {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-	margin-bottom: 12px;
+.progress-percentage {
+	font-size: 11.5px;
+	font-weight: 700;
+	color: var(--accent, #00A69D);
 }
 
+/* Linear Progress Bar Details */
 .progress-track {
 	width: 100%;
-	height: 4px;
-	background: rgba(255, 255, 255, 0.06);
+	height: 6px;
+	background: rgba(255, 255, 255, 0.05);
 	border-radius: 100px;
 	overflow: hidden;
 
@@ -912,47 +890,114 @@
 	height: 100%;
 	background: linear-gradient(90deg, var(--accent, #00A69D), #38bdf8);
 	border-radius: inherit;
-	transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+	transition: width 0.3s ease;
 
 	.completed & {
 		background: #10b981;
 	}
 }
 
-.progress-text {
-	font-size: 10.5px;
-	font-weight: 600;
+.controls-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-top: 2px;
+}
+
+.controls-label {
+	font-size: 9.5px;
+	font-weight: 700;
 	color: var(--text-secondary, #94a3b8);
-	text-align: right;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
 
 	html[data-theme="light"] & {
 		color: #64748b;
 	}
 }
 
-.goal-footer {
+.stepper-controls {
 	display: flex;
 	align-items: center;
-	gap: 14px;
+	gap: 8px;
 }
 
-.category-tag {
-	display: inline-flex;
+.step-btn {
+	display: flex;
 	align-items: center;
-	gap: 5px;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	padding: 0;
+	background: rgba(255, 255, 255, 0.04);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 8px;
+	color: var(--text, #f8fafc);
+	cursor: pointer;
+	transition: all 0.2s ease;
+
+	html[data-theme="light"] & {
+		background: #ffffff;
+		border-color: rgba(15, 23, 42, 0.12);
+		color: #0f172a;
+	}
+
+	&:hover:not(:disabled) {
+		background: rgba(0, 166, 157, 0.12);
+		border-color: var(--accent, #00A69D);
+		color: var(--accent, #00A69D);
+	}
+
+	&:disabled {
+		opacity: 0.3;
+		cursor: not-allowed;
+	}
+}
+
+/* Card Footer */
+.goal-card-footer {
+	margin-top: 14px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	width: 100%;
+	z-index: 1;
+}
+
+.category-pill {
 	font-size: 10px;
 	font-weight: 700;
 	text-transform: uppercase;
-	letter-spacing: 0.03em;
+	letter-spacing: 0.04em;
+	padding: 4px 10px;
+	border-radius: 100px;
+
+	.nutrition & {
+		background: rgba(16, 185, 129, 0.06);
+		color: #10b981;
+	}
+	.activity & {
+		background: rgba(56, 189, 248, 0.06);
+		color: #38bdf8;
+	}
+	.sleep & {
+		background: rgba(139, 92, 246, 0.06);
+		color: #8b5cf6;
+	}
+	.mind & {
+		background: rgba(245, 158, 11, 0.06);
+		color: #f59e0b;
+	}
 }
 
-.reward {
+.reward-badge {
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
 	font-size: 10.5px;
 	font-weight: 600;
 	color: var(--text-secondary, #94a3b8);
+	margin-left: auto;
 
 	html[data-theme="light"] & {
 		color: #64748b;
@@ -965,18 +1010,18 @@
 
 /* NFT Soulbound Milestone Badge */
 .mint-btn {
-	padding: 8px;
-	border-radius: 12px;
+	padding: 6px;
+	border-radius: 10px;
 	background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.15));
 	border: 1px solid rgba(245, 158, 11, 0.3);
 	color: #f59e0b;
 	cursor: pointer;
 	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 	animation: pulseNFT 2s infinite;
-	z-index: 1;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	margin-left: 8px;
 	align-self: flex-start;
 	margin-top: 2px;
 

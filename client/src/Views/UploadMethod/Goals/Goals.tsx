@@ -670,24 +670,44 @@ const Goals = () => {
 													transition={{ duration: 0.25, delay: index * 0.04 }}
 													className={`${styles["goal-card"]} ${goal.completed ? styles["completed"] : ""} ${styles[goal.category.toLowerCase()]}`}
 												>
-													<div className={styles["card-mesh-bg"]} />
-													<div className={styles["card-outline-glow"]} />
+													<div className={styles["card-glow-border"]} />
 													
-													{/* Checkbox */}
-													<div
-														className={`${styles["checkbox"]} ${goal.completed ? styles["checked"] : ""}`}
-														onClick={() => handleToggle(goal.id)}
-													>
-														{goal.completed && <Check size={12} strokeWidth={3.5} />}
+													{/* Card Header */}
+													<div className={styles["goal-card-header"]}>
+														<div className={styles["goal-icon-badge"]}>
+															{getCategoryIcon(goal.category)}
+														</div>
+														<div className={styles["goal-header-text"]}>
+															<h3 className={styles["goal-title"]}>{goal.title}</h3>
+															<p className={styles["goal-desc"]}>{goal.description}</p>
+														</div>
+														<div
+															className={`${styles["checkbox"]} ${goal.completed ? styles["checked"] : ""}`}
+															onClick={() => handleToggle(goal.id)}
+														>
+															{goal.completed ? <Check size={10} strokeWidth={3.5} /> : <div className={styles["checkbox-dot"]} />}
+														</div>
 													</div>
 
-													<div className={styles["goal-info"]}>
-														<h3 className={styles["goal-title"]}>{goal.title}</h3>
-														<p className={styles["goal-desc"]}>{goal.description}</p>
-														
-														{/* Active Stepper Control */}
-														<div className={styles["stepper-container"]}>
-															<span className={styles["stepper-label"]}>Your Progress</span>
+													{/* Progress and Stepper controls */}
+													<div className={styles["goal-body"]}>
+														<div className={styles["progress-info"]}>
+															<span className={styles["progress-fraction"]}>
+																<strong>{goal.current_value}</strong> / {goal.target_value} {goal.unit}
+															</span>
+															<span className={styles["progress-percentage"]}>{goal.progress}% Completed</span>
+														</div>
+
+														<div className={styles["progress-track"]}>
+															<div 
+																className={styles["progress-fill"]} 
+																style={{ width: `${goal.progress}%` }}
+															/>
+														</div>
+
+														{/* Stepper controls */}
+														<div className={styles["controls-row"]}>
+															<span className={styles["controls-label"]}>Adjust Progress</span>
 															<div className={styles["stepper-controls"]}>
 																<button 
 																	type="button" 
@@ -697,9 +717,6 @@ const Goals = () => {
 																>
 																	<Minus size={11} />
 																</button>
-																<span className={styles["stepper-value"]}>
-																	<strong>{goal.current_value}</strong> / {goal.target_value} {goal.unit}
-																</span>
 																<button 
 																	type="button" 
 																	className={styles["step-btn"]} 
@@ -710,40 +727,29 @@ const Goals = () => {
 																</button>
 															</div>
 														</div>
-
-														{/* Progress details */}
-														<div className={styles["progress-bar-details"]}>
-															<div className={styles["progress-track"]}>
-																<div 
-																	className={styles["progress-fill"]} 
-																	style={{ width: `${goal.progress}%` }}
-																/>
-															</div>
-															<span className={styles["progress-text"]}>{goal.progress}% Completed</span>
-														</div>
-
-														<div className={styles["goal-footer"]}>
-															<span className={styles["category-tag"]}>
-																{getCategoryIcon(goal.category)}
-																<span>{goal.category}</span>
-															</span>
-															<span className={styles["reward"]}>
-																<Zap size={11} className={styles["reward-icon"]} />
-																<span>+10 Health Points</span>
-															</span>
-														</div>
 													</div>
 
-													{/* Enclave Vault Milestone Sealing */}
-													{goal.completed && goal.streak >= 7 && (
-														<button
-															className={styles["mint-btn"]}
-															onClick={() => handleSealMilestone(goal.id)}
-															title='Save safely on this device'
-														>
-															<Trophy size={14} />
-														</button>
-													)}
+													{/* Card Footer */}
+													<div className={styles["goal-card-footer"]}>
+														<span className={styles["category-pill"]}>
+															{goal.category}
+														</span>
+														<span className={styles["reward-badge"]}>
+															<Zap size={11} className={styles["reward-icon"]} />
+															<span>+10 Health Points</span>
+														</span>
+														
+														{/* Save milestone button */}
+														{goal.completed && goal.streak >= 7 && (
+															<button
+																className={styles["mint-btn"]}
+																onClick={() => handleSealMilestone(goal.id)}
+																title='Save safely on this device'
+															>
+																<Trophy size={12} />
+															</button>
+														)}
+													</div>
 												</motion.div>
 											);
 										})}
