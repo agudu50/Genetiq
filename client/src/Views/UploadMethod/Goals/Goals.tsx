@@ -35,9 +35,10 @@ const Goals = () => {
 		totalHealthScore,
 	} = useSelector((state: RootState) => state.goals);
 	const [activeCategory, setActiveCategory] = useState<string>("All");
+	const [activeTab, setActiveTab] = useState<"routine" | "discovery" | "insights">("routine");
 
-	// State for custom goal form
-	const [isCustomOpen, setIsCustomOpen] = useState(false);
+	// State for custom goal form (default open on discovery tab)
+	const [isCustomOpen, setIsCustomOpen] = useState(true);
 	const [customTitle, setCustomTitle] = useState("");
 	const [customCategory, setCustomCategory] = useState<HealthGoal["category"]>("Activity");
 	const [customTarget, setCustomTarget] = useState("");
@@ -147,7 +148,7 @@ const Goals = () => {
 			setCustomTitle("");
 			setCustomTarget("");
 			setCustomDesc("");
-			setIsCustomOpen(false);
+			setActiveTab("routine"); // Switch back to see the new goal in routine!
 		},
 		[dispatch, goals, customTitle, customCategory, customTarget, customUnit, customDesc]
 	);
@@ -211,6 +212,7 @@ const Goals = () => {
 			// Sync back to LocalVault
 			const updatedGoals = [...goals, newGoal];
 			await LocalVault.save("user_goals", updatedGoals);
+			setActiveTab("routine"); // Switch back to see the newly added goal!
 		},
 		[dispatch, goals]
 	);
@@ -287,347 +289,440 @@ const Goals = () => {
 					</div>
 				</div>
 
-				{/* AI Assistant Insight Suggestion */}
-				<div className={styles["ai-suggestions"]}>
-					<div className={styles["suggestion-card"]}>
-						<div className={styles["suggestion-sparkle-bg"]} />
-						<div className={styles["suggestion-icon-wrapper"]}>
-							<Sparkles size={16} className={styles["sparkles-icon"]} />
-						</div>
-						<div className={styles["suggestion-text"]}>
-							<p>
-								<strong className={styles["ai-tag"]}>AI Insight:</strong> Your Heart Rate Variability (HRV)
-								is 15% lower than baseline. Consider prioritizing the "Deep Breath" mindfulness goal
-								today to restore metabolic equilibrium.
-							</p>
-						</div>
-					</div>
-				</div>
-
-				{/* NEW CONTENT SECTION: Weekly Progress Analytics Dashboard Row */}
-				<div className={styles["analytics-row"]}>
-					<div className={styles["analytic-card"]}>
-						<div className={styles["analytic-icon-wrapper"]}>
-							<Target size={16} />
-						</div>
-						<div className={styles["analytic-info"]}>
-							<span className={styles["analytic-label"]}>Active Goals</span>
-							<span className={styles["analytic-value"]}>{totalGoalsCount} Habits</span>
-						</div>
-					</div>
-
-					<div className={styles["analytic-card"]}>
-						<div className={styles["analytic-icon-wrapper"]}>
-							<TrendingUp size={16} />
-						</div>
-						<div className={styles["analytic-info"]}>
-							<span className={styles["analytic-label"]}>Completed Today</span>
-							<span className={styles["analytic-value"]}>{completedGoalsCount} of {totalGoalsCount}</span>
-						</div>
-					</div>
-
-					<div className={styles["analytic-card"]}>
-						<div className={styles["analytic-icon-wrapper"]}>
-							<Zap size={16} />
-						</div>
-						<div className={styles["analytic-info"]}>
-							<span className={styles["analytic-label"]}>Earned Bio-Points</span>
-							<span className={styles["analytic-value"]}>{totalBioPoints} pts</span>
-						</div>
-					</div>
-
-					<div className={styles["analytic-card"]}>
-						<div className={styles["analytic-icon-wrapper"]}>
-							<Trophy size={16} />
-						</div>
-						<div className={styles["analytic-info"]}>
-							<span className={styles["analytic-label"]}>Enclave Milestones</span>
-							<span className={styles["analytic-value"]}>{sealedMilestonesCount} Sealed</span>
-						</div>
-					</div>
-				</div>
-
-				{/* Collapsible Custom Goal Builder Form */}
-				<div className={styles["custom-goal-builder"]}>
+				{/* Top-Level Navigation Tabs */}
+				<div className={styles["main-tabs-row"]}>
 					<button 
-						className={styles["toggle-custom-btn"]} 
-						onClick={() => setIsCustomOpen(!isCustomOpen)}
+						className={`${styles["main-tab-btn"]} ${activeTab === "routine" ? styles["active"] : ""}`}
+						onClick={() => setActiveTab("routine")}
 					>
-						<div className={styles["btn-label"]}>
-							<Settings size={15} />
-							<span>Configure Custom Bio-Habit</span>
-						</div>
-						{isCustomOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+						<Target size={15} />
+						<span>Daily Routine</span>
 					</button>
-
-					<AnimatePresence>
-						{isCustomOpen && (
-							<motion.form
-								onSubmit={handleCreateGoal}
-								initial={{ height: 0, opacity: 0 }}
-								animate={{ height: "auto", opacity: 1 }}
-								exit={{ height: 0, opacity: 0 }}
-								transition={{ duration: 0.3 }}
-								className={styles["custom-form"]}
-							>
-								<div className={styles["form-grid"]}>
-									<div className={styles["input-group"]}>
-										<label>Goal Name</label>
-										<input 
-											type="text" 
-											placeholder="e.g. Morning Hydration Boost" 
-											value={customTitle} 
-											onChange={(e) => setCustomTitle(e.target.value)} 
-											required 
-										/>
-									</div>
-
-									<div className={styles["input-row"]}>
-										<div className={styles["input-group"]}>
-											<label>Category</label>
-											<select 
-												value={customCategory} 
-												onChange={(e) => setCustomCategory(e.target.value as HealthGoal["category"])}
-											>
-												<option value="Nutrition">Nutrition</option>
-												<option value="Activity">Activity</option>
-												<option value="Sleep">Sleep</option>
-												<option value="Mind">Mind</option>
-											</select>
-										</div>
-
-										<div className={styles["input-group"]}>
-											<label>Daily Target</label>
-											<input 
-												type="number" 
-												placeholder="e.g. 3000" 
-												value={customTarget} 
-												onChange={(e) => setCustomTarget(e.target.value)} 
-												min="1" 
-												required 
-											/>
-										</div>
-
-										<div className={styles["input-group"]}>
-											<label>Unit</label>
-											<input 
-												type="text" 
-												placeholder="e.g. ml, min, steps" 
-												value={customUnit} 
-												onChange={(e) => setCustomUnit(e.target.value)} 
-												required 
-											/>
-										</div>
-									</div>
-
-									<div className={styles["input-group"]}>
-										<label>Description (Optional)</label>
-										<input 
-											type="text" 
-											placeholder="e.g. Drink 3000ml of raw structured spring water daily." 
-											value={customDesc} 
-											onChange={(e) => setCustomDesc(e.target.value)} 
-										/>
-									</div>
-
-									<button type="submit" className={styles["submit-btn"]}>
-										<Plus size={14} />
-										<span>Activate Goal</span>
-									</button>
-								</div>
-							</motion.form>
-						)}
-					</AnimatePresence>
+					<button 
+						className={`${styles["main-tab-btn"]} ${activeTab === "discovery" ? styles["active"] : ""}`}
+						onClick={() => setActiveTab("discovery")}
+					>
+						<Plus size={15} />
+						<span>Goal Discovery</span>
+					</button>
+					<button 
+						className={`${styles["main-tab-btn"]} ${activeTab === "insights" ? styles["active"] : ""}`}
+						onClick={() => setActiveTab("insights")}
+					>
+						<Sparkles size={15} />
+						<span>Insights & Science</span>
+					</button>
 				</div>
 
-				{/* Navigation/Category Filter Row */}
-				<div className={styles["filter-row"]}>
-					{categories.map((cat) => (
-						<button
-							key={cat.name}
-							className={`${styles["filter-btn"]} ${activeCategory === cat.name ? styles["active"] : ""}`}
-							onClick={() => setActiveCategory(cat.name)}
+				{/* Tab Content Panel */}
+				<AnimatePresence mode='wait'>
+					{activeTab === "routine" && (
+						<motion.div
+							key="routine-tab"
+							initial={{ opacity: 0, y: 10 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: -10 }}
+							transition={{ duration: 0.2 }}
+							className={styles["goals-content"]}
+							style={{ gap: "24px" }}
 						>
-							<span className={styles["filter-icon"]}>{cat.icon}</span>
-							<span>{cat.name}</span>
-						</button>
-					))}
-				</div>
-
-				{/* Active Goals Grid */}
-				<div className={styles["goals-grid"]}>
-					<AnimatePresence mode='popLayout'>
-						{filteredGoals.map((goal, index) => {
-							const targetVal = parseFloat(goal.target_value) || 1;
-							
-							return (
-								<motion.div
-									key={goal.id}
-									layout
-									initial={{ opacity: 0, y: 12 }}
-									animate={{ opacity: 1, y: 0 }}
-									exit={{ opacity: 0, scale: 0.95 }}
-									transition={{ duration: 0.25, delay: index * 0.04 }}
-									className={`${styles["goal-card"]} ${goal.completed ? styles["completed"] : ""} ${styles[goal.category.toLowerCase()]}`}
-								>
-									<div className={styles["card-mesh-bg"]} />
-									<div className={styles["card-outline-glow"]} />
-									
-									{/* Checkbox */}
-									<div
-										className={`${styles["checkbox"]} ${goal.completed ? styles["checked"] : ""}`}
-										onClick={() => handleToggle(goal.id)}
-									>
-										{goal.completed && <Check size={12} strokeWidth={3.5} />}
+							{/* Weekly Progress Analytics Dashboard Row */}
+							<div className={styles["analytics-row"]}>
+								<div className={styles["analytic-card"]}>
+									<div className={styles["analytic-icon-wrapper"]}>
+										<Target size={16} />
 									</div>
-
-									<div className={styles["goal-info"]}>
-										<h3 className={styles["goal-title"]}>{goal.title}</h3>
-										<p className={styles["goal-desc"]}>{goal.description}</p>
-										
-										{/* Active Stepper Control */}
-										<div className={styles["stepper-container"]}>
-											<span className={styles["stepper-label"]}>Logged Progress</span>
-											<div className={styles["stepper-controls"]}>
-												<button 
-													type="button" 
-													className={styles["step-btn"]} 
-													onClick={() => handleProgressChange(goal.id, -(targetVal * 0.1))}
-													disabled={goal.completed}
-												>
-													<Minus size={11} />
-												</button>
-												<span className={styles["stepper-value"]}>
-													<strong>{goal.current_value}</strong> / {goal.target_value} {goal.unit}
-												</span>
-												<button 
-													type="button" 
-													className={styles["step-btn"]} 
-													onClick={() => handleProgressChange(goal.id, targetVal * 0.1)}
-													disabled={goal.completed}
-												>
-													<Plus size={11} />
-												</button>
-											</div>
-										</div>
-
-										{/* Progress details */}
-										<div className={styles["progress-bar-details"]}>
-											<div className={styles["progress-track"]}>
-												<div 
-													className={styles["progress-fill"]} 
-													style={{ width: `${goal.progress}%` }}
-												/>
-											</div>
-											<span className={styles["progress-text"]}>{goal.progress}% Completed</span>
-										</div>
-
-										<div className={styles["goal-footer"]}>
-											<span className={styles["category-tag"]}>
-												{getCategoryIcon(goal.category)}
-												<span>{goal.category}</span>
-											</span>
-											<span className={styles["reward"]}>
-												<Zap size={11} className={styles["reward-icon"]} />
-												<span>+10 Bio-Points</span>
-											</span>
-										</div>
+									<div className={styles["analytic-info"]}>
+										<span className={styles["analytic-label"]}>Active Goals</span>
+										<span className={styles["analytic-value"]}>{totalGoalsCount} Habits</span>
 									</div>
+								</div>
 
-									{/* Enclave Vault Milestone Sealing */}
-									{goal.completed && goal.streak >= 7 && (
+								<div className={styles["analytic-card"]}>
+									<div className={styles["analytic-icon-wrapper"]}>
+										<TrendingUp size={16} />
+									</div>
+									<div className={styles["analytic-info"]}>
+										<span className={styles["analytic-label"]}>Completed Today</span>
+										<span className={styles["analytic-value"]}>{completedGoalsCount} of {totalGoalsCount}</span>
+									</div>
+								</div>
+
+								<div className={styles["analytic-card"]}>
+									<div className={styles["analytic-icon-wrapper"]}>
+										<Zap size={16} />
+									</div>
+									<div className={styles["analytic-info"]}>
+										<span className={styles["analytic-label"]}>Earned Bio-Points</span>
+										<span className={styles["analytic-value"]}>{totalBioPoints} pts</span>
+									</div>
+								</div>
+
+								<div className={styles["analytic-card"]}>
+									<div className={styles["analytic-icon-wrapper"]}>
+										<Trophy size={16} />
+									</div>
+									<div className={styles["analytic-info"]}>
+										<span className={styles["analytic-label"]}>Enclave Milestones</span>
+										<span className={styles["analytic-value"]}>{sealedMilestonesCount} Sealed</span>
+									</div>
+								</div>
+							</div>
+
+							{/* Navigation/Category Filter Row */}
+							{goals.length > 0 && (
+								<div className={styles["filter-row"]}>
+									{categories.map((cat) => (
 										<button
-											className={styles["mint-btn"]}
-											onClick={() => handleSealMilestone(goal.id)}
-											title='Seal Milestone in Secure Vault'
+											key={cat.name}
+											className={`${styles["filter-btn"]} ${activeCategory === cat.name ? styles["active"] : ""}`}
+											onClick={() => setActiveCategory(cat.name)}
 										>
-											<Trophy size={14} />
+											<span className={styles["filter-icon"]}>{cat.icon}</span>
+											<span>{cat.name}</span>
 										</button>
-									)}
-								</motion.div>
-							);
-						})}
-					</AnimatePresence>
-				</div>
+									))}
+								</div>
+							)}
 
-				{/* Suggested AI Bio-Goals Panel */}
-				{suggestedGoals.length > 0 && (
-					<div className={styles["suggested-panel"]}>
-						<div className={styles["suggested-header"]}>
-							<Heart size={16} className={styles["heart-icon"]} />
-							<h3>Suggested DNA Bio-Goals</h3>
-						</div>
-						<div className={styles["suggested-grid"]}>
-							{suggestedGoals.map((s) => (
-								<div 
-									key={s.title} 
-									className={`${styles["suggested-card"]} ${s.category.toLowerCase()}`}
-								>
-									<div className={styles["suggested-spark"]} />
-									<div className={styles["suggested-info"]}>
-										<div className={styles["suggested-category"]}>
-											{getCategoryIcon(s.category)}
-											<span>{s.category} • Precision DNA Suggestion</span>
-										</div>
-										<h4 className={styles["suggested-title"]}>{s.title}</h4>
-										<p className={styles["suggested-desc"]}>{s.description}</p>
-									</div>
+							{/* Active Goals Grid or Empty State */}
+							{goals.length === 0 ? (
+								<div className={styles["empty-state"]}>
+									<Target size={36} style={{ color: "var(--accent)" }} />
+									<h3>No Habits Active</h3>
+									<p>You haven't activated any habits yet. Choose from our recommended bio-goals or build your own custom routine.</p>
 									<button 
-										className={styles["add-suggested-btn"]}
-										onClick={() => handleAddSuggestedGoal(s)}
-										title="Add to Action Plan"
+										className={styles["empty-state-btn"]}
+										onClick={() => setActiveTab("discovery")}
 									>
 										<Plus size={14} />
-										<span>Add Goal</span>
+										<span>Discover Bio-Goals</span>
 									</button>
 								</div>
-							))}
-						</div>
-					</div>
-				)}
+							) : filteredGoals.length === 0 ? (
+								<div className={styles["empty-state"]}>
+									<Target size={36} style={{ color: "var(--text-secondary)" }} />
+									<h3>No Goals Found</h3>
+									<p>No habits are currently active in the "{activeCategory}" category.</p>
+								</div>
+							) : (
+								<div className={styles["goals-grid"]}>
+									<AnimatePresence mode='popLayout'>
+										{filteredGoals.map((goal, index) => {
+											const targetVal = parseFloat(goal.target_value) || 1;
+											
+											return (
+												<motion.div
+													key={goal.id}
+													layout
+													initial={{ opacity: 0, y: 12 }}
+													animate={{ opacity: 1, y: 0 }}
+													exit={{ opacity: 0, scale: 0.95 }}
+													transition={{ duration: 0.25, delay: index * 0.04 }}
+													className={`${styles["goal-card"]} ${goal.completed ? styles["completed"] : ""} ${styles[goal.category.toLowerCase()]}`}
+												>
+													<div className={styles["card-mesh-bg"]} />
+													<div className={styles["card-outline-glow"]} />
+													
+													{/* Checkbox */}
+													<div
+														className={`${styles["checkbox"]} ${goal.completed ? styles["checked"] : ""}`}
+														onClick={() => handleToggle(goal.id)}
+													>
+														{goal.completed && <Check size={12} strokeWidth={3.5} />}
+													</div>
 
-				{/* Diagnostic Health Grade Widget */}
-				<div className={styles["health-score-widget"]}>
-					<div className={styles["score-mesh"]} />
-					<div className={styles["score-glow"]} />
-					<div className={styles["score-info"]}>
-						<div className={styles["score-header-row"]}>
-							<Award size={18} className={styles["award-icon"]} />
-							<h3>Current Health Score</h3>
-						</div>
-						<p>Dynamic assessment calculated from your last 24h biometrics, activity, and plan compliance.</p>
-						
-						{/* Progress bar visual indicator */}
-						<div className={styles["progress-bar-container"]}>
-							<div 
-								className={styles["progress-bar-fill"]} 
-								style={{ width: `${totalHealthScore}%` }}
-							/>
-						</div>
-					</div>
-					<div className={styles["score-value"]}>
-						<span className={styles["number"]}>{totalHealthScore}</span>
-						<span className={styles["unit"]}>%</span>
-					</div>
-				</div>
+													<div className={styles["goal-info"]}>
+														<h3 className={styles["goal-title"]}>{goal.title}</h3>
+														<p className={styles["goal-desc"]}>{goal.description}</p>
+														
+														{/* Active Stepper Control */}
+														<div className={styles["stepper-container"]}>
+															<span className={styles["stepper-label"]}>Logged Progress</span>
+															<div className={styles["stepper-controls"]}>
+																<button 
+																	type="button" 
+																	className={styles["step-btn"]} 
+																	onClick={() => handleProgressChange(goal.id, -(targetVal * 0.1))}
+																	disabled={goal.completed}
+																>
+																	<Minus size={11} />
+																</button>
+																<span className={styles["stepper-value"]}>
+																	<strong>{goal.current_value}</strong> / {goal.target_value} {goal.unit}
+																</span>
+																<button 
+																	type="button" 
+																	className={styles["step-btn"]} 
+																	onClick={() => handleProgressChange(goal.id, targetVal * 0.1)}
+																	disabled={goal.completed}
+																>
+																	<Plus size={11} />
+																</button>
+															</div>
+														</div>
 
-				{/* NEW CONTENT SECTION: Science-backed Habits FAQ/Guide */}
-				<div className={styles["faq-panel"]}>
-					<div className={styles["faq-header"]}>
-						<Sparkles size={16} className={styles["faq-icon"]} />
-						<h3>Why Gamified Genetic Habits Work</h3>
-					</div>
-					<div className={styles["faq-content"]}>
-						<div className={styles["faq-item"]}>
-							<h4>🧬 Gene-Environment Synergy (Epigenetics)</h4>
-							<p>Your genome is a dynamic software program, not a static script. Daily habits, optimized nutrition, circadian light alignment, and stress management serve as real-time molecular switches. By completing your targets, you actively modulate gene expression, promoting cellular regeneration and long-term vitality.</p>
-						</div>
-						<div className={styles["faq-item"]}>
-							<h4>🔒 Secure Enclave & Biometric Vault Seals</h4>
-							<p>Achieving a 7-day consistency streak validates your biological dedication. Genetiq cryptographically seals these milestones inside your local hardware secure enclave using secure SHA-256 hashes—creating a tamper-proof, fully private pedigree of your wellness journey without sharing your clinical data.</p>
-						</div>
-					</div>
-				</div>
+														{/* Progress details */}
+														<div className={styles["progress-bar-details"]}>
+															<div className={styles["progress-track"]}>
+																<div 
+																	className={styles["progress-fill"]} 
+																	style={{ width: `${goal.progress}%` }}
+																/>
+															</div>
+															<span className={styles["progress-text"]}>{goal.progress}% Completed</span>
+														</div>
+
+														<div className={styles["goal-footer"]}>
+															<span className={styles["category-tag"]}>
+																{getCategoryIcon(goal.category)}
+																<span>{goal.category}</span>
+															</span>
+															<span className={styles["reward"]}>
+																<Zap size={11} className={styles["reward-icon"]} />
+																<span>+10 Bio-Points</span>
+															</span>
+														</div>
+													</div>
+
+													{/* Enclave Vault Milestone Sealing */}
+													{goal.completed && goal.streak >= 7 && (
+														<button
+															className={styles["mint-btn"]}
+															onClick={() => handleSealMilestone(goal.id)}
+															title='Seal Milestone in Secure Vault'
+														>
+															<Trophy size={14} />
+														</button>
+													)}
+												</motion.div>
+											);
+										})}
+									</AnimatePresence>
+								</div>
+							)}
+						</motion.div>
+					)}
+
+					{activeTab === "discovery" && (
+						<motion.div
+							key="discovery-tab"
+							initial={{ opacity: 0, y: 10 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: -10 }}
+							transition={{ duration: 0.2 }}
+							className={styles["goals-content"]}
+							style={{ gap: "32px" }}
+						>
+							{/* Collapsible Custom Goal Builder Form */}
+							<div className={styles["custom-goal-builder"]}>
+								<button 
+									className={styles["toggle-custom-btn"]} 
+									onClick={() => setIsCustomOpen(!isCustomOpen)}
+								>
+									<div className={styles["btn-label"]}>
+										<Settings size={15} />
+										<span>Configure Custom Bio-Habit</span>
+									</div>
+									{isCustomOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+								</button>
+
+								<AnimatePresence initial={false}>
+									{isCustomOpen && (
+										<motion.form
+											onSubmit={handleCreateGoal}
+											initial={{ height: 0, opacity: 0 }}
+											animate={{ height: "auto", opacity: 1 }}
+											exit={{ height: 0, opacity: 0 }}
+											transition={{ duration: 0.3 }}
+											className={styles["custom-form"]}
+										>
+											<div className={styles["form-grid"]}>
+												<div className={styles["input-group"]}>
+													<label>Goal Name</label>
+													<input 
+														type="text" 
+														placeholder="e.g. Morning Hydration Boost" 
+														value={customTitle} 
+														onChange={(e) => setCustomTitle(e.target.value)} 
+														required 
+													/>
+												</div>
+
+												<div className={styles["input-row"]}>
+													<div className={styles["input-group"]}>
+														<label>Category</label>
+														<select 
+															value={customCategory} 
+															onChange={(e) => setCustomCategory(e.target.value as HealthGoal["category"])}
+														>
+															<option value="Nutrition">Nutrition</option>
+															<option value="Activity">Activity</option>
+															<option value="Sleep">Sleep</option>
+															<option value="Mind">Mind</option>
+														</select>
+													</div>
+
+													<div className={styles["input-group"]}>
+														<label>Daily Target</label>
+														<input 
+															type="number" 
+															placeholder="e.g. 3000" 
+															value={customTarget} 
+															onChange={(e) => setCustomTarget(e.target.value)} 
+															min="1" 
+															required 
+														/>
+													</div>
+
+													<div className={styles["input-group"]}>
+														<label>Unit</label>
+														<input 
+															type="text" 
+															placeholder="e.g. ml, min, steps" 
+															value={customUnit} 
+															onChange={(e) => setCustomUnit(e.target.value)} 
+															required 
+														/>
+													</div>
+												</div>
+
+												<div className={styles["input-group"]}>
+													<label>Description (Optional)</label>
+													<input 
+														type="text" 
+														placeholder="e.g. Drink 3000ml of raw structured spring water daily." 
+														value={customDesc} 
+														onChange={(e) => setCustomDesc(e.target.value)} 
+													/>
+												</div>
+
+												<button type="submit" className={styles["submit-btn"]}>
+													<Plus size={14} />
+													<span>Activate Goal</span>
+												</button>
+											</div>
+										</motion.form>
+									)}
+								</AnimatePresence>
+							</div>
+
+							{/* Suggested AI Bio-Goals Panel */}
+							{suggestedGoals.length > 0 ? (
+								<div className={styles["suggested-panel"]} style={{ marginTop: 0 }}>
+									<div className={styles["suggested-header"]}>
+										<Heart size={16} className={styles["heart-icon"]} />
+										<h3>Suggested DNA Bio-Goals</h3>
+									</div>
+									<div className={styles["suggested-grid"]}>
+										{suggestedGoals.map((s) => (
+											<div 
+												key={s.title} 
+												className={`${styles["suggested-card"]} ${s.category.toLowerCase()}`}
+											>
+												<div className={styles["suggested-spark"]} />
+												<div className={styles["suggested-info"]}>
+													<div className={styles["suggested-category"]}>
+														{getCategoryIcon(s.category)}
+														<span>{s.category} • Precision DNA Suggestion</span>
+													</div>
+													<h4 className={styles["suggested-title"]}>{s.title}</h4>
+													<p className={styles["suggested-desc"]}>{s.description}</p>
+												</div>
+												<button 
+													className={styles["add-suggested-btn"]}
+													onClick={() => handleAddSuggestedGoal(s)}
+													title="Add to Action Plan"
+												>
+													<Plus size={14} />
+													<span>Add Goal</span>
+												</button>
+											</div>
+										))}
+									</div>
+								</div>
+							) : (
+								<div className={styles["empty-state"]}>
+									<Check size={36} style={{ color: "#10b981" }} />
+									<h3>All Recommendations Added</h3>
+									<p>You have activated all recommended DNA bio-goals. Keep checking back daily for new suggestions based on your biometric analytics!</p>
+								</div>
+							)}
+						</motion.div>
+					)}
+
+					{activeTab === "insights" && (
+						<motion.div
+							key="insights-tab"
+							initial={{ opacity: 0, y: 10 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: -10 }}
+							transition={{ duration: 0.2 }}
+							className={styles["goals-content"]}
+							style={{ gap: "28px" }}
+						>
+							{/* AI Assistant Insight Suggestion */}
+							<div className={styles["ai-suggestions"]}>
+								<div className={styles["suggestion-card"]}>
+									<div className={styles["suggestion-sparkle-bg"]} />
+									<div className={styles["suggestion-icon-wrapper"]}>
+										<Sparkles size={16} className={styles["sparkles-icon"]} />
+									</div>
+									<div className={styles["suggestion-text"]}>
+										<p>
+											<strong className={styles["ai-tag"]}>AI Insight:</strong> Your Heart Rate Variability (HRV)
+											is 15% lower than baseline. Consider prioritizing the "Deep Breath" mindfulness goal
+											today to restore metabolic equilibrium.
+										</p>
+									</div>
+								</div>
+							</div>
+
+							{/* Diagnostic Health Grade Widget */}
+							<div className={styles["health-score-widget"]}>
+								<div className={styles["score-mesh"]} />
+								<div className={styles["score-glow"]} />
+								<div className={styles["score-info"]}>
+									<div className={styles["score-header-row"]}>
+										<Award size={18} className={styles["award-icon"]} />
+										<h3>Current Health Score</h3>
+									</div>
+									<p>Dynamic assessment calculated from your last 24h biometrics, activity, and plan compliance.</p>
+									
+									{/* Progress bar visual indicator */}
+									<div className={styles["progress-bar-container"]}>
+										<div 
+											className={styles["progress-bar-fill"]} 
+											style={{ width: `${totalHealthScore}%` }}
+										/>
+									</div>
+								</div>
+								<div className={styles["score-value"]}>
+									<span className={styles["number"]}>{totalHealthScore}</span>
+									<span className={styles["unit"]}>%</span>
+								</div>
+							</div>
+
+							{/* Science-backed Habits FAQ/Guide */}
+							<div className={styles["faq-panel"]}>
+								<div className={styles["faq-header"]}>
+									<Sparkles size={16} className={styles["faq-icon"]} />
+									<h3>Why Gamified Genetic Habits Work</h3>
+								</div>
+								<div className={styles["faq-content"]}>
+									<div className={styles["faq-item"]}>
+										<h4>🧬 Gene-Environment Synergy (Epigenetics)</h4>
+										<p>Your genome is a dynamic software program, not a static script. Daily habits, optimized nutrition, circadian light alignment, and stress management serve as real-time molecular switches. By completing your targets, you actively modulate gene expression, promoting cellular regeneration and long-term vitality.</p>
+									</div>
+									<div className={styles["faq-item"]}>
+										<h4>🔒 Secure Enclave & Biometric Vault Seals</h4>
+										<p>Achieving a 7-day consistency streak validates your biological dedication. Genetiq cryptographically seals these milestones inside your local hardware secure enclave using secure SHA-256 hashes—creating a tamper-proof, fully private pedigree of your wellness journey without sharing your clinical data.</p>
+									</div>
+								</div>
+							</div>
+						</motion.div>
+					)}
+				</AnimatePresence>
 
 				{/* Vault Sync Status Footer */}
 				<div className={styles["offline-notice"]}>
