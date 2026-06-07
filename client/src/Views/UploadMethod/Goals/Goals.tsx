@@ -27,6 +27,7 @@ import {
 	Scale,
 	Utensils,
 	AlertCircle,
+	Sun,
 } from "lucide-react";
 import styles from "./Goals.module.scss";
 
@@ -37,9 +38,9 @@ const DIET_TEMPLATES = {
 			macro: { protein: 30, fat: 55, carbs: 15 },
 			desc: "Helps you burn fat for energy using healthy oils and fresh foods. This keeps your heart healthy and protects your muscles.",
 			habits: [
-				{ title: "Eat less sugar and starch", description: "Eat less bread, rice, and sweets to help your body burn fat.", target_value: "50", unit: "g" },
-				{ title: "Use healthy olive oil", description: "Have 2 spoons of olive oil every day.", target_value: "2", unit: "tbsp" },
-				{ title: "Eat green vegetables", description: "Eat at least 3 cups of green veggies like spinach or salad.", target_value: "3", unit: "cups" }
+				{ title: "Eat less sugar and starch", description: "Eat less bread, rice, and sweets to help your body burn fat.", target_value: "50", unit: "g", session: "Morning" },
+				{ title: "Use healthy olive oil", description: "Have 2 spoons of olive oil every day.", target_value: "2", unit: "tbsp", session: "Afternoon" },
+				{ title: "Eat green vegetables", description: "Eat at least 3 cups of green veggies like spinach or salad.", target_value: "3", unit: "cups", session: "Evening" }
 			]
 		},
 		respiratory: {
@@ -47,9 +48,9 @@ const DIET_TEMPLATES = {
 			macro: { protein: 25, fat: 60, carbs: 15 },
 			desc: "Full of healthy fats and clean foods that help lower swelling in your lungs. This helps you breathe easier.",
 			habits: [
-				{ title: "Eat healthy fish and nuts", description: "Eat foods like salmon, walnuts, or seeds that fight swelling.", target_value: "3", unit: "servings" },
-				{ title: "Drink green tea", description: "Drink 2 cups of green tea to protect your body's cells.", target_value: "2", unit: "cups" },
-				{ title: "Eat less sugar", description: "Keep sugar under 20 grams a day to prevent swelling.", target_value: "20", unit: "g" }
+				{ title: "Eat healthy fish and nuts", description: "Eat foods like salmon, walnuts, or seeds that fight swelling.", target_value: "3", unit: "servings", session: "Afternoon" },
+				{ title: "Drink green tea", description: "Drink 2 cups of green tea to protect your body's cells.", target_value: "2", unit: "cups", session: "Morning" },
+				{ title: "Eat less sugar", description: "Keep sugar under 20 grams a day to prevent swelling.", target_value: "20", unit: "g", session: "Evening" }
 			]
 		},
 		cardio: {
@@ -57,9 +58,9 @@ const DIET_TEMPLATES = {
 			macro: { protein: 30, fat: 45, carbs: 25 },
 			desc: "A low-salt food plan that is great for your blood flow, blood pressure, and heart health.",
 			habits: [
-				{ title: "Eat red beets and greens", description: "Eat foods like beets and salad greens to help your blood flow better.", target_value: "2", unit: "servings" },
-				{ title: "Eat less salt", description: "Keep total salt intake below 1500mg daily.", target_value: "1500", unit: "mg" },
-				{ title: "Take healthy fish oil", description: "Get enough healthy oils from fish or soft gels.", target_value: "2000", unit: "mg" }
+				{ title: "Eat red beets and greens", description: "Eat foods like beets and salad greens to help your blood flow better.", target_value: "2", unit: "servings", session: "Afternoon" },
+				{ title: "Eat less salt", description: "Keep total salt intake below 1500mg daily.", target_value: "1500", unit: "mg", session: "Evening" },
+				{ title: "Take healthy fish oil", description: "Get enough healthy oils from fish or soft gels.", target_value: "2000", unit: "mg", session: "Morning" }
 			]
 		}
 	},
@@ -69,9 +70,9 @@ const DIET_TEMPLATES = {
 			macro: { protein: 30, fat: 35, carbs: 35 },
 			desc: "A simple food plan made of real, unprocessed foods. It keeps your energy steady and your body in balance.",
 			habits: [
-				{ title: "Drink enough water", description: "Drink water through the day to stay hydrated.", target_value: "3000", unit: "ml" },
-				{ title: "Eat high fiber foods", description: "Eat 35 grams of fiber from vegetables and oats to help your stomach.", target_value: "35", unit: "g" },
-				{ title: "Choose real foods", description: "Make sure almost all your food comes from real, natural ingredients.", target_value: "90", unit: "%" }
+				{ title: "Drink enough water", description: "Drink water through the day to stay hydrated.", target_value: "3000", unit: "ml", session: "Morning" },
+				{ title: "Eat high fiber foods", description: "Eat 35 grams of fiber from vegetables and oats to help your stomach.", target_value: "35", unit: "g", session: "Afternoon" },
+				{ title: "Choose real foods", description: "Make sure almost all your food comes from real, natural ingredients.", target_value: "90", unit: "%", session: "Evening" }
 			]
 		},
 		respiratory: {
@@ -79,9 +80,9 @@ const DIET_TEMPLATES = {
 			macro: { protein: 30, fat: 35, carbs: 35 },
 			desc: "Protects your throat and lungs using clean, natural foods that support your immune system.",
 			habits: [
-				{ title: "Eat berries and nuts", description: "Eat oranges, berries, and almonds to protect your cells.", target_value: "4", unit: "servings" },
-				{ title: "Drink warm broth", description: "Have a cup of bone broth or collagen to keep your body walls strong.", target_value: "1", unit: "cup" },
-				{ title: "Drink water for lungs", description: "Drink plenty of water to keep your airways clear and clean.", target_value: "3500", unit: "ml" }
+				{ title: "Eat berries and nuts", description: "Eat oranges, berries, and almonds to protect your cells.", target_value: "4", unit: "servings", session: "Afternoon" },
+				{ title: "Drink warm broth", description: "Have a cup of bone broth or collagen to keep your body walls strong.", target_value: "1", unit: "cup", session: "Evening" },
+				{ title: "Drink water for lungs", description: "Drink plenty of water to keep your airways clear and clean.", target_value: "3500", unit: "ml", session: "Morning" }
 			]
 		},
 		cardio: {
@@ -89,9 +90,9 @@ const DIET_TEMPLATES = {
 			macro: { protein: 25, fat: 40, carbs: 35 },
 			desc: "Helps your heart heal and work well. Uses clean proteins and fats that are good for your blood vessels.",
 			habits: [
-				{ title: "Eat fresh garlic", description: "Eat a clove of fresh garlic to help keep your cholesterol healthy.", target_value: "1", unit: "clove" },
-				{ title: "Eat bananas and avocados", description: "Eat foods like bananas, spinach, and avocados to support your heart.", target_value: "3", unit: "servings" },
-				{ title: "Eat heart-friendly foods", description: "Eat foods like spinach, meat, or sesame seeds for cellular energy.", target_value: "2", unit: "servings" }
+				{ title: "Eat fresh garlic", description: "Eat a clove of fresh garlic to help keep your cholesterol healthy.", target_value: "1", unit: "clove", session: "Morning" },
+				{ title: "Eat bananas and avocados", description: "Eat foods like bananas, spinach, and avocados to support your heart.", target_value: "3", unit: "servings", session: "Afternoon" },
+				{ title: "Eat heart-friendly foods", description: "Eat foods like spinach, meat, or sesame seeds for cellular energy.", target_value: "2", unit: "servings", session: "Evening" }
 			]
 		}
 	},
@@ -101,9 +102,9 @@ const DIET_TEMPLATES = {
 			macro: { protein: 35, fat: 25, carbs: 40 },
 			desc: "A high-protein plan to help you build clean muscle and store energy without gaining bad fat.",
 			habits: [
-				{ title: "Eat enough protein", description: "Eat 140 grams of clean protein from meat, eggs, or plants daily.", target_value: "140", unit: "g" },
-				{ title: "Eat extra clean calories", description: "Eat about 300 extra calories of healthy food each day.", target_value: "300", unit: "kcal" },
-				{ title: "Eat carbs before exercise", description: "Eat foods like oats or rice 90 minutes before you work out.", target_value: "75", unit: "g" }
+				{ title: "Eat enough protein", description: "Eat 140 grams of clean protein from meat, eggs, or plants daily.", target_value: "140", unit: "g", session: "Afternoon" },
+				{ title: "Eat extra clean calories", description: "Eat about 300 extra calories of healthy food each day.", target_value: "300", unit: "kcal", session: "Evening" },
+				{ title: "Eat carbs before exercise", description: "Eat foods like oats or rice 90 minutes before you work out.", target_value: "75", unit: "g", session: "Morning" }
 			]
 		},
 		respiratory: {
@@ -111,9 +112,9 @@ const DIET_TEMPLATES = {
 			macro: { protein: 35, fat: 30, carbs: 35 },
 			desc: "Helps you gain clean weight and build muscle while giving your cells and lungs the energy to recover.",
 			habits: [
-				{ title: "Eat lean protein", description: "Eat 150 grams of chicken, fish, or eggs to build muscle.", target_value: "150", unit: "g" },
-				{ title: "Eat vitamin rich foods", description: "Eat foods with vitamins, iron, and magnesium to boost your cell energy.", target_value: "3", unit: "servings" },
-				{ title: "Take healthy fish oils", description: "Take healthy oils to help your body and lungs heal after heavy exercise.", target_value: "2000", unit: "mg" }
+				{ title: "Eat lean protein", description: "Eat 150 grams of chicken, fish, or eggs to build muscle.", target_value: "150", unit: "g", session: "Afternoon" },
+				{ title: "Eat vitamin rich foods", description: "Eat foods with vitamins, iron, and magnesium to boost your cell energy.", target_value: "3", unit: "servings", session: "Morning" },
+				{ title: "Take healthy fish oils", description: "Take healthy oils to help your body and lungs heal after heavy exercise.", target_value: "2000", unit: "mg", session: "Evening" }
 			]
 		},
 		cardio: {
@@ -121,12 +122,19 @@ const DIET_TEMPLATES = {
 			macro: { protein: 35, fat: 30, carbs: 35 },
 			desc: "Helps you build strong muscles while keeping your heart and blood vessels safe from heavy lifting strain.",
 			habits: [
-				{ title: "Eat clean protein", description: "Eat fish, egg whites, and clean protein powders.", target_value: "160", unit: "g" },
-				{ title: "Eat seeds and poultry", description: "Eat seeds and chicken to help your blood vessels relax and open up.", target_value: "2", unit: "servings" },
-				{ title: "Drink water while lifting", description: "Drink plenty of water while you exercise to keep your blood flowing smoothly.", target_value: "4000", unit: "ml" }
+				{ title: "Eat clean protein", description: "Eat fish, egg whites, and clean protein powders.", target_value: "160", unit: "g", session: "Afternoon" },
+				{ title: "Eat seeds and poultry", description: "Eat seeds and chicken to help your blood vessels relax and open up.", target_value: "2", unit: "servings", session: "Evening" },
+				{ title: "Drink water while lifting", description: "Drink plenty of water while you exercise to keep your blood flowing smoothly.", target_value: "4000", unit: "ml", session: "Morning" }
 			]
 		}
 	}
+};
+
+const getRealTimeSession = () => {
+	const hour = new Date().getHours();
+	if (hour >= 5 && hour < 12) return "Morning";
+	if (hour >= 12 && hour < 17) return "Afternoon";
+	return "Evening";
 };
 
 const Goals = () => {
@@ -149,6 +157,7 @@ const Goals = () => {
 	const [isCustomOpen, setIsCustomOpen] = useState(true);
 	const [customTitle, setCustomTitle] = useState("");
 	const [customCategory, setCustomCategory] = useState<HealthGoal["category"]>("Activity");
+	const [customSession, setCustomSession] = useState<"Morning" | "Afternoon" | "Evening">(getRealTimeSession);
 	const [customTarget, setCustomTarget] = useState("");
 	const [customUnit, setCustomUnit] = useState("min");
 	const [customDesc, setCustomDesc] = useState("");
@@ -193,6 +202,7 @@ const Goals = () => {
 					trend: "stable",
 					streak: 0,
 					completed: false,
+					session: th.session as "Morning" | "Afternoon" | "Evening",
 				};
 				dispatch(addGoal(newGoal));
 				updatedGoals.push(newGoal);
@@ -217,12 +227,55 @@ const Goals = () => {
 		loadSavedGoals();
 	}, [dispatch]);
 
+	const getGoalSession = useCallback((goal: HealthGoal): "Morning" | "Afternoon" | "Evening" => {
+		if (goal.session) return goal.session;
+
+		const title = goal.title.toLowerCase();
+		const desc = goal.description.toLowerCase();
+
+		if (
+			title.includes("morning") ||
+			title.includes("sun") ||
+			title.includes("wake") ||
+			title.includes("am") ||
+			title.includes("hydration") ||
+			title.includes("water") ||
+			desc.includes("morning") ||
+			desc.includes("wake") ||
+			desc.includes("am")
+		) {
+			return "Morning";
+		}
+
+		if (
+			title.includes("sleep") ||
+			title.includes("night") ||
+			title.includes("evening") ||
+			title.includes("pm") ||
+			title.includes("breath") ||
+			title.includes("meditat") ||
+			title.includes("calm") ||
+			desc.includes("sleep") ||
+			desc.includes("night") ||
+			desc.includes("pm") ||
+			desc.includes("calm")
+		) {
+			return "Evening";
+		}
+
+		return "Afternoon";
+	}, []);
+
+	// State for time-of-day session filter (Morning, Afternoon, Evening)
+	const [activeSession, setActiveSession] = useState<"Morning" | "Afternoon" | "Evening">(getRealTimeSession);
+
 	const filteredGoals = useMemo(() => {
 		return goals.filter(
 			(g: HealthGoal) =>
-				activeCategory === "All" || g.category === activeCategory,
+				(activeCategory === "All" || g.category === activeCategory) &&
+				getGoalSession(g) === activeSession,
 		);
-	}, [goals, activeCategory]);
+	}, [goals, activeCategory, activeSession, getGoalSession]);
 
 	// Interactive Progress Loggers (steppers)
 	const handleProgressChange = useCallback(
@@ -294,6 +347,7 @@ const Goals = () => {
 				trend: "stable",
 				streak: 0,
 				completed: false,
+				session: customSession,
 			};
 
 			dispatch(addGoal(newGoal));
@@ -320,6 +374,7 @@ const Goals = () => {
 				description: "Eat foods with 1500mg of antioxidants (like berries or nuts) daily.",
 				target_value: "1500",
 				unit: "mg",
+				session: "Afternoon",
 			},
 			{
 				category: "Activity" as const,
@@ -327,6 +382,7 @@ const Goals = () => {
 				description: "Get 20 minutes of fast-paced exercise that makes you breathe hard.",
 				target_value: "20",
 				unit: "min",
+				session: "Afternoon",
 			},
 			{
 				category: "Sleep" as const,
@@ -334,6 +390,7 @@ const Goals = () => {
 				description: "Get 15 minutes of natural sunlight outside by 8 AM.",
 				target_value: "15",
 				unit: "min",
+				session: "Morning",
 			},
 			{
 				category: "Mind" as const,
@@ -341,6 +398,7 @@ const Goals = () => {
 				description: "Take deep, slow breaths for 15 minutes to calm your body.",
 				target_value: "15",
 				unit: "min",
+				session: "Evening",
 			},
 		].filter(
 			(s) => !goals.some((g) => g.title === s.title)
@@ -363,6 +421,7 @@ const Goals = () => {
 				trend: "stable",
 				streak: 0,
 				completed: false,
+				session: suggested.session as "Morning" | "Afternoon" | "Evening",
 			};
 
 			dispatch(addGoal(newGoal));
@@ -533,6 +592,31 @@ const Goals = () => {
 									</div>
 								</div>
 							</div>
+
+							{/* Session Selector Row */}
+							{goals.length > 0 && (
+								<div className={styles["session-row"]}>
+									{(["Morning", "Afternoon", "Evening"] as const).map((sess) => {
+										const isCurrent = getRealTimeSession() === sess;
+										const isActive = activeSession === sess;
+										
+										return (
+											<button
+												type="button"
+												key={sess}
+												className={`${styles["session-btn"]} ${isActive ? styles["active"] : ""}`}
+												onClick={() => setActiveSession(sess)}
+											>
+												<span className={styles["session-icon"]}>
+													{sess === "Morning" ? <Sun size={14} /> : sess === "Afternoon" ? <Activity size={14} /> : <Moon size={14} />}
+												</span>
+												<span>{sess} Session</span>
+												{isCurrent && <span className={styles["current-badge"]}>Active Now</span>}
+											</button>
+										);
+									})}
+								</div>
+							)}
 
 							{/* Navigation/Category Filter Row */}
 							{goals.length > 0 && (
@@ -725,6 +809,18 @@ const Goals = () => {
 															<option value="Activity">Activity</option>
 															<option value="Sleep">Sleep</option>
 															<option value="Mind">Mind</option>
+														</select>
+													</div>
+
+													<div className={styles["input-group"]}>
+														<label>Session</label>
+														<select 
+															value={customSession} 
+															onChange={(e) => setCustomSession(e.target.value as "Morning" | "Afternoon" | "Evening")}
+														>
+															<option value="Morning">Morning</option>
+															<option value="Afternoon">Afternoon</option>
+															<option value="Evening">Evening</option>
 														</select>
 													</div>
 

@@ -21,6 +21,7 @@ export interface HealthGoal {
 	streak: number;
 	completed: boolean;
 	vaultSealHash?: string;
+	session?: "Morning" | "Afternoon" | "Evening";
 }
 
 interface GoalState {
@@ -44,6 +45,7 @@ const initialState: GoalState = {
 			trend: "improving",
 			streak: 0,
 			completed: false,
+			session: "Morning",
 		},
 		{
 			id: "goal-2",
@@ -58,6 +60,7 @@ const initialState: GoalState = {
 			trend: "stable",
 			streak: 0,
 			completed: false,
+			session: "Afternoon",
 		},
 		{
 			id: "goal-3",
@@ -72,6 +75,7 @@ const initialState: GoalState = {
 			trend: "stable",
 			streak: 0,
 			completed: false,
+			session: "Evening",
 		},
 		{
 			id: "goal-4",
@@ -86,6 +90,7 @@ const initialState: GoalState = {
 			trend: "improving",
 			streak: 0,
 			completed: false,
+			session: "Evening",
 		},
 	],
 	streakCount: 0,

@@ -445,10 +445,14 @@
 
 .input-row {
 	display: grid;
-	grid-template-columns: 2fr 1fr 1fr;
+	grid-template-columns: repeat(4, 1fr);
 	gap: 16px;
 
-	@media (max-width: 640px) {
+	@media (max-width: 768px) {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	@media (max-width: 480px) {
 		grid-template-columns: 1fr;
 		gap: 12px;
 	}
@@ -1975,4 +1979,78 @@
 			color: rgba(0, 0, 0, 0.35);
 		}
 	}
+}
+
+/* Time of Day Session Selector Styles */
+.session-row {
+	display: flex;
+	gap: 12px;
+	width: 100%;
+	overflow-x: auto;
+	padding-bottom: 4px;
+	margin-bottom: 8px;
+
+	@media (max-width: 640px) {
+		flex-direction: column;
+		gap: 8px;
+	}
+}
+
+.session-btn {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 12px 20px;
+	background: rgba(30, 41, 59, 0.25);
+	border: 1px solid rgba(255, 255, 255, 0.05);
+	border-radius: 16px;
+	color: var(--text-secondary, #94a3b8);
+	font-size: 13.5px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.25s ease;
+	flex: 1;
+	justify-content: center;
+
+	html[data-theme="light"] & {
+		background: rgba(255, 255, 255, 0.5);
+		border-color: rgba(15, 23, 42, 0.06);
+		color: #64748b;
+	}
+
+	&:hover:not(.active) {
+		background: rgba(255, 255, 255, 0.06);
+		border-color: rgba(255, 255, 255, 0.1);
+		color: var(--text, #f8fafc);
+
+		html[data-theme="light"] & {
+			background: rgba(15, 23, 42, 0.04);
+			color: #0f172a;
+		}
+	}
+
+	&.active {
+		background: linear-gradient(135deg, rgba(0, 166, 157, 0.15), rgba(56, 189, 248, 0.08));
+		border-color: rgba(0, 166, 157, 0.35);
+		color: var(--accent, #00A69D);
+		box-shadow: 0 4px 20px rgba(0, 166, 157, 0.1);
+	}
+}
+
+.session-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.current-badge {
+	font-size: 9px;
+	font-weight: 800;
+	background: rgba(16, 185, 129, 0.15);
+	color: #10b981;
+	padding: 2px 6px;
+	border-radius: 100px;
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+	margin-left: 6px;
 }
