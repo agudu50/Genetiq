@@ -501,10 +501,10 @@ const Tests = () => {
 			setNewRotationTriggered(true);
 			
 			// Fire a beautiful toast notification alerting the user in the notification area
-			toast.info(
+			toast(
 				<div className={styles["toast-guidelines-update"]}>
 					<div className={styles["toast-icon-wrap"]}>
-						<Globe size={16} className={styles["toast-globe-icon"]} />
+						<Globe size={18} className={styles["toast-globe-icon"]} />
 						<span className={styles["toast-pulse-dot"]} />
 					</div>
 					<div className={styles["toast-content"]}>
@@ -517,10 +517,10 @@ const Tests = () => {
 				{
 					position: "top-right",
 					autoClose: 7000,
-					hideProgressBar: false,
+					hideProgressBar: true,
 					closeOnClick: true,
 					pauseOnHover: true,
-					theme: "dark",
+					className: styles["custom-premium-toast"],
 				}
 			);
 
