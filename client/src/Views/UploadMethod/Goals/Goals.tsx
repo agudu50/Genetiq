@@ -24,8 +24,110 @@ import {
 	Heart,
 	TrendingUp,
 	Target,
+	Scale,
+	Utensils,
+	AlertCircle,
 } from "lucide-react";
 import styles from "./Goals.module.scss";
+
+const DIET_TEMPLATES = {
+	lose: {
+		default: {
+			name: "Healthy Fat Burning Diet",
+			macro: { protein: 30, fat: 55, carbs: 15 },
+			desc: "Helps you burn fat for energy using healthy oils and fresh foods. This keeps your heart healthy and protects your muscles.",
+			habits: [
+				{ title: "Eat less sugar and starch", description: "Eat less bread, rice, and sweets to help your body burn fat.", target_value: "50", unit: "g" },
+				{ title: "Use healthy olive oil", description: "Have 2 spoons of olive oil every day.", target_value: "2", unit: "tbsp" },
+				{ title: "Eat green vegetables", description: "Eat at least 3 cups of green veggies like spinach or salad.", target_value: "3", unit: "cups" }
+			]
+		},
+		respiratory: {
+			name: "Lung-Friendly Fat Burning Diet",
+			macro: { protein: 25, fat: 60, carbs: 15 },
+			desc: "Full of healthy fats and clean foods that help lower swelling in your lungs. This helps you breathe easier.",
+			habits: [
+				{ title: "Eat healthy fish and nuts", description: "Eat foods like salmon, walnuts, or seeds that fight swelling.", target_value: "3", unit: "servings" },
+				{ title: "Drink green tea", description: "Drink 2 cups of green tea to protect your body's cells.", target_value: "2", unit: "cups" },
+				{ title: "Eat less sugar", description: "Keep sugar under 20 grams a day to prevent swelling.", target_value: "20", unit: "g" }
+			]
+		},
+		cardio: {
+			name: "Heart-Healthy Fat Burning Diet",
+			macro: { protein: 30, fat: 45, carbs: 25 },
+			desc: "A low-salt food plan that is great for your blood flow, blood pressure, and heart health.",
+			habits: [
+				{ title: "Eat red beets and greens", description: "Eat foods like beets and salad greens to help your blood flow better.", target_value: "2", unit: "servings" },
+				{ title: "Eat less salt", description: "Keep total salt intake below 1500mg daily.", target_value: "1500", unit: "mg" },
+				{ title: "Take healthy fish oil", description: "Get enough healthy oils from fish or soft gels.", target_value: "2000", unit: "mg" }
+			]
+		}
+	},
+	maintain: {
+		default: {
+			name: "Simple Whole Foods Diet",
+			macro: { protein: 30, fat: 35, carbs: 35 },
+			desc: "A simple food plan made of real, unprocessed foods. It keeps your energy steady and your body in balance.",
+			habits: [
+				{ title: "Drink enough water", description: "Drink water through the day to stay hydrated.", target_value: "3000", unit: "ml" },
+				{ title: "Eat high fiber foods", description: "Eat 35 grams of fiber from vegetables and oats to help your stomach.", target_value: "35", unit: "g" },
+				{ title: "Choose real foods", description: "Make sure almost all your food comes from real, natural ingredients.", target_value: "90", unit: "%" }
+			]
+		},
+		respiratory: {
+			name: "Lung-Protecting Whole Food Diet",
+			macro: { protein: 30, fat: 35, carbs: 35 },
+			desc: "Protects your throat and lungs using clean, natural foods that support your immune system.",
+			habits: [
+				{ title: "Eat berries and nuts", description: "Eat oranges, berries, and almonds to protect your cells.", target_value: "4", unit: "servings" },
+				{ title: "Drink warm broth", description: "Have a cup of bone broth or collagen to keep your body walls strong.", target_value: "1", unit: "cup" },
+				{ title: "Drink water for lungs", description: "Drink plenty of water to keep your airways clear and clean.", target_value: "3500", unit: "ml" }
+			]
+		},
+		cardio: {
+			name: "Heart-Protecting Whole Food Diet",
+			macro: { protein: 25, fat: 40, carbs: 35 },
+			desc: "Helps your heart heal and work well. Uses clean proteins and fats that are good for your blood vessels.",
+			habits: [
+				{ title: "Eat fresh garlic", description: "Eat a clove of fresh garlic to help keep your cholesterol healthy.", target_value: "1", unit: "clove" },
+				{ title: "Eat bananas and avocados", description: "Eat foods like bananas, spinach, and avocados to support your heart.", target_value: "3", unit: "servings" },
+				{ title: "Eat heart-friendly foods", description: "Eat foods like spinach, meat, or sesame seeds for cellular energy.", target_value: "2", unit: "servings" }
+			]
+		}
+	},
+	gain: {
+		default: {
+			name: "Clean Muscle Building Diet",
+			macro: { protein: 35, fat: 25, carbs: 40 },
+			desc: "A high-protein plan to help you build clean muscle and store energy without gaining bad fat.",
+			habits: [
+				{ title: "Eat enough protein", description: "Eat 140 grams of clean protein from meat, eggs, or plants daily.", target_value: "140", unit: "g" },
+				{ title: "Eat extra clean calories", description: "Eat about 300 extra calories of healthy food each day.", target_value: "300", unit: "kcal" },
+				{ title: "Eat carbs before exercise", description: "Eat foods like oats or rice 90 minutes before you work out.", target_value: "75", unit: "g" }
+			]
+		},
+		respiratory: {
+			name: "Lung-Supporting Muscle Diet",
+			macro: { protein: 35, fat: 30, carbs: 35 },
+			desc: "Helps you gain clean weight and build muscle while giving your cells and lungs the energy to recover.",
+			habits: [
+				{ title: "Eat lean protein", description: "Eat 150 grams of chicken, fish, or eggs to build muscle.", target_value: "150", unit: "g" },
+				{ title: "Eat vitamin rich foods", description: "Eat foods with vitamins, iron, and magnesium to boost your cell energy.", target_value: "3", unit: "servings" },
+				{ title: "Take healthy fish oils", description: "Take healthy oils to help your body and lungs heal after heavy exercise.", target_value: "2000", unit: "mg" }
+			]
+		},
+		cardio: {
+			name: "Heart-Safe Muscle Diet",
+			macro: { protein: 35, fat: 30, carbs: 35 },
+			desc: "Helps you build strong muscles while keeping your heart and blood vessels safe from heavy lifting strain.",
+			habits: [
+				{ title: "Eat clean protein", description: "Eat fish, egg whites, and clean protein powders.", target_value: "160", unit: "g" },
+				{ title: "Eat seeds and poultry", description: "Eat seeds and chicken to help your blood vessels relax and open up.", target_value: "2", unit: "servings" },
+				{ title: "Drink water while lifting", description: "Drink plenty of water while you exercise to keep your blood flowing smoothly.", target_value: "4000", unit: "ml" }
+			]
+		}
+	}
+};
 
 const Goals = () => {
 	const dispatch = useDispatch();
@@ -34,8 +136,14 @@ const Goals = () => {
 		streakCount,
 		totalHealthScore,
 	} = useSelector((state: RootState) => state.goals);
+	const activeAlerts = useSelector((state: RootState) => state.triage.activeAlerts);
 	const [activeCategory, setActiveCategory] = useState<string>("All");
-	const [activeTab, setActiveTab] = useState<"routine" | "discovery" | "insights">("routine");
+	const [activeTab, setActiveTab] = useState<"routine" | "discovery" | "diet" | "insights">("routine");
+
+	// State for weight goal (persisted locally)
+	const [weightGoal, setWeightGoal] = useState<"lose" | "gain" | "maintain">(() => {
+		return (localStorage.getItem("genetiq_weight_goal") as "lose" | "gain" | "maintain") || "maintain";
+	});
 
 	// State for custom goal form (default open on discovery tab)
 	const [isCustomOpen, setIsCustomOpen] = useState(true);
@@ -44,6 +152,56 @@ const Goals = () => {
 	const [customTarget, setCustomTarget] = useState("");
 	const [customUnit, setCustomUnit] = useState("min");
 	const [customDesc, setCustomDesc] = useState("");
+
+	const handleWeightGoalChange = useCallback((goal: "lose" | "gain" | "maintain") => {
+		setWeightGoal(goal);
+		localStorage.setItem("genetiq_weight_goal", goal);
+	}, []);
+
+	const activeDietPlan = useMemo(() => {
+		const isRespiratory = activeAlerts.some((a) => a.system.includes("Respiratory"));
+		const isCardio = activeAlerts.some((a) => a.system.includes("Cardio") || a.system.includes("Cardiac"));
+		
+		const category = isRespiratory ? "respiratory" : isCardio ? "cardio" : "default";
+		const template = DIET_TEMPLATES[weightGoal][category];
+		
+		const habitsAdded = template.habits.every((th) => 
+			goals.some((g) => g.title === th.title)
+		);
+
+		return {
+			...template,
+			habitsAdded,
+			categoryText: isRespiratory ? "Lung Health Warning" : isCardio ? "Heart Health Warning" : "Healthy Body Guide",
+		};
+	}, [weightGoal, activeAlerts, goals]);
+
+	const handleActivateDietHabits = useCallback(async () => {
+		let updatedGoals = [...goals];
+		activeDietPlan.habits.forEach((th) => {
+			if (!goals.some((g) => g.title === th.title)) {
+				const newGoal: HealthGoal = {
+					id: `diet-goal-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+					category: "Nutrition",
+					title: th.title,
+					description: th.description,
+					target_value: th.target_value,
+					current_value: "0",
+					unit: th.unit,
+					progress: 0,
+					status: "In Progress",
+					trend: "stable",
+					streak: 0,
+					completed: false,
+				};
+				dispatch(addGoal(newGoal));
+				updatedGoals.push(newGoal);
+			}
+		});
+		await LocalVault.save("user_goals", updatedGoals);
+		alert(`Added the ${activeDietPlan.name} habits to your Action Plan!`);
+		setActiveTab("routine");
+	}, [dispatch, goals, activeDietPlan]);
 
 	// Load goals on mount from LocalVault (ensuring refresh works and no defaults are pre-checked unless saved)
 	useEffect(() => {
@@ -111,9 +269,9 @@ const Goals = () => {
 		[dispatch, goals],
 	);
 
-	const handleSealMilestone = useCallback((id: string) => {
+	const handleSealMilestone = useCallback((_id: string) => {
 		alert(
-			`Sealing goal milestone for goal ${id} in your secure enclave vault...\nGenerating secure SHA-256 integrity seal.`,
+			`Saving your progress securely on your device...`,
 		);
 	}, []);
 
@@ -158,29 +316,29 @@ const Goals = () => {
 		return [
 			{
 				category: "Nutrition" as const,
-				title: "Oxidative Shield",
-				description: "Intake 1500mg antioxidants daily.",
+				title: "Cell Protection",
+				description: "Eat foods with 1500mg of antioxidants (like berries or nuts) daily.",
 				target_value: "1500",
 				unit: "mg",
 			},
 			{
 				category: "Activity" as const,
-				title: "VO2 Max Burst",
-				description: "20 min of high-intensity cardio.",
+				title: "Fast Heart Exercise",
+				description: "Get 20 minutes of fast-paced exercise that makes you breathe hard.",
 				target_value: "20",
 				unit: "min",
 			},
 			{
 				category: "Sleep" as const,
-				title: "Circadian Sun Align",
-				description: "15 min natural sunlight by 8 AM.",
+				title: "Morning Sunlight",
+				description: "Get 15 minutes of natural sunlight outside by 8 AM.",
 				target_value: "15",
 				unit: "min",
 			},
 			{
 				category: "Mind" as const,
-				title: "HRV Breath Reset",
-				description: "15 min deep diaphragmatic breaths.",
+				title: "Deep Breathing Reset",
+				description: "Take deep, slow breaths for 15 minutes to calm your body.",
 				target_value: "15",
 				unit: "min",
 			},
@@ -257,7 +415,7 @@ const Goals = () => {
 							<span className={styles["gradient-primary"]}>Plan</span>
 						</h1>
 						<p className={styles["subtitle"]}>
-							Translating AI bio-insights into daily health metrics. Adjust your progress and build custom routines.
+							Turn your body reports into easy daily steps. Update your progress and build your own healthy habits.
 						</p>
 					</div>
 
@@ -284,7 +442,7 @@ const Goals = () => {
 								<span className={styles["streak-number"]}>{streakCount}</span>
 								<span className={styles["streak-days"]}>Days</span>
 							</div>
-							<span className={styles["streak-label"]}>Active Streak</span>
+							<span className={styles["streak-label"]}>Day Streak</span>
 						</div>
 					</div>
 				</div>
@@ -296,21 +454,28 @@ const Goals = () => {
 						onClick={() => setActiveTab("routine")}
 					>
 						<Target size={15} />
-						<span>Daily Routine</span>
+						<span>Daily Habits</span>
 					</button>
 					<button 
 						className={`${styles["main-tab-btn"]} ${activeTab === "discovery" ? styles["active"] : ""}`}
 						onClick={() => setActiveTab("discovery")}
 					>
 						<Plus size={15} />
-						<span>Goal Discovery</span>
+						<span>Find Habits</span>
+					</button>
+					<button 
+						className={`${styles["main-tab-btn"]} ${activeTab === "diet" ? styles["active"] : ""}`}
+						onClick={() => setActiveTab("diet")}
+					>
+						<Apple size={15} />
+						<span>Food & Weight</span>
 					</button>
 					<button 
 						className={`${styles["main-tab-btn"]} ${activeTab === "insights" ? styles["active"] : ""}`}
 						onClick={() => setActiveTab("insights")}
 					>
 						<Sparkles size={15} />
-						<span>Insights & Science</span>
+						<span>Tips & Science</span>
 					</button>
 				</div>
 
@@ -333,7 +498,7 @@ const Goals = () => {
 										<Target size={16} />
 									</div>
 									<div className={styles["analytic-info"]}>
-										<span className={styles["analytic-label"]}>Active Goals</span>
+										<span className={styles["analytic-label"]}>Active Habits</span>
 										<span className={styles["analytic-value"]}>{totalGoalsCount} Habits</span>
 									</div>
 								</div>
@@ -353,7 +518,7 @@ const Goals = () => {
 										<Zap size={16} />
 									</div>
 									<div className={styles["analytic-info"]}>
-										<span className={styles["analytic-label"]}>Earned Bio-Points</span>
+										<span className={styles["analytic-label"]}>Health Points</span>
 										<span className={styles["analytic-value"]}>{totalBioPoints} pts</span>
 									</div>
 								</div>
@@ -363,8 +528,8 @@ const Goals = () => {
 										<Trophy size={16} />
 									</div>
 									<div className={styles["analytic-info"]}>
-										<span className={styles["analytic-label"]}>Enclave Milestones</span>
-										<span className={styles["analytic-value"]}>{sealedMilestonesCount} Sealed</span>
+										<span className={styles["analytic-label"]}>Saved Steps</span>
+										<span className={styles["analytic-value"]}>{sealedMilestonesCount} Saved</span>
 									</div>
 								</div>
 							</div>
@@ -389,14 +554,14 @@ const Goals = () => {
 							{goals.length === 0 ? (
 								<div className={styles["empty-state"]}>
 									<Target size={36} style={{ color: "var(--accent)" }} />
-									<h3>No Habits Active</h3>
-									<p>You haven't activated any habits yet. Choose from our recommended bio-goals or build your own custom routine.</p>
+									<h3>No Active Habits</h3>
+									<p>You do not have any active habits. Pick a suggested goal or write your own custom habit below.</p>
 									<button 
 										className={styles["empty-state-btn"]}
 										onClick={() => setActiveTab("discovery")}
 									>
 										<Plus size={14} />
-										<span>Discover Bio-Goals</span>
+										<span>Find Healthy Habits</span>
 									</button>
 								</div>
 							) : filteredGoals.length === 0 ? (
@@ -438,7 +603,7 @@ const Goals = () => {
 														
 														{/* Active Stepper Control */}
 														<div className={styles["stepper-container"]}>
-															<span className={styles["stepper-label"]}>Logged Progress</span>
+															<span className={styles["stepper-label"]}>Your Progress</span>
 															<div className={styles["stepper-controls"]}>
 																<button 
 																	type="button" 
@@ -480,7 +645,7 @@ const Goals = () => {
 															</span>
 															<span className={styles["reward"]}>
 																<Zap size={11} className={styles["reward-icon"]} />
-																<span>+10 Bio-Points</span>
+																<span>+10 Health Points</span>
 															</span>
 														</div>
 													</div>
@@ -490,7 +655,7 @@ const Goals = () => {
 														<button
 															className={styles["mint-btn"]}
 															onClick={() => handleSealMilestone(goal.id)}
-															title='Seal Milestone in Secure Vault'
+															title='Save safely on this device'
 														>
 															<Trophy size={14} />
 														</button>
@@ -522,7 +687,7 @@ const Goals = () => {
 								>
 									<div className={styles["btn-label"]}>
 										<Settings size={15} />
-										<span>Configure Custom Bio-Habit</span>
+										<span>Create Your Own Custom Habit</span>
 									</div>
 									{isCustomOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
 								</button>
@@ -539,10 +704,10 @@ const Goals = () => {
 										>
 											<div className={styles["form-grid"]}>
 												<div className={styles["input-group"]}>
-													<label>Goal Name</label>
+													<label>Habit Name</label>
 													<input 
 														type="text" 
-														placeholder="e.g. Morning Hydration Boost" 
+														placeholder="e.g. Drink Water in the Morning" 
 														value={customTitle} 
 														onChange={(e) => setCustomTitle(e.target.value)} 
 														required 
@@ -564,7 +729,7 @@ const Goals = () => {
 													</div>
 
 													<div className={styles["input-group"]}>
-														<label>Daily Target</label>
+														<label>Daily Goal</label>
 														<input 
 															type="number" 
 															placeholder="e.g. 3000" 
@@ -588,10 +753,10 @@ const Goals = () => {
 												</div>
 
 												<div className={styles["input-group"]}>
-													<label>Description (Optional)</label>
+													<label>Details (Optional)</label>
 													<input 
 														type="text" 
-														placeholder="e.g. Drink 3000ml of raw structured spring water daily." 
+														placeholder="e.g. Drink 3 liters of fresh water every day." 
 														value={customDesc} 
 														onChange={(e) => setCustomDesc(e.target.value)} 
 													/>
@@ -599,7 +764,7 @@ const Goals = () => {
 
 												<button type="submit" className={styles["submit-btn"]}>
 													<Plus size={14} />
-													<span>Activate Goal</span>
+													<span>Start Habit</span>
 												</button>
 											</div>
 										</motion.form>
@@ -612,7 +777,7 @@ const Goals = () => {
 								<div className={styles["suggested-panel"]} style={{ marginTop: 0 }}>
 									<div className={styles["suggested-header"]}>
 										<Heart size={16} className={styles["heart-icon"]} />
-										<h3>Suggested DNA Bio-Goals</h3>
+										<h3>Recommended Habits for Your Body</h3>
 									</div>
 									<div className={styles["suggested-grid"]}>
 										{suggestedGoals.map((s) => (
@@ -624,7 +789,7 @@ const Goals = () => {
 												<div className={styles["suggested-info"]}>
 													<div className={styles["suggested-category"]}>
 														{getCategoryIcon(s.category)}
-														<span>{s.category} • Precision DNA Suggestion</span>
+														<span>{s.category} • Suggested for You</span>
 													</div>
 													<h4 className={styles["suggested-title"]}>{s.title}</h4>
 													<p className={styles["suggested-desc"]}>{s.description}</p>
@@ -635,7 +800,7 @@ const Goals = () => {
 													title="Add to Action Plan"
 												>
 													<Plus size={14} />
-													<span>Add Goal</span>
+													<span>Add Habit</span>
 												</button>
 											</div>
 										))}
@@ -644,10 +809,134 @@ const Goals = () => {
 							) : (
 								<div className={styles["empty-state"]}>
 									<Check size={36} style={{ color: "#10b981" }} />
-									<h3>All Recommendations Added</h3>
-									<p>You have activated all recommended DNA bio-goals. Keep checking back daily for new suggestions based on your biometric analytics!</p>
+									<h3>All Suggested Habits Added</h3>
+									<p>You have added all suggested habits. Check back tomorrow for more suggestions based on your body reports!</p>
 								</div>
 							)}
+						</motion.div>
+					)}
+
+					{activeTab === "diet" && (
+						<motion.div
+							key="diet-tab"
+							initial={{ opacity: 0, y: 10 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: -10 }}
+							transition={{ duration: 0.2 }}
+							className={styles["diet-section"]}
+						>
+							{/* Weight Goal Selector Card Row */}
+							<div className={styles["weight-goal-selector"]}>
+								<div 
+									className={`${styles["weight-goal-card"]} ${weightGoal === "lose" ? styles["active"] : ""}`}
+									onClick={() => handleWeightGoalChange("lose")}
+								>
+									<div className={styles["icon-wrapper"]}>
+										<Scale size={20} />
+									</div>
+									<h4>Lose Weight</h4>
+									<p>Burn body fat, balance blood sugar, and lower stress on your body.</p>
+								</div>
+
+								<div 
+									className={`${styles["weight-goal-card"]} ${weightGoal === "maintain" ? styles["active"] : ""}`}
+									onClick={() => handleWeightGoalChange("maintain")}
+								>
+									<div className={styles["icon-wrapper"]}>
+										<Utensils size={20} />
+									</div>
+									<h4>Maintain / Balance</h4>
+									<p>Keep your body balanced and maintain steady daily energy.</p>
+								</div>
+
+								<div 
+									className={`${styles["weight-goal-card"]} ${weightGoal === "gain" ? styles["active"] : ""}`}
+									onClick={() => handleWeightGoalChange("gain")}
+								>
+									<div className={styles["icon-wrapper"]}>
+										<TrendingUp size={20} />
+									</div>
+									<h4>Gain Weight</h4>
+									<p>Build strong muscles and clean body mass.</p>
+								</div>
+							</div>
+
+							{/* Report-Aligned Diet Plan Description */}
+							<div className={styles["diet-presc-card"]}>
+								<div className={styles["diet-header"]}>
+									<h3>{activeDietPlan.name}</h3>
+									<p>{activeDietPlan.desc}</p>
+								</div>
+
+								{/* Macro visualizer */}
+								<div className={styles["macro-box"]}>
+									<h4>Your Daily Food Mix Target</h4>
+									<div className={styles["macro-bar"]}>
+										<div className={`${styles["macro-segment"]} ${styles["carbs"]}`} style={{ width: `${activeDietPlan.macro.carbs}%` }} />
+										<div className={`${styles["macro-segment"]} ${styles["protein"]}`} style={{ width: `${activeDietPlan.macro.protein}%` }} />
+										<div className={`${styles["macro-segment"]} ${styles["fat"]}`} style={{ width: `${activeDietPlan.macro.fat}%` }} />
+									</div>
+									<div className={styles["macro-labels"]}>
+										<div className={styles["macro-label-item"]}>
+											<span className={`${styles["dot"]} ${styles["carbs"]}`} />
+											<span>Sugar and Bread (Carbs): {activeDietPlan.macro.carbs}%</span>
+										</div>
+										<div className={styles["macro-label-item"]}>
+											<span className={`${styles["dot"]} ${styles["protein"]}`} />
+											<span>Eggs, Fish, and Meat (Protein): {activeDietPlan.macro.protein}%</span>
+										</div>
+										<div className={styles["macro-label-item"]}>
+											<span className={`${styles["dot"]} ${styles["fat"]}`} />
+											<span>Healthy Oils and Fats: {activeDietPlan.macro.fat}%</span>
+										</div>
+									</div>
+								</div>
+
+								{/* Report alignment notice */}
+								<div className={styles["report-alert-box"]}>
+									<AlertCircle size={16} className={styles["alert-icon"]} />
+									<p>
+										<strong>Suggested for You:</strong> This diet is built for you based on the <strong>{activeDietPlan.categoryText}</strong> found in your health reports.
+									</p>
+								</div>
+
+								{/* Recommended nutrition habits checklist */}
+								<div className={styles["suggested-panel"]} style={{ marginTop: 8 }}>
+									<div className={styles["suggested-header"]} style={{ color: "var(--accent)" }}>
+										<Apple size={16} />
+										<h3 style={{ fontSize: "14px", fontWeight: 700 }}>Suggested Daily Food Habits</h3>
+									</div>
+									<div className={styles["suggested-grid"]}>
+										{activeDietPlan.habits.map((th) => {
+											const isAdded = goals.some((g) => g.title === th.title);
+											return (
+												<div key={th.title} className={`${styles["suggested-card"]} nutrition`}>
+													<div className={styles["suggested-info"]} style={{ marginBottom: 0 }}>
+														<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", gap: "8px" }}>
+															<h4 className={styles["suggested-title"]} style={{ fontSize: "13.5px", margin: 0 }}>{th.title}</h4>
+															{isAdded && <Check size={14} style={{ color: "#10b981", flexShrink: 0 }} />}
+														</div>
+														<p className={styles["suggested-desc"]} style={{ fontSize: "12px", marginTop: "6px", marginBottom: 0 }}>{th.description}</p>
+														<span style={{ fontSize: "11px", fontWeight: 700, color: "var(--accent)", display: "inline-block", marginTop: "8px" }}>
+															Goal: {th.target_value} {th.unit}
+														</span>
+													</div>
+												</div>
+											);
+										})}
+									</div>
+								</div>
+
+								{/* Activation button */}
+								<button 
+									className={styles["activate-diet-btn"]}
+									onClick={handleActivateDietHabits}
+									disabled={activeDietPlan.habitsAdded}
+								>
+									<Plus size={14} />
+									<span>{activeDietPlan.habitsAdded ? "All Food Habits Active" : "Add Suggested Food Habits"}</span>
+								</button>
+							</div>
 						</motion.div>
 					)}
 
@@ -670,9 +959,7 @@ const Goals = () => {
 									</div>
 									<div className={styles["suggestion-text"]}>
 										<p>
-											<strong className={styles["ai-tag"]}>AI Insight:</strong> Your Heart Rate Variability (HRV)
-											is 15% lower than baseline. Consider prioritizing the "Deep Breath" mindfulness goal
-											today to restore metabolic equilibrium.
+											<strong className={styles["ai-tag"]}>AI Tip:</strong> Your body is showing slightly more stress than usual today. Try spending 15 minutes on deep breathing to help calm your body and restore balance.
 										</p>
 									</div>
 								</div>
@@ -685,9 +972,9 @@ const Goals = () => {
 								<div className={styles["score-info"]}>
 									<div className={styles["score-header-row"]}>
 										<Award size={18} className={styles["award-icon"]} />
-										<h3>Current Health Score</h3>
+										<h3>Your Health Score</h3>
 									</div>
-									<p>Dynamic assessment calculated from your last 24h biometrics, activity, and plan compliance.</p>
+									<p>This score is calculated from your activity, habits, and how you feel today.</p>
 									
 									{/* Progress bar visual indicator */}
 									<div className={styles["progress-bar-container"]}>
@@ -707,16 +994,16 @@ const Goals = () => {
 							<div className={styles["faq-panel"]}>
 								<div className={styles["faq-header"]}>
 									<Sparkles size={16} className={styles["faq-icon"]} />
-									<h3>Why Gamified Genetic Habits Work</h3>
+									<h3>Why These Habits Help You</h3>
 								</div>
 								<div className={styles["faq-content"]}>
 									<div className={styles["faq-item"]}>
-										<h4>🧬 Gene-Environment Synergy (Epigenetics)</h4>
-										<p>Your genome is a dynamic software program, not a static script. Daily habits, optimized nutrition, circadian light alignment, and stress management serve as real-time molecular switches. By completing your targets, you actively modulate gene expression, promoting cellular regeneration and long-term vitality.</p>
+										<h4>🧬 How Your Habits Change Your Body</h4>
+										<p>Your body is not set in stone. Your daily choices—like eating well, getting sun, and lowering stress—act like switches. By doing these habits, you help your body repair itself, stay young, and gain more energy.</p>
 									</div>
 									<div className={styles["faq-item"]}>
-										<h4>🔒 Secure Enclave & Biometric Vault Seals</h4>
-										<p>Achieving a 7-day consistency streak validates your biological dedication. Genetiq cryptographically seals these milestones inside your local hardware secure enclave using secure SHA-256 hashes—creating a tamper-proof, fully private pedigree of your wellness journey without sharing your clinical data.</p>
+										<h4>🔒 Fully Private and Safe on Your Device</h4>
+										<p>When you finish your habits, your progress is saved safely right on your own device. It is completely private. Your personal health details are never shared with anyone else.</p>
 									</div>
 								</div>
 							</div>
@@ -730,7 +1017,7 @@ const Goals = () => {
 						<div className={styles["status-dot"]} />
 						<div className={styles["status-pulse"]} />
 					</div>
-					<span>Vault Encrypted & Synced • Decentralized Health Record Protected</span>
+					<span>Your health data is safe, private, and saved on this device.</span>
 				</div>
 			</div>
 		</div>
