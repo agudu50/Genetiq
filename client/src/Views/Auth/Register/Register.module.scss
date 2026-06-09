@@ -1,23 +1,183 @@
-// ── Register page — mirrors Login split layout ────────────────────────────────
+// ── Register page — theme-aware split layout ──────────────────────────────────
+
+$brand: #007c72;
+
+@mixin register-theme-dark {
+	--reg-bg: #0a0e1a;
+	--reg-panel: #0d1321;
+	--reg-border: rgba(255, 255, 255, 0.06);
+	--reg-text: #ffffff;
+	--reg-text-muted: rgba(255, 255, 255, 0.5);
+	--reg-text-soft: rgba(255, 255, 255, 0.75);
+	--reg-footer: rgba(255, 255, 255, 0.25);
+	--reg-footer-link: rgba(255, 255, 255, 0.35);
+	--reg-brand-tint: rgba(0, 166, 157, 0.12);
+	--reg-brand-border: rgba(0, 166, 157, 0.2);
+	--reg-accent-glow: rgba(0, 166, 157, 0.35);
+	--reg-show-glow: 1;
+}
+
+@mixin register-theme-light {
+	--reg-bg: #f8fafc;
+	--reg-panel: #ffffff;
+	--reg-border: #e2e8f0;
+	--reg-text: #0f172a;
+	--reg-text-muted: #64748b;
+	--reg-text-soft: #475569;
+	--reg-footer: #94a3b8;
+	--reg-footer-link: #64748b;
+	--reg-brand-tint: #e6f4f3;
+	--reg-brand-border: rgba(0, 124, 114, 0.22);
+	--reg-accent-glow: transparent;
+	--reg-show-glow: 0;
+}
+
+// ── Animations ────────────────────────────────────────────────────────────────
+
+@keyframes blobFloatA {
+	0%,
+	100% {
+		transform: translate(0, 0) scale(1);
+	}
+	50% {
+		transform: translate(24px, 18px) scale(1.06);
+	}
+}
+
+@keyframes blobFloatB {
+	0%,
+	100% {
+		transform: translate(0, 0) scale(1);
+	}
+	50% {
+		transform: translate(-18px, -22px) scale(1.08);
+	}
+}
+
+@keyframes gridDrift {
+	from {
+		transform: translate(0, 0);
+	}
+	to {
+		transform: translate(40px, 40px);
+	}
+}
+
+@keyframes bgGlowPulse {
+	0%,
+	100% {
+		opacity: 0.35;
+		transform: translateX(-50%) scale(1);
+	}
+	50% {
+		opacity: 0.55;
+		transform: translateX(-50%) scale(1.05);
+	}
+}
+
+@keyframes logoFloat {
+	0%,
+	100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-4px);
+	}
+}
+
+@keyframes badgeBob {
+	0%,
+	100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-4px);
+	}
+}
+
+@keyframes iconPulse {
+	0%,
+	100% {
+		box-shadow: 0 0 0 0 rgba($brand, 0.2);
+	}
+	50% {
+		box-shadow: 0 0 0 6px rgba($brand, 0);
+	}
+}
 
 .page {
+	@include register-theme-dark;
+	position: relative;
 	min-height: 100vh;
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	background: #0A0E1A;
+	background: var(--reg-bg);
+	transition: background 0.25s ease;
+	overflow: hidden;
+
+	:global(html[data-theme="light"]) & {
+		@include register-theme-light;
+	}
 
 	@media (max-width: 900px) {
 		grid-template-columns: 1fr;
 	}
 }
 
+.bgLayer {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	overflow: hidden;
+}
+
+.bgGrid {
+	position: absolute;
+	inset: -40px;
+	background-image:
+		linear-gradient(var(--reg-border) 1px, transparent 1px),
+		linear-gradient(90deg, var(--reg-border) 1px, transparent 1px);
+	background-size: 40px 40px;
+	opacity: 0.35;
+	mask-image: radial-gradient(ellipse 80% 70% at 70% 50%, #000 10%, transparent 75%);
+	animation: gridDrift 28s linear infinite;
+}
+
+.bgGlow {
+	position: absolute;
+	top: 20%;
+	right: 10%;
+	width: min(520px, 60vw);
+	height: min(520px, 60vw);
+	border-radius: 50%;
+	background: var(--reg-brand-tint);
+	opacity: 0.5;
+	filter: blur(72px);
+	animation: bgGlowPulse 9s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.bgGrid,
+	.bgGlow,
+	.leftPanel::before,
+	.leftPanel::after,
+	.brandLogo,
+	.trustBadge,
+	.featureIcon {
+		animation: none !important;
+	}
+}
+
 .leftPanel {
-	background: #0D1321;
-	border-right: 1px solid rgba(255, 255, 255, 0.06);
+	background: var(--reg-panel);
+	border-right: 1px solid var(--reg-border);
 	display: flex;
 	align-items: stretch;
 	position: relative;
+	z-index: 1;
 	overflow: hidden;
+	transition: background 0.25s ease, border-color 0.25s ease;
 
 	&::before {
 		content: "";
@@ -26,8 +186,10 @@
 		left: -120px;
 		width: 360px;
 		height: 360px;
-		background: radial-gradient(circle, rgba(#00A69D, 0.18) 0%, transparent 70%);
+		background: rgba(0, 166, 157, calc(0.18 * var(--reg-show-glow)));
+		border-radius: 50%;
 		pointer-events: none;
+		animation: blobFloatA 14s ease-in-out infinite;
 	}
 
 	&::after {
@@ -37,8 +199,10 @@
 		right: -80px;
 		width: 280px;
 		height: 280px;
-		background: radial-gradient(circle, rgba(#06B6D4, 0.1) 0%, transparent 70%);
+		background: rgba(6, 182, 212, calc(0.1 * var(--reg-show-glow)));
+		border-radius: 50%;
 		pointer-events: none;
+		animation: blobFloatB 18s ease-in-out infinite;
 	}
 
 	@media (max-width: 900px) {
@@ -68,14 +232,15 @@
 	height: 40px;
 	object-fit: cover;
 	border-radius: 8px;
-	border: 1px solid rgba(#00A69D, 0.3);
-	filter: drop-shadow(0 0 8px rgba(#00A69D, 0.35));
+	border: 1px solid var(--reg-brand-border);
+	filter: drop-shadow(0 0 8px var(--reg-accent-glow));
+	animation: logoFloat 4.5s ease-in-out infinite;
 }
 
 .brandName {
 	font-size: 1.4rem;
 	font-weight: 800;
-	color: #00A69D;
+	color: $brand;
 	letter-spacing: -0.03em;
 }
 
@@ -86,7 +251,7 @@
 .leftHeading {
 	font-size: clamp(1.6rem, 2.5vw, 2.2rem);
 	font-weight: 800;
-	color: #ffffff;
+	color: var(--reg-text);
 	line-height: 1.25;
 	letter-spacing: -0.03em;
 	margin: 0 0 16px;
@@ -94,7 +259,7 @@
 
 .leftSub {
 	font-size: 1rem;
-	color: rgba(255, 255, 255, 0.5);
+	color: var(--reg-text-muted);
 	line-height: 1.7;
 	margin: 0 0 36px;
 	max-width: 380px;
@@ -115,20 +280,33 @@
 	gap: 14px;
 	font-size: 0.95rem;
 	font-weight: 500;
-	color: rgba(255, 255, 255, 0.75);
+	color: var(--reg-text-soft);
 }
 
 .featureIcon {
 	width: 36px;
 	height: 36px;
 	border-radius: 10px;
-	background: rgba(#00A69D, 0.12);
-	border: 1px solid rgba(#00A69D, 0.2);
+	background: var(--reg-brand-tint);
+	border: 1px solid var(--reg-brand-border);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: #00A69D;
+	color: $brand;
 	flex-shrink: 0;
+	animation: iconPulse 3s ease-in-out infinite;
+}
+
+.featureItem:nth-child(1) .featureIcon {
+	animation-delay: 0s;
+}
+
+.featureItem:nth-child(2) .featureIcon {
+	animation-delay: 0.5s;
+}
+
+.featureItem:nth-child(3) .featureIcon {
+	animation-delay: 1s;
 }
 
 .trustBadge {
@@ -137,27 +315,29 @@
 	gap: 8px;
 	font-size: 0.82rem;
 	font-weight: 600;
-	color: rgba(#00A69D, 0.9);
-	background: rgba(#00A69D, 0.08);
-	border: 1px solid rgba(#00A69D, 0.15);
+	color: $brand;
+	background: var(--reg-brand-tint);
+	border: 1px solid var(--reg-brand-border);
 	border-radius: 20px;
 	padding: 8px 16px;
+	animation: badgeBob 3.5s ease-in-out infinite;
 }
 
 .leftFooter {
 	font-size: 0.8rem;
-	color: rgba(255, 255, 255, 0.25);
+	color: var(--reg-footer);
 	margin: 0;
 
 	a {
-		color: rgba(255, 255, 255, 0.35);
+		color: var(--reg-footer-link);
 		text-decoration: none;
 		transition: color 0.2s;
-		&:hover { color: #00A69D; }
+
+		&:hover {
+			color: $brand;
+		}
 	}
 }
-
-// ── Right panel ──────────────────────────────────────────────────────────────
 
 .rightPanel {
 	display: flex;
@@ -165,6 +345,10 @@
 	justify-content: center;
 	padding: 48px 24px;
 	overflow-y: auto;
+	background: transparent;
+	position: relative;
+	z-index: 1;
+	transition: background 0.25s ease;
 }
 
 .rightInner {
