@@ -19,7 +19,15 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 const STORAGE_KEY = "theme-mode";
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-	const [theme, setThemeState] = useState<ThemeMode>("dark");
+	const [theme, setThemeState] = useState<ThemeMode>(() => {
+		try {
+			const saved = localStorage.getItem(STORAGE_KEY);
+			if (saved === "light" || saved === "dark") return saved;
+		} catch {
+			// ignore storage failures
+		}
+		return "dark";
+	});
 
 	// Apply to document for CSS hooks
 	useEffect(() => {

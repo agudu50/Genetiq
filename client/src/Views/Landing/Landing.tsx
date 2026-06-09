@@ -16,8 +16,10 @@ import {
 	Linkedin,
 	FlaskConical,
 	HeartPulse,
+	Menu,
 } from "lucide-react";
 import { paths } from "@/App/Routes/Paths";
+import ThemeSwitcher from "@/Features/Structural/ThemeSwitcher/ThemeSwitcher";
 import styles from "./Landing.module.scss";
 
 // ─── Static data ─────────────────────────────────────────────────────────────
@@ -130,14 +132,22 @@ const BUILDER = {
 	role: "Founder & Builder",
 	bio: "I built Genetiq after watching my mum come home from a clinic visit confused and anxious she had a stack of lab results in her hand but no idea what any of the numbers meant. The doctor had 10 minutes and 20 patients. She had no one to ask. I realised millions of people face the same thing every day. Genetiq is my answer: upload your results, and within seconds, know exactly what they mean and what to do next.",
 	tags: ["Full-Stack Engineer", "Health Tech", "AI & Accessibility"],
-	github: "https://github.com",
+	github: "https://github.com/agudu50",
 	twitter: "https://twitter.com",
 	linkedin: "https://linkedin.com",
 };
 
-// ─── Particle Canvas ──────────────────────────────────────────────────────────
+const NAV_ITEMS = [
+	{ href: "#pillars", label: "How It Works" },
+	{ href: "#ecosystem", label: "Features" },
+	{ href: "#stats", label: "Impact" },
+	{ href: "#faq", label: "FAQ" },
+	{ href: "#builder", label: "About" },
+] as const;
 
-function ParticleCanvas() {
+// ─── Animated background ──────────────────────────────────────────────────────
+
+function LandingBackground() {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
 	useEffect(() => {
@@ -146,86 +156,92 @@ function ParticleCanvas() {
 		const ctx = canvas.getContext("2d");
 		if (!ctx) return;
 
-		let animId: number;
-		let W = (canvas.width = window.innerWidth);
-		let H = (canvas.height = window.innerHeight * 2.5);
+		let animId = 0;
+		let width = 0;
+		let height = 0;
 
-		const isMobile = window.innerWidth < 768;
-		const NUM = isMobile ? 40 : 80;
-		type Particle = {
-			x: number; y: number; vx: number; vy: number;
-			r: number; alpha: number; color: string;
+		type Particle = { x: number; y: number; vx: number; vy: number; r: number };
+		let particles: Particle[] = [];
+
+		const isLightTheme = () =>
+			document.documentElement.getAttribute("data-theme") === "light";
+
+		const buildParticles = () => {
+			const count = window.innerWidth < 768 ? 36 : 64;
+			particles = Array.from({ length: count }, () => ({
+				x: Math.random() * width,
+				y: Math.random() * height,
+				vx: (Math.random() - 0.5) * 0.32,
+				vy: (Math.random() - 0.5) * 0.32,
+				r: Math.random() * 1.4 + 0.6,
+			}));
 		};
 
-		const COLORS = ["#00A69D", "#06B6D4", "#34D399", "#00A69D", "#ffffff"];
-		const particles: Particle[] = Array.from({ length: NUM }, () => ({
-			x: Math.random() * W,
-			y: Math.random() * H,
-			vx: (Math.random() - 0.5) * 0.4,
-			vy: (Math.random() - 0.5) * 0.4,
-			r: Math.random() * 2 + 0.5,
-			alpha: Math.random() * 0.5 + 0.1,
-			color: COLORS[Math.floor(Math.random() * COLORS.length)],
-		}));
+		const resize = () => {
+			width = canvas.width = window.innerWidth;
+			height = canvas.height = window.innerHeight;
+			buildParticles();
+		};
 
-		function draw() {
-			if (!ctx) return;
-			ctx.clearRect(0, 0, W, H);
+		const draw = () => {
+			const light = isLightTheme();
+			const rgb = light ? "0, 124, 114" : "0, 166, 157";
+			const lineAlpha = light ? 0.07 : 0.14;
+			const dotAlpha = light ? 0.28 : 0.5;
+			const maxDist = 130;
 
-			// draw connection lines
-			const maxDistSq = 140 * 140;
+			ctx.clearRect(0, 0, width, height);
+
 			for (let i = 0; i < particles.length; i++) {
-				const pi = particles[i];
+				const a = particles[i];
 				for (let j = i + 1; j < particles.length; j++) {
-					const pj = particles[j];
-					const dx = pi.x - pj.x;
-					const dy = pi.y - pj.y;
-					const distSq = dx * dx + dy * dy;
-					if (distSq < maxDistSq) {
-						const dist = Math.sqrt(distSq); // Only calculate sqrt when drawing connection
+					const b = particles[j];
+					const dx = a.x - b.x;
+					const dy = a.y - b.y;
+					const dist = Math.hypot(dx, dy);
+					if (dist < maxDist) {
 						ctx.beginPath();
-						ctx.moveTo(pi.x, pi.y);
-						ctx.lineTo(pj.x, pj.y);
-						ctx.strokeStyle = `rgba(0,166,157,${0.15 * (1 - dist / 140)})`;
-						ctx.lineWidth = 0.5;
+						ctx.moveTo(a.x, a.y);
+						ctx.lineTo(b.x, b.y);
+						ctx.strokeStyle = `rgba(${rgb}, ${lineAlpha * (1 - dist / maxDist)})`;
+						ctx.lineWidth = 0.6;
 						ctx.stroke();
 					}
 				}
 			}
 
-			// draw particles
 			particles.forEach((p) => {
 				ctx.beginPath();
 				ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-				ctx.globalAlpha = p.alpha;
-				ctx.fillStyle = p.color;
+				ctx.fillStyle = `rgba(${rgb}, ${dotAlpha})`;
 				ctx.fill();
-				ctx.globalAlpha = 1;
 
 				p.x += p.vx;
 				p.y += p.vy;
-				if (p.x < 0 || p.x > W) p.vx *= -1;
-				if (p.y < 0 || p.y > H) p.vy *= -1;
+				if (p.x <= 0 || p.x >= width) p.vx *= -1;
+				if (p.y <= 0 || p.y >= height) p.vy *= -1;
 			});
 
 			animId = requestAnimationFrame(draw);
-		}
+		};
 
+		resize();
 		draw();
 
-		const onResize = () => {
-			W = canvas.width = window.innerWidth;
-			H = canvas.height = window.innerHeight * 2.5;
-		};
-		window.addEventListener("resize", onResize);
-
+		window.addEventListener("resize", resize);
 		return () => {
 			cancelAnimationFrame(animId);
-			window.removeEventListener("resize", onResize);
+			window.removeEventListener("resize", resize);
 		};
 	}, []);
 
-	return <canvas ref={canvasRef} className={styles.particleCanvas} />;
+	return (
+		<div className={styles.bgLayer} aria-hidden>
+			<div className={styles.bgGrid} />
+			<div className={styles.bgGlow} />
+			<canvas ref={canvasRef} className={styles.bgCanvas} />
+		</div>
+	);
 }
 
 // ─── Scroll Reveal Hook ───────────────────────────────────────────────────────
@@ -238,8 +254,13 @@ function useScrollReveal() {
 		const el = ref.current;
 		if (!el) return;
 		const obs = new IntersectionObserver(
-			([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
-			{ threshold: 0.12 }
+			([entry]) => {
+				if (entry.isIntersecting) {
+					setVisible(true);
+					obs.disconnect();
+				}
+			},
+			{ threshold: 0.08, rootMargin: "0px 0px -40px 0px" },
 		);
 		obs.observe(el);
 		return () => obs.disconnect();
@@ -414,7 +435,6 @@ function BuilderSection() {
 			<div className={`${styles.builderCard} ${reveal.visible ? styles.revealIn : styles.revealHidden}`}>
 				<div className={styles.builderAvatar}>
 					<img src='/assets/genetiq_logo_v2.png' alt={BUILDER.name} className={styles.builderAvatarImg} />
-					<div className={styles.builderAvatarGlow} />
 				</div>
 
 				<div className={styles.builderInfo}>
@@ -460,6 +480,7 @@ export default function Landing() {
 	const navigate = useNavigate();
 	const [isScrolled, setIsScrolled] = useState(false);
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 	const [heroVisible, setHeroVisible] = useState(false);
 
 	const pillarsReveal    = useScrollReveal();
@@ -489,6 +510,35 @@ export default function Landing() {
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, []);
 
+	useEffect(() => {
+		document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
+		return () => {
+			document.body.style.overflow = "";
+		};
+	}, [mobileMenuOpen]);
+
+	useEffect(() => {
+		const onKeyDown = (event: KeyboardEvent) => {
+			if (event.key === "Escape") setMobileMenuOpen(false);
+		};
+		window.addEventListener("keydown", onKeyDown);
+		return () => window.removeEventListener("keydown", onKeyDown);
+	}, []);
+
+	useEffect(() => {
+		const onResize = () => {
+			if (window.innerWidth > 1024) setMobileMenuOpen(false);
+		};
+		window.addEventListener("resize", onResize);
+		return () => window.removeEventListener("resize", onResize);
+	}, []);
+
+	const closeMobileMenu = () => setMobileMenuOpen(false);
+
+	const handleMobileNavClick = () => {
+		closeMobileMenu();
+	};
+
 	const handleProceed = () => {
 		setIsModalOpen(false);
 		navigate(paths.auth.register);
@@ -496,14 +546,9 @@ export default function Landing() {
 
 	return (
 		<div className={styles.page}>
-			{/* ── Particle background ───────────────────────────── */}
-			<ParticleCanvas />
+			<LandingBackground />
 
-			{/* ── Ambient orbs ─────────────────────────────────── */}
-			<div className={styles.orb1} />
-			<div className={styles.orb2} />
-			<div className={styles.orb3} />
-
+			<div className={styles.pageContent}>
 			{/* ── Navbar ───────────────────────────────────────── */}
 			<nav className={`${styles.nav} ${isScrolled ? styles.scrolled : ""}`}>
 				<div className={styles.navInner}>
@@ -511,17 +556,111 @@ export default function Landing() {
 						<img src='/assets/genetiq_logo_v2.png' alt='Genetiq Logo' className={styles.logoImage} />
 						<span className={styles.logoText}>Genetiq</span>
 					</div>
+
 					<div className={styles.navLinks}>
-						<a href='#pillars' className={styles.navLink}>How It Works</a>
-						<a href='#ecosystem' className={styles.navLink}>Features</a>
-						<a href='#stats' className={styles.navLink}>Impact</a>
-						<a href='#faq' className={styles.navLink}>FAQ</a>
-						<a href='#builder' className={styles.navLink}>About</a>
-						<button className={styles.btnNavOutline} onClick={() => navigate(paths.auth.login)}>Log In</button>
-						<button className={styles.btnNavPrimary} onClick={() => setIsModalOpen(true)}>Get Started Free</button>
+						{NAV_ITEMS.map((item) => (
+							<a key={item.href} href={item.href} className={styles.navLink}>
+								{item.label}
+							</a>
+						))}
+						<div className={styles.navActions}>
+							<div className={styles.navTheme}>
+								<ThemeSwitcher />
+							</div>
+							<button className={styles.btnNavOutline} onClick={() => navigate(paths.auth.login)}>
+								Log In
+							</button>
+							<button className={styles.btnNavPrimary} onClick={() => setIsModalOpen(true)}>
+								Get Started Free
+							</button>
+						</div>
+					</div>
+
+					<div className={styles.navMobileControls}>
+						<div className={styles.navTheme}>
+							<ThemeSwitcher />
+						</div>
+						<button
+							type='button'
+							className={`${styles.menuToggle} ${mobileMenuOpen ? styles.menuToggleOpen : ""}`}
+							onClick={() => setMobileMenuOpen((open) => !open)}
+							aria-expanded={mobileMenuOpen}
+							aria-controls='landing-mobile-menu'
+							aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+						>
+							{mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+						</button>
 					</div>
 				</div>
 			</nav>
+
+			<div
+				id='landing-mobile-menu'
+				className={`${styles.mobileMenu} ${mobileMenuOpen ? styles.mobileMenuOpen : ""}`}
+				aria-hidden={!mobileMenuOpen}
+			>
+				<button
+					type='button'
+					className={styles.mobileMenuBackdrop}
+					onClick={closeMobileMenu}
+					aria-label='Close menu'
+					tabIndex={mobileMenuOpen ? 0 : -1}
+				/>
+				<div className={styles.mobileMenuPanel} role='dialog' aria-modal='true' aria-label='Navigation menu'>
+					<div className={styles.mobileMenuHeader}>
+						<span className={styles.mobileMenuTitle}>Menu</span>
+						<button
+							type='button'
+							className={styles.mobileMenuClose}
+							onClick={closeMobileMenu}
+							aria-label='Close menu'
+						>
+							<X size={18} />
+						</button>
+					</div>
+
+					<nav className={styles.mobileNavList}>
+						{NAV_ITEMS.map((item, index) => (
+							<a
+								key={item.href}
+								href={item.href}
+								className={styles.mobileNavLink}
+								style={{ transitionDelay: mobileMenuOpen ? `${0.06 + index * 0.05}s` : "0s" }}
+								onClick={handleMobileNavClick}
+							>
+								{item.label}
+							</a>
+						))}
+					</nav>
+
+					<div className={styles.mobileMenuFooter}>
+						<div className={styles.mobileMenuThemeRow}>
+							<span>Theme</span>
+							<ThemeSwitcher />
+						</div>
+						<button
+							type='button'
+							className={styles.btnMobileOutline}
+							onClick={() => {
+								closeMobileMenu();
+								navigate(paths.auth.login);
+							}}
+						>
+							Log In
+						</button>
+						<button
+							type='button'
+							className={styles.btnMobilePrimary}
+							onClick={() => {
+								closeMobileMenu();
+								setIsModalOpen(true);
+							}}
+						>
+							Get Started Free <ArrowRight size={18} />
+						</button>
+					</div>
+				</div>
+			</div>
 
 			{/* ── Hero ─────────────────────────────────────────── */}
 			<section className={`${styles.hero} ${heroVisible ? styles.heroIn : ""}`}>
@@ -554,8 +693,6 @@ export default function Landing() {
 				</div>
 
 				<div className={styles.heroVisual}>
-					<div className={styles.heroGlowRing} />
-					<div className={styles.heroGlowRing2} />
 					<img
 						src='/assets/digital_twin_hero.png'
 						alt='Digital Twin 3D Preview'
@@ -590,7 +727,6 @@ export default function Landing() {
 							<div className={styles.pillarIconWrapper}>{pillar.icon}</div>
 							<h3 className={styles.pillarTitle}>{pillar.title}</h3>
 							<p className={styles.pillarDesc}>{pillar.desc}</p>
-							<div className={styles.cardGlowLine} />
 						</div>
 					))}
 				</div>
@@ -634,7 +770,6 @@ export default function Landing() {
 								alt='Ecosystem'
 								className={styles.mockScreen}
 							/>
-							<div className={styles.ecoScanLine} />
 						</div>
 					</div>
 					<div className={`${styles.ecoList} ${ecosystemReveal.visible ? styles.slideInRight : styles.slideHidden}`}>
@@ -654,7 +789,7 @@ export default function Landing() {
 			</section>
 
 			{/* ── Security & Privacy ────────────────────────────── */}
-			<section className={`${styles.section} ${styles.suiEdgeSection}`}>
+			<section className={styles.suiEdgeSection}>
 				<div ref={securityReveal.ref} className={`${styles.sectionHeader} ${securityReveal.visible ? styles.revealIn : styles.revealHidden}`}>
 					<span className={styles.badge}>What the AI Can Read</span>
 					<h2 className={styles.sectionTitle}>Wide Coverage, Deep Understanding</h2>
@@ -671,7 +806,6 @@ export default function Landing() {
 						>
 							<h3>{tech.icon} {tech.title}</h3>
 							<p>{tech.desc}</p>
-							<div className={styles.cardGlowLine} />
 						</div>
 					))}
 				</div>
@@ -702,7 +836,6 @@ export default function Landing() {
 			{/* ── Final CTA ─────────────────────────────────────── */}
 			<section className={styles.finalCta}>
 				<div ref={ctaReveal.ref} className={`${styles.finalCtaContent} ${ctaReveal.visible ? styles.revealIn : styles.revealHidden}`}>
-					<div className={styles.ctaGlowPulse} />
 					<h2 className={styles.finalTitle}>Got test results you don't understand?</h2>
 					<p className={styles.finalSub}>Upload them now. Our AI will explain every number in plain English — free, in under 30 seconds.</p>
 					<button className={styles.btnLarge} onClick={() => setIsModalOpen(true)}>
@@ -725,24 +858,24 @@ export default function Landing() {
 						</div>
 						<div className={styles.footerLinksGrid}>
 							<div className={styles.footerLinkCol}>
-								<h4>Protocol</h4>
+								<h4>Product</h4>
 								<ul className={styles.footerLinkList}>
-									<li><a href='#'>Walrus Storage</a></li>
-									<li><a href='#'>Sui zkLogin</a></li>
+									<li><a href='#pillars'>How It Works</a></li>
+									<li><a href='#faq'>FAQ</a></li>
 								</ul>
 							</div>
 							<div className={styles.footerLinkCol}>
-								<h4>Resources</h4>
+								<h4>Company</h4>
 								<ul className={styles.footerLinkList}>
-									<li><a href='#faq'>Documentation</a></li>
-									<li><a href='#'>Whitepaper</a></li>
+									<li><a href='#builder'>About</a></li>
+									<li><a href='#stats'>Impact</a></li>
 								</ul>
 							</div>
 							<div className={styles.footerLinkCol}>
 								<h4>Legal</h4>
 								<ul className={styles.footerLinkList}>
-									<li><a href='#'>Privacy Policy</a></li>
-									<li><a href='#'>Terms of Service</a></li>
+									<li><a href={paths.privacy}>Privacy Policy</a></li>
+									<li><a href={paths.terms}>Terms of Service</a></li>
 								</ul>
 							</div>
 						</div>
@@ -752,6 +885,7 @@ export default function Landing() {
 					</div>
 				</div>
 			</footer>
+			</div>
 		</div>
 	);
 }

@@ -1,0 +1,1 @@
+"export function safeGet(obj: any, key: any): any {\n\tif (typeof key === \"string\" && [\"__proto__\", \"constructor\", \"prototype\"].includes(key)) {\n\t\treturn undefined;\n\t}\n\treturn obj ? Reflect.get(obj, key) : undefined;\n}\n"
