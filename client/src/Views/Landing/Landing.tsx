@@ -667,7 +667,7 @@ export default function Landing() {
 				<div className={styles.heroContent}>
 					<div className={styles.heroBadge}>
 						<span className={styles.heroBadgeDot} />
-						Upload Your Lab Results · AI Explains Everything
+						Lab Results, Explained
 					</div>
 					<h1 className={styles.heroTitle}>
 						Your Test Results, <br />
