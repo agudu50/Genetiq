@@ -1,22 +1,38 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 import { paths } from "@/App/Routes/Paths";
 import { LoginForm } from "@/Features/Auth/Login/Components/LoginForm/LoginForm";
 import styles from "./Login.module.scss";
 import { ShieldCheck, Upload, Brain } from "lucide-react";
 
 const FEATURES = [
-	{ icon: <Upload size={18} />, text: "Upload any lab result paper or PDF" },
+	{ icon: <Upload size={18} />, text: "Upload any lab result — paper or PDF" },
 	{ icon: <Brain size={18} />, text: "AI explains every value in plain English" },
 	{ icon: <ShieldCheck size={18} />, text: "Your data is private and encrypted" },
 ];
 
 const Login = () => {
 	const navigate = useNavigate();
+	const [pageIn, setPageIn] = useState(false);
+
+	useEffect(() => {
+		let frame2 = 0;
+		const frame1 = requestAnimationFrame(() => {
+			frame2 = requestAnimationFrame(() => setPageIn(true));
+		});
+		return () => {
+			cancelAnimationFrame(frame1);
+			cancelAnimationFrame(frame2);
+		};
+	}, []);
 
 	return (
-		<div className={styles.page}>
-			{/* ── Left panel ── */}
+		<div className={`${styles.page} ${pageIn ? styles.pageIn : ""}`}>
+			<div className={styles.bgLayer} aria-hidden>
+				<div className={styles.bgGrid} />
+				<div className={styles.bgGlow} />
+			</div>
+
 			<div className={styles.leftPanel}>
 				<div className={styles.leftInner}>
 					<div className={styles.brand} onClick={() => navigate(paths.landing)}>
@@ -34,25 +50,20 @@ const Login = () => {
 
 						<ul className={styles.featureList}>
 							{FEATURES.map((f, i) => (
-								<motion.li
-									key={i}
-									className={styles.featureItem}
-									initial={{ opacity: 0, x: -16 }}
-									animate={{ opacity: 1, x: 0 }}
-									transition={{ delay: 0.2 + i * 0.12 }}
-								>
+								<li key={i} className={styles.featureItem}>
 									<span className={styles.featureIcon}>{f.icon}</span>
 									<span>{f.text}</span>
-								</motion.li>
+								</li>
 							))}
 						</ul>
 					</div>
 
-					<p className={styles.leftFooter}>© 2026 Genetiq · <a href='/privacy'>Privacy</a> · <a href='/terms'>Terms</a></p>
+					<p className={styles.leftFooter}>
+						© 2026 Genetiq · <a href='/privacy'>Privacy</a> · <a href='/terms'>Terms</a>
+					</p>
 				</div>
 			</div>
 
-			{/* ── Right panel ── */}
 			<div className={styles.rightPanel}>
 				<div className={styles.rightInner}>
 					<div className={styles.mobileHeader} onClick={() => navigate(paths.landing)}>
@@ -60,13 +71,7 @@ const Login = () => {
 						<span className={styles.brandName}>Genetiq</span>
 					</div>
 
-					<motion.div
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ duration: 0.4 }}
-					>
-						<LoginForm />
-					</motion.div>
+					<LoginForm animate={pageIn} />
 				</div>
 			</div>
 		</div>

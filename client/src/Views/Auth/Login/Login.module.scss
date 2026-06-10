@@ -1,27 +1,219 @@
-// ── Login page — split layout ─────────────────────────────────────────────────
+// ── Login page — theme-aware split layout ─────────────────────────────────────
+
+$brand: #007c72;
+
+@mixin auth-theme-dark {
+	--auth-bg: #0a0e1a;
+	--auth-panel: #0d1321;
+	--auth-border: rgba(255, 255, 255, 0.06);
+	--auth-text: #ffffff;
+	--auth-text-muted: rgba(255, 255, 255, 0.5);
+	--auth-text-soft: rgba(255, 255, 255, 0.75);
+	--auth-footer: rgba(255, 255, 255, 0.25);
+	--auth-footer-link: rgba(255, 255, 255, 0.35);
+	--auth-brand-tint: rgba(0, 166, 157, 0.12);
+	--auth-brand-border: rgba(0, 166, 157, 0.2);
+	--auth-accent-glow: rgba(0, 166, 157, 0.35);
+	--auth-show-glow: 1;
+}
+
+@mixin auth-theme-light {
+	--auth-bg: #f8fafc;
+	--auth-panel: #ffffff;
+	--auth-border: #e2e8f0;
+	--auth-text: #0f172a;
+	--auth-text-muted: #64748b;
+	--auth-text-soft: #475569;
+	--auth-footer: #94a3b8;
+	--auth-footer-link: #64748b;
+	--auth-brand-tint: #e6f4f3;
+	--auth-brand-border: rgba(0, 124, 114, 0.22);
+	--auth-accent-glow: transparent;
+	--auth-show-glow: 0.35;
+}
+
+$ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+@keyframes slideInLeft {
+	from {
+		opacity: 0;
+		transform: translateX(-56px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes slideInRight {
+	from {
+		opacity: 0;
+		transform: translateX(56px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes fadeUp {
+	from {
+		opacity: 0;
+		transform: translateY(28px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes fadeDown {
+	from {
+		opacity: 0;
+		transform: translateY(-16px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes slideInItem {
+	from {
+		opacity: 0;
+		transform: translateX(-24px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes blobFloatA {
+	0%,
+	100% {
+		transform: translate(0, 0) scale(1);
+	}
+	50% {
+		transform: translate(24px, 18px) scale(1.06);
+	}
+}
+
+@keyframes blobFloatB {
+	0%,
+	100% {
+		transform: translate(0, 0) scale(1);
+	}
+	50% {
+		transform: translate(-18px, -22px) scale(1.08);
+	}
+}
+
+@keyframes gridDrift {
+	from {
+		transform: translate(0, 0);
+	}
+	to {
+		transform: translate(48px, 48px);
+	}
+}
+
+@keyframes bgGlowPulse {
+	0%,
+	100% {
+		opacity: 0.4;
+		transform: scale(1);
+	}
+	50% {
+		opacity: 0.65;
+		transform: scale(1.08);
+	}
+}
+
+@keyframes logoFloat {
+	0%,
+	100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-4px);
+	}
+}
+
+@keyframes iconPulse {
+	0%,
+	100% {
+		box-shadow: 0 0 0 0 rgba($brand, 0.2);
+	}
+	50% {
+		box-shadow: 0 0 0 6px rgba($brand, 0);
+	}
+}
 
 .page {
+	@include auth-theme-dark;
+	position: relative;
 	min-height: 100vh;
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	background: #0A0E1A;
+	background: var(--auth-bg);
+	transition: background 0.25s ease;
+	overflow: hidden;
+
+	:global(html[data-theme="light"]) & {
+		@include auth-theme-light;
+	}
 
 	@media (max-width: 900px) {
 		grid-template-columns: 1fr;
 	}
 }
 
-// ── Left panel ───────────────────────────────────────────────────────────────
+.bgLayer {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	overflow: hidden;
+}
+
+.bgGrid {
+	position: absolute;
+	inset: -40px;
+	background-image:
+		linear-gradient(var(--auth-border) 1px, transparent 1px),
+		linear-gradient(90deg, var(--auth-border) 1px, transparent 1px);
+	background-size: 40px 40px;
+	opacity: 0.65;
+	mask-image: radial-gradient(ellipse 80% 70% at 70% 50%, #000 10%, transparent 75%);
+	animation: gridDrift 16s linear infinite;
+	will-change: transform;
+}
+
+.bgGlow {
+	position: absolute;
+	top: 20%;
+	right: 10%;
+	width: min(520px, 60vw);
+	height: min(520px, 60vw);
+	border-radius: 50%;
+	background: var(--auth-brand-tint);
+	opacity: 0.5;
+	filter: blur(72px);
+	animation: bgGlowPulse 9s ease-in-out infinite;
+	will-change: transform, opacity;
+}
 
 .leftPanel {
-	background: #0D1321;
-	border-right: 1px solid rgba(255, 255, 255, 0.06);
+	background: var(--auth-panel);
+	border-right: 1px solid var(--auth-border);
 	display: flex;
 	align-items: stretch;
 	position: relative;
+	z-index: 1;
 	overflow: hidden;
+	transition: background 0.25s ease, border-color 0.25s ease;
 
-	// Subtle teal top-left accent blob
 	&::before {
 		content: "";
 		position: absolute;
@@ -29,8 +221,11 @@
 		left: -120px;
 		width: 360px;
 		height: 360px;
-		background: radial-gradient(circle, rgba(#00A69D, 0.18) 0%, transparent 70%);
+		background: rgba(0, 166, 157, calc(0.18 * var(--auth-show-glow)));
+		border-radius: 50%;
 		pointer-events: none;
+		animation: blobFloatA 14s ease-in-out infinite;
+		will-change: transform;
 	}
 
 	&::after {
@@ -40,8 +235,11 @@
 		right: -80px;
 		width: 280px;
 		height: 280px;
-		background: radial-gradient(circle, rgba(#06B6D4, 0.1) 0%, transparent 70%);
+		background: rgba(6, 182, 212, calc(0.1 * var(--auth-show-glow)));
+		border-radius: 50%;
 		pointer-events: none;
+		animation: blobFloatB 18s ease-in-out infinite;
+		will-change: transform;
 	}
 
 	@media (max-width: 900px) {
@@ -64,6 +262,15 @@
 	gap: 12px;
 	cursor: pointer;
 	margin-bottom: auto;
+	transition: transform 0.2s ease;
+
+	&:hover {
+		transform: scale(1.02);
+	}
+
+	&:active {
+		transform: scale(0.98);
+	}
 }
 
 .brandLogo {
@@ -71,25 +278,27 @@
 	height: 40px;
 	object-fit: cover;
 	border-radius: 8px;
-	border: 1px solid rgba(#00A69D, 0.3);
-	filter: drop-shadow(0 0 8px rgba(#00A69D, 0.35));
+	border: 1px solid var(--auth-brand-border);
+	filter: drop-shadow(0 0 8px var(--auth-accent-glow));
+	animation: logoFloat 4.5s ease-in-out infinite;
+	will-change: transform;
 }
 
 .brandName {
 	font-size: 1.4rem;
 	font-weight: 800;
-	color: #00A69D;
+	color: $brand;
 	letter-spacing: -0.03em;
 }
 
 .leftContent {
-	padding: 60px 0;
+	padding: 60px 0 40px;
 }
 
 .leftHeading {
 	font-size: clamp(1.6rem, 2.5vw, 2.2rem);
 	font-weight: 800;
-	color: #ffffff;
+	color: var(--auth-text);
 	line-height: 1.25;
 	letter-spacing: -0.03em;
 	margin: 0 0 16px;
@@ -97,9 +306,9 @@
 
 .leftSub {
 	font-size: 1rem;
-	color: rgba(255, 255, 255, 0.5);
+	color: var(--auth-text-muted);
 	line-height: 1.7;
-	margin: 0 0 40px;
+	margin: 0 0 36px;
 	max-width: 380px;
 }
 
@@ -118,36 +327,55 @@
 	gap: 14px;
 	font-size: 0.95rem;
 	font-weight: 500;
-	color: rgba(255, 255, 255, 0.75);
+	color: var(--auth-text-soft);
+	transition: transform 0.2s ease;
+
+	&:hover {
+		transform: translateX(6px);
+	}
 }
 
 .featureIcon {
 	width: 36px;
 	height: 36px;
 	border-radius: 10px;
-	background: rgba(#00A69D, 0.12);
-	border: 1px solid rgba(#00A69D, 0.2);
+	background: var(--auth-brand-tint);
+	border: 1px solid var(--auth-brand-border);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: #00A69D;
+	color: $brand;
 	flex-shrink: 0;
+	animation: iconPulse 3s ease-in-out infinite;
+}
+
+.featureItem:nth-child(1) .featureIcon {
+	animation-delay: 0s;
+}
+
+.featureItem:nth-child(2) .featureIcon {
+	animation-delay: 0.5s;
+}
+
+.featureItem:nth-child(3) .featureIcon {
+	animation-delay: 1s;
 }
 
 .leftFooter {
 	font-size: 0.8rem;
-	color: rgba(255, 255, 255, 0.25);
+	color: var(--auth-footer);
 	margin: 0;
 
 	a {
-		color: rgba(255, 255, 255, 0.35);
+		color: var(--auth-footer-link);
 		text-decoration: none;
 		transition: color 0.2s;
-		&:hover { color: #00A69D; }
+
+		&:hover {
+			color: $brand;
+		}
 	}
 }
-
-// ── Right panel ──────────────────────────────────────────────────────────────
 
 .rightPanel {
 	display: flex;
@@ -155,6 +383,9 @@
 	justify-content: center;
 	padding: 48px 24px;
 	overflow-y: auto;
+	background: transparent;
+	position: relative;
+	z-index: 1;
 }
 
 .rightInner {
@@ -171,5 +402,101 @@
 
 	@media (max-width: 900px) {
 		display: flex;
+	}
+}
+
+// ── Entrance animations ───────────────────────────────────────────────────────
+
+.leftPanel,
+.rightPanel,
+.brand,
+.leftHeading,
+.leftSub,
+.featureItem,
+.leftFooter,
+.mobileHeader {
+	opacity: 0;
+}
+
+.pageIn {
+	.leftPanel {
+		animation: slideInLeft 0.75s $ease-out forwards;
+	}
+
+	.rightPanel {
+		animation: slideInRight 0.75s $ease-out 0.1s forwards;
+	}
+
+	.brand {
+		animation: fadeUp 0.55s $ease-out 0.22s forwards;
+	}
+
+	.leftHeading {
+		animation: fadeUp 0.55s $ease-out 0.32s forwards;
+	}
+
+	.leftSub {
+		animation: fadeUp 0.55s $ease-out 0.4s forwards;
+	}
+
+	.featureItem {
+		animation: slideInItem 0.5s $ease-out forwards;
+
+		&:nth-child(1) {
+			animation-delay: 0.48s;
+		}
+
+		&:nth-child(2) {
+			animation-delay: 0.58s;
+		}
+
+		&:nth-child(3) {
+			animation-delay: 0.68s;
+		}
+	}
+
+	.leftFooter {
+		animation: fadeUp 0.5s $ease-out 0.78s forwards;
+	}
+
+	.mobileHeader {
+		animation: fadeDown 0.45s $ease-out 0.28s forwards;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.bgGrid,
+	.bgGlow,
+	.leftPanel::before,
+	.leftPanel::after,
+	.brandLogo,
+	.featureIcon {
+		animation: none !important;
+	}
+
+	.pageIn {
+		.leftPanel,
+		.rightPanel,
+		.brand,
+		.leftHeading,
+		.leftSub,
+		.featureItem,
+		.leftFooter,
+		.mobileHeader {
+			animation: none !important;
+			opacity: 1 !important;
+			transform: none !important;
+		}
+	}
+
+	.leftPanel,
+	.rightPanel,
+	.brand,
+	.leftHeading,
+	.leftSub,
+	.featureItem,
+	.leftFooter,
+	.mobileHeader {
+		opacity: 1;
 	}
 }

@@ -30,7 +30,7 @@ const AppleIcon = () => (
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export const LoginForm = () => {
+export const LoginForm = ({ animate = false }: { animate?: boolean }) => {
 	const navigate = useNavigate();
 
 	// Restore saved email & remember preference from a previous "keep me signed in"
@@ -79,7 +79,7 @@ export const LoginForm = () => {
 	};
 
 	return (
-		<div className={styles.formWrap}>
+		<div className={`${styles.formWrap} ${animate ? styles.formIn : ""}`}>
 			{/* Heading */}
 			<div className={styles.heading}>
 				<h1 className={styles.title}>Welcome back</h1>
@@ -149,7 +149,7 @@ export const LoginForm = () => {
 					{isLoading ? (
 						<span className={styles.spinner} />
 					) : (
-						<>Sign In <ArrowRight size={16} /></>
+						<>Sign In <ArrowRight size={16} className={styles.submitArrow} /></>
 					)}
 				</button>
 			</form>
