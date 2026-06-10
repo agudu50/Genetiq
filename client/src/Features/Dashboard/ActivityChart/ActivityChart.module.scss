@@ -61,7 +61,7 @@
 	pointer-events: none;
 	z-index: 0;
 	transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-	animation: chartBlobPulse 8s infinite alternate ease-in-out;
+	animation: none;
 
 	html[data-theme="light"] & {
 		background: radial-gradient(circle, color-mix(in srgb, var(--active-metric-color, #00A69D) 10%, transparent) 0%, transparent 70%);
@@ -284,7 +284,7 @@
 			opacity: 1;
 			transform: scale(1.15);
 			box-shadow: 0 0 8px var(--metric-color);
-			animation: dotBreathe 1.5s infinite alternate ease-in-out;
+			animation: none;
 		}
 	}
 }
@@ -412,7 +412,7 @@
 	&.today {
 		border: 1px solid rgba(255, 255, 255, 0.15);
 		box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06), 0 0 16px color-mix(in srgb, var(--active-metric-color, #00A69D) 40%, transparent);
-		animation: todayPulse 2.5s infinite alternate ease-in-out, growUp 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.1) both;
+		animation: growUp 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.1) both;
 
 		html[data-theme="light"] & {
 			border-color: rgba(15, 23, 42, 0.15);

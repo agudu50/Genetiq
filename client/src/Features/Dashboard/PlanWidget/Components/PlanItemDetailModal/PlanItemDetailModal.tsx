@@ -3,19 +3,19 @@ import ReactDOM from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
 	X,
-	Sparkles,
-	TrendingUp,
 	Pill,
 	Calendar,
 	CheckCircle,
-	ShoppingCart,
+	Bell,
 	ClipboardList,
 	Activity,
+	Sparkles,
+	ChevronRight,
+	Info,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
 import { HealthGoal, setGoals } from "@/App/Redux/goalSlice";
-import { addToCart } from "@/App/Redux/cartSlice";
 import { LocalVault } from "@/App/Services/LocalVault";
 import { useLanguage } from "@/App/i18n/LanguageContext";
 import {
@@ -45,26 +45,33 @@ export const PlanItemDetailModal = ({
 	const { t } = useLanguage();
 	const dispatch = useDispatch();
 	const existingGoals = useSelector((state: RootState) => state.goals.items);
-	const cartItems = useSelector((state: RootState) => state.cart.items);
 
 	const [scheduled, setScheduled] = useState(false);
 	const [scheduling, setScheduling] = useState(false);
+	const [reminderSet, setReminderSet] = useState(false);
 
 	useEffect(() => {
 		setScheduled(false);
 		setScheduling(false);
+		if (!selection?.item.name) {
+			setReminderSet(false);
+			return;
+		}
+		try {
+			const saved = localStorage.getItem("genetiq_plan_reminders");
+			const reminders: string[] = saved ? JSON.parse(saved) : [];
+			setReminderSet(reminders.includes(selection.item.name));
+		} catch {
+			setReminderSet(false);
+		}
 	}, [selection?.item.name]);
 
 	const item = selection?.item;
 	const category = selection?.category ?? "";
 	const accentColor = selection?.accentColor ?? "#00a69d";
 	const translatedDesc = item ? t(item.description) : "";
-	const { text: benefitText, score: impactScore } = parseImpact(translatedDesc);
-	const isInCart = item
-		? cartItems.some((c) => c.name === item.name)
-		: false;
+	const { text: benefitText } = parseImpact(translatedDesc);
 	const isSupplement = category === "Supplements";
-	const impactPercent = impactScore ? Math.min(impactScore * 10, 100) : null;
 
 	const handleSchedule = async () => {
 		if (!item) return;
@@ -99,17 +106,21 @@ export const PlanItemDetailModal = ({
 		}, 800);
 	};
 
-	const handleAddToCart = () => {
-		if (!item || isInCart) return;
-		dispatch(
-			addToCart({
-				id: item.name,
-				name: item.name,
-				description: item.description,
-				icon: item.icon,
-				price: "$49",
-			}),
-		);
+	const handleSetReminder = () => {
+		if (!item || reminderSet) return;
+		try {
+			const saved = localStorage.getItem("genetiq_plan_reminders");
+			const reminders: string[] = saved ? JSON.parse(saved) : [];
+			if (!reminders.includes(item.name)) {
+				localStorage.setItem(
+					"genetiq_plan_reminders",
+					JSON.stringify([...reminders, item.name]),
+				);
+			}
+			setReminderSet(true);
+		} catch {
+			setReminderSet(true);
+		}
 	};
 
 	const handleClose = () => {
@@ -131,12 +142,14 @@ export const PlanItemDetailModal = ({
 					<motion.div
 						className={styles.modal}
 						style={{ "--accent": accentColor } as React.CSSProperties}
-						initial={{ opacity: 0, y: 28, scale: 0.96 }}
+						initial={{ opacity: 0, y: 24, scale: 0.97 }}
 						animate={{ opacity: 1, y: 0, scale: 1 }}
-						exit={{ opacity: 0, y: 20, scale: 0.96 }}
+						exit={{ opacity: 0, y: 16, scale: 0.98 }}
 						transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
 						onClick={(e) => e.stopPropagation()}
 					>
+						<div className={styles.accentStripe} aria-hidden />
+						<div className={styles.modalMesh} aria-hidden />
 						<div className={styles.modalGlow} aria-hidden />
 
 						<header className={styles.header}>
@@ -150,12 +163,12 @@ export const PlanItemDetailModal = ({
 								onClick={handleClose}
 								aria-label={t("close")}
 							>
-								<X size={18} />
+								<X size={18} strokeWidth={2.5} aria-hidden />
 							</button>
 						</header>
 
 						<div className={styles.hero}>
-							<div className={styles.heroIcon}>
+							<div className={styles.productIcon}>
 								<img src={item.icon} alt="" />
 							</div>
 							<div className={styles.heroText}>
@@ -167,48 +180,30 @@ export const PlanItemDetailModal = ({
 						</div>
 
 						<div className={styles.body}>
-							<div className={styles.benefitCard}>
-								<div className={styles.benefitHead}>
-									<Sparkles size={16} strokeWidth={2.25} />
+							<section className={styles.surfaceCard}>
+								<div className={styles.surfaceHead}>
+									<Sparkles size={15} strokeWidth={2.25} />
 									<span>{t("plan_detail_benefit")}</span>
 								</div>
 								<p className={styles.benefitText}>{benefitText}</p>
-
-								{impactPercent !== null && (
-									<div className={styles.impactBlock}>
-										<div className={styles.impactLabel}>
-											<TrendingUp size={14} />
-											<span>{t("plan_detail_impact")}</span>
-											<strong>+{impactScore}</strong>
-										</div>
-										<div className={styles.impactTrack}>
-											<motion.div
-												className={styles.impactFill}
-												initial={{ width: 0 }}
-												animate={{ width: `${impactPercent}%` }}
-												transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-											/>
-										</div>
-									</div>
-								)}
-							</div>
+							</section>
 
 							{(item.dosage || item.frequency) && (
-								<div className={styles.detailsGrid}>
+								<div className={styles.statGrid}>
 									{item.dosage && (
-										<div className={styles.detailCell}>
-											<span className={styles.detailLabel}>
+										<div className={styles.statCell}>
+											<span className={styles.statLabel}>
 												{t("plan_detail_dosage")}
 											</span>
-											<span className={styles.detailValue}>{item.dosage}</span>
+											<span className={styles.statValue}>{item.dosage}</span>
 										</div>
 									)}
 									{item.frequency && (
-										<div className={styles.detailCell}>
-											<span className={styles.detailLabel}>
+										<div className={styles.statCell}>
+											<span className={styles.statLabel}>
 												{t("plan_detail_frequency")}
 											</span>
-											<span className={styles.detailValue}>
+											<span className={styles.statValue}>
 												{item.frequency}
 											</span>
 										</div>
@@ -216,35 +211,36 @@ export const PlanItemDetailModal = ({
 								</div>
 							)}
 
-							<div className={styles.whyCard}>
-								<p className={styles.whyLabel}>
+							<section className={styles.whyPanel}>
+								<span className={styles.whyLabel}>
 									{t("plan_detail_why_recommended")}
-								</p>
+								</span>
 								<p className={styles.whyText}>
 									{t("plan_detail_why_body", { category: t(category) })}
 								</p>
-							</div>
+							</section>
 
-							<p className={styles.dataNote}>
-								{t("plan_based_on_data")}
-							</p>
+							<div className={styles.dataRow}>
+								<Info size={13} strokeWidth={2.25} />
+								<span>{t("plan_based_on_data")}</span>
+							</div>
 						</div>
 
 						<footer className={styles.footer}>
 							{scheduled ? (
-								<div className={styles.successRow}>
+								<div className={styles.successBanner}>
 									<CheckCircle size={18} />
 									<span>{t("plan_detail_scheduled")}</span>
 								</div>
 							) : (
-								<>
+								<div className={styles.actionRow}>
 									<button
 										type="button"
 										className={styles.scheduleBtn}
 										onClick={handleSchedule}
 										disabled={scheduling}
 									>
-										<Calendar size={16} />
+										<Calendar size={16} strokeWidth={2.25} />
 										<span>
 											{scheduling
 												? t("activating_plan")
@@ -254,17 +250,19 @@ export const PlanItemDetailModal = ({
 									{isSupplement && (
 										<button
 											type="button"
-											className={`${styles.cartBtn} ${isInCart ? styles.cartAdded : ""}`}
-											onClick={handleAddToCart}
-											disabled={isInCart}
+											className={`${styles.secondaryBtn} ${reminderSet ? styles.secondaryDone : ""}`}
+											onClick={handleSetReminder}
+											disabled={reminderSet}
 										>
-											<ShoppingCart size={16} />
+											<Bell size={16} strokeWidth={2.25} />
 											<span>
-												{isInCart ? t("added") : t("add_to_cart")}
+												{reminderSet
+													? t("plan_detail_reminder_set")
+													: t("plan_detail_set_reminder")}
 											</span>
 										</button>
 									)}
-								</>
+								</div>
 							)}
 							{onViewSection && (
 								<button
@@ -276,6 +274,7 @@ export const PlanItemDetailModal = ({
 									}}
 								>
 									{t("plan_detail_view_section", { category: t(category) })}
+									<ChevronRight size={14} strokeWidth={2.5} />
 								</button>
 							)}
 						</footer>

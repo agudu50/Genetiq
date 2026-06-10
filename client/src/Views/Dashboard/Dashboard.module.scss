@@ -37,8 +37,7 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 	background-size: 44px 44px;
 	opacity: 0.55;
 	mask-image: radial-gradient(ellipse 85% 75% at 30% 40%, #000 15%, transparent 72%);
-	animation: dashGridDrift 20s linear infinite;
-	will-change: transform;
+	animation: none;
 
 	html[data-theme="light"] & {
 		background-image:
@@ -57,8 +56,7 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 	border-radius: 50%;
 	background: radial-gradient(circle, rgba($teal-primary, 0.14) 0%, transparent 68%);
 	filter: blur(64px);
-	animation: dashGlowPulse 9s ease-in-out infinite alternate;
-	will-change: transform, opacity;
+	animation: none;
 
 	html[data-theme="light"] & {
 		background: radial-gradient(circle, rgba($teal-primary, 0.1) 0%, transparent 68%);
@@ -189,7 +187,7 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 		z-index: 2;
 		opacity: 0.6;
 		transition: opacity 0.3s ease;
-		animation: modelGlowPulse 7s ease-in-out infinite alternate;
+		animation: none;
 	}
 
 	&:hover {
@@ -390,17 +388,10 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 	overflow-x: hidden;
 	padding-right: 8px;
 	padding-bottom: 24px;
-	transform: translateZ(0);
-	will-change: transform;
 
 	> * {
-		opacity: 0;
-		transform: translateY(28px) scale(0.97);
-	}
-
-	&.loopAnimation > * {
-		opacity: 0;
-		transform: translateY(16px) scale(0.98);
+		opacity: 1;
+		transform: none;
 	}
 
 	@for $i from 1 through 15 {
@@ -787,9 +778,6 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 		width: 4px;
 	}
 
-	transform: translateZ(0);
-	will-change: transform;
-
 	&::-webkit-scrollbar-track {
 		background: transparent;
 	}
@@ -891,28 +879,34 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 
 .pageIn {
 	.Dashboard-left {
-		animation: modelReveal 0.75s $ease-out 0.08s forwards;
+		animation: modelReveal 0.5s $ease-out 0.05s forwards;
 
 		@media (max-width: 1024px) {
-			animation: widgetIn 0.6s $ease-out 0.05s forwards;
+			animation: widgetIn 0.4s $ease-out forwards;
 		}
 	}
 
 	.floating-dock {
 		@media (max-width: 1024px) {
-			animation: dockSlideUp 0.55s $ease-out 0.5s forwards;
+			animation: dockSlideUp 0.4s $ease-out 0.35s forwards;
 		}
 	}
 
-	.Dashboard-right.firstAnimation > * {
-		animation: widgetIn 0.65s $ease-out forwards;
-		animation-delay: calc(0.18s + var(--widget-delay, 0s));
+	.Dashboard-right.firstAnimation > *:nth-child(-n + 3) {
+		animation: widgetIn 0.45s $ease-out forwards;
+		animation-delay: calc(0.1s + var(--widget-delay, 0s));
 	}
 
 	.Dashboard-right.loopAnimation > * {
-		animation: widgetRefresh 0.55s $ease-out forwards;
-		animation-delay: calc(0.06s + var(--widget-delay, 0s));
+		animation: widgetRefresh 0.35s $ease-out forwards;
 	}
+}
+
+.widgetSkeleton {
+	border-radius: 20px;
+	background: var(--dash-card-bg, rgba(30, 41, 59, 0.5));
+	border: 1px solid var(--dash-card-border, rgba(255, 255, 255, 0.06));
+	opacity: 0.5;
 }
 
 @media (prefers-reduced-motion: reduce) {

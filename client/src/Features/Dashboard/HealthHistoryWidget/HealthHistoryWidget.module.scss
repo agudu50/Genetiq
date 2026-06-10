@@ -77,7 +77,7 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 	pointer-events: none;
 	z-index: 0;
 	transition: all 0.65s $ease-spring;
-	animation: historyGlowPulse 12s infinite alternate ease-in-out;
+	animation: none;
 
 	html[data-theme="light"] & {
 		background: radial-gradient(
@@ -533,7 +533,7 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 	height: 5px;
 	border-radius: 50%;
 	flex-shrink: 0;
-	animation: ledPulse 2s infinite alternate ease-in-out;
+	animation: none;
 }
 
 .statusBadge--success {
@@ -688,16 +688,12 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 	}
 
 	button {
+		@include mixins.modal-close-btn(36px, 20px);
 		background: rgba(255, 255, 255, 0.06);
 		border: none;
 		border-radius: 10px;
 		color: var(--text-secondary, #94a3b8);
-		cursor: pointer;
-		padding: 6px;
 		transition: all 0.3s $ease-spring;
-		display: flex;
-		align-items: center;
-		justify-content: center;
 
 		&:hover {
 			background: rgba(255, 255, 255, 0.12);
@@ -741,7 +737,7 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 	height: 3px;
 	background: linear-gradient(90deg, transparent, $teal-primary, transparent);
 	box-shadow: 0 0 12px $teal-primary;
-	animation: scan 2.5s infinite linear;
+	animation: none;
 }
 
 @keyframes scan {

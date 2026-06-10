@@ -50,7 +50,7 @@
 	filter: blur(40px);
 	pointer-events: none;
 	z-index: 0;
-	animation: pulseGlow 6s ease-in-out infinite alternate;
+	animation: none;
 }
 
 @keyframes pulseGlow {

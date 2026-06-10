@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import {
 	Activity,
 	ClipboardList,
@@ -81,7 +80,7 @@ export const PlanAggregate = ({
 			</header>
 
 			<div className={styles.sections}>
-				{groupKeys.map((groupKey, sectionIdx) => {
+				{groupKeys.map((groupKey) => {
 					const config = groupConfig[groupKey] || {
 						color: "#8b5cf6",
 						icon: "clipboard" as const,
@@ -89,17 +88,10 @@ export const PlanAggregate = ({
 					const items = groupedData[groupKey];
 
 					return (
-						<motion.section
+						<section
 							key={groupKey}
 							className={styles.section}
 							style={{ "--group-color": config.color } as React.CSSProperties}
-							initial={{ opacity: 0, y: 16 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{
-								delay: sectionIdx * 0.1,
-								duration: 0.45,
-								ease: [0.22, 1, 0.36, 1],
-							}}
 						>
 							<div className={styles.sectionHead}>
 								<div className={styles.sectionTitleWrap}>
@@ -132,19 +124,13 @@ export const PlanAggregate = ({
 										t(item.description),
 									);
 									return (
-										<motion.button
+										<button
 											type="button"
 											key={`${groupKey}-${i}`}
 											className={`${styles.timelineItem} ${isLast ? styles.timelineItemLast : ""}`}
 											style={
 												{ "--accent-color": config.color } as React.CSSProperties
 											}
-											initial={{ opacity: 0, x: -8 }}
-											animate={{ opacity: 1, x: 0 }}
-											transition={{
-												delay: sectionIdx * 0.1 + i * 0.05,
-												duration: 0.4,
-											}}
 											onClick={() =>
 												onItemSelect({
 													item,
@@ -174,11 +160,11 @@ export const PlanAggregate = ({
 													<ChevronRight size={15} strokeWidth={2.5} />
 												</div>
 											</div>
-										</motion.button>
+										</button>
 									);
 								})}
 							</div>
-						</motion.section>
+						</section>
 					);
 				})}
 			</div>
@@ -202,11 +188,7 @@ export const PlanAggregate = ({
 						<p className={styles.ctaDesc}>{t("physician_checkin_desc")}</p>
 					</div>
 				</div>
-				<button
-					type="button"
-					className={styles.ctaButton}
-					disabled
-				>
+				<button type="button" className={styles.ctaButton} disabled>
 					<span>{t("coming_soon")}</span>
 					<Calendar size={16} strokeWidth={2.25} />
 				</button>

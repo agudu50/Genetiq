@@ -1,6 +1,5 @@
 import { ClipboardList, Pill, Activity } from "lucide-react";
 import styles from "./PlanTable.module.scss";
-import { CtaBlock } from "../CtaBlock/CtaBlock";
 import { PlanRow } from "../PlanRow/PlanRow";
 import { PlanItem, PlanSection } from "../../helpers/planMockData";
 import { PlanItemSelection } from "../../helpers/planItemHelpers";
@@ -69,8 +68,6 @@ export const PlanTable = ({
 					</div>
 				</div>
 			</header>
-
-			{section.cta && <CtaBlock cta={section.cta} />}
 
 			<div className={styles.list}>
 				{Object.keys(groupedData).map((groupKey) => (

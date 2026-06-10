@@ -1,3 +1,5 @@
+@use "@/App/Styles/_mixins" as mixins;
+
 .overlay {
 	position: fixed;
 	inset: 0;
@@ -125,33 +127,18 @@
 }
 
 .closeBtn {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 32px;
-	height: 32px;
-	padding: 0 !important;
+	@include mixins.modal-close-btn(32px, 18px);
 	border-radius: 50%;
 	background: rgba(255, 255, 255, 0.03);
 	border: 1px solid rgba(255, 255, 255, 0.06);
 	color: #94a3b8;
-	cursor: pointer;
 	transition: all 0.2s ease;
-	flex-shrink: 0;
 
 	html[data-theme="light"] & {
 		background: rgba(15, 23, 42, 0.02);
 		border-color: rgba(15, 23, 42, 0.05);
 		color: #1e293b;
 		font-weight: 750;
-	}
-
-	svg {
-		width: 18px;
-		height: 18px;
-		stroke: currentColor !important;
-		stroke-width: 2.5px !important;
-		display: block;
 	}
 
 	&:hover {

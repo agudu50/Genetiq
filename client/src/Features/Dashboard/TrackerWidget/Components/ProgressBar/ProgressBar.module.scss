@@ -53,7 +53,7 @@
 		inset: 0;
 		background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.35) 50%, transparent 100%);
 		width: 40%;
-		animation: laserSweep 2s infinite linear;
+		animation: none;
 	}
 }
 
@@ -90,7 +90,7 @@
 	border-radius: 50%;
 	background: var(--accent, #00A69D);
 	box-shadow: 0 0 6px rgba(0, 166, 157, 0.8);
-	animation: beadPulse 1.5s infinite alternate ease-in-out;
+	animation: none;
 }
 
 @keyframes beadPulse {

@@ -1,19 +1,62 @@
-import { useState, useEffect, useCallback, useTransition } from "react";
+import {
+	useState,
+	useEffect,
+	useCallback,
+	useTransition,
+	useRef,
+	lazy,
+	Suspense,
+} from "react";
 import styles from "./Dashboard.module.scss";
 import { TrackerWidget } from "@/Features/Dashboard/TrackerWidget/TrackerWidget";
 import { AgeWidget } from "@/Features/Dashboard/AgeWidget/AgeWidget";
-import MainScene from "@/Features/DigitalTwin/Components/Three/Scene/MainScene";
 import { CameraProvider } from "@/Features/DigitalTwin/Context/CameraContext";
-import CtaModal from "@/Features/Dashboard/CtaModal/CtaModal";
-import { ConcernsWidget } from "@/Features/Dashboard/ConcernsWidget/ConcernsWidget";
-import { SystemDetailWidget } from "@/Features/Dashboard/SystemDetailWidget/SystemDetailWidget";
 import { WelcomeHeader } from "@/Features/Dashboard/WelcomeHeader/WelcomeHeader";
 import { QuickActions } from "@/Features/Dashboard/QuickActions/QuickActions";
-import { ActivityChart } from "@/Features/Dashboard/ActivityChart/ActivityChart";
 import { TriageWidget } from "@/Features/Dashboard/TriageWidget/TriageWidget";
 import { HealthHistoryWidget } from "@/Features/Dashboard/HealthHistoryWidget/HealthHistoryWidget";
+import { DeferredMount } from "./DeferredMount";
+import { WidgetFallback } from "./WidgetFallback";
 import { useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
+
+const MainScene = lazy(
+	() => import("@/Features/DigitalTwin/Components/Three/Scene/MainScene"),
+);
+const CtaModal = lazy(() => import("@/Features/Dashboard/CtaModal/CtaModal"));
+const ConcernsWidget = lazy(() =>
+	import("@/Features/Dashboard/ConcernsWidget/ConcernsWidget").then((m) => ({
+		default: m.ConcernsWidget,
+	})),
+);
+const SystemDetailWidget = lazy(() =>
+	import("@/Features/Dashboard/SystemDetailWidget/SystemDetailWidget").then(
+		(m) => ({ default: m.SystemDetailWidget }),
+	),
+);
+const ActivityChart = lazy(() =>
+	import("@/Features/Dashboard/ActivityChart/ActivityChart").then((m) => ({
+		default: m.ActivityChart,
+	})),
+);
+
+const attachScrollPerf = (el: HTMLElement | null) => {
+	if (!el) return () => {};
+	let timeout: ReturnType<typeof setTimeout>;
+	const onScroll = () => {
+		document.body.classList.add("is-scrolling");
+		clearTimeout(timeout);
+		timeout = setTimeout(
+			() => document.body.classList.remove("is-scrolling"),
+			150,
+		);
+	};
+	el.addEventListener("scroll", onScroll, { passive: true });
+	return () => {
+		el.removeEventListener("scroll", onScroll);
+		clearTimeout(timeout);
+	};
+};
 
 const Dashboard = () => {
 	const [, startTransition] = useTransition();
@@ -22,6 +65,9 @@ const Dashboard = () => {
 	const [isMobile, setIsMobile] = useState(false);
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+	const [mobileWidgetsReady, setMobileWidgetsReady] = useState(false);
+	const panelRef = useRef<HTMLDivElement>(null);
+	const drawerBodyRef = useRef<HTMLDivElement>(null);
 	const selectedCategory = useSelector(
 		(state: RootState) => state.category.selectedCategory,
 	);
@@ -30,7 +76,6 @@ const Dashboard = () => {
 	const [isModelVisible, setIsModelVisible] = useState(true);
 	const [pageIn, setPageIn] = useState(false);
 
-	// Entrance animation gate (same pattern as /config)
 	useEffect(() => {
 		let frame2 = 0;
 		const frame1 = requestAnimationFrame(() => {
@@ -42,7 +87,6 @@ const Dashboard = () => {
 		};
 	}, []);
 
-	// Detect mobile viewport
 	useEffect(() => {
 		const checkMobile = () => {
 			setIsMobile(window.innerWidth <= 1024);
@@ -50,7 +94,6 @@ const Dashboard = () => {
 		checkMobile();
 		window.addEventListener("resize", checkMobile);
 
-		// Intersection Observer for 3D performance
 		const observer = new IntersectionObserver(
 			([entry]) => {
 				setIsModelVisible(entry.isIntersecting);
@@ -67,7 +110,20 @@ const Dashboard = () => {
 		};
 	}, []);
 
-	// Close drawer/sidebar on escape key
+	useEffect(() => {
+		if (isMobile && isDrawerOpen) {
+			setMobileWidgetsReady(true);
+		}
+	}, [isMobile, isDrawerOpen]);
+
+	useEffect(() => {
+		const cleanups = [
+			attachScrollPerf(panelRef.current),
+			attachScrollPerf(drawerBodyRef.current),
+		];
+		return () => cleanups.forEach((cleanup) => cleanup());
+	}, [isMobile, mobileWidgetsReady, isDrawerOpen]);
+
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
 			if (e.key === "Escape") {
@@ -79,7 +135,6 @@ const Dashboard = () => {
 		return () => window.removeEventListener("keydown", handleKeyDown);
 	}, [isDrawerOpen, isSidebarOpen]);
 
-	// Prevent body scroll when drawer is open
 	useEffect(() => {
 		if (isDrawerOpen && isMobile) {
 			document.body.style.overflow = "hidden";
@@ -94,7 +149,6 @@ const Dashboard = () => {
 	const toggleDrawer = useCallback(() => {
 		startTransition(() => {
 			setIsDrawerOpen((prev) => !prev);
-			// Close sidebar when opening drawer
 			if (!isDrawerOpen) setIsSidebarOpen(false);
 		});
 	}, [isDrawerOpen]);
@@ -102,7 +156,6 @@ const Dashboard = () => {
 	const toggleSidebar = useCallback(() => {
 		startTransition(() => {
 			setIsSidebarOpen((prev) => !prev);
-			// Close drawer when opening sidebar
 			if (!isSidebarOpen) setIsDrawerOpen(false);
 		});
 	}, [isSidebarOpen]);
@@ -113,22 +166,22 @@ const Dashboard = () => {
 		}
 	}, [selectedCategory]);
 
-	const handleAnimationStart = () => {
+	useEffect(() => {
+		const delay = isNotFirstAnimation ? 80 : 200;
 		const timeout = setTimeout(() => {
 			setCategory(selectedCategory || "total");
-		}, 800);
+		}, delay);
 		return () => clearTimeout(timeout);
-	};
+	}, [selectedCategory, isNotFirstAnimation]);
 
 	const widgetsContent = (
 		<div
 			key={selectedCategory}
+			ref={panelRef}
 			className={`${styles["Dashboard-right"]} ${
 				isNotFirstAnimation ? styles["loopAnimation"] : styles["firstAnimation"]
 			}`}
-			onAnimationStart={handleAnimationStart}
 		>
-			{/* Imported Content - At the Top */}
 			<div className={styles["span-2"]}>
 				<WelcomeHeader />
 			</div>
@@ -139,24 +192,30 @@ const Dashboard = () => {
 				<TrackerWidget />
 			</div>
 
-			{/* Actionable Health Analytics */}
 			<div className={styles["span-1"]}>
-				<ActivityChart />
+				<Suspense fallback={<WidgetFallback minHeight={220} />}>
+					<ActivityChart />
+				</Suspense>
 			</div>
 			<div className={styles["span-1"]}>
 				<QuickActions onToggleChatbot={() => setIsChatbotOpen((prev) => !prev)} />
 			</div>
 
-			{/* Tertiary Analytics & Risk Models */}
-			<div className={styles["span-2"]}>
+			<DeferredMount className={styles["span-2"]} minHeight={280} timeout={300}>
 				<HealthHistoryWidget />
-			</div>
-			<div className={styles["span-2"]}>
-				<ConcernsWidget category={category || "total"} />
-			</div>
-			<div className={styles["span-2"]}>
-				<SystemDetailWidget category={category} />
-			</div>
+			</DeferredMount>
+
+			<DeferredMount className={styles["span-2"]} minHeight={360} timeout={600}>
+				<Suspense fallback={<WidgetFallback minHeight={360} />}>
+					<ConcernsWidget category={category || "total"} />
+				</Suspense>
+			</DeferredMount>
+
+			<DeferredMount className={styles["span-2"]} minHeight={280} timeout={900}>
+				<Suspense fallback={<WidgetFallback minHeight={280} />}>
+					<SystemDetailWidget category={category} />
+				</Suspense>
+			</DeferredMount>
 		</div>
 	);
 
@@ -169,31 +228,29 @@ const Dashboard = () => {
 						<div className={styles.bgGlow} />
 					</div>
 
-					{/* 3D Model - fullscreen on mobile */}
 					<div className={styles["Dashboard-left"]}>
 						<div className={styles["Dashboard-dt-container"]}>
 							<div className={styles["Dashboard-model"]}>
-								<MainScene
-									selectedCategory={selectedCategory || "total"}
-									sidebarCollapsed={isMobile ? !isSidebarOpen : undefined}
-									onSidebarToggle={isMobile ? toggleSidebar : undefined}
-									onSidebarSelectionMade={
-										isMobile ? () => setIsSidebarOpen(false) : undefined
-									}
-									isPaused={!isModelVisible || (isMobile && isDrawerOpen)}
-								/>
+								<Suspense fallback={<WidgetFallback minHeight={400} />}>
+									<MainScene
+										selectedCategory={selectedCategory || "total"}
+										sidebarCollapsed={isMobile ? !isSidebarOpen : undefined}
+										onSidebarToggle={isMobile ? toggleSidebar : undefined}
+										onSidebarSelectionMade={
+											isMobile ? () => setIsSidebarOpen(false) : undefined
+										}
+										isPaused={!isModelVisible || (isMobile && isDrawerOpen)}
+									/>
+								</Suspense>
 							</div>
 						</div>
 					</div>
 
-					{/* Desktop: widgets inline | Mobile: hidden (in drawer) */}
 					{!isMobile && widgetsContent}
 				</div>
 
-				{/* Mobile floating dock with two action buttons */}
 				{isMobile && (
 					<div className={styles["floating-dock"]}>
-						{/* Body/Anatomy button - toggles sidebar */}
 						<button
 							className={`${styles["dock-btn"]} ${isSidebarOpen ? styles["dock-btn-active"] : ""}`}
 							onClick={toggleSidebar}
@@ -211,7 +268,6 @@ const Dashboard = () => {
 								strokeLinecap='round'
 								strokeLinejoin='round'
 							>
-								{/* Human body silhouette */}
 								<circle cx='12' cy='4' r='2.5' />
 								<path d='M12 6.5V14' />
 								<path d='M8 9.5L12 8L16 9.5' />
@@ -221,10 +277,8 @@ const Dashboard = () => {
 							<span className={styles["dock-label"]}>Body</span>
 						</button>
 
-						{/* Divider */}
 						<div className={styles["dock-divider"]} />
 
-						{/* Dashboard/Widgets button - toggles drawer */}
 						<button
 							className={`${styles["dock-btn"]} ${isDrawerOpen ? styles["dock-btn-active"] : ""}`}
 							onClick={toggleDrawer}
@@ -240,7 +294,6 @@ const Dashboard = () => {
 								strokeLinecap='round'
 								strokeLinejoin='round'
 							>
-								{/* Grid/dashboard icon */}
 								<rect x='3' y='3' width='7' height='7' rx='1.5' />
 								<rect x='14' y='3' width='7' height='7' rx='1.5' />
 								<rect x='3' y='14' width='7' height='7' rx='1.5' />
@@ -251,7 +304,6 @@ const Dashboard = () => {
 					</div>
 				)}
 
-				{/* Mobile drawer overlay */}
 				{isMobile && (
 					<>
 						<div
@@ -283,19 +335,44 @@ const Dashboard = () => {
 									</svg>
 								</button>
 							</div>
-							<div className={styles["drawer-body"]}>{widgetsContent}</div>
+							<div ref={drawerBodyRef} className={styles["drawer-body"]}>
+								{mobileWidgetsReady ? widgetsContent : null}
+							</div>
 						</div>
 					</>
 				)}
 			</CameraProvider>
-			<CtaModal />
+
+			<DeferredMount minHeight={0} timeout={1200}>
+				<Suspense fallback={null}>
+					<CtaModal />
+				</Suspense>
+			</DeferredMount>
+
 			{isChatbotOpen && (
-				<div className={styles["chatbot-modal-overlay"]} onClick={() => setIsChatbotOpen(false)}>
-					<div className={styles["chatbot-modal-content"]} onClick={(e) => e.stopPropagation()}>
-						<button className={styles["chatbot-modal-close"]} onClick={() => setIsChatbotOpen(false)} aria-label="Close AI Assistant">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-								<line x1="18" y1="6" x2="6" y2="18"></line>
-								<line x1="6" y1="6" x2="18" y2="18"></line>
+				<div
+					className={styles["chatbot-modal-overlay"]}
+					onClick={() => setIsChatbotOpen(false)}
+				>
+					<div
+						className={styles["chatbot-modal-content"]}
+						onClick={(e) => e.stopPropagation()}
+					>
+						<button
+							className={styles["chatbot-modal-close"]}
+							onClick={() => setIsChatbotOpen(false)}
+							aria-label='Close AI Assistant'
+						>
+							<svg
+								viewBox='0 0 24 24'
+								fill='none'
+								stroke='currentColor'
+								strokeWidth='2.5'
+								strokeLinecap='round'
+								strokeLinejoin='round'
+							>
+								<line x1='18' y1='6' x2='6' y2='18' />
+								<line x1='6' y1='6' x2='18' y2='18' />
 							</svg>
 						</button>
 						<TriageWidget />

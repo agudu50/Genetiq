@@ -148,8 +148,13 @@ export const SuggestionsModal: React.FC<SuggestionsModalProps> = ({ concern, onC
 						</div>
 						<h2>{t(concern.title)}</h2>
 					</div>
-					<button className={styles.closeBtn} onClick={handleClose} aria-label="Close modal">
-						<X size={20} />
+					<button
+						type="button"
+						className={styles.closeBtn}
+						onClick={handleClose}
+						aria-label={t("close")}
+					>
+						<X size={18} strokeWidth={2.5} aria-hidden />
 					</button>
 				</div>
 

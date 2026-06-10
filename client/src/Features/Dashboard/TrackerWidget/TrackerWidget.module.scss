@@ -66,7 +66,7 @@
 	pointer-events: none;
 	z-index: 0;
 	transition: all 0.6s ease;
-	animation: pulseGlow 10s infinite alternate ease-in-out;
+	animation: none;
 
 	html[data-theme="light"] & {
 		background: radial-gradient(circle, rgba(0, 166, 157, 0.12) 0%, transparent 70%);
@@ -191,7 +191,7 @@
 		color: #fbbf24; // Amber Gold
 		background: rgba(245, 158, 11, 0.08);
 		border: 1px solid rgba(245, 158, 11, 0.2);
-		animation: pulseStatus 2.5s infinite alternate ease-in-out;
+		animation: none;
 	}
 
 	&.completed {
@@ -218,7 +218,7 @@
 	&.processing {
 		background-color: #fbbf24;
 		box-shadow: 0 0 8px #fbbf24, 0 0 12px rgba(245, 158, 11, 0.4);
-		animation: ledPulse 1.2s infinite ease-in-out;
+		animation: none;
 	}
 
 	&.completed {
@@ -229,7 +229,7 @@
 	&.idle {
 		background-color: #60a5fa;
 		box-shadow: 0 0 8px #60a5fa, 0 0 12px rgba(59, 130, 246, 0.4);
-		animation: ledPulse 2s infinite ease-in-out;
+		animation: none;
 	}
 }
 

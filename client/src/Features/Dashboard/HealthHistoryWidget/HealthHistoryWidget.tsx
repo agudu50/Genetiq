@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
 	Activity,
 	Beaker,
@@ -259,14 +258,11 @@ export const HealthHistoryWidget = () => {
 					const isLast = i === combinedItems.length - 1;
 
 					return (
-						<motion.button
+						<button
 							type="button"
 							key={item.id}
 							className={`${styles.historyItem} ${isLast ? styles.historyItemLast : ""}`}
 							style={{ "--accent-color": item.color } as React.CSSProperties}
-							initial={{ opacity: 0, y: 12 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{ delay: i * 0.08, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
 							onClick={() => navigate(paths.clinicalHistory)}
 						>
 							<div className={styles.timelineNode}>
@@ -306,32 +302,28 @@ export const HealthHistoryWidget = () => {
 									<ChevronRight size={16} strokeWidth={2.5} />
 								</div>
 							</div>
-						</motion.button>
+						</button>
 					);
 				})}
 			</div>
 
-			<AnimatePresence>
-				{showQR && (
-					<motion.div
-						className={styles.modalOverlay}
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						exit={{ opacity: 0 }}
-						onClick={() => setShowQR(false)}
+			{showQR && (
+				<div
+					className={styles.modalOverlay}
+					onClick={() => setShowQR(false)}
+				>
+					<div
+						className={styles.qrModal}
+						onClick={(e) => e.stopPropagation()}
 					>
-						<motion.div
-							className={styles.qrModal}
-							initial={{ scale: 0.92, y: 24, opacity: 0 }}
-							animate={{ scale: 1, y: 0, opacity: 1 }}
-							exit={{ scale: 0.92, y: 24, opacity: 0 }}
-							transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-							onClick={(e) => e.stopPropagation()}
-						>
 							<div className={styles.modalHeader}>
 								<h3>{t("clinical_handover")}</h3>
-								<button type="button" onClick={() => setShowQR(false)}>
-									<X size={20} />
+								<button
+									type="button"
+									onClick={() => setShowQR(false)}
+									aria-label={t("close")}
+								>
+									<X size={20} strokeWidth={2.5} aria-hidden />
 								</button>
 							</div>
 							<div className={styles.qrContent}>
@@ -352,10 +344,9 @@ export const HealthHistoryWidget = () => {
 									<Share2 size={18} /> {t("share_secure_link")}
 								</button>
 							</div>
-						</motion.div>
-					</motion.div>
-				)}
-			</AnimatePresence>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 };

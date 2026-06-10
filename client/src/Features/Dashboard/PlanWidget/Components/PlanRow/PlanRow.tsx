@@ -1,12 +1,8 @@
 import { ChevronRight } from "lucide-react";
-import Cart from "@assets/CtaModal/Cart.svg?react";
 import styles from "./PlanRow.module.scss";
 import { PlanItem } from "../../helpers/planMockData";
 import { PlanItemSelection } from "../../helpers/planItemHelpers";
 import { useLanguage } from "@/App/i18n/LanguageContext";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/App/Redux/store";
-import { addToCart, removeFromCart } from "@/App/Redux/cartSlice";
 
 export const PlanRow = ({
 	item,
@@ -24,9 +20,6 @@ export const PlanRow = ({
 	onItemSelect?: (selection: PlanItemSelection) => void;
 }) => {
 	const { t } = useLanguage();
-	const dispatch = useDispatch();
-	const cartItems = useSelector((state: RootState) => state.cart.items);
-	const isInCart = cartItems.some((c) => c.name === item.name);
 
 	const handleClick = () => {
 		if (onItemSelect && category) {
@@ -34,23 +27,6 @@ export const PlanRow = ({
 			return;
 		}
 		if (item.link) setActiveTab(item.link);
-	};
-
-	const handleCartClick = (e: React.MouseEvent) => {
-		e.stopPropagation();
-		if (isInCart) {
-			dispatch(removeFromCart(item.name));
-		} else {
-			dispatch(
-				addToCart({
-					id: item.name,
-					name: item.name,
-					description: item.description,
-					icon: item.icon,
-					price: "$49",
-				}),
-			);
-		}
 	};
 
 	return (
@@ -97,19 +73,9 @@ export const PlanRow = ({
 						<span className={styles.typeChip}>{t("plan_item_activity")}</span>
 					)}
 
-					{item.link ? (
-						<div className={styles.arrow}>
-							<ChevronRight size={15} strokeWidth={2.5} />
-						</div>
-					) : (
-						<button
-							type="button"
-							className={`${styles.cartBtn} ${isInCart ? styles.cartAdded : ""}`}
-							onClick={handleCartClick}
-						>
-							{isInCart ? "✓" : <Cart />}
-						</button>
-					)}
+					<div className={styles.arrow}>
+						<ChevronRight size={15} strokeWidth={2.5} />
+					</div>
 				</div>
 			</div>
 		</div>

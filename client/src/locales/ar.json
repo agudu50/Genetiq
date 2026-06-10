@@ -230,6 +230,8 @@
 	"plan_detail_why_body": "This step is part of your personalized {category} plan, tailored from your latest lab markers and risk profile.",
 	"plan_detail_scheduled": "Added to your schedule!",
 	"plan_detail_view_section": "View all {category} actions",
+	"plan_detail_set_reminder": "Set Daily Reminder",
+	"plan_detail_reminder_set": "Daily reminder set",
 	"Take Genetic Health Risk Tests": "Take Genetic Health Risk Tests",
 	"Monitoring blood pressure 3 times a week": "Monitoring blood pressure 3 times a week",
 	"Adopt a low-glycemic index and heart healthy diets": "Adopt a low-glycemic index and heart healthy diets",
