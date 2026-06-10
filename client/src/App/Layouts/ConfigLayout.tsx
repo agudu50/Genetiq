@@ -1,6 +1,7 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { paths } from "@/App/Routes/Paths";
 import ThemeSwitcher from "@/Features/Structural/ThemeSwitcher/ThemeSwitcher";
+import LanguageSwitcher from "@/Features/Structural/LanguageSwitcher/LanguageSwitcher";
 import styles from "./ConfigLayout.module.scss";
 
 export const ConfigLayout = () => {
@@ -17,6 +18,7 @@ export const ConfigLayout = () => {
 				</button>
 
 				<div className={styles.navActions}>
+					<LanguageSwitcher variant="compact" />
 					<ThemeSwitcher />
 				</div>
 			</nav>

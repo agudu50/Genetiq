@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import { paths } from "@/App/Routes/Paths";
 import ThemeSwitcher from "@/Features/Structural/ThemeSwitcher/ThemeSwitcher";
+import LanguageSwitcher from "@/Features/Structural/LanguageSwitcher/LanguageSwitcher";
+import { useLanguage } from "@/App/i18n/LanguageContext";
 import styles from "./Landing.module.scss";
 
 // ─── Static data ─────────────────────────────────────────────────────────────
@@ -137,12 +139,12 @@ const BUILDER = {
 	linkedin: "https://linkedin.com",
 };
 
-const NAV_ITEMS = [
-	{ href: "#pillars", label: "How It Works" },
-	{ href: "#ecosystem", label: "Features" },
-	{ href: "#stats", label: "Impact" },
-	{ href: "#faq", label: "FAQ" },
-	{ href: "#builder", label: "About" },
+const NAV_LINKS = [
+	{ href: "#pillars", key: "nav_how_it_works" },
+	{ href: "#ecosystem", key: "nav_features" },
+	{ href: "#stats", key: "nav_impact" },
+	{ href: "#faq", key: "nav_faq" },
+	{ href: "#builder", key: "nav_about" },
 ] as const;
 
 // ─── Animated background ──────────────────────────────────────────────────────
@@ -478,6 +480,11 @@ function BuilderSection() {
 
 export default function Landing() {
 	const navigate = useNavigate();
+	const { t } = useLanguage();
+	const navItems = NAV_LINKS.map((item) => ({
+		...item,
+		label: t(item.key),
+	}));
 	const [isScrolled, setIsScrolled] = useState(false);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -491,8 +498,8 @@ export default function Landing() {
 	const ctaReveal        = useScrollReveal();
 
 	useEffect(() => {
-		const t = setTimeout(() => setHeroVisible(true), 100);
-		return () => clearTimeout(t);
+		const timer = setTimeout(() => setHeroVisible(true), 100);
+		return () => clearTimeout(timer);
 	}, []);
 
 	useEffect(() => {
@@ -558,26 +565,28 @@ export default function Landing() {
 					</div>
 
 					<div className={styles.navLinks}>
-						{NAV_ITEMS.map((item) => (
+						{navItems.map((item) => (
 							<a key={item.href} href={item.href} className={styles.navLink}>
 								{item.label}
 							</a>
 						))}
 						<div className={styles.navActions}>
 							<div className={styles.navTheme}>
+								<LanguageSwitcher variant="compact" />
 								<ThemeSwitcher />
 							</div>
 							<button className={styles.btnNavOutline} onClick={() => navigate(paths.auth.login)}>
-								Log In
+								{t("login")}
 							</button>
 							<button className={styles.btnNavPrimary} onClick={() => setIsModalOpen(true)}>
-								Get Started Free
+								{t("get_started_free")}
 							</button>
 						</div>
 					</div>
 
 					<div className={styles.navMobileControls}>
 						<div className={styles.navTheme}>
+							<LanguageSwitcher variant="compact" />
 							<ThemeSwitcher />
 						</div>
 						<button
@@ -608,7 +617,7 @@ export default function Landing() {
 				/>
 				<div className={styles.mobileMenuPanel} role='dialog' aria-modal='true' aria-label='Navigation menu'>
 					<div className={styles.mobileMenuHeader}>
-						<span className={styles.mobileMenuTitle}>Menu</span>
+						<span className={styles.mobileMenuTitle}>{t("menu")}</span>
 						<button
 							type='button'
 							className={styles.mobileMenuClose}
@@ -620,7 +629,7 @@ export default function Landing() {
 					</div>
 
 					<nav className={styles.mobileNavList}>
-						{NAV_ITEMS.map((item, index) => (
+						{navItems.map((item, index) => (
 							<a
 								key={item.href}
 								href={item.href}
@@ -635,7 +644,7 @@ export default function Landing() {
 
 					<div className={styles.mobileMenuFooter}>
 						<div className={styles.mobileMenuThemeRow}>
-							<span>Theme</span>
+							<span>{t("theme")}</span>
 							<ThemeSwitcher />
 						</div>
 						<button
@@ -646,7 +655,7 @@ export default function Landing() {
 								navigate(paths.auth.login);
 							}}
 						>
-							Log In
+							{t("login")}
 						</button>
 						<button
 							type='button'
@@ -656,7 +665,7 @@ export default function Landing() {
 								setIsModalOpen(true);
 							}}
 						>
-							Get Started Free <ArrowRight size={18} />
+							{t("get_started_free")} <ArrowRight size={18} />
 						</button>
 					</div>
 				</div>
@@ -667,18 +676,18 @@ export default function Landing() {
 				<div className={styles.heroContent}>
 					<div className={styles.heroBadge}>
 						<span className={styles.heroBadgeDot} />
-						Lab Results, Explained
+						{t("landing_badge")}
 					</div>
 					<h1 className={styles.heroTitle}>
-						Your Test Results, <br />
+						{t("landing_hero_title_prefix")} <br />
 						<Typewriter words={HERO_WORDS} />
 					</h1>
 					<p className={styles.heroSub}>
-						Confused by your lab results? Just snap a photo or upload the PDF. Genetiq's AI reads every value and tells you exactly what it means plus what to eat, what to change, and what to watch out for.
+						{t("landing_hero_sub")}
 					</p>
 					<div className={styles.heroCtas}>
 						<button className={styles.btnPrimary} onClick={() => setIsModalOpen(true)}>
-							Upload Your First Result Free <ArrowRight size={20} />
+							{t("landing_cta_primary")} <ArrowRight size={20} />
 						</button>
 					</div>
 

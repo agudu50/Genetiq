@@ -2,18 +2,20 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { paths } from "@/App/Routes/Paths";
 import { LoginForm } from "@/Features/Auth/Login/Components/LoginForm/LoginForm";
+import { useLanguage } from "@/App/i18n/LanguageContext";
 import styles from "./Login.module.scss";
 import { ShieldCheck, Upload, Brain } from "lucide-react";
 
-const FEATURES = [
-	{ icon: <Upload size={18} />, text: "Upload any lab result — paper or PDF" },
-	{ icon: <Brain size={18} />, text: "AI explains every value in plain English" },
-	{ icon: <ShieldCheck size={18} />, text: "Your data is private and encrypted" },
-];
-
 const Login = () => {
 	const navigate = useNavigate();
+	const { t } = useLanguage();
 	const [pageIn, setPageIn] = useState(false);
+
+	const features = [
+		{ icon: <Upload size={18} />, text: t("auth_feature_upload") },
+		{ icon: <Brain size={18} />, text: t("auth_feature_ai") },
+		{ icon: <ShieldCheck size={18} />, text: t("auth_feature_private") },
+	];
 
 	useEffect(() => {
 		let frame2 = 0;
@@ -42,14 +44,14 @@ const Login = () => {
 
 					<div className={styles.leftContent}>
 						<h2 className={styles.leftHeading}>
-							Understand your health results finally.
+							{t("auth_login_heading")}
 						</h2>
 						<p className={styles.leftSub}>
-							Upload your lab tests, get plain-English explanations, and receive a personalised health plan all in under 30 seconds.
+							{t("auth_login_sub")}
 						</p>
 
 						<ul className={styles.featureList}>
-							{FEATURES.map((f, i) => (
+							{features.map((f, i) => (
 								<li key={i} className={styles.featureItem}>
 									<span className={styles.featureIcon}>{f.icon}</span>
 									<span>{f.text}</span>

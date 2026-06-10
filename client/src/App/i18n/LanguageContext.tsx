@@ -13,7 +13,7 @@ type Translations = Record<string, string>;
 export type LanguageContextValue = {
 	lang: LangCode;
 	setLang: (lang: LangCode) => void;
-	t: (key: string) => string;
+	t: (key: string, params?: Record<string, string | number>) => string;
 };
 
 const LanguageContext = createContext<LanguageContextValue | undefined>(
@@ -22,7 +22,39 @@ const LanguageContext = createContext<LanguageContextValue | undefined>(
 
 const STORAGE_KEY = "app.lang";
 const DEFAULT_LANG = "en";
-const RTL_LANGS = new Set(["ar", "fa", "he", "ur"]); // basic RTL list
+const RTL_LANGS = new Set(["ar", "fa", "he", "ur"]);
+
+function interpolate(
+	template: string,
+	params?: Record<string, string | number>,
+): string {
+	if (!params) return template;
+	return template.replace(/\{(\w+)\}/g, (_, token: string) =>
+		params[token] !== undefined ? String(params[token]) : `{${token}}`,
+	);
+}
+
+function resolveBrowserLang(): LangCode {
+	if (typeof navigator === "undefined") return DEFAULT_LANG;
+
+	const supported = new Set(
+		Object.keys(import.meta.glob("../../locales/*.json")).map((path) =>
+			path.split("/").pop()!.replace(".json", ""),
+		),
+	);
+
+	const candidates = [
+		...(navigator.languages ?? []),
+		navigator.language,
+	].filter(Boolean) as string[];
+
+	for (const raw of candidates) {
+		const code = raw.toLowerCase().split("-")[0];
+		if (supported.has(code)) return code;
+	}
+
+	return DEFAULT_LANG;
+}
 
 // Vite: index locale JSONs; we'll lazy-load on demand
 const localeModules = import.meta.glob("../../locales/*.json");
@@ -53,9 +85,13 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
 	// Load initial language + English fallback
 	useEffect(() => {
-		const saved = localStorage.getItem(STORAGE_KEY) || DEFAULT_LANG;
-		const initial = typeof saved === "string" ? saved : DEFAULT_LANG;
+		const saved = localStorage.getItem(STORAGE_KEY);
+		const initial =
+			typeof saved === "string" && saved.length > 0
+				? saved
+				: resolveBrowserLang();
 		setLangState(initial);
+		if (!saved) localStorage.setItem(STORAGE_KEY, initial);
 
 		(async () => {
 			const [primary, fallback] = await Promise.all([
@@ -92,10 +128,14 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 	};
 
 	const t = useMemo(() => {
-		return (key: string) => {
-			if (key in dict) return dict[key];
-			if (key in fallbackDict) return fallbackDict[key];
-			return key;
+		return (key: string, params?: Record<string, string | number>) => {
+			const template =
+				key in dict
+					? dict[key]
+					: key in fallbackDict
+						? fallbackDict[key]
+						: key;
+			return interpolate(template, params);
 		};
 	}, [dict, fallbackDict]);
 

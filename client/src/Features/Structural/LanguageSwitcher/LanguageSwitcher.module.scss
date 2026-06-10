@@ -195,3 +195,81 @@
 		transform: translateY(0) scale(1);
 	}
 }
+
+@keyframes slideDownIn {
+	0% {
+		opacity: 0;
+		transform: translateY(-6px) scale(0.97);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+// ─── Compact navbar variant ────────────────────────────────────────────────────
+
+.compact {
+	width: auto;
+
+	.label {
+		flex-direction: row;
+	}
+
+	.button {
+		width: auto;
+		min-width: 68px;
+		padding: 6px 10px;
+		gap: 6px;
+		border-radius: 100px;
+		font-size: 12px;
+		font-weight: 700;
+	}
+
+	.buttonText {
+		max-width: 36px;
+		font-size: 11px;
+		letter-spacing: 0.04em;
+	}
+
+	.caret {
+		margin-left: 0;
+		font-size: 9px;
+	}
+
+	.menu {
+		bottom: auto;
+		top: calc(100% + 8px);
+		left: auto;
+		right: 0;
+		min-width: 180px;
+		max-height: 280px;
+		animation: slideDownIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+		box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+
+		html[data-theme="light"] & {
+			box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+		}
+	}
+
+	.option {
+		justify-content: flex-start;
+		gap: 10px;
+	}
+}
+
+.optionCode {
+	font-size: 10px;
+	font-weight: 800;
+	letter-spacing: 0.06em;
+	color: $teal-primary;
+	min-width: 24px;
+
+	html[data-theme="light"] & {
+		color: $teal-dark;
+	}
+}
+
+.optionName {
+	flex: 1;
+}

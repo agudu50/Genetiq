@@ -119,6 +119,7 @@ const Navbar = () => {
 				{/* Secondary actions (only visible on main dashboard/goals/history views or if mobile) */}
 				{(!isConfigFlow || isMobile) && (
 					<div className={styles["actions-container"]}>
+						<LanguageSwitcher variant="compact" />
 						<ThemeSwitcher />
 
 
