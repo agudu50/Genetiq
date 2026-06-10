@@ -586,7 +586,6 @@ export default function Landing() {
 
 					<div className={styles.navMobileControls}>
 						<div className={styles.navTheme}>
-							<LanguageSwitcher variant="compact" />
 							<ThemeSwitcher />
 						</div>
 						<button

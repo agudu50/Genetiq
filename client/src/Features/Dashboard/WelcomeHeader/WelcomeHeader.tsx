@@ -14,17 +14,27 @@ interface QuickStat {
 }
 
 export const WelcomeHeader = () => {
-	const { t } = useLanguage();
+	const { t, lang } = useLanguage();
 	const currentHour = new Date().getHours();
 	const user = useSelector((state: RootState) => state.user);
 
 	const getGreeting = () => {
-		if (currentHour < 12) return t("good_morning") || "Good morning";
-		if (currentHour < 18) return t("good_afternoon") || "Good afternoon";
-		return t("good_evening") || "Good evening";
+		if (currentHour < 12) return t("good_morning");
+		if (currentHour < 18) return t("good_afternoon");
+		return t("good_evening");
 	};
 
 	const userName = user.firstName || "John";
+
+	const formattedDate = useMemo(
+		() =>
+			new Date().toLocaleDateString(lang, {
+				weekday: "long",
+				month: "long",
+				day: "numeric",
+			}),
+		[lang],
+	);
 
 	// Compute BMI from real user data
 	const bmi = useMemo(() => {
@@ -54,124 +64,133 @@ export const WelcomeHeader = () => {
 		return Math.min(score, 100);
 	}, [user]);
 
-	const quickStats: QuickStat[] = [
-		{
-			label: t("health_score") || "Health Score",
-			value: healthScore,
-			trend: healthScore >= 80 ? "up" : healthScore >= 60 ? "stable" : "down",
-			trendValue:
-				healthScore >= 80 ? "Great" : healthScore >= 60 ? "Good" : "Improve",
-			color:
-				healthScore >= 80
-					? "#10b981"
-					: healthScore >= 60
-						? "#f59e0b"
-						: "#ef4444",
-			icon: (
-				<svg width='24' height='24' viewBox='0 0 24 24' fill='none'>
-					<path
-						d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'
-						fill='currentColor'
-					/>
-				</svg>
-			),
-		},
-		{
-			label: "BMI",
-			value: bmi ? bmi.toFixed(1) : "—",
-			trend: bmi ? (bmi < 25 ? "up" : bmi < 30 ? "stable" : "down") : "stable",
-			trendValue: bmi
-				? bmi < 18.5
-					? "Low"
-					: bmi < 25
-						? "Normal"
-						: bmi < 30
-							? "High"
-							: "Obese"
-				: "No data",
-			color: bmi
-				? bmi < 18.5
-					? "#60a5fa"
-					: bmi < 25
+	const quickStats: QuickStat[] = useMemo(
+		() => [
+			{
+				label: t("health_score"),
+				value: healthScore,
+				trend: healthScore >= 80 ? "up" : healthScore >= 60 ? "stable" : "down",
+				trendValue:
+					healthScore >= 80
+						? t("score_great")
+						: healthScore >= 60
+							? t("score_good")
+							: t("score_improve"),
+				color:
+					healthScore >= 80
 						? "#10b981"
-						: bmi < 30
+						: healthScore >= 60
 							? "#f59e0b"
-							: "#ef4444"
-				: "#6b7280",
-			icon: (
-				<svg
-					width='24'
-					height='24'
-					viewBox='0 0 24 24'
-					fill='none'
-					stroke='currentColor'
-					strokeWidth='2'
-				>
-					<path
-						d='M22 12h-4l-3 9L9 3l-3 9H2'
-						strokeLinecap='round'
-						strokeLinejoin='round'
-					/>
-				</svg>
-			),
-		},
-		{
-			label: t("conditions") || "Conditions",
-			value: user.medicalConditions.length,
-			trend:
-				user.medicalConditions.length === 0
-					? "up"
-					: user.medicalConditions.length <= 2
-						? "stable"
-						: "down",
-			trendValue: user.medicalConditions.length === 0 ? "Clear" : `active`,
-			color: user.medicalConditions.length === 0 ? "#10b981" : "#ef4444",
-			icon: (
-				<svg
-					width='24'
-					height='24'
-					viewBox='0 0 24 24'
-					fill='none'
-					stroke='currentColor'
-					strokeWidth='2'
-				>
-					<path
-						d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'
-						strokeLinecap='round'
-						strokeLinejoin='round'
-					/>
-				</svg>
-			),
-		},
-		{
-			label: t("medications") || "Medications",
-			value: user.medications.filter((m) => m.name).length,
-			trend: "stable",
-			trendValue: "active",
-			color: "#8b5cf6",
-			icon: (
-				<svg
-					width='24'
-					height='24'
-					viewBox='0 0 24 24'
-					fill='none'
-					stroke='currentColor'
-					strokeWidth='2'
-				>
-					<path
-						d='m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z'
-						strokeLinecap='round'
-						strokeLinejoin='round'
-					/>
-					<path d='m8.5 8.5 7 7' strokeLinecap='round' strokeLinejoin='round' />
-				</svg>
-			),
-		},
-	];
+							: "#ef4444",
+				icon: (
+					<svg width='24' height='24' viewBox='0 0 24 24' fill='none'>
+						<path
+							d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'
+							fill='currentColor'
+						/>
+					</svg>
+				),
+			},
+			{
+				label: t("bmi_label"),
+				value: bmi ? bmi.toFixed(1) : "—",
+				trend: bmi ? (bmi < 25 ? "up" : bmi < 30 ? "stable" : "down") : "stable",
+				trendValue: bmi
+					? bmi < 18.5
+						? t("bmi_low")
+						: bmi < 25
+							? t("bmi_normal")
+							: bmi < 30
+								? t("bmi_high")
+								: t("bmi_obese")
+					: t("no_data"),
+				color: bmi
+					? bmi < 18.5
+						? "#60a5fa"
+						: bmi < 25
+							? "#10b981"
+							: bmi < 30
+								? "#f59e0b"
+								: "#ef4444"
+					: "#6b7280",
+				icon: (
+					<svg
+						width='24'
+						height='24'
+						viewBox='0 0 24 24'
+						fill='none'
+						stroke='currentColor'
+						strokeWidth='2'
+					>
+						<path
+							d='M22 12h-4l-3 9L9 3l-3 9H2'
+							strokeLinecap='round'
+							strokeLinejoin='round'
+						/>
+					</svg>
+				),
+			},
+			{
+				label: t("conditions"),
+				value: user.medicalConditions.length,
+				trend:
+					user.medicalConditions.length === 0
+						? "up"
+						: user.medicalConditions.length <= 2
+							? "stable"
+							: "down",
+				trendValue:
+					user.medicalConditions.length === 0
+						? t("status_clear")
+						: t("status_active"),
+				color: user.medicalConditions.length === 0 ? "#10b981" : "#ef4444",
+				icon: (
+					<svg
+						width='24'
+						height='24'
+						viewBox='0 0 24 24'
+						fill='none'
+						stroke='currentColor'
+						strokeWidth='2'
+					>
+						<path
+							d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'
+							strokeLinecap='round'
+							strokeLinejoin='round'
+						/>
+					</svg>
+				),
+			},
+			{
+				label: t("medications"),
+				value: user.medications.filter((m) => m.name).length,
+				trend: "stable",
+				trendValue: t("status_active"),
+				color: "#8b5cf6",
+				icon: (
+					<svg
+						width='24'
+						height='24'
+						viewBox='0 0 24 24'
+						fill='none'
+						stroke='currentColor'
+						strokeWidth='2'
+					>
+						<path
+							d='m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z'
+							strokeLinecap='round'
+							strokeLinejoin='round'
+						/>
+						<path d='m8.5 8.5 7 7' strokeLinecap='round' strokeLinejoin='round' />
+					</svg>
+				),
+			},
+		],
+		[t, bmi, healthScore, user.medicalConditions.length, user.medications],
+	);
 
 	return (
 		<div className={styles.welcomeHeader}>
-			{/* High-fidelity visual background elements */}
 			<div className={styles.cardMeshBg} />
 			<div className={styles.cardGlowBlob} />
 
@@ -181,19 +200,10 @@ export const WelcomeHeader = () => {
 						<span className='text-gradient-muted'>{getGreeting()},</span>{" "}
 						<span className='text-gradient-primary'>{userName}</span>
 					</h1>
-					<p className={styles.subtitle}>
-						{t("dashboard_subtitle") ||
-							"Navigating your care journey and overcoming healthcare gaps today"}
-					</p>
+					<p className={styles.subtitle}>{t("dashboard_subtitle")}</p>
 				</div>
 				<div className={styles.dateInfo}>
-					<span className={styles.date}>
-						{new Date().toLocaleDateString("en-US", {
-							weekday: "long",
-							month: "long",
-							day: "numeric",
-						})}
-					</span>
+					<span className={styles.date}>{formattedDate}</span>
 				</div>
 			</div>
 
@@ -209,7 +219,6 @@ export const WelcomeHeader = () => {
 							} as React.CSSProperties
 						}
 					>
-						{/* Top Header Row: Icon on left, Trend badge on right */}
 						<div className={styles.statHeader}>
 							<div className={styles.statIcon} style={{ color: stat.color }}>
 								{stat.icon}
@@ -241,7 +250,6 @@ export const WelcomeHeader = () => {
 							</div>
 						</div>
 
-						{/* Bottom Body Row: Large Value and Label stacked vertically */}
 						<div className={styles.statBody}>
 							<span className={styles.statValue}>{stat.value}</span>
 							<span className={styles.statLabel}>{stat.label}</span>

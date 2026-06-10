@@ -87,6 +87,12 @@ $brand: #007c72;
 	margin-left: auto;
 }
 
+.navLang {
+	@media (max-width: 768px) {
+		display: none;
+	}
+}
+
 .uploadBtn {
 	display: flex;
 	align-items: center;

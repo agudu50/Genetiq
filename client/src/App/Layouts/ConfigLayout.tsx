@@ -18,7 +18,9 @@ export const ConfigLayout = () => {
 				</button>
 
 				<div className={styles.navActions}>
-					<LanguageSwitcher variant="compact" />
+					<div className={styles.navLang}>
+						<LanguageSwitcher variant="compact" />
+					</div>
 					<ThemeSwitcher />
 				</div>
 			</nav>
