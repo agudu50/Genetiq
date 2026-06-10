@@ -1,3 +1,5 @@
+@use "@/App/Styles/_mixins" as mixins;
+
 $teal-primary: #00A69D;
 $purple-vibrant: #8b5cf6;
 
@@ -9,21 +11,14 @@ $purple-vibrant: #8b5cf6;
 	height: 100%;
 	width: 100%;
 	box-sizing: border-box;
-	background: rgba(30, 41, 59, 0.35);
-	backdrop-filter: blur(24px) saturate(180%);
-	-webkit-backdrop-filter: blur(24px) saturate(180%);
 	border-radius: 24px;
-	border: 1px solid rgba(255, 255, 255, 0.06);
-	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-	transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 	position: relative;
 	overflow: hidden;
 	color: var(--text, #ffffff);
+	@include mixins.dashboard-card;
+	@include mixins.dashboard-card-hover($purple-vibrant);
 
 	html[data-theme="light"] & {
-		background: rgba(255, 255, 255, 0.7);
-		border-color: rgba(15, 23, 42, 0.05);
-		box-shadow: 0 10px 40px rgba(15, 23, 42, 0.02), inset 0 1px 0 rgba(255, 255, 255, 0.6);
 		color: #0f172a;
 	}
 

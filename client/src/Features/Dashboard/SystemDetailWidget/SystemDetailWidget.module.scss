@@ -6,16 +6,16 @@
 	gap: 12px;
 	padding: 24px;
 	border-radius: 20px;
-	background: var(--glass-bg);
-	backdrop-filter: blur(8px) saturate(180%);
-	-webkit-backdrop-filter: blur(8px) saturate(180%);
-	border: 1px solid var(--glass-border);
-	box-shadow: var(--card-shadow);
-	transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+	@include mixins.dashboard-card;
 
 	&:hover {
 		box-shadow: 0 6px 20px rgba(168, 85, 247, 0.12);
 		border-color: rgba(168, 85, 247, 0.25);
+
+		html[data-theme="light"] & {
+			box-shadow: var(--dash-card-shadow-hover);
+			border-color: color-mix(in srgb, #a855f7 35%, #cbd5e1);
+		}
 	}
 
 	&-hidden {

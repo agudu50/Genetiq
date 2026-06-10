@@ -28,6 +28,19 @@ const Dashboard = () => {
 	const [category, setCategory] = useState(selectedCategory || "total");
 
 	const [isModelVisible, setIsModelVisible] = useState(true);
+	const [pageIn, setPageIn] = useState(false);
+
+	// Entrance animation gate (same pattern as /config)
+	useEffect(() => {
+		let frame2 = 0;
+		const frame1 = requestAnimationFrame(() => {
+			frame2 = requestAnimationFrame(() => setPageIn(true));
+		});
+		return () => {
+			cancelAnimationFrame(frame1);
+			cancelAnimationFrame(frame2);
+		};
+	}, []);
 
 	// Detect mobile viewport
 	useEffect(() => {
@@ -148,9 +161,14 @@ const Dashboard = () => {
 	);
 
 	return (
-		<div className={styles["Dashboard-layout"]}>
+		<div className={`${styles["Dashboard-layout"]} ${pageIn ? styles.pageIn : ""}`}>
 			<CameraProvider>
 				<div className={styles["Dashboard-content"]}>
+					<div className={styles.bgLayer} aria-hidden>
+						<div className={styles.bgGrid} />
+						<div className={styles.bgGlow} />
+					</div>
+
 					{/* 3D Model - fullscreen on mobile */}
 					<div className={styles["Dashboard-left"]}>
 						<div className={styles["Dashboard-dt-container"]}>

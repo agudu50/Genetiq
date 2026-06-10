@@ -1,3 +1,5 @@
+@use "@/App/Styles/_mixins" as mixins;
+
 .AgeWidget-container {
 	display: flex;
 	flex-direction: row;
@@ -6,19 +8,19 @@
 	position: relative;
 	gap: 32px;
 	padding: 24px;
-	background: var(--glass-bg);
-	backdrop-filter: blur(8px) saturate(180%);
-	-webkit-backdrop-filter: blur(8px) saturate(180%);
 	border-radius: 20px;
 	margin-top: -2px;
-	box-shadow: var(--card-shadow);
-	border: 1px solid var(--glass-border);
-	transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 	overflow: hidden;
+	@include mixins.dashboard-card;
+	@include mixins.dashboard-card-hover;
 
 	&:hover {
 		box-shadow: 0 6px 24px rgba(102, 126, 234, 0.15);
 		transform: translateY(-2px);
+
+		html[data-theme="light"] & {
+			box-shadow: var(--dash-card-shadow-hover);
+		}
 	}
 
 	@media (max-width: 1412px) {

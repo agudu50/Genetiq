@@ -1,3 +1,5 @@
+@use "@/App/Styles/_mixins" as mixins;
+
 .welcomeHeader {
 	display: flex;
 	flex-direction: column;
@@ -8,21 +10,8 @@
 	box-sizing: border-box;
 	position: relative;
 	overflow: hidden;
-	
-	// Premium Glassmorphism
-	background: rgba(30, 41, 59, 0.35);
-	backdrop-filter: blur(20px) saturate(180%);
-	-webkit-backdrop-filter: blur(20px) saturate(180%);
+	@include mixins.dashboard-card;
 	border-radius: 24px;
-	border: 1px solid rgba(255, 255, 255, 0.06);
-	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-	transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-
-	html[data-theme="light"] & {
-		background: rgba(255, 255, 255, 0.7);
-		border-color: rgba(15, 23, 42, 0.05);
-		box-shadow: 0 8px 32px rgba(15, 23, 42, 0.02);
-	}
 
 	@media (max-width: 768px) {
 		padding: 24px;
@@ -47,16 +36,7 @@
 	opacity: 0.03;
 	z-index: 0;
 	background-size: 24px 24px;
-	background-image: 
-		linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-		linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-
-	html[data-theme="light"] & {
-		opacity: 0.02;
-		background-image: 
-			linear-gradient(rgba(15, 23, 42, 0.02) 1px, transparent 1px),
-			linear-gradient(90deg, rgba(15, 23, 42, 0.02) 1px, transparent 1px);
-	}
+	@include mixins.dashboard-mesh-bg;
 }
 
 .cardGlowBlob {
@@ -155,10 +135,10 @@
 	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 
 	html[data-theme="light"] & {
-		background: rgba(15, 23, 42, 0.02);
-		border-color: rgba(15, 23, 42, 0.05);
+		background: #f8fafc;
+		border: 1.5px solid #cbd5e1;
 		color: #0f172a;
-		box-shadow: none;
+		box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 	}
 }
 
@@ -186,8 +166,6 @@
 	align-items: stretch;
 	gap: 16px;
 	padding: 20px;
-	background: rgba(255, 255, 255, 0.02);
-	border: 1px solid rgba(255, 255, 255, 0.04);
 	border-radius: 20px;
 	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
 	transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -195,12 +173,7 @@
 	cursor: pointer;
 	position: relative;
 	overflow: hidden;
-
-	html[data-theme="light"] & {
-		background: rgba(15, 23, 42, 0.015);
-		border-color: rgba(15, 23, 42, 0.04);
-		box-shadow: none;
-	}
+	@include mixins.dashboard-nested-surface;
 
 	@media (max-width: 768px) {
 		padding: 16px;
@@ -216,7 +189,8 @@
 
 		html[data-theme="light"] & {
 			background: #ffffff;
-			box-shadow: 0 10px 25px color-mix(in srgb, var(--stat-color) 12%, transparent);
+			border-color: color-mix(in srgb, var(--stat-color) 45%, #cbd5e1);
+			box-shadow: 0 8px 20px color-mix(in srgb, var(--stat-color) 14%, transparent);
 		}
 
 		.statIcon {
