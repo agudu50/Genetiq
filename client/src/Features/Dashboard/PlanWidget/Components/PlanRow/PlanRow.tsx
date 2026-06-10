@@ -1,10 +1,8 @@
-import ChevronHollow from "@assets/CtaModal/ChevronHollow.svg?react";
+import { ChevronRight } from "lucide-react";
 import Cart from "@assets/CtaModal/Cart.svg?react";
-import QuestionMark from "@assets/PlanWidget/QuestionMark.svg?react";
 import styles from "./PlanRow.module.scss";
 import { PlanItem } from "../../helpers/planMockData";
 import { useLanguage } from "@/App/i18n/LanguageContext";
-
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
 import { addToCart, removeFromCart } from "@/App/Redux/cartSlice";
@@ -13,10 +11,12 @@ export const PlanRow = ({
 	item,
 	setActiveTab,
 	index = 0,
+	accentColor = "#00a69d",
 }: {
 	item: PlanItem;
 	setActiveTab: (tab: string) => void;
 	index?: number;
+	accentColor?: string;
 }) => {
 	const { t } = useLanguage();
 	const dispatch = useDispatch();
@@ -24,9 +24,7 @@ export const PlanRow = ({
 	const isInCart = cartItems.some((c) => c.name === item.name);
 
 	const handleClick = () => {
-		if (item.link) {
-			setActiveTab(item.link);
-		}
+		if (item.link) setActiveTab(item.link);
 	};
 
 	const handleCartClick = (e: React.MouseEvent) => {
@@ -34,95 +32,76 @@ export const PlanRow = ({
 		if (isInCart) {
 			dispatch(removeFromCart(item.name));
 		} else {
-			dispatch(addToCart({
-				id: item.name,
-				name: item.name,
-				description: item.description,
-				icon: item.icon,
-				price: "$49",
-			}));
+			dispatch(
+				addToCart({
+					id: item.name,
+					name: item.name,
+					description: item.description,
+					icon: item.icon,
+					price: "$49",
+				}),
+			);
 		}
 	};
 
 	return (
-		<div className={styles["PlanRow-row"]} onClick={handleClick}>
-			{/* ── Step index circle ── */}
-			<div className={styles["PlanRow-step"]}>
-				{index + 1}
+		<div
+			className={styles.row}
+			style={{ "--accent-color": accentColor } as React.CSSProperties}
+			onClick={handleClick}
+		>
+			<div className={styles.node}>
+				<div className={styles.step}>{index + 1}</div>
 			</div>
 
-			{/* ── Body ── */}
-			<div className={styles["PlanRow-body"]}>
-				<div className={styles["PlanRow-name"]}>
-					{item.count && (
-						<span className={styles["PlanRow-count"]}>{item.count} </span>
-					)}
-					{t(item.name)}
+			<div className={styles.card}>
+				<div className={styles.accent} aria-hidden />
+
+				<div className={styles.iconWrap}>
+					<img src={item.icon} alt="" />
 				</div>
-				{item.description && (
-					<div className={styles["PlanRow-desc"]}>{t(item.description)}</div>
-				)}
-			</div>
 
-			{/* ── Right: pills on idle, teal arrow on hover ── */}
-			<div className={styles["PlanRow-misc-wrap"]}>
-				<div className={styles["PlanRow-misc"]}>
-					{item.dosage && (
-						<div className={styles["PlanRow-dosage"]}>{item.dosage}</div>
-					)}
-					{item.frequency && (
-						<div className={styles["PlanRow-frequency"]}>{item.frequency}</div>
-					)}
-					{!item.dosage && !item.frequency && (
-						<span className={styles["PlanRow-type-chip"]}>
-							{t("plan_item_activity") || "Activity"}
+				<div className={styles.body}>
+					<p className={styles.name}>
+						{item.count && (
+							<span className={styles.count}>{item.count} </span>
+						)}
+						{t(item.name)}
+					</p>
+					{item.description ? (
+						<p className={styles.desc}>{t(item.description)}</p>
+					) : (
+						<span className={styles.typeChip}>
+							{t("plan_item_activity")}
 						</span>
 					)}
 				</div>
 
-				{/* Hover-reveal arrow (navigate or cart) */}
-				{item.link ? (
-					<div className={styles["PlanRow-arrow"]}>
-						<svg viewBox="0 0 24 24" fill="none" strokeLinecap="round" strokeLinejoin="round">
-							<path d="M5 12h14M13 6l6 6-6 6" />
-						</svg>
-					</div>
-				) : (
-					<button
-						className={`${styles["PlanRow-arrow"]} ${isInCart ? styles["PlanRow-cart-added"] : ""}`}
-						onClick={handleCartClick}
-						style={{ background: isInCart ? "#10b981" : undefined }}
-					>
-						{isInCart ? (
-							<svg viewBox="0 0 24 24" fill="none" strokeLinecap="round" strokeLinejoin="round">
-								<path d="m5 12 5 5L20 7" />
-							</svg>
-						) : (
-							<Cart />
-						)}
-					</button>
-				)}
-			</div>
+				<div className={styles.actions}>
+					{item.dosage && (
+						<span className={styles.metaChip}>{item.dosage}</span>
+					)}
+					{item.frequency && (
+						<span className={styles.metaChip}>{item.frequency}</span>
+					)}
+					{item.description && (
+						<span className={styles.typeChip}>{t("plan_item_activity")}</span>
+					)}
 
-			{/* Legacy buttons (kept for compatibility, hidden by default) */}
-			<div className={styles["PlanRow-buttons"]}>
-				<div className={styles["PlanRow-why"]}>
-					<p>{t("why")}</p>
-					<QuestionMark />
+					{item.link ? (
+						<div className={styles.arrow}>
+							<ChevronRight size={15} strokeWidth={2.5} />
+						</div>
+					) : (
+						<button
+							type="button"
+							className={`${styles.cartBtn} ${isInCart ? styles.cartAdded : ""}`}
+							onClick={handleCartClick}
+						>
+							{isInCart ? "✓" : <Cart />}
+						</button>
+					)}
 				</div>
-				{item.link ? (
-					<div className={styles["PlanRow-chevron-container"]}>
-						<ChevronHollow />
-					</div>
-				) : (
-					<button
-						className={`${styles["PlanRow-cart"]} ${isInCart ? styles["PlanRow-cart-added"] : ""}`}
-						onClick={handleCartClick}
-					>
-						<p>{isInCart ? `${t("added") || "Added"} ✓` : t("add_to_cart")}</p>
-						<Cart />
-					</button>
-				)}
 			</div>
 		</div>
 	);

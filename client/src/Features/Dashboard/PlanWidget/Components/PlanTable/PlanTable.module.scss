@@ -1,101 +1,126 @@
-@use "@/App/Styles/_mixins" as mixins;
+$ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 
-.PlanTable-section {
+.section {
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
-	overflow: hidden;
+	gap: 18px;
 	width: 100%;
 	box-sizing: border-box;
+	z-index: 2;
+	position: relative;
 }
 
-.PlanTable-section.PlanTable-section-animate {
-	animation: fadeIn 1s ease-out forwards;
+.sectionAnimate {
+	animation: fadeSlideIn 0.45s $ease-spring forwards;
 }
 
-@keyframes slideOutAndIn {
-	0% {
-		transform: translateX(0%);
-		opacity: 1;
-	}
-	49% {
-		transform: translateX(110%);
+@keyframes fadeSlideIn {
+	from {
 		opacity: 0;
+		transform: translateY(10px);
 	}
-	50% {
-		transform: translateX(-110%);
-		opacity: 0;
-	}
-	100% {
-		transform: translateX(0%);
+	to {
 		opacity: 1;
+		transform: translateY(0);
 	}
 }
 
-@keyframes fadeIn {
-	0% {
-		opacity: 0;
-	}
-	100% {
-		opacity: 1;
+.header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.titleBlock {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.titleIcon {
+	width: 42px;
+	height: 42px;
+	border-radius: 14px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--section-color);
+	background: color-mix(in srgb, var(--section-color) 14%, transparent);
+	border: 1px solid color-mix(in srgb, var(--section-color) 25%, transparent);
+}
+
+.title {
+	margin: 0;
+	font-size: 17px;
+	font-weight: 750;
+	letter-spacing: -0.02em;
+	color: var(--text, #ffffff);
+
+	html[data-theme="light"] & {
+		color: #0f172a;
 	}
 }
 
-.PlanTable-list {
+.subtitle {
+	margin: 3px 0 0;
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--text-secondary, #94a3b8);
+
+	html[data-theme="light"] & {
+		color: #64748b;
+	}
+}
+
+.list {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
+}
 
-	@media (max-width: 768px) {
-		flex-direction: row;
-		overflow-x: auto;
-		scroll-snap-type: x mandatory;
-		-webkit-overflow-scrolling: touch;
-		padding-bottom: 8px;
-		margin: 0 -16px;
-		padding-left: 16px;
-		padding-right: 16px;
-		/* GPU compositing for smooth scroll */
-		will-change: scroll-position;
-		transform: translateZ(0);
-		contain: layout style;
+.group {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
 
-		&::-webkit-scrollbar {
-			height: 4px;
-		}
+.groupHeader {
+	padding: 0 4px;
 
-		&::-webkit-scrollbar-track {
-			background: transparent;
-			border-radius: 4px;
-		}
+	h4 {
+		margin: 0;
+		font-size: 12px;
+		font-weight: 800;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--text-secondary, #94a3b8);
 
-		&::-webkit-scrollbar-thumb {
-			background: rgba(0, 166, 157, 0.25);
-			border-radius: 4px;
-			&:hover {
-				background: rgba(0, 166, 157, 0.45);
-			}
-		}
-
-		> * {
-			flex: 0 0 280px;
-			scroll-snap-align: start;
+		html[data-theme="light"] & {
+			color: #64748b;
 		}
 	}
 }
 
-.PlanTable-group-header {
-	font-weight: 400;
-	font-size: 10px;
-	line-height: 14px;
-	letter-spacing: 0.02em;
-	text-transform: uppercase;
-	color: var(--text-secondary);
-	margin: 16px 0;
-}
-
-.PlanTable-rows {
+.rows {
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
+	gap: 8px;
+	position: relative;
+	padding-left: 2px;
+
+	&::before {
+		content: "";
+		position: absolute;
+		left: 21px;
+		top: 18px;
+		bottom: 18px;
+		width: 2px;
+		border-radius: 2px;
+		background: linear-gradient(
+			180deg,
+			color-mix(in srgb, var(--section-color) 45%, transparent) 0%,
+			rgba(148, 163, 184, 0.12) 100%
+		);
+		pointer-events: none;
+	}
 }
