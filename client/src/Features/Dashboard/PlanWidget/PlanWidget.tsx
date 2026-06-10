@@ -3,7 +3,9 @@ import styles from "./PlanWidget.module.scss";
 import { Tabs } from "./Components/Tabs/Tabs";
 import { PlanTable } from "./Components/PlanTable/PlanTable";
 import { PlanAggregate } from "./Components/PlanAggregate/PlanAggregate";
+import { PlanItemDetailModal } from "./Components/PlanItemDetailModal/PlanItemDetailModal";
 import { PlanSection } from "./helpers/planMockData";
+import { PlanItemSelection } from "./helpers/planItemHelpers";
 import dashboardData from "@/App/Data/dashboard_data.json";
 
 interface PlanWidgetProps {
@@ -20,6 +22,9 @@ export const PlanWidget = ({
 		(dashboardData.action_plan.default as unknown as PlanSection[]);
 	const [activeTab, setActiveTab] = useState(planData[0].title);
 	const [transitioning, setTransitioning] = useState(false);
+	const [selectedItem, setSelectedItem] = useState<PlanItemSelection | null>(
+		null,
+	);
 
 	const getActionPlanData = () => {
 		return planData
@@ -47,6 +52,10 @@ export const PlanWidget = ({
 		setActiveTab(newTab);
 	};
 
+	const handleItemSelect = (selection: PlanItemSelection) => {
+		setSelectedItem(selection);
+	};
+
 	return (
 		<div
 			className={`${styles["PlanWidget-wrapper"]} ${backgroundColor === "blue" && styles["PlanWidget-wrapper-blue"]}`}
@@ -65,6 +74,7 @@ export const PlanWidget = ({
 					<PlanAggregate
 						section={activeSection}
 						setActiveTab={setActiveTab}
+						onItemSelect={handleItemSelect}
 						backgroundColor={backgroundColor}
 					/>
 				) : (
@@ -75,11 +85,21 @@ export const PlanWidget = ({
 								setActiveTab={setActiveTab}
 								transitioning={transitioning}
 								setTransitioning={setTransitioning}
+								onItemSelect={handleItemSelect}
 							/>
 						)}
 					</>
 				)}
 			</div>
+
+			<PlanItemDetailModal
+				selection={selectedItem}
+				onClose={() => setSelectedItem(null)}
+				onViewSection={(category) => {
+					setTransitioning(true);
+					setActiveTab(category);
+				}}
+			/>
 		</div>
 	);
 };

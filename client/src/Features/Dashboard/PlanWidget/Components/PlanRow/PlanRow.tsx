@@ -2,6 +2,7 @@ import { ChevronRight } from "lucide-react";
 import Cart from "@assets/CtaModal/Cart.svg?react";
 import styles from "./PlanRow.module.scss";
 import { PlanItem } from "../../helpers/planMockData";
+import { PlanItemSelection } from "../../helpers/planItemHelpers";
 import { useLanguage } from "@/App/i18n/LanguageContext";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
@@ -12,11 +13,15 @@ export const PlanRow = ({
 	setActiveTab,
 	index = 0,
 	accentColor = "#00a69d",
+	category = "",
+	onItemSelect,
 }: {
 	item: PlanItem;
 	setActiveTab: (tab: string) => void;
 	index?: number;
 	accentColor?: string;
+	category?: string;
+	onItemSelect?: (selection: PlanItemSelection) => void;
 }) => {
 	const { t } = useLanguage();
 	const dispatch = useDispatch();
@@ -24,6 +29,10 @@ export const PlanRow = ({
 	const isInCart = cartItems.some((c) => c.name === item.name);
 
 	const handleClick = () => {
+		if (onItemSelect && category) {
+			onItemSelect({ item, category, accentColor });
+			return;
+		}
 		if (item.link) setActiveTab(item.link);
 	};
 

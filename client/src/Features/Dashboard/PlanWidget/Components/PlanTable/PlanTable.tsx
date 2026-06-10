@@ -3,6 +3,7 @@ import styles from "./PlanTable.module.scss";
 import { CtaBlock } from "../CtaBlock/CtaBlock";
 import { PlanRow } from "../PlanRow/PlanRow";
 import { PlanItem, PlanSection } from "../../helpers/planMockData";
+import { PlanItemSelection } from "../../helpers/planItemHelpers";
 import { useLanguage } from "@/App/i18n/LanguageContext";
 
 type PlanTableProps = {
@@ -10,6 +11,7 @@ type PlanTableProps = {
 	setActiveTab: (title: string) => void;
 	transitioning: boolean;
 	setTransitioning: (state: boolean) => void;
+	onItemSelect: (selection: PlanItemSelection) => void;
 };
 
 const sectionIcons: Record<string, React.ReactNode> = {
@@ -29,6 +31,7 @@ export const PlanTable = ({
 	setActiveTab,
 	transitioning,
 	setTransitioning,
+	onItemSelect,
 }: PlanTableProps) => {
 	const { t } = useLanguage();
 	const accentColor = sectionColors[section.title] || "#00a69d";
@@ -85,6 +88,8 @@ export const PlanTable = ({
 									item={item}
 									setActiveTab={setActiveTab}
 									accentColor={accentColor}
+									category={section.title}
+									onItemSelect={onItemSelect}
 								/>
 							))}
 						</div>

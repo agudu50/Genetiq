@@ -386,6 +386,23 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 	}
 }
 
+.itemPreview {
+	margin: 0;
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 1.4;
+	color: var(--text-secondary, #94a3b8);
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	line-clamp: 1;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+
+	html[data-theme="light"] & {
+		color: #64748b;
+	}
+}
+
 .itemType {
 	display: inline-flex;
 	align-self: flex-start;

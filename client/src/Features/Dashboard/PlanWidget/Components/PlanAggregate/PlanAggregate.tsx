@@ -8,6 +8,10 @@ import {
 	Calendar,
 } from "lucide-react";
 import { PlanItem, PlanSection } from "../../helpers/planMockData";
+import {
+	PlanItemSelection,
+	parseImpact,
+} from "../../helpers/planItemHelpers";
 import styles from "./PlanAggregate.module.scss";
 import doctor from "@assets/PlanWidget/doctor.png";
 import { useLanguage } from "@/App/i18n/LanguageContext";
@@ -15,6 +19,7 @@ import { useLanguage } from "@/App/i18n/LanguageContext";
 type PlanAggregateProps = {
 	section: PlanSection;
 	setActiveTab: (title: string) => void;
+	onItemSelect: (selection: PlanItemSelection) => void;
 	backgroundColor: string;
 };
 
@@ -41,6 +46,7 @@ const renderGroupIcon = (type: "clipboard" | "pill" | "activity") => {
 export const PlanAggregate = ({
 	section,
 	setActiveTab,
+	onItemSelect,
 }: PlanAggregateProps) => {
 	const { t } = useLanguage();
 
@@ -122,6 +128,9 @@ export const PlanAggregate = ({
 
 								{items.map((item, i) => {
 									const isLast = i === items.length - 1;
+									const { text: benefitPreview } = parseImpact(
+										t(item.description),
+									);
 									return (
 										<motion.button
 											type="button"
@@ -136,7 +145,13 @@ export const PlanAggregate = ({
 												delay: sectionIdx * 0.1 + i * 0.05,
 												duration: 0.4,
 											}}
-											onClick={() => setActiveTab(groupKey)}
+											onClick={() =>
+												onItemSelect({
+													item,
+													category: groupKey,
+													accentColor: config.color,
+												})
+											}
 										>
 											<div className={styles.timelineNode}>
 												<div className={styles.itemIcon}>
@@ -148,6 +163,9 @@ export const PlanAggregate = ({
 												<div className={styles.itemAccent} aria-hidden />
 												<div className={styles.itemBody}>
 													<p className={styles.itemName}>{t(item.name)}</p>
+													<p className={styles.itemPreview}>
+														{benefitPreview}
+													</p>
 													<span className={styles.itemType}>
 														{t("plan_item_activity")}
 													</span>
