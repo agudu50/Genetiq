@@ -187,8 +187,8 @@ const ImportOrUpload = () => {
 						<div className={styles.scoreMobileWrapper}>
 							<div className={styles.scoreRing}>
 								<svg viewBox="0 0 120 120" className={styles.ringsvg}>
-									<circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="8"/>
-									<circle cx="60" cy="60" r="52" fill="none" stroke="#00A69D" strokeWidth="8"
+									<circle cx="60" cy="60" r="52" fill="none" className={styles.ringTrack} strokeWidth="8"/>
+									<circle cx="60" cy="60" r="52" fill="none" className={styles.ringProgress} strokeWidth="8"
 										strokeDasharray="326.7" strokeDashoffset="81.7"
 										strokeLinecap="round" transform="rotate(-90 60 60)"/>
 								</svg>

@@ -1,23 +1,114 @@
-// ── Variables ─────────────────────────────────────────────────────────────────
+// ── Theme tokens ──────────────────────────────────────────────────────────────
 
-$teal:   #00A69D;
-$teal2:  #008F87;
-$bg:     #0A0E1A;
-$card:   rgba(255,255,255,0.03);
-$border: rgba(255,255,255,0.07);
-$text:   rgba(255,255,255,0.85);
-$muted:  rgba(255,255,255,0.35);
+$teal: #00a69d;
+$teal2: #008f87;
 
-// ── Page shell ────────────────────────────────────────────────────────────────
+@mixin iou-theme-dark {
+	--iou-bg: #0a0e1a;
+	--iou-card: rgba(255, 255, 255, 0.03);
+	--iou-card-hover: rgba(255, 255, 255, 0.05);
+	--iou-border: rgba(255, 255, 255, 0.07);
+	--iou-text: rgba(255, 255, 255, 0.85);
+	--iou-heading: #ffffff;
+	--iou-muted: rgba(255, 255, 255, 0.35);
+	--iou-muted-mid: rgba(255, 255, 255, 0.45);
+	--iou-muted-soft: rgba(255, 255, 255, 0.58);
+	--iou-input-bg: rgba(255, 255, 255, 0.04);
+	--iou-input-hover-bg: rgba(255, 255, 255, 0.07);
+	--iou-input-hover-border: rgba(255, 255, 255, 0.12);
+	--iou-placeholder: rgba(255, 255, 255, 0.2);
+	--iou-overlay: rgba(10, 14, 26, 0.92);
+	--iou-overlay-card: rgba(255, 255, 255, 0.03);
+	--iou-step-bg: rgba(255, 255, 255, 0.04);
+	--iou-step-line: rgba(255, 255, 255, 0.15);
+	--iou-divider: rgba(255, 255, 255, 0.06);
+	--iou-surface: rgba(255, 255, 255, 0.02);
+	--iou-surface-hover: rgba(255, 255, 255, 0.05);
+	--iou-score-bar-bg: rgba(255, 255, 255, 0.01);
+	--iou-score-bar-border: rgba(255, 255, 255, 0.04);
+	--iou-score-bar-hover: rgba(255, 255, 255, 0.02);
+	--iou-score-bar-active-bg: rgba(255, 255, 255, 0.03);
+	--iou-score-bar-text: rgba(255, 255, 255, 0.7);
+	--iou-marker: rgba(255, 255, 255, 0.9);
+	--iou-marker-sub: rgba(255, 255, 255, 0.38);
+	--iou-unit: rgba(255, 255, 255, 0.35);
+	--iou-note: rgba(255, 255, 255, 0.58);
+	--iou-ghost-border: rgba(255, 255, 255, 0.15);
+	--iou-ghost-hover-border: rgba(255, 255, 255, 0.3);
+	--iou-ghost-hover-bg: rgba(255, 255, 255, 0.04);
+	--iou-select-option-bg: #1a2035;
+	--iou-select-option-text: rgba(255, 255, 255, 0.9);
+	--iou-progress-track: rgba(255, 255, 255, 0.08);
+	--iou-section-sub: rgba(255, 255, 255, 0.45);
+	--iou-ring-track: rgba(255, 255, 255, 0.06);
+	--iou-score-shadow: rgba(0, 0, 0, 0.5);
+	--iou-input-border: rgba(255, 255, 255, 0.07);
+	--iou-input-border-width: 1px;
+	--iou-label: rgba(255, 255, 255, 0.35);
+	--iou-label-weight: 600;
+	--iou-input-weight: 400;
+}
+
+@mixin iou-theme-light {
+	--iou-bg: #f8fafc;
+	--iou-card: #ffffff;
+	--iou-card-hover: #f1f5f9;
+	--iou-border: #cbd5e1;
+	--iou-text: #0f172a;
+	--iou-heading: #0f172a;
+	--iou-muted: #475569;
+	--iou-muted-mid: #475569;
+	--iou-muted-soft: #334155;
+	--iou-input-bg: #ffffff;
+	--iou-input-hover-bg: #f8fafc;
+	--iou-input-hover-border: #64748b;
+	--iou-placeholder: #64748b;
+	--iou-overlay: rgba(15, 23, 42, 0.45);
+	--iou-overlay-card: #ffffff;
+	--iou-step-bg: #ffffff;
+	--iou-step-line: #cbd5e1;
+	--iou-divider: #cbd5e1;
+	--iou-surface: #f8fafc;
+	--iou-surface-hover: #f1f5f9;
+	--iou-score-bar-bg: #f8fafc;
+	--iou-score-bar-border: #cbd5e1;
+	--iou-score-bar-hover: #f1f5f9;
+	--iou-score-bar-active-bg: #ffffff;
+	--iou-score-bar-text: #334155;
+	--iou-marker: #0f172a;
+	--iou-marker-sub: #475569;
+	--iou-unit: #475569;
+	--iou-note: #334155;
+	--iou-ghost-border: #94a3b8;
+	--iou-ghost-hover-border: #64748b;
+	--iou-ghost-hover-bg: #f1f5f9;
+	--iou-select-option-bg: #ffffff;
+	--iou-select-option-text: #0f172a;
+	--iou-progress-track: #cbd5e1;
+	--iou-section-sub: #475569;
+	--iou-ring-track: #cbd5e1;
+	--iou-score-shadow: rgba(15, 23, 42, 0.08);
+	--iou-input-border: #94a3b8;
+	--iou-input-border-width: 2px;
+	--iou-label: #1e293b;
+	--iou-label-weight: 700;
+	--iou-input-weight: 500;
+}
 
 .page {
+	@include iou-theme-dark;
 	min-height: 100vh;
-	background: $bg;
+	background: var(--iou-bg);
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	font-family: "Inter", "Outfit", system-ui, sans-serif;
-	color: $text;
+	color: var(--iou-text);
+	transition: background 0.25s ease, color 0.25s ease;
+
+	:global(html[data-theme="light"]) & {
+		@include iou-theme-light;
+	}
 }
 
 // ── Top bar (back button only) ────────────────────────────────────────────────
@@ -51,14 +142,14 @@ $muted:  rgba(255,255,255,0.35);
 	gap: 6px;
 	background: none;
 	border: none;
-	color: $muted;
+	color: var(--iou-muted);
 	font-size: 0.875rem;
 	font-family: inherit;
 	cursor: pointer;
 	transition: color 0.2s;
 	padding: 0;
 
-	&:hover { color: $text; }
+	&:hover { color: var(--iou-text); }
 }
 
 // ── Content wrapper ───────────────────────────────────────────────────────────
@@ -89,7 +180,7 @@ $muted:  rgba(255,255,255,0.35);
 	gap: 8px;
 	font-size: 0.82rem;
 	font-weight: 600;
-	color: $muted;
+	color: var(--iou-muted);
 	transition: color 0.3s;
 
 	&.stepActive { color: $teal; }
@@ -100,8 +191,8 @@ $muted:  rgba(255,255,255,0.35);
 	width: 24px;
 	height: 24px;
 	border-radius: 50%;
-	background: rgba(255,255,255,0.04);
-	border: 1px solid $border;
+	background: var(--iou-step-bg);
+	border: 1px solid var(--iou-border);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -124,7 +215,7 @@ $muted:  rgba(255,255,255,0.35);
 .stepLine {
 	width: 32px;
 	height: 2px;
-	background: rgba(255, 255, 255, 0.15);
+	background: var(--iou-step-line);
 	border-radius: 2px;
 	flex-shrink: 0;
 	position: relative;
@@ -152,7 +243,7 @@ $muted:  rgba(255,255,255,0.35);
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
-	border-bottom: 1px solid $border;
+	border-bottom: 1px solid var(--iou-border);
 	padding-bottom: 24px;
 
 	h1 {
@@ -161,12 +252,12 @@ $muted:  rgba(255,255,255,0.35);
 		letter-spacing: -0.04em;
 		line-height: 1.1;
 		margin: 0;
-		color: #fff;
+		color: var(--iou-heading);
 	}
 
 	p {
 		font-size: 0.95rem;
-		color: $muted;
+		color: var(--iou-muted);
 		margin: 0;
 		line-height: 1.6;
 	}
@@ -177,8 +268,8 @@ $muted:  rgba(255,255,255,0.35);
 // ── Form card ─────────────────────────────────────────────────────────────────
 
 .card {
-	background: $card;
-	border: 1px solid $border;
+	background: var(--iou-card);
+	border: var(--iou-input-border-width) solid var(--iou-border);
 	border-radius: 20px;
 	padding: 36px;
 	display: flex;
@@ -203,8 +294,8 @@ $muted:  rgba(255,255,255,0.35);
 
 	label {
 		font-size: 0.8rem;
-		font-weight: 600;
-		color: $muted;
+		font-weight: var(--iou-label-weight);
+		color: var(--iou-label);
 		letter-spacing: 0.04em;
 		text-transform: uppercase;
 	}
@@ -212,22 +303,26 @@ $muted:  rgba(255,255,255,0.35);
 	input, select {
 		width: 100%;
 		box-sizing: border-box;
-		background: rgba(255,255,255,0.04);
-		border: 1px solid $border;
+		background: var(--iou-input-bg);
+		border: var(--iou-input-border-width) solid var(--iou-input-border);
 		border-radius: 10px;
 		padding: 12px 14px;
-		color: $text;
-		font-size: 0.9rem;
+		color: var(--iou-text);
+		font-size: 0.95rem;
+		font-weight: var(--iou-input-weight);
 		font-family: inherit;
 		outline: none;
 		transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
 		appearance: none;
 
-		&::placeholder { color: rgba(255,255,255,0.2); }
+		&::placeholder {
+			color: var(--iou-placeholder);
+			font-weight: 400;
+		}
 
 		&:focus {
-			border-color: rgba($teal, 0.5);
-			box-shadow: 0 0 0 3px rgba($teal, 0.08);
+			border-color: rgba($teal, 0.55);
+			box-shadow: 0 0 0 3px rgba($teal, 0.12);
 		}
 	}
 
@@ -238,13 +333,13 @@ $muted:  rgba(255,255,255,0.35);
 		cursor: pointer;
 
 		&:hover:not(:focus) {
-			background: rgba(255,255,255,0.07);
-			border-color: rgba(255,255,255,0.12);
+			background: var(--iou-input-hover-bg);
+			border-color: var(--iou-input-hover-border);
 		}
 
 		option {
-			background: #1a2035;
-			color: rgba(255,255,255,0.9);
+			background: var(--iou-select-option-bg);
+			color: var(--iou-select-option-text);
 			padding: 10px 14px;
 			font-size: 0.9rem;
 		}
@@ -252,11 +347,11 @@ $muted:  rgba(255,255,255,0.35);
 }
 
 .optional {
-	font-weight: 400;
+	font-weight: 500;
 	text-transform: none;
 	letter-spacing: 0;
 	font-size: 0.75rem;
-	opacity: 0.6;
+	opacity: 0.75;
 }
 
 // ── Custom select wrapper ─────────────────────────────────────────────────────
@@ -316,9 +411,9 @@ $muted:  rgba(255,255,255,0.35);
 	border-radius: 99px;
 	font-size: 0.78rem;
 	font-weight: 600;
-	color: $muted;
-	background: $card;
-	border: 1px solid $border;
+	color: var(--iou-muted);
+	background: var(--iou-card);
+	border: 1px solid var(--iou-border);
 
 	svg { color: $teal; }
 }
@@ -326,7 +421,7 @@ $muted:  rgba(255,255,255,0.35);
 // ── Drop zone ─────────────────────────────────────────────────────────────────
 
 .dropZone {
-	border: 2px dashed $border;
+	border: 2px dashed var(--iou-border);
 	border-radius: 20px;
 	padding: 56px 32px;
 	display: flex;
@@ -358,7 +453,7 @@ $muted:  rgba(255,255,255,0.35);
 .dropTitle {
 	font-size: 1rem;
 	font-weight: 600;
-	color: $text;
+	color: var(--iou-text);
 	margin: 0;
 
 	span {
@@ -370,7 +465,7 @@ $muted:  rgba(255,255,255,0.35);
 
 .dropSub {
 	font-size: 0.8rem;
-	color: $muted;
+	color: var(--iou-muted);
 	margin: 0;
 }
 
@@ -387,8 +482,8 @@ $muted:  rgba(255,255,255,0.35);
 	align-items: center;
 	gap: 14px;
 	padding: 14px 16px;
-	background: $card;
-	border: 1px solid $border;
+	background: var(--iou-card);
+	border: 1px solid var(--iou-border);
 	border-radius: 12px;
 }
 
@@ -416,7 +511,7 @@ $muted:  rgba(255,255,255,0.35);
 .fileName {
 	font-size: 0.875rem;
 	font-weight: 600;
-	color: $text;
+	color: var(--iou-text);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -424,13 +519,13 @@ $muted:  rgba(255,255,255,0.35);
 
 .fileSize {
 	font-size: 0.75rem;
-	color: $muted;
+	color: var(--iou-muted);
 }
 
 .progressBar {
 	height: 3px;
 	border-radius: 99px;
-	background: rgba(255,255,255,0.08);
+	background: var(--iou-progress-track);
 	overflow: hidden;
 }
 
@@ -444,7 +539,7 @@ $muted:  rgba(255,255,255,0.35);
 .removeBtn {
 	background: none;
 	border: none;
-	color: $muted;
+	color: var(--iou-muted);
 	cursor: pointer;
 	padding: 4px;
 	border-radius: 6px;
@@ -455,7 +550,7 @@ $muted:  rgba(255,255,255,0.35);
 }
 
 .spinner {
-	color: $muted;
+	color: var(--iou-muted);
 	animation: spin 1s linear infinite;
 	flex-shrink: 0;
 }
@@ -508,9 +603,9 @@ $muted:  rgba(255,255,255,0.35);
 	justify-content: center;
 	gap: 8px;
 	background: transparent;
-	border: 1px solid rgba(255, 255, 255, 0.15);
+	border: 1px solid var(--iou-ghost-border);
 	border-radius: 12px;
-	color: $muted;
+	color: var(--iou-muted);
 	font-size: 0.95rem;
 	font-weight: 600;
 	font-family: inherit;
@@ -519,9 +614,9 @@ $muted:  rgba(255,255,255,0.35);
 	transition: border-color 0.2s, color 0.2s, background 0.2s;
 
 	&:hover {
-		border-color: rgba(255, 255, 255, 0.3);
-		color: $text;
-		background: rgba(255, 255, 255, 0.04);
+		border-color: var(--iou-ghost-hover-border);
+		color: var(--iou-text);
+		background: var(--iou-ghost-hover-bg);
 	}
 }
 
@@ -530,7 +625,7 @@ $muted:  rgba(255,255,255,0.35);
 .overlay {
 	position: fixed;
 	inset: 0;
-	background: rgba(10,14,26,0.92);
+	background: var(--iou-overlay);
 	backdrop-filter: blur(12px);
 	display: flex;
 	align-items: center;
@@ -544,8 +639,8 @@ $muted:  rgba(255,255,255,0.35);
 	align-items: center;
 	gap: 20px;
 	padding: 48px 56px;
-	background: rgba(255,255,255,0.03);
-	border: 1px solid $border;
+	background: var(--iou-overlay-card);
+	border: 1px solid var(--iou-border);
 	border-radius: 24px;
 	max-width: 420px;
 	text-align: center;
@@ -554,11 +649,11 @@ $muted:  rgba(255,255,255,0.35);
 		font-size: 1.5rem;
 		font-weight: 800;
 		margin: 0;
-		color: #fff;
+		color: var(--iou-heading);
 	}
 
 	p {
-		color: $muted;
+		color: var(--iou-muted);
 		margin: 0;
 		font-size: 0.9rem;
 		line-height: 1.6;
@@ -595,8 +690,8 @@ $muted:  rgba(255,255,255,0.35);
 	align-items: center;
 	gap: 48px;
 	padding: 48px;
-	background: $card;
-	border: 1px solid $border;
+	background: var(--iou-card);
+	border: 1px solid var(--iou-border);
 	border-radius: 24px;
 
 	// On mobile: score ring + text sit side by side in a compact row
@@ -638,6 +733,14 @@ $muted:  rgba(255,255,255,0.35);
 	height: 100%;
 }
 
+.ringTrack {
+	stroke: var(--iou-ring-track);
+}
+
+.ringProgress {
+	stroke: $teal;
+}
+
 .scoreInner {
 	position: absolute;
 	inset: 0;
@@ -660,7 +763,7 @@ $muted:  rgba(255,255,255,0.35);
 .scoreLabel {
 	font-size: 0.65rem;
 	font-weight: 600;
-	color: $muted;
+	color: var(--iou-muted);
 	text-transform: uppercase;
 	letter-spacing: 0.06em;
 
@@ -676,7 +779,7 @@ $muted:  rgba(255,255,255,0.35);
 		display: block;
 		font-size: 0.62rem;
 		font-weight: 600;
-		color: $muted;
+		color: var(--iou-muted);
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 		text-align: center;
@@ -696,7 +799,7 @@ $muted:  rgba(255,255,255,0.35);
 		font-weight: 900;
 		letter-spacing: -0.04em;
 		margin: 0;
-		color: #fff;
+		color: var(--iou-heading);
 		line-height: 1.1;
 
 		@media (max-width: 640px) {
@@ -707,7 +810,7 @@ $muted:  rgba(255,255,255,0.35);
 
 	p {
 		font-size: 1rem;
-		color: $muted;
+		color: var(--iou-muted);
 		margin: 0;
 		line-height: 1.7;
 		max-width: 600px;
@@ -747,7 +850,7 @@ $muted:  rgba(255,255,255,0.35);
 .sectionTitle {
 	font-size: 1.25rem;
 	font-weight: 800;
-	color: #fff;
+	color: var(--iou-heading);
 	margin: 0;
 	letter-spacing: -0.02em;
 
@@ -778,7 +881,7 @@ $muted:  rgba(255,255,255,0.35);
 .sectionSub {
 	font-size: 0.88rem;
 	font-weight: 500;
-	color: rgba(255, 255, 255, 0.45);
+	color: var(--iou-section-sub);
 	margin: 0;
 	letter-spacing: -0.01em;
 
@@ -807,8 +910,8 @@ $muted:  rgba(255,255,255,0.35);
 	flex-direction: column;
 	gap: 4px;
 	border-radius: 14px;
-	background: rgba(255, 255, 255, 0.01);
-	border: 1px solid rgba(255, 255, 255, 0.04);
+	background: var(--iou-score-bar-bg);
+	border: 1px solid var(--iou-score-bar-border);
 	opacity: 0.55;
 	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	position: relative;
@@ -841,7 +944,7 @@ $muted:  rgba(255,255,255,0.35);
 	span:last-child {
 		font-size: 0.85rem;
 		font-weight: 600;
-		color: rgba(255, 255, 255, 0.7);
+		color: var(--iou-score-bar-text);
 		line-height: 1.3;
 
 		@media (max-width: 640px) { font-size: 0.8rem; }
@@ -850,7 +953,7 @@ $muted:  rgba(255,255,255,0.35);
 	// Hover state
 	&:hover {
 		opacity: 0.8;
-		background: rgba(255, 255, 255, 0.02);
+		background: var(--iou-score-bar-hover);
 		transform: translateY(-1px);
 	}
 
@@ -858,8 +961,8 @@ $muted:  rgba(255,255,255,0.35);
 	&.active {
 		opacity: 1;
 		transform: translateY(-2px);
-		box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-		background: rgba(255, 255, 255, 0.03);
+		box-shadow: 0 10px 30px -10px var(--iou-score-shadow);
+		background: var(--iou-score-bar-active-bg);
 
 		&.good {
 			border-color: rgba(239, 68, 68, 0.4);
@@ -904,7 +1007,7 @@ $muted:  rgba(255,255,255,0.35);
 .findingCard {
 	display: flex;
 	flex-direction: column;
-	background: rgba(255,255,255,0.02);
+	background: var(--iou-surface);
 	border-radius: 18px;
 	overflow: hidden;
 	transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.2s;
@@ -969,7 +1072,7 @@ $muted:  rgba(255,255,255,0.35);
 .cardMarker {
 	font-size: 0.82rem;
 	font-weight: 800;
-	color: rgba(255,255,255,0.9);
+	color: var(--iou-marker);
 	line-height: 1.2;
 	text-transform: uppercase;
 	letter-spacing: 0.03em;
@@ -978,7 +1081,7 @@ $muted:  rgba(255,255,255,0.35);
 .cardSub {
 	font-size: 0.72rem;
 	font-weight: 500;
-	color: rgba(255,255,255,0.38);
+	color: var(--iou-marker-sub);
 	letter-spacing: 0.02em;
 }
 
@@ -1009,7 +1112,7 @@ $muted:  rgba(255,255,255,0.35);
 	font-weight: 900;
 	line-height: 1;
 	letter-spacing: -0.04em;
-	color: #fff;
+	color: var(--iou-heading);
 
 	.card-good &     { color: #4ade80; }
 	.card-warning &  { color: #fbbf24; }
@@ -1019,14 +1122,14 @@ $muted:  rgba(255,255,255,0.35);
 .cardUnit {
 	font-size: 0.78rem;
 	font-weight: 600;
-	color: rgba(255,255,255,0.35);
+	color: var(--iou-unit);
 	letter-spacing: 0.02em;
 }
 
 // Thin divider between value and note
 .cardDivider {
 	height: 1px;
-	background: rgba(255,255,255,0.06);
+	background: var(--iou-divider);
 	margin: 4px 0 2px;
 }
 
@@ -1034,7 +1137,7 @@ $muted:  rgba(255,255,255,0.35);
 .cardNote {
 	font-size: 0.83rem;
 	line-height: 1.72;
-	color: rgba(255,255,255,0.58);
+	color: var(--iou-note);
 	margin: 0;
 	flex: 1;
 }
@@ -1047,11 +1150,11 @@ $muted:  rgba(255,255,255,0.35);
 	align-items: flex-start;
 	gap: 8px;
 	padding: 14px 18px;
-	background: rgba(255,255,255,0.02);
-	border: 1px solid $border;
+	background: var(--iou-surface);
+	border: 1px solid var(--iou-border);
 	border-radius: 12px;
 	font-size: 0.78rem;
-	color: $muted;
+	color: var(--iou-muted);
 	line-height: 1.6;
 
 	svg { flex-shrink: 0; margin-top: 1px; color: rgba($teal, 0.5); }
@@ -1072,12 +1175,12 @@ $muted:  rgba(255,255,255,0.35);
 	align-items: flex-start;
 	gap: 16px;
 	padding: 20px;
-	background: $card;
-	border: 1px solid $border;
+	background: var(--iou-card);
+	border: 1px solid var(--iou-border);
 	border-radius: 16px;
 	transition: background 0.2s;
 
-	&:hover { background: rgba(255,255,255,0.05); }
+	&:hover { background: var(--iou-card-hover); }
 
 	@media (max-width: 640px) { padding: 16px; gap: 12px; border-radius: 12px; }
 }
@@ -1093,7 +1196,7 @@ $muted:  rgba(255,255,255,0.35);
 .recTitle {
 	font-size: 0.9rem;
 	font-weight: 700;
-	color: $text;
+	color: var(--iou-text);
 	margin-bottom: 4px;
 
 	@media (max-width: 640px) { font-size: 0.85rem; }
@@ -1101,7 +1204,7 @@ $muted:  rgba(255,255,255,0.35);
 
 .recBody {
 	font-size: 0.83rem;
-	color: $muted;
+	color: var(--iou-muted);
 	line-height: 1.6;
 
 	@media (max-width: 640px) { font-size: 0.8rem; }
@@ -1136,8 +1239,8 @@ $muted:  rgba(255,255,255,0.35);
 	gap: 8px;
 	padding: 14px 24px;
 	background: transparent;
-	color: $text;
-	border: 1px solid $border;
+	color: var(--iou-text);
+	border: 1px solid var(--iou-border);
 	border-radius: 12px;
 	font-size: 0.95rem;
 	font-weight: 600;
@@ -1163,15 +1266,15 @@ $muted:  rgba(255,255,255,0.35);
 .unitInput {
 	display: flex;
 	align-items: center;
-	border: 1px solid $border;
+	border: var(--iou-input-border-width) solid var(--iou-input-border);
 	border-radius: 12px;
-	background: rgba(255,255,255,0.02);
+	background: var(--iou-input-bg);
 	overflow: hidden;
 	transition: border-color 0.2s ease;
 
 	&:focus-within {
-		border-color: rgba($teal, 0.5);
-		box-shadow: 0 0 0 3px rgba($teal, 0.08);
+		border-color: rgba($teal, 0.6);
+		box-shadow: 0 0 0 3px rgba($teal, 0.12);
 	}
 
 	input {
@@ -1180,13 +1283,16 @@ $muted:  rgba(255,255,255,0.35);
 		border: none;
 		outline: none;
 		padding: 12px 14px;
-		font-size: 1rem;
-		font-weight: 600;
-		color: $text;
+		font-size: 0.95rem;
+		font-weight: var(--iou-input-weight);
+		color: var(--iou-text);
 		font-family: inherit;
 		-moz-appearance: textfield;
 
-		&::placeholder { color: $muted; }
+		&::placeholder {
+			color: var(--iou-placeholder);
+			font-weight: 400;
+		}
 
 		&::-webkit-outer-spin-button,
 		&::-webkit-inner-spin-button {
@@ -1203,7 +1309,7 @@ $muted:  rgba(255,255,255,0.35);
 	color: $teal;
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
-	border-left: 1px solid $border;
+	border-left: var(--iou-input-border-width) solid var(--iou-input-border);
 	white-space: nowrap;
 	line-height: 46px;
 }
@@ -1216,8 +1322,8 @@ $muted:  rgba(255,255,255,0.35);
 	gap: 10px;
 	padding: 12px 16px;
 	border-radius: 12px;
-	background: rgba(255,255,255,0.02);
-	border: 1px solid $border;
+	background: var(--iou-surface);
+	border: 1px solid var(--iou-border);
 	animation: fadeIn 0.2s ease;
 }
 
@@ -1229,7 +1335,7 @@ $muted:  rgba(255,255,255,0.35);
 .bmiPreviewLabel {
 	font-size: 11px;
 	font-weight: 800;
-	color: $muted;
+	color: var(--iou-muted);
 	text-transform: uppercase;
 	letter-spacing: 0.08em;
 }
