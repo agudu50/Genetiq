@@ -1,5 +1,6 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { paths } from "@/App/Routes/Paths";
+import ThemeSwitcher from "@/Features/Structural/ThemeSwitcher/ThemeSwitcher";
 import styles from "./ConfigLayout.module.scss";
 
 export const ConfigLayout = () => {
@@ -15,7 +16,10 @@ export const ConfigLayout = () => {
 					<span className={styles.brandName}>Genetiq</span>
 				</button>
 
-	</nav>
+				<div className={styles.navActions}>
+					<ThemeSwitcher />
+				</div>
+			</nav>
 
 			{/* ── Page content ── */}
 			<main className={styles.main}>

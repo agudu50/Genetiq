@@ -80,6 +80,13 @@ $brand: #007c72;
 	font-family: inherit;
 }
 
+.navActions {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-left: auto;
+}
+
 .uploadBtn {
 	display: flex;
 	align-items: center;
