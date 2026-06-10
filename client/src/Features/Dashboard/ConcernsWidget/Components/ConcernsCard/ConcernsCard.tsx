@@ -94,7 +94,7 @@ export const ConcernsCard: React.FC<ConcernsCardProps> = ({
 					</span>
 					{concern.factors.length > 1 && (
 						<span className={styles["ConcernsCard-extra-factors"]}>
-							+{concern.factors.length - 1} {t("factors")}
+							{" "}+{concern.factors.length - 1} {t("factors")}
 						</span>
 					)}
 				</div>

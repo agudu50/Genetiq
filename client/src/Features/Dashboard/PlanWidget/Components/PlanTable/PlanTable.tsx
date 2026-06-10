@@ -2,6 +2,7 @@ import styles from "./PlanTable.module.scss";
 import { CtaBlock } from "../CtaBlock/CtaBlock";
 import { PlanRow } from "../PlanRow/PlanRow";
 import { PlanItem, PlanSection } from "../../helpers/planMockData";
+import { useLanguage } from "@/App/i18n/LanguageContext";
 
 type PlanTableProps = {
 	section: PlanSection;
@@ -16,6 +17,7 @@ export const PlanTable = ({
 	transitioning,
 	setTransitioning,
 }: PlanTableProps) => {
+	const { t } = useLanguage();
 	const groupedData = section.data.reduce(
 		(acc: { [key: string]: PlanItem[] }, item: PlanItem) => {
 			const group = item.group || "default";
@@ -46,7 +48,7 @@ export const PlanTable = ({
 					<div key={groupKey}>
 						{groupKey !== "default" && (
 							<div className={styles["PlanTable-group-header"]}>
-								<h3>{groupKey}</h3>
+								<h3>{t(groupKey)}</h3>
 							</div>
 						)}
 						<div className={styles["PlanTable-rows"]}>

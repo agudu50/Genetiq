@@ -1,4 +1,5 @@
 import styles from "./Tabs.module.scss";
+import { useLanguage } from "@/App/i18n/LanguageContext";
 
 type Section = {
 	title: string;
@@ -17,6 +18,8 @@ export const Tabs = ({
 	setActiveTab,
 	backgroundColor,
 }: TabsProps) => {
+	const { t } = useLanguage();
+
 	return (
 		<div className={`${styles.tabsWrapper}`}>
 			<div
@@ -28,7 +31,7 @@ export const Tabs = ({
 						className={`${styles.tabBtn} ${activeTab === section.title ? styles.active : ""}`}
 						onClick={() => setActiveTab(section.title)}
 					>
-						{section.title}
+						{t(section.title)}
 					</button>
 				))}
 			</div>

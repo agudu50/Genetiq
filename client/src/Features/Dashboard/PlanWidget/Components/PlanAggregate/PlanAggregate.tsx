@@ -128,10 +128,10 @@ export const PlanAggregate = ({
 						<path d='m9 12 2 2 4-4' />
 						<path d='M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12s4.477 10 10 10 10-4.477 10-10z' />
 					</svg>
-					Recommended Next Steps
+					{t("plan_recommended_steps")}
 				</h3>
 				<span className={styles["PlanAggregate-note"]}>
-					Based on your health data
+					{t("plan_based_on_data")}
 				</span>
 			</div>
 
@@ -163,7 +163,7 @@ export const PlanAggregate = ({
 											{renderGroupIcon(config.icon)}
 										</div>
 										<div className={styles["PlanAggregate-section-title"]}>
-											{groupKey}
+											{t(groupKey)}
 										</div>
 										<div className={styles["PlanAggregate-section-count"]}>
 											{groupedData[groupKey].length}
@@ -192,7 +192,7 @@ export const PlanAggregate = ({
 													/>
 												</div>
 												<div className={styles["PlanAggregate-row-name"]}>
-													{item.name}
+													{t(item.name)}
 												</div>
 											</div>
 											<div className={styles["PlanAggregate-row-type"]}>
