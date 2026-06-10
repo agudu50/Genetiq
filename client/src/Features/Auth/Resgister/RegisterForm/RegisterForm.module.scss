@@ -63,6 +63,134 @@ $brand-hover: #006158;
 	}
 }
 
+$ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+@keyframes formFadeUp {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes formPopIn {
+	from {
+		opacity: 0;
+		transform: scale(0.86);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+@keyframes arrowNudge {
+	0%,
+	100% {
+		transform: translateX(0);
+	}
+	50% {
+		transform: translateX(4px);
+	}
+}
+
+.heading,
+.field,
+.checkRow,
+.submitBtn,
+.oauthDivider,
+.oauthIcon,
+.switchPrompt {
+	opacity: 0;
+}
+
+.formIn {
+	.heading {
+		animation: formFadeUp 0.5s $ease-out 0.32s forwards;
+	}
+
+	.field {
+		animation: formFadeUp 0.45s $ease-out forwards;
+
+		&:nth-child(1) {
+			animation-delay: 0.4s;
+		}
+
+		&:nth-child(2) {
+			animation-delay: 0.48s;
+		}
+
+		&:nth-child(3) {
+			animation-delay: 0.56s;
+		}
+
+		&:nth-child(4) {
+			animation-delay: 0.64s;
+		}
+	}
+
+	.checkRow {
+		animation: formFadeUp 0.45s $ease-out 0.72s forwards;
+	}
+
+	.submitBtn {
+		animation: formFadeUp 0.45s $ease-out 0.8s forwards;
+	}
+
+	.oauthDivider {
+		animation: formFadeUp 0.45s $ease-out 0.88s forwards;
+	}
+
+	.oauthIcon {
+		animation: formPopIn 0.45s $ease-out forwards;
+
+		&:nth-child(1) {
+			animation-delay: 0.96s;
+		}
+
+		&:nth-child(2) {
+			animation-delay: 1.04s;
+		}
+	}
+
+	.switchPrompt {
+		animation: formFadeUp 0.45s $ease-out 1.12s forwards;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.formIn {
+		.heading,
+		.field,
+		.checkRow,
+		.submitBtn,
+		.oauthDivider,
+		.oauthIcon,
+		.switchPrompt {
+			animation: none !important;
+			opacity: 1 !important;
+			transform: none !important;
+		}
+	}
+
+	.heading,
+	.field,
+	.checkRow,
+	.submitBtn,
+	.oauthDivider,
+	.oauthIcon,
+	.switchPrompt {
+		opacity: 1;
+	}
+
+	.submitArrow {
+		animation: none !important;
+	}
+}
+
 .heading {
 	display: flex;
 	flex-direction: column;
@@ -344,6 +472,11 @@ $brand-hover: #006158;
 		opacity: 0.65;
 		cursor: not-allowed;
 	}
+}
+
+.submitArrow {
+	display: inline-flex;
+	animation: arrowNudge 1.4s ease-in-out infinite;
 }
 
 .spinner {

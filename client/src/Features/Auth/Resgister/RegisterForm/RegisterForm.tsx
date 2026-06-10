@@ -1,42 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
 import { paths } from "@/App/Routes/Paths";
 import { toast } from "react-toastify";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, User } from "lucide-react";
 import styles from "./RegisterForm.module.scss";
-
-const EASE = [0.22, 1, 0.36, 1] as const;
-
-const fadeUp = {
-	hidden: { opacity: 0, y: 20 },
-	visible: (delay: number) => ({
-		opacity: 1,
-		y: 0,
-		transition: { duration: 0.5, ease: EASE, delay },
-	}),
-};
-
-const fieldReveal = {
-	hidden: { opacity: 0, y: 16, filter: "blur(4px)" },
-	visible: (delay: number) => ({
-		opacity: 1,
-		y: 0,
-		filter: "blur(0px)",
-		transition: { duration: 0.45, ease: EASE, delay },
-	}),
-};
-
-const oauthReveal = {
-	hidden: { opacity: 0, scale: 0.85 },
-	visible: (delay: number) => ({
-		opacity: 1,
-		scale: 1,
-		transition: { type: "spring", stiffness: 320, damping: 22, delay },
-	}),
-};
-
-// ─── OAuth icons ──────────────────────────────────────────────────────────────
 
 const GoogleIcon = () => (
 	<svg width='22' height='22' viewBox='0 0 24 24' fill='none'>
@@ -53,8 +20,6 @@ const AppleIcon = () => (
 	</svg>
 );
 
-// ─── Password strength ────────────────────────────────────────────────────────
-
 const getStrength = (pw: string) => {
 	if (pw.length === 0) return { width: "0%", color: "transparent", label: "" };
 	if (pw.length < 6)   return { width: "33%", color: "#ef4444", label: "Weak" };
@@ -62,13 +27,7 @@ const getStrength = (pw: string) => {
 	return { width: "100%", color: "#10b981", label: "Strong" };
 };
 
-type RegisterFormProps = {
-	reduceMotion?: boolean;
-};
-
-// ─── Component ────────────────────────────────────────────────────────────────
-
-export const RegisterForm = ({ reduceMotion = false }: RegisterFormProps) => {
+export const RegisterForm = ({ animate = false }: { animate?: boolean }) => {
 	const navigate = useNavigate();
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
@@ -80,9 +39,6 @@ export const RegisterForm = ({ reduceMotion = false }: RegisterFormProps) => {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const strength = getStrength(password);
-	const motionProps = reduceMotion
-		? { initial: false as const, animate: undefined }
-		: { initial: "hidden" as const, animate: "visible" as const };
 
 	const handleRegister = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -101,22 +57,15 @@ export const RegisterForm = ({ reduceMotion = false }: RegisterFormProps) => {
 		toast.info(`${provider} coming soon!`);
 	};
 
-	const fieldDelays = [0.18, 0.26, 0.34, 0.42];
-
 	return (
-		<div className={styles.formWrap}>
-			<motion.div
-				className={styles.heading}
-				variants={fadeUp}
-				custom={0.12}
-				{...motionProps}
-			>
+		<div className={`${styles.formWrap} ${animate ? styles.formIn : ""}`}>
+			<div className={styles.heading}>
 				<h1 className={styles.title}>Create your account</h1>
 				<p className={styles.subtitle}>Free forever · No credit card needed</p>
-			</motion.div>
+			</div>
 
 			<form className={styles.form} onSubmit={handleRegister}>
-				<motion.div className={styles.field} variants={fieldReveal} custom={fieldDelays[0]} {...motionProps}>
+				<div className={styles.field}>
 					<label htmlFor='reg-name'>Full name</label>
 					<div className={styles.inputWrap}>
 						<User size={16} className={styles.inputIcon} />
@@ -130,9 +79,9 @@ export const RegisterForm = ({ reduceMotion = false }: RegisterFormProps) => {
 							required
 						/>
 					</div>
-				</motion.div>
+				</div>
 
-				<motion.div className={styles.field} variants={fieldReveal} custom={fieldDelays[1]} {...motionProps}>
+				<div className={styles.field}>
 					<label htmlFor='reg-email'>Email address</label>
 					<div className={styles.inputWrap}>
 						<Mail size={16} className={styles.inputIcon} />
@@ -146,9 +95,9 @@ export const RegisterForm = ({ reduceMotion = false }: RegisterFormProps) => {
 							required
 						/>
 					</div>
-				</motion.div>
+				</div>
 
-				<motion.div className={styles.field} variants={fieldReveal} custom={fieldDelays[2]} {...motionProps}>
+				<div className={styles.field}>
 					<label htmlFor='reg-password'>Password</label>
 					<div className={styles.inputWrap}>
 						<Lock size={16} className={styles.inputIcon} />
@@ -165,37 +114,22 @@ export const RegisterForm = ({ reduceMotion = false }: RegisterFormProps) => {
 							{showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
 						</button>
 					</div>
-					<AnimatePresence>
-						{password.length > 0 && (
-							<motion.div
-								className={styles.strengthRow}
-								initial={reduceMotion ? false : { opacity: 0, height: 0 }}
-								animate={{ opacity: 1, height: "auto" }}
-								exit={reduceMotion ? undefined : { opacity: 0, height: 0 }}
-								transition={{ duration: 0.25, ease: EASE }}
-							>
-								<div className={styles.strengthBar}>
-									<motion.div
-										className={styles.strengthFill}
-										animate={{ width: strength.width, background: strength.color }}
-										transition={reduceMotion ? { duration: 0 } : { duration: 0.35, ease: EASE }}
-									/>
-								</div>
-								<motion.span
-									className={styles.strengthLabel}
-									key={strength.label}
-									initial={reduceMotion ? false : { opacity: 0, y: 4 }}
-									animate={{ opacity: 1, y: 0, color: strength.color }}
-									transition={{ duration: 0.2 }}
-								>
-									{strength.label}
-								</motion.span>
-							</motion.div>
-						)}
-					</AnimatePresence>
-				</motion.div>
+					{password.length > 0 && (
+						<div className={styles.strengthRow}>
+							<div className={styles.strengthBar}>
+								<div
+									className={styles.strengthFill}
+									style={{ width: strength.width, background: strength.color }}
+								/>
+							</div>
+							<span className={styles.strengthLabel} style={{ color: strength.color }}>
+								{strength.label}
+							</span>
+						</div>
+					)}
+				</div>
 
-				<motion.div className={styles.field} variants={fieldReveal} custom={fieldDelays[3]} {...motionProps}>
+				<div className={styles.field}>
 					<label htmlFor='reg-confirm'>Confirm password</label>
 					<div className={styles.inputWrap}>
 						<Lock size={16} className={styles.inputIcon} />
@@ -212,117 +146,54 @@ export const RegisterForm = ({ reduceMotion = false }: RegisterFormProps) => {
 							{showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
 						</button>
 					</div>
-					<AnimatePresence>
-						{confirmPassword.length > 0 && password !== confirmPassword && (
-							<motion.span
-								className={styles.errorMsg}
-								initial={reduceMotion ? false : { opacity: 0, y: -4 }}
-								animate={{ opacity: 1, y: 0 }}
-								exit={reduceMotion ? undefined : { opacity: 0, y: -4 }}
-								transition={{ duration: 0.2 }}
-							>
-								Passwords don't match
-							</motion.span>
-						)}
-					</AnimatePresence>
-				</motion.div>
+					{confirmPassword.length > 0 && password !== confirmPassword && (
+						<span className={styles.errorMsg}>Passwords don't match</span>
+					)}
+				</div>
 
-				<motion.label
-					className={styles.checkRow}
-					variants={fieldReveal}
-					custom={0.5}
-					{...motionProps}
-				>
+				<label className={styles.checkRow}>
 					<input type='checkbox' checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)} required />
 					<span className={styles.checkBox} />
 					<span className={styles.checkLabel}>
 						I agree to the{" "}
-						<a
-							href={paths.terms}
-							target="_blank"
-							rel="noopener noreferrer"
-							onClick={(e) => e.stopPropagation()}
-						>
+						<a href={paths.terms} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
 							Terms of Service
 						</a>
 						{" "}and{" "}
-						<a
-							href={paths.privacy}
-							target="_blank"
-							rel="noopener noreferrer"
-							onClick={(e) => e.stopPropagation()}
-						>
+						<a href={paths.privacy} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
 							Privacy Policy
 						</a>
 					</span>
-				</motion.label>
+				</label>
 
-				<motion.button
-					type='submit'
-					className={styles.submitBtn}
-					disabled={isLoading}
-					variants={fieldReveal}
-					custom={0.58}
-					{...motionProps}
-					whileHover={reduceMotion || isLoading ? undefined : { scale: 1.01, y: -1 }}
-					whileTap={reduceMotion || isLoading ? undefined : { scale: 0.99 }}
-				>
+				<button type='submit' className={styles.submitBtn} disabled={isLoading}>
 					{isLoading ? (
 						<span className={styles.spinner} />
 					) : (
 						<>
-							Create Free Account
-							<motion.span
-								animate={reduceMotion ? undefined : { x: [0, 4, 0] }}
-								transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
-							>
-								<ArrowRight size={16} />
-							</motion.span>
+							Create Free Account <ArrowRight size={16} className={styles.submitArrow} />
 						</>
 					)}
-				</motion.button>
+				</button>
 			</form>
 
-			<motion.div
-				className={styles.oauthDivider}
-				variants={fadeUp}
-				custom={0.66}
-				{...motionProps}
-			>
+			<div className={styles.oauthDivider}>
 				<span>or continue with</span>
-			</motion.div>
-
-			<div className={styles.oauthIcons}>
-				{[
-					{ label: "Sign up with Google", icon: <GoogleIcon />, provider: "Google" },
-					{ label: "Sign up with Apple", icon: <AppleIcon />, provider: "Apple" },
-				].map((item, i) => (
-					<motion.button
-						key={item.provider}
-						className={styles.oauthIcon}
-						onClick={() => handleOAuth(item.provider)}
-						type='button'
-						aria-label={item.label}
-						variants={oauthReveal}
-						custom={0.72 + i * 0.08}
-						{...motionProps}
-						whileHover={reduceMotion ? undefined : { y: -3, scale: 1.04 }}
-						whileTap={reduceMotion ? undefined : { scale: 0.96 }}
-					>
-						{item.icon}
-					</motion.button>
-				))}
 			</div>
 
-			<motion.p
-				className={styles.switchPrompt}
-				variants={fadeUp}
-				custom={0.82}
-				{...motionProps}
-			>
+			<div className={styles.oauthIcons}>
+				<button className={styles.oauthIcon} onClick={() => handleOAuth("Google")} type='button' aria-label='Sign up with Google'>
+					<GoogleIcon />
+				</button>
+				<button className={styles.oauthIcon} onClick={() => handleOAuth("Apple")} type='button' aria-label='Sign up with Apple'>
+					<AppleIcon />
+				</button>
+			</div>
+
+			<p className={styles.switchPrompt}>
 				Already have an account?{" "}
 				<button type='button' onClick={() => navigate(paths.auth.login)}>Sign in</button>
-			</motion.p>
+			</p>
 		</div>
 	);
 };

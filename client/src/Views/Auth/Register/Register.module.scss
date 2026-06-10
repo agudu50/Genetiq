@@ -29,10 +29,78 @@ $brand: #007c72;
 	--reg-brand-tint: #e6f4f3;
 	--reg-brand-border: rgba(0, 124, 114, 0.22);
 	--reg-accent-glow: transparent;
-	--reg-show-glow: 0;
+	--reg-show-glow: 0.35;
 }
 
 // ── Animations ────────────────────────────────────────────────────────────────
+
+$ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+@keyframes slideInLeft {
+	from {
+		opacity: 0;
+		transform: translateX(-56px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes slideInRight {
+	from {
+		opacity: 0;
+		transform: translateX(56px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes fadeUp {
+	from {
+		opacity: 0;
+		transform: translateY(28px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes fadeDown {
+	from {
+		opacity: 0;
+		transform: translateY(-16px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes slideInItem {
+	from {
+		opacity: 0;
+		transform: translateX(-24px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes popIn {
+	from {
+		opacity: 0;
+		transform: scale(0.88);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
 
 @keyframes blobFloatA {
 	0%,
@@ -59,19 +127,19 @@ $brand: #007c72;
 		transform: translate(0, 0);
 	}
 	to {
-		transform: translate(40px, 40px);
+		transform: translate(48px, 48px);
 	}
 }
 
 @keyframes bgGlowPulse {
 	0%,
 	100% {
-		opacity: 0.35;
-		transform: translateX(-50%) scale(1);
+		opacity: 0.4;
+		transform: scale(1);
 	}
 	50% {
-		opacity: 0.55;
-		transform: translateX(-50%) scale(1.05);
+		opacity: 0.65;
+		transform: scale(1.08);
 	}
 }
 
@@ -139,9 +207,10 @@ $brand: #007c72;
 		linear-gradient(var(--reg-border) 1px, transparent 1px),
 		linear-gradient(90deg, var(--reg-border) 1px, transparent 1px);
 	background-size: 40px 40px;
-	opacity: 0.35;
+	opacity: 0.65;
 	mask-image: radial-gradient(ellipse 80% 70% at 70% 50%, #000 10%, transparent 75%);
-	animation: gridDrift 28s linear infinite;
+	animation: gridDrift 16s linear infinite;
+	will-change: transform;
 }
 
 .bgGlow {
@@ -155,6 +224,93 @@ $brand: #007c72;
 	opacity: 0.5;
 	filter: blur(72px);
 	animation: bgGlowPulse 9s ease-in-out infinite;
+	will-change: transform, opacity;
+}
+
+.mobileHeader {
+	display: none;
+	align-items: center;
+	gap: 12px;
+	cursor: pointer;
+	margin-bottom: 40px;
+
+	@media (max-width: 900px) {
+		display: flex;
+	}
+}
+
+// ── Entrance (CSS — same pattern as Landing hero) ─────────────────────────────
+
+.leftPanel,
+.rightPanel,
+.brand,
+.leftHeading,
+.leftSub,
+.featureItem,
+.trustBadge,
+.leftFooter,
+.mobileHeader {
+	opacity: 0;
+}
+
+.featureItem {
+	transition: transform 0.2s ease;
+
+	&:hover {
+		transform: translateX(6px);
+	}
+}
+
+.pageIn {
+	.leftPanel {
+		animation: slideInLeft 0.75s $ease-out forwards;
+	}
+
+	.rightPanel {
+		animation: slideInRight 0.75s $ease-out 0.1s forwards;
+	}
+
+	.brand {
+		animation: fadeUp 0.55s $ease-out 0.22s forwards;
+	}
+
+	.leftHeading {
+		animation: fadeUp 0.55s $ease-out 0.32s forwards;
+	}
+
+	.leftSub {
+		animation: fadeUp 0.55s $ease-out 0.4s forwards;
+	}
+
+	.featureItem {
+		animation: slideInItem 0.5s $ease-out forwards;
+
+		&:nth-child(1) {
+			animation-delay: 0.48s;
+		}
+
+		&:nth-child(2) {
+			animation-delay: 0.58s;
+		}
+
+		&:nth-child(3) {
+			animation-delay: 0.68s;
+		}
+	}
+
+	.trustBadge {
+		animation:
+			popIn 0.5s $ease-out 0.78s forwards,
+			badgeBob 3.5s ease-in-out 1.4s infinite;
+	}
+
+	.leftFooter {
+		animation: fadeUp 0.5s $ease-out 0.88s forwards;
+	}
+
+	.mobileHeader {
+		animation: fadeDown 0.45s $ease-out 0.28s forwards;
+	}
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -163,9 +319,36 @@ $brand: #007c72;
 	.leftPanel::before,
 	.leftPanel::after,
 	.brandLogo,
-	.trustBadge,
 	.featureIcon {
 		animation: none !important;
+	}
+
+	.pageIn {
+		.leftPanel,
+		.rightPanel,
+		.brand,
+		.leftHeading,
+		.leftSub,
+		.featureItem,
+		.trustBadge,
+		.leftFooter,
+		.mobileHeader {
+			animation: none !important;
+			opacity: 1 !important;
+			transform: none !important;
+		}
+	}
+
+	.leftPanel,
+	.rightPanel,
+	.brand,
+	.leftHeading,
+	.leftSub,
+	.featureItem,
+	.trustBadge,
+	.leftFooter,
+	.mobileHeader {
+		opacity: 1;
 	}
 }
 
@@ -190,6 +373,7 @@ $brand: #007c72;
 		border-radius: 50%;
 		pointer-events: none;
 		animation: blobFloatA 14s ease-in-out infinite;
+		will-change: transform;
 	}
 
 	&::after {
@@ -203,6 +387,7 @@ $brand: #007c72;
 		border-radius: 50%;
 		pointer-events: none;
 		animation: blobFloatB 18s ease-in-out infinite;
+		will-change: transform;
 	}
 
 	@media (max-width: 900px) {
@@ -225,6 +410,15 @@ $brand: #007c72;
 	gap: 12px;
 	cursor: pointer;
 	margin-bottom: auto;
+	transition: transform 0.2s ease;
+
+	&:hover {
+		transform: scale(1.02);
+	}
+
+	&:active {
+		transform: scale(0.98);
+	}
 }
 
 .brandLogo {
@@ -235,6 +429,7 @@ $brand: #007c72;
 	border: 1px solid var(--reg-brand-border);
 	filter: drop-shadow(0 0 8px var(--reg-accent-glow));
 	animation: logoFloat 4.5s ease-in-out infinite;
+	will-change: transform;
 }
 
 .brandName {
@@ -320,7 +515,6 @@ $brand: #007c72;
 	border: 1px solid var(--reg-brand-border);
 	border-radius: 20px;
 	padding: 8px 16px;
-	animation: badgeBob 3.5s ease-in-out infinite;
 }
 
 .leftFooter {
