@@ -1,6 +1,6 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { paths } from "@/App/Routes/Paths";
-import { motion } from "framer-motion";
 import {
 	Upload,
 	FileText,
@@ -10,8 +10,6 @@ import {
 	ShieldCheck,
 } from "lucide-react";
 import styles from "./UploadMethod.module.scss";
-
-// ─── Option cards ─────────────────────────────────────────────────────────────
 
 const OPTIONS = [
 	{
@@ -52,57 +50,56 @@ const OPTIONS = [
 	},
 ];
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
 const Config = () => {
 	const navigate = useNavigate();
+	const [pageIn, setPageIn] = useState(false);
+
+	useEffect(() => {
+		let frame2 = 0;
+		const frame1 = requestAnimationFrame(() => {
+			frame2 = requestAnimationFrame(() => setPageIn(true));
+		});
+		return () => {
+			cancelAnimationFrame(frame1);
+			cancelAnimationFrame(frame2);
+		};
+	}, []);
 
 	return (
-		<div className={styles.page}>
-			{/* Header */}
-			<motion.div
-				className={styles.header}
-				initial={{ opacity: 0, y: 24 }}
-				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.5 }}
-			>
+		<div className={`${styles.page} ${pageIn ? styles.pageIn : ""}`}>
+			<div className={styles.bgLayer} aria-hidden>
+				<div className={styles.bgGrid} />
+				<div className={styles.bgGlow} />
+			</div>
+
+			<header className={styles.header}>
 				<span className={styles.badge}>
 					<span className={styles.badgeDot} />
 					What would you like to do?
 				</span>
-				<h1 className={styles.title}>
-					You're in. Let's get started.
-				</h1>
+				<h1 className={styles.title}>You&apos;re in. Let&apos;s get started.</h1>
 				<p className={styles.subtitle}>
 					Upload your lab results and our AI will explain every value in plain English,
 					then build you a personalised health and diet plan.
 				</p>
-			</motion.div>
+			</header>
 
-			{/* Option cards */}
 			<div className={styles.cards}>
-				{OPTIONS.map((opt, i) => (
-					<motion.div
+				{OPTIONS.map((opt) => (
+					<article
 						key={opt.id}
 						className={`${styles.card} ${opt.disabled ? styles.cardDisabled : ""} ${opt.id === "upload" ? styles.cardFeatured : ""}`}
-						initial={{ opacity: 0, y: 32 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ delay: 0.15 + i * 0.1, duration: 0.45 }}
 						onClick={() => !opt.disabled && navigate(opt.url!)}
 					>
-						{/* Badge */}
 						<div className={`${styles.cardBadge} ${styles[`badge-${opt.badgeColor}`]}`}>
 							{opt.badge}
 						</div>
 
-						{/* Icon */}
 						<div className={styles.cardIcon}>{opt.icon}</div>
 
-						{/* Text */}
 						<h2 className={styles.cardTitle}>{opt.title}</h2>
 						<p className={styles.cardDesc}>{opt.desc}</p>
 
-						{/* Highlights */}
 						<ul className={styles.highlights}>
 							{opt.highlights.map((h) => (
 								<li key={h}>
@@ -112,25 +109,22 @@ const Config = () => {
 							))}
 						</ul>
 
-						{/* CTA */}
 						{!opt.disabled && (
-							<button className={styles.cardCta}>
+							<button type="button" className={styles.cardCta}>
 								{opt.cta}
-								<ArrowRight size={16} />
+								<ArrowRight size={16} className={styles.ctaArrow} />
 							</button>
 						)}
 
 						{opt.disabled && (
 							<span className={styles.comingSoon}>Coming soon</span>
 						)}
-					</motion.div>
+					</article>
 				))}
 			</div>
 
-			{/* Footer */}
-			<footer className={styles.configFooter} style={{ marginTop: "80px" }}>
+			<footer className={styles.configFooter}>
 				<div className={styles.footerTop}>
-					{/* Brand */}
 					<div className={styles.footerBrand}>
 						<div className={styles.footerLogo}>
 							<img src="/assets/genetiq_logo_v2.png" alt="Genetiq" />
@@ -152,7 +146,6 @@ const Config = () => {
 						</div>
 					</div>
 
-					{/* Link columns */}
 					<div className={styles.footerLinks}>
 						<div className={styles.footerCol}>
 							<h4>Product</h4>
@@ -179,7 +172,6 @@ const Config = () => {
 					</div>
 				</div>
 
-				{/* Bottom bar */}
 				<div className={styles.footerBottom}>
 					© 2026 Genetiq · Making health data simple, one result at a time.
 				</div>
@@ -189,4 +181,3 @@ const Config = () => {
 };
 
 export default Config;
-

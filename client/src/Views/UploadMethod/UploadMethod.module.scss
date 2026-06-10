@@ -36,6 +36,7 @@ $brand-bright: #00a69d;
 	--cfg-footer-bottom-border: rgba(255, 255, 255, 0.05);
 	--cfg-trust-bg: rgba(255, 255, 255, 0.04);
 	--cfg-trust-border: rgba(255, 255, 255, 0.07);
+	--cfg-grid-line: rgba(255, 255, 255, 0.06);
 }
 
 @mixin config-page-light {
@@ -71,6 +72,72 @@ $brand-bright: #00a69d;
 	--cfg-footer-bottom-border: #e2e8f0;
 	--cfg-trust-bg: #f8fafc;
 	--cfg-trust-border: #e2e8f0;
+	--cfg-grid-line: #e2e8f0;
+}
+
+$ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+@keyframes fadeUp {
+	from {
+		opacity: 0;
+		transform: translateY(28px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes cardIn {
+	from {
+		opacity: 0;
+		transform: translateY(36px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes gridDrift {
+	from {
+		transform: translate(0, 0);
+	}
+	to {
+		transform: translate(48px, 48px);
+	}
+}
+
+@keyframes bgGlowPulse {
+	0%,
+	100% {
+		opacity: 0.4;
+		transform: translateX(-50%) scale(1);
+	}
+	50% {
+		opacity: 0.65;
+		transform: translateX(-50%) scale(1.08);
+	}
+}
+
+@keyframes iconPulse {
+	0%,
+	100% {
+		box-shadow: 0 0 0 0 rgba($brand-bright, 0.2);
+	}
+	50% {
+		box-shadow: 0 0 0 6px rgba($brand-bright, 0);
+	}
+}
+
+@keyframes arrowNudge {
+	0%,
+	100% {
+		transform: translateX(0);
+	}
+	50% {
+		transform: translateX(4px);
+	}
 }
 
 .page {
@@ -91,24 +158,59 @@ $brand-bright: #00a69d;
 		@include config-page-light;
 	}
 
-	&::before {
-		content: "";
-		position: absolute;
-		top: -60px;
-		left: 50%;
-		transform: translateX(-50%);
-		width: 60%;
-		height: 300px;
-		background: var(--cfg-glow);
-		border-radius: 50%;
-		filter: blur(60px);
-		pointer-events: none;
-	}
-
 	@media (max-width: 768px) {
 		padding: 48px 20px 0;
 		gap: 36px;
 	}
+}
+
+.bgLayer {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	overflow: hidden;
+}
+
+.bgGrid {
+	position: absolute;
+	inset: -40px;
+	background-image:
+		linear-gradient(var(--cfg-grid-line) 1px, transparent 1px),
+		linear-gradient(90deg, var(--cfg-grid-line) 1px, transparent 1px);
+	background-size: 40px 40px;
+	opacity: 0.55;
+	mask-image: radial-gradient(ellipse 85% 65% at 50% 20%, #000 12%, transparent 72%);
+	animation: gridDrift 18s linear infinite;
+	will-change: transform;
+}
+
+.bgGlow {
+	position: absolute;
+	top: -8%;
+	left: 50%;
+	width: min(640px, 80vw);
+	height: min(640px, 80vw);
+	border-radius: 50%;
+	background: var(--cfg-glow);
+	filter: blur(72px);
+	animation: bgGlowPulse 9s ease-in-out infinite;
+	will-change: transform, opacity;
+}
+
+.page::before {
+	content: "";
+	position: absolute;
+	top: -60px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 60%;
+	height: 300px;
+	background: var(--cfg-glow);
+	border-radius: 50%;
+	filter: blur(60px);
+	pointer-events: none;
+	z-index: 0;
 }
 
 .header {
@@ -263,6 +365,19 @@ $brand-bright: #00a69d;
 	justify-content: center;
 	color: $brand-bright;
 	transition: transform 0.2s;
+	animation: iconPulse 3s ease-in-out infinite;
+
+	.card:nth-child(1) & {
+		animation-delay: 0s;
+	}
+
+	.card:nth-child(2) & {
+		animation-delay: 0.45s;
+	}
+
+	.card:nth-child(3) & {
+		animation-delay: 0.9s;
+	}
 
 	.card:hover & {
 		transform: scale(1.08) rotate(-3deg);
@@ -343,6 +458,11 @@ $brand-bright: #00a69d;
 	}
 }
 
+.ctaArrow {
+	display: inline-flex;
+	animation: arrowNudge 1.4s ease-in-out infinite;
+}
+
 .comingSoon {
 	font-size: 0.78rem;
 	font-weight: 600;
@@ -353,7 +473,7 @@ $brand-bright: #00a69d;
 .configFooter {
 	width: 100%;
 	border-top: 1px solid var(--cfg-footer-border);
-	margin-top: 16px;
+	margin-top: 80px;
 	background: var(--cfg-footer-bg);
 	position: relative;
 	z-index: 1;
@@ -499,5 +619,79 @@ $brand-bright: #00a69d;
 	50% {
 		opacity: 0.5;
 		transform: scale(0.85);
+	}
+}
+
+// ── Entrance animations ───────────────────────────────────────────────────────
+
+.badge,
+.title,
+.subtitle,
+.card,
+.configFooter {
+	opacity: 0;
+}
+
+.pageIn {
+	.badge {
+		animation: fadeUp 0.55s $ease-out 0.12s forwards;
+	}
+
+	.title {
+		animation: fadeUp 0.6s $ease-out 0.22s forwards;
+	}
+
+	.subtitle {
+		animation: fadeUp 0.55s $ease-out 0.32s forwards;
+	}
+
+	.card {
+		animation: cardIn 0.55s $ease-out forwards;
+
+		&:nth-child(1) {
+			animation-delay: 0.42s;
+		}
+
+		&:nth-child(2) {
+			animation-delay: 0.54s;
+		}
+
+		&:nth-child(3) {
+			animation-delay: 0.66s;
+		}
+	}
+
+	.configFooter {
+		animation: fadeUp 0.6s $ease-out 0.82s forwards;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.bgGrid,
+	.bgGlow,
+	.badgeDot,
+	.cardIcon,
+	.ctaArrow {
+		animation: none !important;
+	}
+
+	.pageIn {
+		.badge,
+		.title,
+		.subtitle,
+		.card,
+		.configFooter {
+			animation: none !important;
+			opacity: 1 !important;
+			transform: none !important;
+		}
+	}
+
+	.badge,
+	.title,
+	.subtitle,
+	.card,
+	.configFooter {
+		opacity: 1;
 	}
 }
