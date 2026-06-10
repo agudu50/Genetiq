@@ -1,2 +1,105 @@
-"import React from \"react\";\nimport styles from \"./AppCard.module.scss\";\nimport { FuselabIcon } from \"@/assets/Icons/Fuselab\";\nimport { DataConsole } from \"../DataConsole/DataConsole\";\nimport { motion, AnimatePresence } from \"framer-motion\";\nimport { safeGet } from \"@/App/Utils/safeAccess\";\n\ninterface AppCardProps {\n\timg: string;\n\ttitle: string;\n\tdescription: string;\n\ttags?: string[];\n\tisSynced?: boolean;\n\tonToggle?: () => void;\n}\n\nexport const AppCard: React.FC<AppCardProps> = ({\n\timg,\n\ttitle,\n\tdescription,\n\ttags = [],\n\tisSynced = false,\n\tonToggle,\n}) => {\n\tconst s = (key: string) => safeGet(styles, key);\n\n\treturn (\n\t\t<div\n\t\t\tclassName={`${s(\"app-card-container\")} ${isSynced ? s(\"is-connected\") : \"\"}`}\n\t\t>\n\t\t\t<div className={s(\"header-wrapper\")}>\n\t\t\t\t<div className={s(\"image-wrapper\")}>\n\t\t\t\t\t<img src={img} alt={title} />\n\t\t\t\t</div>\n\t\t\t\t<button\n\t\t\t\t\tclassName={`${s(\"connect-btn\")} ${isSynced ? s(\"connected\") : \"\"}`}\n\t\t\t\t\tonClick={onToggle}\n\t\t\t\t>\n\t\t\t\t\t{isSynced ? \"Synced\" : \"Connect\"}\n\t\t\t\t</button>\n\t\t\t</div>\n\n\t\t\t<div className={s(\"info\")}>\n\t\t\t\t<div className={s(\"title-row\")}>\n\t\t\t\t\t<div className={s(\"title\")}>{title}</div>\n\t\t\t\t\t{isSynced && (\n\t\t\t\t\t\t<motion.div\n\t\t\t\t\t\t\tanimate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}\n\t\t\t\t\t\t\ttransition={{ duration: 2, repeat: Infinity }}\n\t\t\t\t\t\t\tclassName={s(\"sync-dot\")}\n\t\t\t\t\t\t/>\n\t\t\t\t\t)}\n\t\t\t\t</div>\n\t\t\t\t<div className={s(\"description\")}>{description}</div>\n\t\t\t</div>\n\n\t\t\t{/* Biological System Mapping Tags */}\n\t\t\t{tags.length > 0 && (\n\t\t\t\t<div className={s(\"tags-container\")}>\n\t\t\t\t\t{tags.map((tag, idx) => (\n\t\t\t\t\t\t<span key={idx} className={s(\"mapping-tag\")}>\n\t\t\t\t\t\t\t{tag}\n\t\t\t\t\t\t</span>\n\t\t\t\t\t))}\n\t\t\t\t</div>\n\t\t\t)}\n\n\t\t\t<AnimatePresence>\n\t\t\t\t{isSynced && (\n\t\t\t\t\t<motion.div\n\t\t\t\t\t\tin
-<truncated 1241 bytes>
+import React from "react";
+import styles from "./AppCard.module.scss";
+import { FuselabIcon } from "@/assets/Icons/Fuselab";
+import { DataConsole } from "../DataConsole/DataConsole";
+import { motion, AnimatePresence } from "framer-motion";
+
+interface AppCardProps {
+	img: string;
+	title: string;
+	description: string;
+	tags?: string[];
+	isSynced?: boolean;
+	onToggle?: () => void;
+}
+
+export const AppCard: React.FC<AppCardProps> = ({
+	img,
+	title,
+	description,
+	tags = [],
+	isSynced = false,
+	onToggle,
+}) => {
+	return (
+		<div
+			className={`${styles["app-card-container"]} ${isSynced ? styles["is-connected"] : ""}`}
+		>
+			<div className={styles["header-wrapper"]}>
+				<div className={styles["image-wrapper"]}>
+					<img src={img} alt={title} />
+				</div>
+				<button
+					className={`${styles["connect-btn"]} ${isSynced ? styles["connected"] : ""}`}
+					onClick={onToggle}
+				>
+					{isSynced ? "Synced" : "Connect"}
+				</button>
+			</div>
+
+			<div className={styles["info"]}>
+				<div className={styles["title-row"]}>
+					<div className={styles["title"]}>{title}</div>
+					{isSynced && (
+						<motion.div
+							animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+							transition={{ duration: 2, repeat: Infinity }}
+							className={styles["sync-dot"]}
+						/>
+					)}
+				</div>
+				<div className={styles["description"]}>{description}</div>
+			</div>
+
+			{tags.length > 0 && (
+				<div className={styles["tags-container"]}>
+					{tags.map((tag, idx) => (
+						<span key={idx} className={styles["mapping-tag"]}>
+							{tag}
+						</span>
+					))}
+				</div>
+			)}
+
+			<AnimatePresence>
+				{isSynced && (
+					<motion.div
+						initial={{ height: 0, opacity: 0 }}
+						animate={{ height: "auto", opacity: 1 }}
+						exit={{ height: 0, opacity: 0 }}
+						className={styles["console-wrapper"]}
+					>
+						<DataConsole isActive={isSynced} deviceName={title} />
+					</motion.div>
+				)}
+			</AnimatePresence>
+
+			<div className={styles["card-footer"]}>
+				<div className={styles["favorite"]}>
+					<motion.div
+						animate={
+							isSynced
+								? {
+										scale: [1, 1.1, 1],
+										filter: [
+											"drop-shadow(0 0 0px #6366f1)",
+											"drop-shadow(0 0 8px #6366f1)",
+											"drop-shadow(0 0 0px #6366f1)",
+										],
+									}
+								: {}
+						}
+						transition={{ duration: 3, repeat: Infinity }}
+					>
+						<FuselabIcon fill={isSynced ? "#6366f1" : "#818cf8"} />
+					</motion.div>
+				</div>
+				<span
+					className={`${styles["status-label"]} ${isSynced ? styles["live"] : ""}`}
+				>
+					{isSynced ? "Real-time Sync" : "Available"}
+				</span>
+			</div>
+		</div>
+	);
+};

@@ -1,6 +1,80 @@
 // ── Config / Getting Started page ─────────────────────────────────────────────
 
+$brand: #007c72;
+$brand-bright: #00a69d;
+
+@mixin config-page-dark {
+	--cfg-text: #ffffff;
+	--cfg-text-muted: rgba(255, 255, 255, 0.48);
+	--cfg-text-soft: rgba(255, 255, 255, 0.5);
+	--cfg-text-faint: rgba(255, 255, 255, 0.35);
+	--cfg-text-dim: rgba(255, 255, 255, 0.25);
+	--cfg-text-heading: rgba(255, 255, 255, 0.9);
+	--cfg-card-bg: rgba(255, 255, 255, 0.03);
+	--cfg-card-bg-hover: rgba(255, 255, 255, 0.06);
+	--cfg-card-border: rgba(255, 255, 255, 0.08);
+	--cfg-card-border-hover: rgba(255, 255, 255, 0.15);
+	--cfg-card-shadow: rgba(0, 0, 0, 0.25);
+	--cfg-featured-bg: rgba(0, 166, 157, 0.04);
+	--cfg-featured-bg-hover: rgba(0, 166, 157, 0.07);
+	--cfg-featured-border: rgba(0, 166, 157, 0.35);
+	--cfg-featured-border-hover: rgba(0, 166, 157, 0.6);
+	--cfg-featured-shadow: rgba(0, 166, 157, 0.12);
+	--cfg-badge-bg: rgba(0, 166, 157, 0.1);
+	--cfg-badge-border: rgba(0, 166, 157, 0.25);
+	--cfg-brand-tint: rgba(0, 166, 157, 0.1);
+	--cfg-brand-border: rgba(0, 166, 157, 0.2);
+	--cfg-neutral-badge-bg: rgba(255, 255, 255, 0.06);
+	--cfg-neutral-badge-text: rgba(255, 255, 255, 0.45);
+	--cfg-neutral-badge-border: rgba(255, 255, 255, 0.1);
+	--cfg-cta-secondary-bg: rgba(255, 255, 255, 0.07);
+	--cfg-cta-secondary-text: rgba(255, 255, 255, 0.75);
+	--cfg-cta-secondary-hover: rgba(255, 255, 255, 0.12);
+	--cfg-glow: rgba(0, 166, 157, 0.08);
+	--cfg-footer-bg: rgba(10, 14, 26, 0.6);
+	--cfg-footer-border: rgba(0, 166, 157, 0.08);
+	--cfg-footer-bottom-border: rgba(255, 255, 255, 0.05);
+	--cfg-trust-bg: rgba(255, 255, 255, 0.04);
+	--cfg-trust-border: rgba(255, 255, 255, 0.07);
+}
+
+@mixin config-page-light {
+	--cfg-text: #0f172a;
+	--cfg-text-muted: #64748b;
+	--cfg-text-soft: #475569;
+	--cfg-text-faint: #64748b;
+	--cfg-text-dim: #94a3b8;
+	--cfg-text-heading: #0f172a;
+	--cfg-card-bg: #ffffff;
+	--cfg-card-bg-hover: #ffffff;
+	--cfg-card-border: #e2e8f0;
+	--cfg-card-border-hover: rgba(0, 124, 114, 0.35);
+	--cfg-card-shadow: rgba(15, 23, 42, 0.08);
+	--cfg-featured-bg: #e6f4f3;
+	--cfg-featured-bg-hover: #dff0ee;
+	--cfg-featured-border: rgba(0, 124, 114, 0.28);
+	--cfg-featured-border-hover: rgba(0, 124, 114, 0.45);
+	--cfg-featured-shadow: rgba(0, 124, 114, 0.1);
+	--cfg-badge-bg: #e6f4f3;
+	--cfg-badge-border: rgba(0, 124, 114, 0.22);
+	--cfg-brand-tint: #e6f4f3;
+	--cfg-brand-border: rgba(0, 124, 114, 0.22);
+	--cfg-neutral-badge-bg: #f1f5f9;
+	--cfg-neutral-badge-text: #64748b;
+	--cfg-neutral-badge-border: #e2e8f0;
+	--cfg-cta-secondary-bg: #f1f5f9;
+	--cfg-cta-secondary-text: #475569;
+	--cfg-cta-secondary-hover: #e2e8f0;
+	--cfg-glow: rgba(0, 124, 114, 0.06);
+	--cfg-footer-bg: #ffffff;
+	--cfg-footer-border: #e2e8f0;
+	--cfg-footer-bottom-border: #e2e8f0;
+	--cfg-trust-bg: #f8fafc;
+	--cfg-trust-border: #e2e8f0;
+}
+
 .page {
+	@include config-page-dark;
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
@@ -11,8 +85,12 @@
 	background: transparent;
 	position: relative;
 	overflow-x: hidden;
+	transition: color 0.25s ease;
 
-	// Subtle teal glow top-centre
+	:global(html[data-theme="light"]) & {
+		@include config-page-light;
+	}
+
 	&::before {
 		content: "";
 		position: absolute;
@@ -21,7 +99,9 @@
 		transform: translateX(-50%);
 		width: 60%;
 		height: 300px;
-		background: radial-gradient(ellipse, rgba(#00A69D, 0.08) 0%, transparent 70%);
+		background: var(--cfg-glow);
+		border-radius: 50%;
+		filter: blur(60px);
 		pointer-events: none;
 	}
 
@@ -30,8 +110,6 @@
 		gap: 36px;
 	}
 }
-
-// ── Header ────────────────────────────────────────────────────────────────────
 
 .header {
 	display: flex;
@@ -50,9 +128,9 @@
 	gap: 8px;
 	padding: 6px 16px;
 	border-radius: 99px;
-	background: rgba(#00A69D, 0.1);
-	border: 1px solid rgba(#00A69D, 0.25);
-	color: #00A69D;
+	background: var(--cfg-badge-bg);
+	border: 1px solid var(--cfg-badge-border);
+	color: $brand-bright;
 	font-size: 0.78rem;
 	font-weight: 700;
 	letter-spacing: 0.04em;
@@ -63,28 +141,27 @@
 	width: 6px;
 	height: 6px;
 	border-radius: 50%;
-	background: #00A69D;
-	box-shadow: 0 0 8px rgba(#00A69D, 0.6);
+	background: $brand-bright;
+	box-shadow: 0 0 8px rgba($brand-bright, 0.6);
 	animation: pulse 2s ease-in-out infinite;
 }
 
 .title {
 	font-size: clamp(2.2rem, 5vw, 3.2rem);
 	font-weight: 800;
-	color: #ffffff;
+	color: var(--cfg-text);
 	letter-spacing: -0.04em;
 	line-height: 1.1;
 	margin: 0;
 	position: relative;
 	display: inline-block;
 
-	// Teal underline accent
 	&::after {
 		content: "";
 		display: block;
 		width: 56px;
 		height: 3px;
-		background: #00A69D;
+		background: $brand-bright;
 		border-radius: 2px;
 		margin: 12px auto 0;
 	}
@@ -92,13 +169,11 @@
 
 .subtitle {
 	font-size: 1.05rem;
-	color: rgba(255, 255, 255, 0.48);
+	color: var(--cfg-text-muted);
 	line-height: 1.75;
 	margin: 0;
 	max-width: 560px;
 }
-
-// ── Cards grid ────────────────────────────────────────────────────────────────
 
 .cards {
 	display: grid;
@@ -113,11 +188,9 @@
 	}
 }
 
-// ── Individual card ───────────────────────────────────────────────────────────
-
 .card {
-	background: rgba(255, 255, 255, 0.03);
-	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: var(--cfg-card-bg);
+	border: 1px solid var(--cfg-card-border);
 	border-radius: 20px;
 	padding: 28px 24px;
 	display: flex;
@@ -128,22 +201,21 @@
 	position: relative;
 
 	&:hover {
-		background: rgba(255, 255, 255, 0.06);
-		border-color: rgba(255, 255, 255, 0.15);
+		background: var(--cfg-card-bg-hover);
+		border-color: var(--cfg-card-border-hover);
 		transform: translateY(-4px);
-		box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+		box-shadow: 0 16px 40px var(--cfg-card-shadow);
 	}
 }
 
-// Featured card (Upload) gets a teal accent border
 .cardFeatured {
-	border-color: rgba(#00A69D, 0.35);
-	background: rgba(#00A69D, 0.04);
+	border-color: var(--cfg-featured-border);
+	background: var(--cfg-featured-bg);
 
 	&:hover {
-		border-color: rgba(#00A69D, 0.6);
-		background: rgba(#00A69D, 0.07);
-		box-shadow: 0 16px 40px rgba(#00A69D, 0.12);
+		border-color: var(--cfg-featured-border-hover);
+		background: var(--cfg-featured-bg-hover);
+		box-shadow: 0 16px 40px var(--cfg-featured-shadow);
 	}
 }
 
@@ -157,8 +229,6 @@
 	}
 }
 
-// ── Card badge ────────────────────────────────────────────────────────────────
-
 .cardBadge {
 	display: inline-flex;
 	align-self: flex-start;
@@ -171,29 +241,27 @@
 }
 
 .badge-teal {
-	background: rgba(#00A69D, 0.15);
-	color: #00A69D;
-	border: 1px solid rgba(#00A69D, 0.25);
+	background: var(--cfg-badge-bg);
+	color: $brand-bright;
+	border: 1px solid var(--cfg-badge-border);
 }
 
 .badge-neutral {
-	background: rgba(255, 255, 255, 0.06);
-	color: rgba(255, 255, 255, 0.45);
-	border: 1px solid rgba(255, 255, 255, 0.1);
+	background: var(--cfg-neutral-badge-bg);
+	color: var(--cfg-neutral-badge-text);
+	border: 1px solid var(--cfg-neutral-badge-border);
 }
-
-// ── Card icon ─────────────────────────────────────────────────────────────────
 
 .cardIcon {
 	width: 56px;
 	height: 56px;
 	border-radius: 16px;
-	background: rgba(#00A69D, 0.1);
-	border: 1px solid rgba(#00A69D, 0.2);
+	background: var(--cfg-brand-tint);
+	border: 1px solid var(--cfg-brand-border);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: #00A69D;
+	color: $brand-bright;
 	transition: transform 0.2s;
 
 	.card:hover & {
@@ -201,12 +269,10 @@
 	}
 }
 
-// ── Card text ─────────────────────────────────────────────────────────────────
-
 .cardTitle {
 	font-size: 1.1rem;
 	font-weight: 700;
-	color: #ffffff;
+	color: var(--cfg-text);
 	letter-spacing: -0.02em;
 	margin: 0;
 	line-height: 1.3;
@@ -214,13 +280,11 @@
 
 .cardDesc {
 	font-size: 0.88rem;
-	color: rgba(255, 255, 255, 0.45);
+	color: var(--cfg-text-muted);
 	line-height: 1.65;
 	margin: 0;
 	flex: 1;
 }
-
-// ── Highlights ────────────────────────────────────────────────────────────────
 
 .highlights {
 	list-style: none;
@@ -236,16 +300,14 @@
 		gap: 7px;
 		font-size: 0.8rem;
 		font-weight: 600;
-		color: rgba(255, 255, 255, 0.5);
+		color: var(--cfg-text-soft);
 
 		svg {
-			color: #00A69D;
+			color: $brand-bright;
 			flex-shrink: 0;
 		}
 	}
 }
-
-// ── Card CTA ──────────────────────────────────────────────────────────────────
 
 .cardCta {
 	display: flex;
@@ -253,7 +315,7 @@
 	gap: 8px;
 	padding: 11px 18px;
 	border-radius: 10px;
-	background: $teal-primary;
+	background: $brand-bright;
 	color: #fff;
 	font-size: 0.88rem;
 	font-weight: 700;
@@ -265,17 +327,17 @@
 	margin-top: 4px;
 
 	&:hover {
-		background: $teal-dark;
+		background: $brand;
 		transform: translateY(-1px);
-		box-shadow: 0 6px 20px rgba($teal-primary, 0.3);
+		box-shadow: 0 6px 20px rgba($brand-bright, 0.3);
 	}
 
 	.card:not(.cardFeatured) & {
-		background: rgba(255, 255, 255, 0.07);
-		color: rgba(255, 255, 255, 0.75);
+		background: var(--cfg-cta-secondary-bg);
+		color: var(--cfg-cta-secondary-text);
 
 		&:hover {
-			background: rgba(255, 255, 255, 0.12);
+			background: var(--cfg-cta-secondary-hover);
 			box-shadow: none;
 		}
 	}
@@ -284,19 +346,18 @@
 .comingSoon {
 	font-size: 0.78rem;
 	font-weight: 600;
-	color: rgba(255, 255, 255, 0.25);
+	color: var(--cfg-text-dim);
 	margin-top: 4px;
 }
 
-// ── Footer (mirrors landing page) ─────────────────────────────────────────────
-
 .configFooter {
 	width: 100%;
-	border-top: 1px solid rgba(#00A69D, 0.08);
+	border-top: 1px solid var(--cfg-footer-border);
 	margin-top: 16px;
-	background: rgba(10, 14, 26, 0.6);
+	background: var(--cfg-footer-bg);
 	position: relative;
 	z-index: 1;
+	transition: background 0.25s ease, border-color 0.25s ease;
 }
 
 .footerTop {
@@ -327,20 +388,20 @@
 		width: 32px;
 		height: 32px;
 		border-radius: 8px;
-		border: 1px solid rgba(#00A69D, 0.3);
+		border: 1px solid var(--cfg-brand-border);
 	}
 
 	span {
 		font-size: 1.3rem;
 		font-weight: 900;
-		color: $teal-primary;
+		color: $brand-bright;
 		letter-spacing: -0.03em;
 	}
 }
 
 .footerDesc {
 	font-size: 0.875rem;
-	color: rgba(255, 255, 255, 0.35);
+	color: var(--cfg-text-faint);
 	line-height: 1.7;
 	max-width: 300px;
 	margin: 0;
@@ -359,13 +420,15 @@
 	gap: 5px;
 	font-size: 0.72rem;
 	font-weight: 600;
-	color: rgba(255, 255, 255, 0.35);
-	background: rgba(255, 255, 255, 0.04);
-	border: 1px solid rgba(255, 255, 255, 0.07);
+	color: var(--cfg-text-faint);
+	background: var(--cfg-trust-bg);
+	border: 1px solid var(--cfg-trust-border);
 	border-radius: 99px;
 	padding: 4px 10px;
 
-	svg { color: $teal-primary; }
+	svg {
+		color: $brand-bright;
+	}
 }
 
 .footerLinks {
@@ -386,7 +449,7 @@
 	h4 {
 		font-size: 0.72rem;
 		font-weight: 700;
-		color: rgba(255, 255, 255, 0.9);
+		color: var(--cfg-text-heading);
 		text-transform: uppercase;
 		letter-spacing: 0.08em;
 		margin: 0;
@@ -403,29 +466,38 @@
 
 	a {
 		font-size: 0.875rem;
-		color: rgba(255, 255, 255, 0.35);
+		color: var(--cfg-text-faint);
 		text-decoration: none;
 		cursor: pointer;
 		transition: color 0.2s;
 
-		&:hover { color: $teal-primary; }
+		&:hover {
+			color: $brand-bright;
+		}
 	}
 }
 
 .footerBottom {
-	border-top: 1px solid rgba(255, 255, 255, 0.05);
+	border-top: 1px solid var(--cfg-footer-bottom-border);
 	padding: 16px 48px;
 	font-size: 0.8rem;
-	color: rgba(255, 255, 255, 0.18);
+	color: var(--cfg-text-dim);
 	text-align: center;
 
-	@media (max-width: 768px) { padding: 14px 20px; }
+	@media (max-width: 768px) {
+		padding: 14px 20px;
+	}
 }
-
-// ── Animations ────────────────────────────────────────────────────────────────
 
 @keyframes pulse {
-	0%, 100% { opacity: 1; transform: scale(1); }
-	50%       { opacity: 0.5; transform: scale(0.85); }
-}
+	0%,
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
 
+	50% {
+		opacity: 0.5;
+		transform: scale(0.85);
+	}
+}

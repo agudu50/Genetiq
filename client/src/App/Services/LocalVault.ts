@@ -1,2 +1,95 @@
-"// Configure the main Genetiq vault using standard localStorage\n\nexport const LocalVault = {\n\t// Save specific health profile data\n\tsaveProfile: async (data: Record<string, unknown>) => {\n\t\ttry {\n\t\t\tlocalStorage.setItem(\"profileData\", JSON.stringify(data));\n\t\t\treturn true;\n\t\t} catch (err) {\n\t\t\tconsole.error(\"LocalVault: Error saving profile\", err);\n\t\t\treturn false;\n\t\t}\n\t},\n\n\t// Retrieve saved profile data\n\tgetProfile: async () => {\n\t\ttry {\n\t\t\tconst value = localStorage.getItem(\"profileData\");\n\t\t\treturn value ? JSON.parse(value) : null;\n\t\t} catch (err) {\n\t\t\tconsole.error(\"LocalVault: Error getting profile\", err);\n\t\t\treturn null;\n\t\t}\n\t},\n\n\t// Save Triage History\n\tsaveTriageHistory: async (history: Record<string, unknown>[]) => {\n\t\ttry {\n\t\t\tlocalStorage.setItem(\"triageHistory\", JSON.stringify(history));\n\t\t\treturn true;\n\t\t} catch (err) {\n\t\t\tconsole.error(\"LocalVault: Error saving triage history\", err);\n\t\t\treturn false;\n\t\t}\n\t},\n\n\t// Retrieve Triage History\n\tgetTriageHistory: async () => {\n\t\ttry {\n\t\t\tconst history = localStorage.getItem(\"triageHistory\");\n\t\t\treturn history ? JSON.parse(history) : [];\n\t\t} catch (err) {\n\t\t\tconsole.error(\"LocalVault: Error getting triage history\", err);\n\t\t\treturn [];\n\t\t}\n\t},\n\n\t// Generic save\n\tsave: async <T>(key: string, data: T) => {\n\t\tif (\n\t\t\ttypeof key === \"string\" &&\n\t\t\t(key === \"__proto__\" || key === \"constructor\" || key === \"prototype\")\n\t\t) {\n\t\t\treturn false;\n\t\t}\n\t\ttry {\n\t\t\tlocalStorage.setItem(key, JSON.stringify(data));\n\t\t\treturn true;\n\t\t} catch (err) {\n\t\t\tconsole.error(`LocalVault: Error saving ${key}`, err);\n\t\t\treturn false;\n\t\t}\n\t},\n\n\t// Generic get\n\tget: async <T>(key: string): Promise<T | null> => {\n\t\tif (\n\t\t\ttypeof key === \"string\" &&\n\t\t\t(key === \"__proto__\" || key === \"constructor\" || key === \"prototype\")\n\t\t) {\n\t\t\treturn null;\n\t\t}\n\t\ttr
-<truncated 230 bytes>
+// Configure the main Genetiq vault using standard localStorage
+
+const BLOCKED_KEYS = new Set(["__proto__", "constructor", "prototype"]);
+
+function isBlockedKey(key: string): boolean {
+	return BLOCKED_KEYS.has(key);
+}
+
+export const LocalVault = {
+	// Save specific health profile data
+	saveProfile: async (data: Record<string, unknown>) => {
+		try {
+			localStorage.setItem("profileData", JSON.stringify(data));
+			return true;
+		} catch (err) {
+			console.error("LocalVault: Error saving profile", err);
+			return false;
+		}
+	},
+
+	// Retrieve saved profile data
+	getProfile: async () => {
+		try {
+			const value = localStorage.getItem("profileData");
+			return value ? JSON.parse(value) : null;
+		} catch (err) {
+			console.error("LocalVault: Error getting profile", err);
+			return null;
+		}
+	},
+
+	// Save Triage History
+	saveTriageHistory: async (history: Record<string, unknown>[]) => {
+		try {
+			localStorage.setItem("triageHistory", JSON.stringify(history));
+			return true;
+		} catch (err) {
+			console.error("LocalVault: Error saving triage history", err);
+			return false;
+		}
+	},
+
+	// Retrieve Triage History
+	getTriageHistory: async () => {
+		try {
+			const history = localStorage.getItem("triageHistory");
+			return history ? JSON.parse(history) : [];
+		} catch (err) {
+			console.error("LocalVault: Error getting triage history", err);
+			return [];
+		}
+	},
+
+	// Generic save
+	save: async <T>(key: string, data: T) => {
+		if (isBlockedKey(key)) {
+			return false;
+		}
+		try {
+			localStorage.setItem(key, JSON.stringify(data));
+			return true;
+		} catch (err) {
+			console.error(`LocalVault: Error saving ${key}`, err);
+			return false;
+		}
+	},
+
+	// Generic get
+	get: async <T>(key: string): Promise<T | null> => {
+		if (isBlockedKey(key)) {
+			return null;
+		}
+		try {
+			const value = localStorage.getItem(key);
+			return value ? (JSON.parse(value) as T) : null;
+		} catch (err) {
+			console.error(`LocalVault: Error getting ${key}`, err);
+			return null;
+		}
+	},
+
+	// Generic remove
+	remove: async (key: string) => {
+		if (isBlockedKey(key)) {
+			return false;
+		}
+		try {
+			localStorage.removeItem(key);
+			return true;
+		} catch (err) {
+			console.error(`LocalVault: Error removing ${key}`, err);
+			return false;
+		}
+	},
+};

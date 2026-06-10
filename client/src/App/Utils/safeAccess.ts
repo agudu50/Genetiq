@@ -1,1 +1,6 @@
-"export function safeGet(obj: any, key: any): any {\n\tif (typeof key === \"string\" && [\"__proto__\", \"constructor\", \"prototype\"].includes(key)) {\n\t\treturn undefined;\n\t}\n\treturn obj ? Reflect.get(obj, key) : undefined;\n}\n"
+export function safeGet(obj: Record<string, unknown>, key: string): unknown {
+	if (["__proto__", "constructor", "prototype"].includes(key)) {
+		return undefined;
+	}
+	return obj ? Reflect.get(obj, key) : undefined;
+}

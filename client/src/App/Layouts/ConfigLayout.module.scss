@@ -1,15 +1,35 @@
 // ── Config layout shell ───────────────────────────────────────────────────────
 
+$brand: #007c72;
+
+@mixin config-layout-dark {
+	--cfg-bg: #0a0e1a;
+	--cfg-nav-bg: rgba(10, 14, 26, 0.85);
+	--cfg-border: rgba(255, 255, 255, 0.06);
+	--cfg-brand-name: #00a69d;
+}
+
+@mixin config-layout-light {
+	--cfg-bg: #f8fafc;
+	--cfg-nav-bg: rgba(255, 255, 255, 0.92);
+	--cfg-border: #e2e8f0;
+	--cfg-brand-name: #{$brand};
+}
+
 .container {
+	@include config-layout-dark;
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
 	width: 100%;
-	background: #0A0E1A;
+	background: var(--cfg-bg);
 	box-sizing: border-box;
-}
+	transition: background 0.25s ease;
 
-// ── Sticky navbar ─────────────────────────────────────────────────────────────
+	:global(html[data-theme="light"]) & {
+		@include config-layout-light;
+	}
+}
 
 .nav {
 	position: sticky;
@@ -22,17 +42,16 @@
 	justify-content: space-between;
 	padding: 0 48px;
 	box-sizing: border-box;
-	background: rgba(10, 14, 26, 0.85);
+	background: var(--cfg-nav-bg);
 	backdrop-filter: blur(16px);
 	-webkit-backdrop-filter: blur(16px);
-	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+	border-bottom: 1px solid var(--cfg-border);
+	transition: background 0.25s ease, border-color 0.25s ease;
 
 	@media (max-width: 768px) {
 		padding: 0 20px;
 	}
 }
-
-// Brand / logo ─────────────────────────────────────────────────────────────────
 
 .brand {
 	display: flex;
@@ -50,18 +69,16 @@
 	height: 32px;
 	border-radius: 8px;
 	object-fit: cover;
-	border: 1px solid rgba(#00A69D, 0.3);
+	border: 1px solid rgba($brand, 0.3);
 }
 
 .brandName {
 	font-size: 1.15rem;
 	font-weight: 900;
-	color: #00A69D;
+	color: var(--cfg-brand-name);
 	letter-spacing: -0.03em;
 	font-family: inherit;
 }
-
-// Upload CTA ──────────────────────────────────────────────────────────────────
 
 .uploadBtn {
 	display: flex;
@@ -69,7 +86,7 @@
 	gap: 7px;
 	padding: 9px 18px;
 	border-radius: 10px;
-	background: #00A69D;
+	background: $brand;
 	color: #fff;
 	font-size: 0.875rem;
 	font-weight: 700;
@@ -80,17 +97,15 @@
 	white-space: nowrap;
 
 	&:hover {
-		background: #008F87;
+		background: #006158;
 		transform: translateY(-1px);
-		box-shadow: 0 6px 20px rgba(#00A69D, 0.3);
+		box-shadow: 0 6px 20px rgba($brand, 0.25);
 	}
 
 	&:active {
 		transform: translateY(0);
 	}
 }
-
-// ── Main content area ─────────────────────────────────────────────────────────
 
 .main {
 	flex: 1;
