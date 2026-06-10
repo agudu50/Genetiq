@@ -15,6 +15,7 @@ $brand: #007c72;
 	--auth-brand-border: rgba(0, 166, 157, 0.2);
 	--auth-accent-glow: rgba(0, 166, 157, 0.35);
 	--auth-show-glow: 1;
+	--auth-brand-name: #ffffff;
 }
 
 @mixin auth-theme-light {
@@ -30,6 +31,7 @@ $brand: #007c72;
 	--auth-brand-border: rgba(0, 124, 114, 0.22);
 	--auth-accent-glow: transparent;
 	--auth-show-glow: 0.35;
+	--auth-brand-name: #{$brand};
 }
 
 $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
@@ -287,7 +289,7 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 .brandName {
 	font-size: 1.4rem;
 	font-weight: 800;
-	color: $brand;
+	color: var(--auth-brand-name);
 	letter-spacing: -0.03em;
 }
 

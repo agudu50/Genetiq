@@ -15,6 +15,7 @@ $brand: #007c72;
 	--reg-brand-border: rgba(0, 166, 157, 0.2);
 	--reg-accent-glow: rgba(0, 166, 157, 0.35);
 	--reg-show-glow: 1;
+	--reg-brand-name: #ffffff;
 }
 
 @mixin register-theme-light {
@@ -30,6 +31,7 @@ $brand: #007c72;
 	--reg-brand-border: rgba(0, 124, 114, 0.22);
 	--reg-accent-glow: transparent;
 	--reg-show-glow: 0.35;
+	--reg-brand-name: #{$brand};
 }
 
 // ── Animations ────────────────────────────────────────────────────────────────
@@ -435,7 +437,7 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 .brandName {
 	font-size: 1.4rem;
 	font-weight: 800;
-	color: $brand;
+	color: var(--reg-brand-name);
 	letter-spacing: -0.03em;
 }
 
