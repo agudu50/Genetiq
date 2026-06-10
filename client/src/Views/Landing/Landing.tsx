@@ -349,8 +349,8 @@ const InitializeModal = ({
 	return (
 		<div className={styles.modalOverlay}>
 			<div className={styles.modalContent}>
-				<button className={styles.modalClose} onClick={onClose}>
-					<X size={20} />
+				<button type="button" className={styles.modalClose} onClick={onClose} aria-label="Close">
+					<X size={20} strokeWidth={2.5} aria-hidden />
 				</button>
 				<div className={styles.modalHeader}>
 					<div className={styles.securityIcon}>

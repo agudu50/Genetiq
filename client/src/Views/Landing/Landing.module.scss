@@ -1514,19 +1514,36 @@ $max-width: 1200px;
 	position: absolute;
 	top: 16px;
 	right: 16px;
+	z-index: 2;
+	box-sizing: border-box;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	width: 36px;
 	height: 36px;
-	color: var(--lp-text-muted);
+	padding: 0;
+	margin: 0;
+	color: var(--lp-text-secondary);
 	background: var(--lp-bg);
 	border: 1px solid var(--lp-border);
 	border-radius: $radius-sm;
 	cursor: pointer;
+	flex-shrink: 0;
+	line-height: 0;
+	transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+
+	svg {
+		display: block;
+		width: 20px;
+		height: 20px;
+		flex-shrink: 0;
+		stroke: currentColor;
+	}
 
 	&:hover {
 		color: var(--lp-text);
+		background: var(--lp-brand-tint);
+		border-color: rgba($brand, 0.35);
 	}
 }
 
