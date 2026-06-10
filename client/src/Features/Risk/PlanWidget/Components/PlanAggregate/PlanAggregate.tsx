@@ -6,6 +6,7 @@ import Shape from "@assets/PlanWidget/Shape.svg?react";
 import QuestionMark from "@assets/PlanWidget/QuestionMark.svg?react";
 import Document from "@assets/PlanWidget/Document.svg?react";
 import doctor from "@assets/PlanWidget/doctor.png";
+import { useLanguage } from "@/App/i18n/LanguageContext";
 
 type PlanAggregateProps = {
 	section: PlanSection;
@@ -16,6 +17,7 @@ export const PlanAggregate = ({
 	section,
 	setActiveTab,
 }: PlanAggregateProps) => {
+	const { t } = useLanguage();
 	const groupedData = section.data.reduce(
 		(acc: { [key: string]: PlanItem[] }, item: PlanItem) => {
 			const group = item.group || "default";
@@ -32,7 +34,7 @@ export const PlanAggregate = ({
 		<div className={styles["PlanAggregate-container"]}>
 			<div className={styles["PlanAggregate-table"]}>
 				<div className={styles["PlanAggregate-note"]}>
-					Recommended next steps based on your health data:
+					{t("plan_recommended_steps")} — {t("plan_based_on_data")}
 				</div>
 				{Object.keys(groupedData)
 					.slice(0, 3)
@@ -43,7 +45,7 @@ export const PlanAggregate = ({
 									{groupedData[groupKey].length}
 								</div>
 								<div className={styles["PlanAggregate-section-title"]}>
-									{groupKey}
+									{t(groupKey)}
 								</div>
 								<button
 									className={styles["PlanAggregate-section-arrow"]}
@@ -64,19 +66,19 @@ export const PlanAggregate = ({
 											/>
 										</div>
 										<div className={styles["PlanAggregate-row-name"]}>
-											{item.name}
+											{t(item.name)}
 										</div>
 										<div className={styles["PlanAggregate-row-type"]}>
-											Activity
+											{t("plan_item_activity")}
 										</div>
 										<div className={styles["PlanAggregate-buttons"]}>
 											<div className={styles["PlanAggregate-why"]}>
-												<p>Why</p>
+												<p>{t("why")}</p>
 												<QuestionMark />
 											</div>
 
 											<button className={styles["PlanAggregate-cart"]}>
-												<p>Add to Cart</p>
+												<p>{t("add_to_cart")}</p>
 												<Document />
 											</button>
 										</div>
@@ -87,7 +89,7 @@ export const PlanAggregate = ({
 					))}
 			</div>
 
-			<div className={styles["PlanAggregate-or"]}>OR</div>
+			<div className={styles["PlanAggregate-or"]}>{t("or")}</div>
 			<div className={styles["PlanAggregate-cta"]}>
 				<div className={styles["PlanAggregate-cta-icon-container"]}>
 					<img src={doctor} alt='Doctor icon' />
@@ -95,20 +97,19 @@ export const PlanAggregate = ({
 				<div className={styles["PlanAggregate-cta-body"]}>
 					<div className={styles["PlanAggregate-cta-title-wrap"]}>
 						<div className={styles["PlanAggregate-cta-title"]}>
-							Check-in with our Physician first
+							{t("physician_checkin_title")}
 							<Shape className={styles["PlanAggregate-cta-shape"]} />
 						</div>
 						<span className={styles["PlanAggregate-cta-badge"]}>
-							Coming Soon
+							{t("coming_soon")}
 						</span>
 					</div>
 					<div className={styles["PlanAggregate-cta-desc"]}>
-						Consult our specialist if you are not sure or concerned about your
-						results.
+						{t("physician_checkin_desc")}
 					</div>
 				</div>
 				<button className={`${styles["PlanAggregate-cta-button"]} ${styles["coming-soon"]}`} disabled>
-					<p className={styles["PlanAggregate-cta-schedule"]}>Coming Soon</p>
+					<p className={styles["PlanAggregate-cta-schedule"]}>{t("coming_soon")}</p>
 					<div className={styles["PlanAggregate-cta-schedule-icon"]}>
 						<Calendar />
 					</div>

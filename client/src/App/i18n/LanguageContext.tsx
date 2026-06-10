@@ -5,10 +5,9 @@ import React, {
 	useMemo,
 	useState,
 } from "react";
+import { LOCALES, LOCALE_CODES, type Translations } from "../../locales";
 
-export type LangCode = string; // ISO code, e.g., 'en', 'es', 'fr', 'de', 'ar', 'zh', etc.
-
-type Translations = Record<string, string>;
+export type LangCode = string;
 
 export type LanguageContextValue = {
 	lang: LangCode;
@@ -37,12 +36,7 @@ function interpolate(
 function resolveBrowserLang(): LangCode {
 	if (typeof navigator === "undefined") return DEFAULT_LANG;
 
-	const supported = new Set(
-		Object.keys(import.meta.glob("../../locales/*.json")).map((path) =>
-			path.split("/").pop()!.replace(".json", ""),
-		),
-	);
-
+	const supported = new Set(LOCALE_CODES);
 	const candidates = [
 		...(navigator.languages ?? []),
 		navigator.language,
@@ -56,75 +50,42 @@ function resolveBrowserLang(): LangCode {
 	return DEFAULT_LANG;
 }
 
-// Vite: index locale JSONs; we'll lazy-load on demand
-const localeModules = import.meta.glob("../../locales/*.json");
+function getStoredLang(): LangCode {
+	if (typeof localStorage === "undefined") return resolveBrowserLang();
 
-async function loadLocale(lang: string): Promise<Translations | null> {
-	const match = Object.entries(localeModules).find(([path]) =>
-		path.endsWith(`/${lang}.json`),
-	);
-	if (!match) return null;
-	const mod: unknown = await match[1]();
+	const saved = localStorage.getItem(STORAGE_KEY);
+	if (saved && saved in LOCALES) return saved;
 
-	// Type-guard to detect modules that export a `default` (ES module) vs plain JSON
-	const isModuleWithDefault = (m: unknown): m is { default: Translations } =>
-		typeof m === "object" &&
-		m !== null &&
-		"default" in (m as Record<string, unknown>) &&
-		typeof (m as Record<string, unknown>).default === "object";
-
-	if (isModuleWithDefault(mod)) return mod.default;
-	if (typeof mod === "object" && mod !== null) return mod as Translations;
-	return null;
+	const detected = resolveBrowserLang();
+	localStorage.setItem(STORAGE_KEY, detected);
+	return detected;
 }
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-	const [lang, setLangState] = useState<LangCode>(DEFAULT_LANG);
-	const [dict, setDict] = useState<Translations>({});
-	const [fallbackDict, setFallbackDict] = useState<Translations>({});
+	const [lang, setLangState] = useState<LangCode>(getStoredLang);
+	const [dict, setDict] = useState<Translations>(
+		() => LOCALES[getStoredLang()] ?? LOCALES[DEFAULT_LANG],
+	);
+	const fallbackDict = LOCALES[DEFAULT_LANG];
 
-	// Load initial language + English fallback
 	useEffect(() => {
-		const saved = localStorage.getItem(STORAGE_KEY);
-		const initial =
-			typeof saved === "string" && saved.length > 0
-				? saved
-				: resolveBrowserLang();
-		setLangState(initial);
-		if (!saved) localStorage.setItem(STORAGE_KEY, initial);
-
-		(async () => {
-			const [primary, fallback] = await Promise.all([
-				loadLocale(initial),
-				loadLocale(DEFAULT_LANG),
-			]);
-			setDict(primary || {});
-			setFallbackDict(fallback || {});
-			// update document attributes
-			document.documentElement.setAttribute(
-				"dir",
-				RTL_LANGS.has(initial) ? "rtl" : "ltr",
-			);
-			document.documentElement.setAttribute("lang", initial);
-		})();
-	}, []);
+		document.documentElement.setAttribute(
+			"dir",
+			RTL_LANGS.has(lang) ? "rtl" : "ltr",
+		);
+		document.documentElement.setAttribute("lang", lang);
+	}, [lang]);
 
 	const setLang = (next: LangCode) => {
-		if (next === lang) return;
+		if (next === lang || !(next in LOCALES)) return;
 		setLangState(next);
 		localStorage.setItem(STORAGE_KEY, next);
-		(async () => {
-			const primary = await loadLocale(next);
-			setDict(primary || {});
-			// refresh fallback as well (helps in dev)
-			const fallback = await loadLocale(DEFAULT_LANG);
-			setFallbackDict(fallback || {});
-			document.documentElement.setAttribute(
-				"dir",
-				RTL_LANGS.has(next) ? "rtl" : "ltr",
-			);
-			document.documentElement.setAttribute("lang", next);
-		})();
+		setDict(LOCALES[next]);
+		document.documentElement.setAttribute(
+			"dir",
+			RTL_LANGS.has(next) ? "rtl" : "ltr",
+		);
+		document.documentElement.setAttribute("lang", next);
 	};
 
 	const t = useMemo(() => {

@@ -57,10 +57,10 @@ export const PlanRow = ({
 					{item.count && (
 						<span className={styles["PlanRow-count"]}>{item.count} </span>
 					)}
-					{item.name}
+					{t(item.name)}
 				</div>
 				{item.description && (
-					<div className={styles["PlanRow-desc"]}>{item.description}</div>
+					<div className={styles["PlanRow-desc"]}>{t(item.description)}</div>
 				)}
 			</div>
 

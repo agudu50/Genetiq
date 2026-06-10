@@ -12,8 +12,6 @@ export const CtaBlock = ({ cta }: { cta: Supplements }) => {
 
 	const activeSupplements = cta.types.find((el) => el.name === activeType);
 
-	console.log(activeSupplements);
-
 	return (
 		<div className={styles["CtaBlock-container"]}>
 			<div className={styles["CtaBlock-left"]}>
@@ -23,14 +21,14 @@ export const CtaBlock = ({ cta }: { cta: Supplements }) => {
 					</div>
 					<div className={styles["CtaBlock-more"]}>{t("view_more")}</div>
 				</div>
-				<div className={styles["CtaBlock-title"]}>{cta.title}</div>
+				<div className={styles["CtaBlock-title"]}>{t(cta.title)}</div>
 				<ul className={styles["CtaBlock-list"]}>
 					{cta.types.map((el) => (
 						<li
 							className={`${styles["CtaBlock-list-item"]} ${el.name === activeType && styles["CtaBlock-list-item-active"]}`}
 							onClick={() => setActiveType(el.name)}
 						>
-							{el.name}
+							{t(el.name)}
 						</li>
 					))}
 				</ul>
@@ -42,7 +40,7 @@ export const CtaBlock = ({ cta }: { cta: Supplements }) => {
 							{t("what_is_this_for")}
 						</div>
 						<div className={styles["CtaBlock-description"]}>
-							{cta.description}
+							{t(cta.description)}
 						</div>
 					</div>
 					<div className={styles["CtaBlock-box"]}>
@@ -61,7 +59,7 @@ export const CtaBlock = ({ cta }: { cta: Supplements }) => {
 												{`${supplement.amount} `}
 											</span>
 											<span className={styles["CtaBlock-name"]}>
-												{supplement.supplement}
+												{t(supplement.supplement)}
 											</span>
 											{index < activeSupplements.supplements.length - 1 && (
 												<span className={styles["CtaBlock-coma"]}>{", "}</span>

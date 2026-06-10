@@ -39,7 +39,7 @@ interface ConcernsWidgetProps {
 }
 
 export const ConcernsWidget: React.FC<ConcernsWidgetProps> = ({ category }) => {
-	const { t } = useLanguage();
+	const { t, lang } = useLanguage();
 	const [isShowMore, setIsShowMore] = useState(false);
 	const [detailIndex, setDetailIndex] = useState(1);
 	const [selectedConcernForModal, setSelectedConcernForModal] = useState<Concern | null>(null);
@@ -256,7 +256,7 @@ export const ConcernsWidget: React.FC<ConcernsWidgetProps> = ({ category }) => {
 					<SymptomsList symptoms={symptoms} />
 				</div>
 
-				<PlanWidget planData={planData} />
+				<PlanWidget key={lang} planData={planData} />
 			</div>
 
 			<SuggestionsModal

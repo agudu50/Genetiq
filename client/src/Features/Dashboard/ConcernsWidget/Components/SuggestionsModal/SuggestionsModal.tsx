@@ -163,9 +163,9 @@ export const SuggestionsModal: React.FC<SuggestionsModalProps> = ({ concern, onC
 							</div>
 							<h3>{t("plan_activated") || "Plan Activated Successfully!"}</h3>
 							<p>
-								{t("concern_activation_success").includes("{concern}")
-									? t("concern_activation_success").replace("{concern}", t(concern.title))
-									: `Your selected actions, supplements, and follow-up care for ${t(concern.title)} have been activated in your schedule.`}
+								{t("concern_activation_success", {
+									concern: t(concern.title),
+								})}
 							</p>
 							<button className={styles.closeSuccessBtn} onClick={handleClose}>
 								{t("close") || "Close"}
@@ -192,8 +192,8 @@ export const SuggestionsModal: React.FC<SuggestionsModalProps> = ({ concern, onC
 										<div key={id} className={styles.itemRow}>
 											<div className={styles.itemMeta}>
 												<span className={styles.sectionLabel}>{t(item.sectionTitle)}</span>
-												<h4>{item.name}</h4>
-												<p>{item.description}</p>
+												<h4>{t(item.name)}</h4>
+												<p>{t(item.description)}</p>
 											</div>
 											<button
 												className={`${styles.scheduleBtn} ${isSelected ? styles.scheduleBtnActive : ""}`}

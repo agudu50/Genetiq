@@ -32,6 +32,7 @@
 	"scheduled": "Programado",
 	"items_selected": "Elementos Seleccionados",
 	"clinical_history": "Historial Clínico",
+	"clinical_records": "records",
 	"clinical_handover": "Entrega Clínica",
 	"view_all": "Ver Todo",
 	"just_now": "Justo ahora",
@@ -250,5 +251,16 @@
 	"Include Coenzyme Q10 (CoQ10)": "Incluir coenzima Q10 (CoQ10)",
 	"Improved lung function +5": "Mejora la función pulmonar",
 	"Supports vascular health +4": "Apoya la salud vascular",
-	"Enhances joint health +8": "Mejora la salud articular"
+	"Enhances joint health +8": "Mejora la salud articular",
+	"suggested_actions_intro": "Acciones objetivo y opciones terapéuticas recomendadas para tu panel de riesgo:",
+	"close": "Cerrar",
+	"Your Personal Supplements Mix": "Tu mezcla personal de suplementos",
+	"This combination helps reduce inflammation, regulate blood pressure, and improve heart function, aiding in the prevention of diseases such as hypertension, atrial fibrillation, and coronary artery disease.": "Esta combinación ayuda a reducir la inflamación, regular la presión arterial y mejorar la función cardíaca, contribuyendo a prevenir enfermedades como hipertensión, fibrilación auricular y enfermedad arterial coronaria.",
+	"Cardiovascular": "Cardiovascular",
+	"Digestive": "Digestivo",
+	"My personal formula": "Mi fórmula personal",
+	"Vitamins": "Vitaminas",
+	"Minerals": "Minerales",
+	"amino acid": "aminoácido",
+	"antixidants": "antioxidantes"
 }
