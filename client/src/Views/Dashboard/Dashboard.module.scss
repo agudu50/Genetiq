@@ -1,3 +1,5 @@
+@use "@/App/Styles/_mixins" as mixins;
+
 .Dashboard-layout {
 	display: flex;
 	flex-direction: column;
@@ -526,17 +528,12 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .dock-btn {
-	display: flex;
+	@include mixins.modal-close-btn(56px, 22px);
 	flex-direction: column;
-	align-items: center;
-	justify-content: center;
 	gap: 3px;
-	width: 56px;
-	height: 56px;
 	border: none;
 	border-radius: 14px;
 	background: transparent;
-	cursor: pointer;
 	color: var(--text-secondary);
 	transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 	position: relative;
@@ -739,22 +736,30 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .drawer-close {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 36px;
-	height: 36px;
+	@include mixins.modal-close-btn(36px, 20px);
+	position: relative;
+	z-index: 2;
+	flex-shrink: 0;
 	border: none;
 	border-radius: 10px;
 	background: var(--surface);
-	cursor: pointer;
 	color: var(--text-secondary);
 	transition: all 0.2s ease;
 	-webkit-tap-highlight-color: transparent;
 
+	html[data-theme="light"] & {
+		background: #f1f5f9;
+		color: #475569;
+	}
+
 	&:hover {
 		background: var(--surface);
 		color: var(--text);
+
+		html[data-theme="light"] & {
+			background: #e2e8f0;
+			color: #0f172a;
+		}
 	}
 
 	&:active {
@@ -814,6 +819,7 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 	width: 100%;
 	max-width: 520px;
 	max-height: 85vh;
+	overflow: visible;
 	animation: modalScaleIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 
 	@media (max-width: 768px) {
@@ -822,28 +828,21 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .chatbot-modal-close {
+	@include mixins.modal-close-btn(36px, 18px);
 	position: absolute;
 	top: -16px;
 	right: -16px;
-	width: 32px;
-	height: 32px;
 	border-radius: 50%;
 	background: rgba(30, 41, 59, 0.9);
 	border: 1px solid rgba(255, 255, 255, 0.1);
 	color: #ffffff;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	cursor: pointer;
 	z-index: 10;
 	transition: all 0.25s ease;
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-	padding: 0 !important;
-	flex-shrink: 0;
 
-	svg {
-		width: 16px;
-		height: 16px;
+	@media (max-width: 768px) {
+		top: 12px;
+		right: 12px;
 	}
 
 	&:hover {

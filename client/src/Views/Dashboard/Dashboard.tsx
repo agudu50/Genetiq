@@ -252,6 +252,7 @@ const Dashboard = () => {
 				{isMobile && (
 					<div className={styles["floating-dock"]}>
 						<button
+							type="button"
 							className={`${styles["dock-btn"]} ${isSidebarOpen ? styles["dock-btn-active"] : ""}`}
 							onClick={toggleSidebar}
 							aria-label={
@@ -280,6 +281,7 @@ const Dashboard = () => {
 						<div className={styles["dock-divider"]} />
 
 						<button
+							type="button"
 							className={`${styles["dock-btn"]} ${isDrawerOpen ? styles["dock-btn-active"] : ""}`}
 							onClick={toggleDrawer}
 							aria-label={isDrawerOpen ? "Close dashboard" : "Open dashboard"}
@@ -316,6 +318,7 @@ const Dashboard = () => {
 							<div className={styles["drawer-header"]}>
 								<h3 className={styles["drawer-title"]}>Dashboard</h3>
 								<button
+									type="button"
 									className={styles["drawer-close"]}
 									onClick={toggleDrawer}
 									aria-label='Close menu'
@@ -359,6 +362,7 @@ const Dashboard = () => {
 						onClick={(e) => e.stopPropagation()}
 					>
 						<button
+							type="button"
 							className={styles["chatbot-modal-close"]}
 							onClick={() => setIsChatbotOpen(false)}
 							aria-label='Close AI Assistant'
