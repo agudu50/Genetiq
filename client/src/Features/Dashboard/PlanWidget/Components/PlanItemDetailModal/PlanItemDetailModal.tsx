@@ -24,6 +24,7 @@ import {
 	goalCategoryForSection,
 } from "../../helpers/planItemHelpers";
 import styles from "./PlanItemDetailModal.module.scss";
+import { PlanItemIcon } from "../../helpers/planItemIcons";
 
 type PlanItemDetailModalProps = {
 	selection: PlanItemSelection | null;
@@ -169,7 +170,11 @@ export const PlanItemDetailModal = ({
 
 						<div className={styles.hero}>
 							<div className={styles.productIcon}>
-								<img src={item.icon} alt="" />
+								<PlanItemIcon
+									icon={item.icon}
+									itemName={item.name}
+									size={28}
+								/>
 							</div>
 							<div className={styles.heroText}>
 								<h2>{t(item.name)}</h2>

@@ -285,10 +285,9 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 			0 3px 10px color-mix(in srgb, var(--accent-color) 10%, transparent);
 	}
 
-	img {
-		width: 16px;
-		height: 16px;
-		object-fit: contain;
+	svg {
+		color: var(--accent-color);
+		flex-shrink: 0;
 	}
 }
 
@@ -328,8 +327,8 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 		border-color: var(--accent-color);
 		box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color) 35%, transparent);
 
-		img {
-			filter: brightness(0) invert(1);
+		svg {
+			color: #ffffff;
 		}
 	}
 

@@ -5,6 +5,7 @@ import { Supplements } from "../../helpers/planMockData";
 import React, { useState } from "react";
 import person from "@assets/PlanWidget/person.png";
 import { useLanguage } from "@/App/i18n/LanguageContext";
+import { PlanItemIcon } from "@/Features/Dashboard/PlanWidget/helpers/planItemIcons";
 
 export const CtaBlock = ({ cta }: { cta: Supplements }) => {
 	const { t } = useLanguage();
@@ -46,10 +47,12 @@ export const CtaBlock = ({ cta }: { cta: Supplements }) => {
 					<div className={styles["CtaBlock-box"]}>
 						<div className={styles["CtaBlock-box-left"]}>
 							<div className={styles["CtaBlock-icon-container"]}>
-								<img
-									src={activeSupplements?.icon}
-									alt={`${activeSupplements?.name} icon`}
-								/>
+								{activeSupplements?.icon && (
+									<PlanItemIcon
+										icon={activeSupplements.icon}
+										size={24}
+									/>
+								)}
 							</div>
 							<p className={styles["CtaBlock-supplements"]}>
 								{activeSupplements?.supplements.map((supplement, index) => (

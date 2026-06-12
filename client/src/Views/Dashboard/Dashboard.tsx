@@ -53,7 +53,7 @@ const Dashboard = () => {
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [mobileWidgetsReady, setMobileWidgetsReady] = useState(false);
-	const { isPanelScrolling, attachPanelScroll } = usePanelScrollPerf();
+	const { attachPanelScroll } = usePanelScrollPerf();
 	const setPanelRef = useCallback(
 		(el: HTMLDivElement | null) => {
 			attachPanelScroll(el);
@@ -233,9 +233,7 @@ const Dashboard = () => {
 											isMobile ? () => setIsSidebarOpen(false) : undefined
 										}
 										isPaused={
-											!isModelVisible ||
-											isPanelScrolling ||
-											(isMobile && isDrawerOpen)
+											!isModelVisible || (isMobile && isDrawerOpen)
 										}
 									/>
 								</Suspense>

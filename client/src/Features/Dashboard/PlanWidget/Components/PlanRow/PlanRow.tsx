@@ -1,6 +1,7 @@
 import { ChevronRight } from "lucide-react";
 import styles from "./PlanRow.module.scss";
 import { PlanItem } from "../../helpers/planMockData";
+import { PlanItemIcon } from "../../helpers/planItemIcons";
 import { PlanItemSelection } from "../../helpers/planItemHelpers";
 import { useLanguage } from "@/App/i18n/LanguageContext";
 
@@ -43,7 +44,7 @@ export const PlanRow = ({
 				<div className={styles.accent} aria-hidden />
 
 				<div className={styles.iconWrap}>
-					<img src={item.icon} alt="" />
+					<PlanItemIcon icon={item.icon} itemName={item.name} size={16} />
 				</div>
 
 				<div className={styles.body}>

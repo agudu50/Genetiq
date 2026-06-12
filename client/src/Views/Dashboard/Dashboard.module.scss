@@ -391,14 +391,12 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 	padding-right: 8px;
 	padding-bottom: 24px;
 	overscroll-behavior: contain;
+	overflow-anchor: none;
 	-webkit-overflow-scrolling: touch;
 
 	> * {
 		opacity: 1;
 		transform: none;
-		content-visibility: auto;
-		contain-intrinsic-size: auto 280px;
-		contain: layout style paint;
 	}
 
 	@for $i from 1 through 15 {
@@ -945,24 +943,24 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 :global(body.is-scrolling) {
-	.Dashboard-model,
-	.Dashboard-left canvas,
-	iframe,
 	.Dashboard-right > * {
-		pointer-events: none !important;
-	}
-
-	.Dashboard-left {
-		content-visibility: hidden;
-	}
-
-	.Dashboard-layout,
-	.Dashboard-layout * {
-		animation-play-state: paused !important;
-	}
-
-	.Dashboard-right > * {
+		pointer-events: none;
 		backdrop-filter: none !important;
 		-webkit-backdrop-filter: none !important;
+		transition: none !important;
+		transform: none !important;
+		animation-play-state: paused !important;
+
+		* {
+			transition: none !important;
+			animation-play-state: paused !important;
+		}
+
+		[class*="Glow"],
+		[class*="glow"],
+		[class*="mesh"],
+		[class*="Mesh"] {
+			filter: none !important;
+		}
 	}
 }

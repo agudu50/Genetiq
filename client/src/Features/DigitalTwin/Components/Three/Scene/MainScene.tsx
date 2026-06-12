@@ -156,7 +156,7 @@ const MainScene: React.FC<MainSceneProps> = ({
 				<Canvas
 					orthographic
 					frameloop={isPaused ? "never" : "always"}
-					dpr={isPaused ? 1 : [1, 1.25]}
+					dpr={isPaused ? 1 : [1, 1.15]}
 					gl={{ powerPreference: "high-performance", antialias: true, stencil: false }}
 					camera={{
 						near: CAMERA_SETTINGS.NEAR,

@@ -7,6 +7,7 @@ import QuestionMark from "@assets/PlanWidget/QuestionMark.svg?react";
 import Document from "@assets/PlanWidget/Document.svg?react";
 import doctor from "@assets/PlanWidget/doctor.png";
 import { useLanguage } from "@/App/i18n/LanguageContext";
+import { PlanItemIcon } from "@/Features/Dashboard/PlanWidget/helpers/planItemIcons";
 
 type PlanAggregateProps = {
 	section: PlanSection;
@@ -59,9 +60,10 @@ export const PlanAggregate = ({
 								{groupedData[groupKey].slice(0, 3).map((item, id) => (
 									<div key={id} className={styles["PlanAggregate-row"]}>
 										<div className={styles["PlanAggregate-row-icon-container"]}>
-											<img
-												src={item.icon}
-												alt={item.name}
+											<PlanItemIcon
+												icon={item.icon}
+												itemName={item.name}
+												size={16}
 												className={styles["PlanAggregate-row-icon"]}
 											/>
 										</div>

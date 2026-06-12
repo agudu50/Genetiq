@@ -14,6 +14,7 @@ import {
 import styles from "./PlanAggregate.module.scss";
 import doctor from "@assets/PlanWidget/doctor.png";
 import { useLanguage } from "@/App/i18n/LanguageContext";
+import { PlanItemIcon } from "../../helpers/planItemIcons";
 
 type PlanAggregateProps = {
 	section: PlanSection;
@@ -141,7 +142,11 @@ export const PlanAggregate = ({
 										>
 											<div className={styles.timelineNode}>
 												<div className={styles.itemIcon}>
-													<img src={item.icon} alt="" />
+													<PlanItemIcon
+														icon={item.icon}
+														itemName={item.name}
+														size={16}
+													/>
 												</div>
 											</div>
 

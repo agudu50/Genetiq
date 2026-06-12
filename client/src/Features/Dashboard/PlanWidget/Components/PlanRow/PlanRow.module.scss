@@ -110,10 +110,9 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 	background: color-mix(in srgb, var(--accent-color) 10%, transparent);
 	border: 1px solid color-mix(in srgb, var(--accent-color) 18%, transparent);
 
-	img {
-		width: 16px;
-		height: 16px;
-		object-fit: contain;
+	svg {
+		color: var(--accent-color);
+		flex-shrink: 0;
 	}
 }
 

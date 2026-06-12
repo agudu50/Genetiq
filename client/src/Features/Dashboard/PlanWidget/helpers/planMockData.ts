@@ -1,19 +1,4 @@
-import beetroot from "@assets/PlanWidget/Supplements/beetroot.svg";
-import tumeric from "@assets/PlanWidget/Supplements/tumeric.svg";
-import omega from "@assets/PlanWidget/Supplements/omega.svg";
-import coenzyme from "@assets/PlanWidget/Supplements/coenzyme.svg";
-import ashwagandha from "@assets/PlanWidget/Supplements/ashwagandha.svg";
-
-import train from "@assets/PlanWidget/Lifestyle/train.svg";
-import quitSmoking from "@assets/PlanWidget/Lifestyle/quitSmoking.svg";
-import apple from "@assets/PlanWidget/Lifestyle/apple.svg";
-
-import gene from "@assets/PlanWidget/FollowUpCare/gene.svg";
-import microscope from "@assets/PlanWidget/FollowUpCare/microscope.svg";
-import scale from "@assets/PlanWidget/FollowUpCare/scale.svg";
-
-import heart from "@assets/ConcernsWidget/Heart.svg";
-import diab from "@assets/ConcernsWidget/Diab.svg";
+import type { PlanIconId } from "./planItemIcons";
 
 export type PlanSection = {
 	title: string;
@@ -27,7 +12,7 @@ export type Supplements = {
 	description: string;
 	types: {
 		name: string;
-		icon: string;
+		icon: PlanIconId;
 		supplements: {
 			amount: number;
 			supplement: string;
@@ -43,7 +28,7 @@ export type PlanItem = {
 	frequency?: string;
 	count?: number;
 	link?: string;
-	icon: string;
+	icon: PlanIconId;
 };
 
 export const planMockData: PlanSection[] = [
@@ -58,37 +43,37 @@ export const planMockData: PlanSection[] = [
 			{
 				name: "Take Genetic Health Risk Tests",
 				description: "Improved lung function",
-				icon: gene,
+				icon: "dna",
 			},
 			{
 				name: "Monitoring blood pressure 3 times a week",
 				description: "Early detection of hypertension",
-				icon: scale,
+				icon: "heart-pulse",
 			},
 			{
 				name: "Adopt a low-glycemic index and heart healthy diets",
 				description: "Helps widen blood vessels +6",
-				icon: microscope,
+				icon: "healthy-diet",
 			},
 			{
 				name: "Keep in range your Body Mass Index",
 				description: "Lowers your blood pressure +3",
-				icon: scale,
+				icon: "scale",
 			},
 			{
 				name: "Take a cholesterol laboratory test",
 				description: "Assessment of insulin resistance +7",
-				icon: microscope,
+				icon: "lab-test",
 			},
 			{
 				name: "Consider taking your avg. blood sugar (glucose) level",
 				description: "Early detection of diabetes or prediabetes +5",
-				icon: microscope,
+				icon: "glucose",
 			},
 			{
 				name: "Monitoring blood pressure 1 time a day",
 				description: "Detect respiratory or cardiovascular issues +5",
-				icon: scale,
+				icon: "stethoscope",
 			},
 		],
 	},
@@ -101,7 +86,7 @@ export const planMockData: PlanSection[] = [
 			types: [
 				{
 					name: "Cardiovascular",
-					icon: heart,
+					icon: "heart",
 					supplements: [
 						{
 							amount: 4,
@@ -123,7 +108,7 @@ export const planMockData: PlanSection[] = [
 				},
 				{
 					name: "Digestive",
-					icon: diab,
+					icon: "digestive",
 					supplements: [
 						{
 							amount: 3,
@@ -145,7 +130,7 @@ export const planMockData: PlanSection[] = [
 				},
 				{
 					name: "My personal formula",
-					icon: heart,
+					icon: "heart",
 					supplements: [
 						{
 							amount: 7,
@@ -175,7 +160,7 @@ export const planMockData: PlanSection[] = [
 				dosage: "1 pill",
 				frequency: "Once",
 				group: "peptides",
-				icon: beetroot,
+				icon: "beetroot",
 			},
 			{
 				name: "Take turmeric extract to reduce inflammation (CPR)",
@@ -183,7 +168,7 @@ export const planMockData: PlanSection[] = [
 				dosage: "1 pill",
 				frequency: "Once",
 				group: "peptides",
-				icon: tumeric,
+				icon: "turmeric",
 			},
 			{
 				name: "Take Omega-3 Fatty Acids",
@@ -191,7 +176,7 @@ export const planMockData: PlanSection[] = [
 				dosage: "1 pill",
 				frequency: "Once",
 				group: "other",
-				icon: omega,
+				icon: "omega",
 			},
 			{
 				name: "Coenzyme Q10 (CoQ10)",
@@ -199,7 +184,7 @@ export const planMockData: PlanSection[] = [
 				dosage: "1 pill",
 				frequency: "Once",
 				group: "other",
-				icon: coenzyme,
+				icon: "coq10",
 			},
 			{
 				name: "Add Ashwagandha (Withania somnifera)",
@@ -207,7 +192,7 @@ export const planMockData: PlanSection[] = [
 				dosage: "1 pill",
 				frequency: "Once",
 				group: "other",
-				icon: ashwagandha,
+				icon: "ashwagandha",
 			},
 		],
 	},
@@ -217,37 +202,37 @@ export const planMockData: PlanSection[] = [
 			{
 				name: "Quit smoking & limit alcohol",
 				description: "Improved lung function +5",
-				icon: quitSmoking,
+				icon: "smoke-free",
 			},
 			{
 				name: "Train in zone 2 & monitor regularly VO2 max",
 				description: "Supports vascular health +4",
-				icon: train,
+				icon: "cardio-training",
 			},
 			{
 				name: "Adopt a low-glycemic index and heart healthy diets",
 				description: "Helps widen blood vessels +6",
-				icon: apple,
+				icon: "healthy-diet",
 			},
 			{
 				name: "Manage your stress",
 				description: "Helps widen blood vessels +8",
-				icon: quitSmoking,
+				icon: "stress",
 			},
 			{
 				name: "Fill your plate with fruits and veggies",
 				description: "Lowers your blood pressure +3",
-				icon: apple,
+				icon: "produce",
 			},
 			{
 				name: "Reduce sugar and salt",
 				description: "Improved lung function +5",
-				icon: apple,
+				icon: "low-sodium",
 			},
 			{
 				name: "Practice flexibility and balance",
 				description: "Enhances joint health +8",
-				icon: train,
+				icon: "flexibility",
 			},
 		],
 	},
@@ -265,12 +250,12 @@ export const AtrialFibrillationPlanMockData: PlanSection[] = [
 			{
 				name: "EKG Monitoring",
 				description: "Detects irregular heart rhythms",
-				icon: gene,
+				icon: "heart-pulse",
 			},
 			{
 				name: "Blood Sugar Monitoring",
 				description: "Reduces secondary health risks",
-				icon: microscope,
+				icon: "glucose",
 			},
 		],
 	},
@@ -282,7 +267,7 @@ export const AtrialFibrillationPlanMockData: PlanSection[] = [
 			types: [
 				{
 					name: "Heart Rhythm Support",
-					icon: heart,
+					icon: "heart",
 					supplements: [
 						{ amount: 3, supplement: "Vitamins" },
 						{ amount: 2, supplement: "Minerals" },
@@ -294,12 +279,12 @@ export const AtrialFibrillationPlanMockData: PlanSection[] = [
 			{
 				name: "Magnesium Citrate",
 				description: "Supports heart muscle relaxation",
-				icon: omega,
+				icon: "pill",
 			},
 			{
 				name: "Turmeric Extract",
 				description: "Reduces inflammation",
-				icon: tumeric,
+				icon: "turmeric",
 			},
 		],
 	},
@@ -309,12 +294,12 @@ export const AtrialFibrillationPlanMockData: PlanSection[] = [
 			{
 				name: "Quit Smoking",
 				description: "Improves lung and heart health",
-				icon: quitSmoking,
+				icon: "smoke-free",
 			},
 			{
 				name: "Adopt a Heart-Healthy Diet",
 				description: "Reduces cholesterol levels",
-				icon: apple,
+				icon: "healthy-diet",
 			},
 		],
 	},
@@ -332,12 +317,12 @@ export const StrokePlanMockData: PlanSection[] = [
 			{
 				name: "Blood Pressure Monitoring",
 				description: "Helps prevent secondary strokes",
-				icon: scale,
+				icon: "heart-pulse",
 			},
 			{
 				name: "Regular Neurological Exams",
 				description: "Monitors post-stroke recovery",
-				icon: gene,
+				icon: "brain",
 			},
 		],
 	},
@@ -349,7 +334,7 @@ export const StrokePlanMockData: PlanSection[] = [
 			types: [
 				{
 					name: "Brain Health",
-					icon: diab,
+					icon: "digestive",
 					supplements: [
 						{ amount: 4, supplement: "Antioxidants" },
 						{ amount: 3, supplement: "Vitamins" },
@@ -361,12 +346,12 @@ export const StrokePlanMockData: PlanSection[] = [
 			{
 				name: "Vitamin D",
 				description: "Improves vascular function",
-				icon: coenzyme,
+				icon: "pill",
 			},
 			{
 				name: "Ashwagandha",
 				description: "Reduces stress and inflammation",
-				icon: ashwagandha,
+				icon: "ashwagandha",
 			},
 		],
 	},
@@ -376,12 +361,12 @@ export const StrokePlanMockData: PlanSection[] = [
 			{
 				name: "Engage in Physical Therapy",
 				description: "Enhances motor recovery",
-				icon: train,
+				icon: "flexibility",
 			},
 			{
 				name: "Reduce Salt and Sugar",
 				description: "Improves blood pressure control",
-				icon: apple,
+				icon: "low-sodium",
 			},
 		],
 	},
@@ -399,12 +384,12 @@ export const CoronaryArteryDiseasePlanMockData: PlanSection[] = [
 			{
 				name: "Routine EKG Tests",
 				description: "Monitors heart function",
-				icon: gene,
+				icon: "heart-pulse",
 			},
 			{
 				name: "Cholesterol Panel Testing",
 				description: "Tracks lipid levels",
-				icon: microscope,
+				icon: "lab-test",
 			},
 		],
 	},
@@ -416,7 +401,7 @@ export const CoronaryArteryDiseasePlanMockData: PlanSection[] = [
 			types: [
 				{
 					name: "Heart Health",
-					icon: heart,
+					icon: "heart",
 					supplements: [
 						{ amount: 3, supplement: "Minerals" },
 						{ amount: 2, supplement: "Vitamins" },
@@ -428,12 +413,12 @@ export const CoronaryArteryDiseasePlanMockData: PlanSection[] = [
 			{
 				name: "Omega-3 Fatty Acids",
 				description: "Lowers triglycerides",
-				icon: omega,
+				icon: "omega",
 			},
 			{
 				name: "Turmeric Extract",
 				description: "Reduces inflammation",
-				icon: tumeric,
+				icon: "turmeric",
 			},
 		],
 	},
@@ -443,12 +428,12 @@ export const CoronaryArteryDiseasePlanMockData: PlanSection[] = [
 			{
 				name: "Exercise Regularly",
 				description: "Improves circulation",
-				icon: train,
+				icon: "cardio-training",
 			},
 			{
 				name: "Adopt a Mediterranean Diet",
 				description: "Promotes heart health",
-				icon: apple,
+				icon: "healthy-diet",
 			},
 		],
 	},
@@ -466,12 +451,12 @@ export const HypertensionPlanMockData: PlanSection[] = [
 			{
 				name: "Blood Pressure Monitoring",
 				description: "Tracks daily changes",
-				icon: scale,
+				icon: "heart-pulse",
 			},
 			{
 				name: "Renal Function Tests",
 				description: "Assesses kidney health",
-				icon: gene,
+				icon: "lab-test",
 			},
 		],
 	},
@@ -483,7 +468,7 @@ export const HypertensionPlanMockData: PlanSection[] = [
 			types: [
 				{
 					name: "Hypertension Support",
-					icon: diab,
+					icon: "digestive",
 					supplements: [
 						{ amount: 3, supplement: "Vitamins" },
 						{ amount: 2, supplement: "Minerals" },
@@ -495,12 +480,12 @@ export const HypertensionPlanMockData: PlanSection[] = [
 			{
 				name: "Beetroot Powder",
 				description: "Increases nitric oxide",
-				icon: beetroot,
+				icon: "beetroot",
 			},
 			{
 				name: "Ashwagandha",
 				description: "Reduces stress",
-				icon: ashwagandha,
+				icon: "ashwagandha",
 			},
 		],
 	},
@@ -510,12 +495,12 @@ export const HypertensionPlanMockData: PlanSection[] = [
 			{
 				name: "Quit Smoking",
 				description: "Improves vascular health",
-				icon: quitSmoking,
+				icon: "smoke-free",
 			},
 			{
 				name: "Engage in Zone 2 Training",
 				description: "Lowers resting heart rate",
-				icon: train,
+				icon: "cardio-training",
 			},
 		],
 	},
@@ -533,12 +518,12 @@ export const HeartFailurePlanMockData: PlanSection[] = [
 			{
 				name: "Echocardiograms",
 				description: "Monitors heart function",
-				icon: gene,
+				icon: "heart-pulse",
 			},
 			{
 				name: "Blood Pressure Monitoring",
 				description: "Prevents sudden changes",
-				icon: scale,
+				icon: "stethoscope",
 			},
 		],
 	},
@@ -550,7 +535,7 @@ export const HeartFailurePlanMockData: PlanSection[] = [
 			types: [
 				{
 					name: "Cardiac Support",
-					icon: heart,
+					icon: "heart",
 					supplements: [
 						{ amount: 3, supplement: "Vitamins" },
 						{ amount: 2, supplement: "Minerals" },
@@ -562,12 +547,12 @@ export const HeartFailurePlanMockData: PlanSection[] = [
 			{
 				name: "Coenzyme Q10",
 				description: "Improves cellular energy",
-				icon: coenzyme,
+				icon: "coq10",
 			},
 			{
 				name: "Turmeric Extract",
 				description: "Reduces inflammation",
-				icon: tumeric,
+				icon: "turmeric",
 			},
 		],
 	},
@@ -577,12 +562,12 @@ export const HeartFailurePlanMockData: PlanSection[] = [
 			{
 				name: "Reduce Salt Intake",
 				description: "Lowers blood pressure",
-				icon: apple,
+				icon: "low-sodium",
 			},
 			{
 				name: "Engage in Physical Therapy",
 				description: "Improves endurance",
-				icon: train,
+				icon: "flexibility",
 			},
 		],
 	},
