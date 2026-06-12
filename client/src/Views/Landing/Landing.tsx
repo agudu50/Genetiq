@@ -259,7 +259,9 @@ function LandingBackground() {
 	);
 }
 
-// ─── Scroll Reveal Hook ───────────────────────────────────────────────────────
+// ─── Scroll Reveal ────────────────────────────────────────────────────────────
+
+type RevealVariant = "reveal" | "card" | "slideLeft" | "slideRight";
 
 function useScrollReveal() {
 	const ref = useRef<HTMLDivElement>(null);
@@ -269,12 +271,6 @@ function useScrollReveal() {
 		const el = ref.current;
 		if (!el) return;
 
-		const rect = el.getBoundingClientRect();
-		if (rect.top < window.innerHeight * 0.92) {
-			setVisible(true);
-			return;
-		}
-
 		const obs = new IntersectionObserver(
 			([entry]) => {
 				if (entry.isIntersecting) {
@@ -282,13 +278,53 @@ function useScrollReveal() {
 					obs.disconnect();
 				}
 			},
-			{ threshold: 0.01, rootMargin: "0px 0px 200px 0px" },
+			{ threshold: 0.12, rootMargin: "0px 0px 48px 0px" },
 		);
 		obs.observe(el);
 		return () => obs.disconnect();
 	}, []);
 
 	return { ref, visible };
+}
+
+function ScrollReveal({
+	children,
+	className = "",
+	variant = "reveal",
+	delay = 0,
+}: {
+	children: React.ReactNode;
+	className?: string;
+	variant?: RevealVariant;
+	delay?: number;
+}) {
+	const { ref, visible } = useScrollReveal();
+
+	const hiddenClass =
+		variant === "card"
+			? styles.cardHidden
+			: variant === "slideLeft" || variant === "slideRight"
+				? styles.slideHidden
+				: styles.revealHidden;
+
+	const visibleClass =
+		variant === "card"
+			? styles.cardIn
+			: variant === "slideLeft"
+				? styles.slideInLeft
+				: variant === "slideRight"
+					? styles.slideInRight
+					: styles.revealIn;
+
+	return (
+		<div
+			ref={ref}
+			className={`${className} ${visible ? visibleClass : hiddenClass}`}
+			style={{ "--reveal-delay": `${delay}s` } as React.CSSProperties}
+		>
+			{children}
+		</div>
+	);
 }
 
 // ─── Animated Counter ─────────────────────────────────────────────────────────
@@ -321,6 +357,20 @@ function AnimatedStat({ stat, visible }: { stat: typeof STATS[0]; visible: boole
 				: `${count}+`;
 
 	return <span className={styles.statValue}>{display}</span>;
+}
+
+function StatItem({ stat }: { stat: (typeof STATS)[0] }) {
+	const { ref, visible } = useScrollReveal();
+
+	return (
+		<div
+			ref={ref}
+			className={`${styles.statItem} ${visible ? styles.cardIn : styles.cardHidden}`}
+		>
+			<AnimatedStat stat={stat} visible={visible} />
+			<span className={styles.statLabel}>{stat.label}</span>
+		</div>
+	);
 }
 
 // ─── Typewriter ───────────────────────────────────────────────────────────────
@@ -399,26 +449,24 @@ const InitializeModal = ({
 
 function FaqSection() {
 	const [openIdx, setOpenIdx] = useState<number | null>(null);
-	const reveal = useScrollReveal();
 
 	return (
 		<section id='faq' className={styles.faqSection}>
-			<div
-				ref={reveal.ref}
-				className={`${styles.sectionHeader} ${reveal.visible ? styles.revealIn : styles.revealHidden}`}
-			>
+			<ScrollReveal className={styles.sectionHeader}>
 				<span className={styles.badge}>Got Questions?</span>
 				<h2 className={styles.sectionTitle}>We've Got Answers</h2>
 				<p className={styles.sectionSub}>
 					Everything you need to know about Genetiq, explained simply.
 				</p>
-			</div>
+			</ScrollReveal>
 
 			<div className={styles.faqList}>
 				{FAQS.map((faq, i) => (
-					<div
+					<ScrollReveal
 						key={i}
-						className={`${styles.faqItem} ${openIdx === i ? styles.faqOpen : ""} ${reveal.visible ? styles.cardIn : styles.cardHidden}`}
+						variant="card"
+						delay={i * 0.05}
+						className={`${styles.faqItem} ${openIdx === i ? styles.faqOpen : ""}`}
 					>
 						<button
 							className={styles.faqQuestion}
@@ -431,7 +479,7 @@ function FaqSection() {
 						<div className={styles.faqAnswer}>
 							<p>{faq.a}</p>
 						</div>
-					</div>
+					</ScrollReveal>
 				))}
 			</div>
 		</section>
@@ -441,19 +489,14 @@ function FaqSection() {
 // ─── Builder Section ──────────────────────────────────────────────────────────
 
 function BuilderSection() {
-	const reveal = useScrollReveal();
-
 	return (
 		<section id='builder' className={styles.builderSection}>
-			<div
-				ref={reveal.ref}
-				className={`${styles.sectionHeader} ${reveal.visible ? styles.revealIn : styles.revealHidden}`}
-			>
+			<ScrollReveal className={styles.sectionHeader}>
 				<span className={styles.badge}>The Person Behind It</span>
 				<h2 className={styles.sectionTitle}>Built by Someone Who Needed It</h2>
-			</div>
+			</ScrollReveal>
 
-			<div className={`${styles.builderCard} ${reveal.visible ? styles.revealIn : styles.revealHidden}`}>
+			<ScrollReveal className={styles.builderCard} delay={0.08}>
 				<div className={styles.builderAvatar}>
 					<img src='/assets/genetiq_logo_v2.png' alt={BUILDER.name} className={styles.builderAvatarImg} />
 				</div>
@@ -489,7 +532,7 @@ function BuilderSection() {
 					<div className={styles.builderQuoteIcon}>"</div>
 					<p>You shouldn't need a medical degree to understand your own test results.</p>
 				</div>
-			</div>
+			</ScrollReveal>
 		</section>
 	);
 }
@@ -507,13 +550,6 @@ export default function Landing() {
 	const [isScrolled, setIsScrolled] = useState(false);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-	const pillarsReveal    = useScrollReveal();
-	const sovereignReveal  = useScrollReveal();
-	const ecosystemReveal  = useScrollReveal();
-	const securityReveal   = useScrollReveal();
-	const statsReveal      = useScrollReveal();
-	const ctaReveal        = useScrollReveal();
 
 	useEffect(() => {
 		let ticking = false;
@@ -746,46 +782,50 @@ export default function Landing() {
 
 			{/* ── Three Pillars ─────────────────────────────────── */}
 			<section id='pillars' className={styles.section}>
-				<div ref={pillarsReveal.ref} className={`${styles.sectionHeader} ${pillarsReveal.visible ? styles.revealIn : styles.revealHidden}`}>
+				<ScrollReveal className={styles.sectionHeader}>
 					<span className={styles.badge}>How Genetiq Helps You</span>
 					<h2 className={styles.sectionTitle}>From Confusing Numbers to Clear Answers</h2>
-				</div>
+				</ScrollReveal>
 				<div className={styles.pillarGrid}>
 					{PILLARS.map((pillar, i) => (
-						<div
+						<ScrollReveal
 							key={pillar.title}
-							className={`${styles.pillarCard} ${pillarsReveal.visible ? styles.cardIn : styles.cardHidden}`}
+							variant="card"
+							delay={i * 0.07}
+							className={styles.pillarCard}
 						>
 							<div className={styles.pillarIconWrapper}>{pillar.icon}</div>
 							<h3 className={styles.pillarTitle}>{pillar.title}</h3>
 							<p className={styles.pillarDesc}>{pillar.desc}</p>
-						</div>
+						</ScrollReveal>
 					))}
 				</div>
 			</section>
 
 			{/* ── Medical Sovereignty ───────────────────────────── */}
 			<section className={styles.historySection}>
-				<div ref={sovereignReveal.ref} className={`${styles.sectionHeader} ${sovereignReveal.visible ? styles.revealIn : styles.revealHidden}`}>
+				<ScrollReveal className={styles.sectionHeader}>
 					<span className={styles.badge}>Your History, Always With You</span>
 					<h2 className={styles.sectionTitle}>Every Result Saved, Every Change Tracked</h2>
 					<p className={styles.historySub}>
 						Every test you upload becomes part of your health story. See what's improved, what needs attention, and share your full history with any doctor — safely and on your terms.
 					</p>
-				</div>
+				</ScrollReveal>
 				<div className={styles.historyGrid}>
 					<div className={styles.historyContent}>
 						{MEDICAL_SOVEREIGNTY.map((item, i) => (
-							<div
+							<ScrollReveal
 								key={item.title}
-								className={`${styles.historyDetailCard} ${sovereignReveal.visible ? styles.cardIn : styles.cardHidden}`}
+								variant="card"
+								delay={i * 0.08}
+								className={styles.historyDetailCard}
 							>
 								<div className={styles.hd_icon}>{item.icon}</div>
 								<div className={styles.hd_text}>
 									<h3>{item.title}</h3>
 									<p>{item.desc}</p>
 								</div>
-							</div>
+							</ScrollReveal>
 						))}
 					</div>
 				</div>
@@ -793,27 +833,31 @@ export default function Landing() {
 
 			{/* ── Ecosystem ─────────────────────────────────────── */}
 			<section id='ecosystem' className={styles.section}>
-				<div ref={ecosystemReveal.ref} className={styles.ecosystemGrid}>
-					<div className={`${styles.ecoVisual} ${ecosystemReveal.visible ? styles.slideInLeft : styles.slideHidden}`}>
+				<div className={styles.ecosystemGrid}>
+					<ScrollReveal className={styles.ecoVisual} variant="slideLeft">
 						<div className={styles.ecoImageWrap}>
 							<img
 								src='/assets/digital_twin_hero.png'
 								alt='Ecosystem'
 								className={styles.mockScreen}
+								loading='lazy'
+								decoding='async'
 							/>
 						</div>
-					</div>
-					<div className={`${styles.ecoList} ${ecosystemReveal.visible ? styles.slideInRight : styles.slideHidden}`}>
-						<div className={styles.badge} style={{ alignSelf: "flex-start" }}>Step by Step</div>
-						<h2 className={styles.sectionTitle} style={{ textAlign: "left" }}>Upload Once, Understand Everything</h2>
+					</ScrollReveal>
+					<div className={styles.ecoList}>
+						<ScrollReveal>
+							<div className={styles.badge} style={{ alignSelf: "flex-start" }}>Step by Step</div>
+							<h2 className={styles.sectionTitle} style={{ textAlign: "left" }}>Upload Once, Understand Everything</h2>
+						</ScrollReveal>
 						{ECOSYSTEM.map((feat, i) => (
-							<div key={feat.title} className={styles.ecoItem}>
+							<ScrollReveal key={feat.title} variant="card" delay={i * 0.06} className={styles.ecoItem}>
 								<span className={styles.ecoNumber}>{feat.number}</span>
 								<div className={styles.ecoContent}>
 									<h4>{feat.title}</h4>
 									<p>{feat.desc}</p>
 								</div>
-							</div>
+							</ScrollReveal>
 						))}
 					</div>
 				</div>
@@ -821,37 +865,33 @@ export default function Landing() {
 
 			{/* ── Security & Privacy ────────────────────────────── */}
 			<section className={styles.suiEdgeSection}>
-				<div ref={securityReveal.ref} className={`${styles.sectionHeader} ${securityReveal.visible ? styles.revealIn : styles.revealHidden}`}>
+				<ScrollReveal className={styles.sectionHeader}>
 					<span className={styles.badge}>What the AI Can Read</span>
 					<h2 className={styles.sectionTitle}>Wide Coverage, Deep Understanding</h2>
 					<p className={styles.sectionSub}>
 						Whether it's a routine blood count or a specialist hormone panel, Genetiq's AI has been trained to understand and explain the results clearly.
 					</p>
-				</div>
+				</ScrollReveal>
 				<div className={styles.techGrid}>
 					{SUI_EDGE.map((tech, i) => (
-						<div
+						<ScrollReveal
 							key={tech.title}
-							className={`${styles.techCard} ${securityReveal.visible ? styles.cardIn : styles.cardHidden}`}
+							variant="card"
+							delay={i * 0.08}
+							className={styles.techCard}
 						>
 							<h3>{tech.icon} {tech.title}</h3>
 							<p>{tech.desc}</p>
-						</div>
+						</ScrollReveal>
 					))}
 				</div>
 			</section>
 
 			{/* ── Stats ─────────────────────────────────────────── */}
 			<section id='stats' className={styles.statsSection}>
-				<div ref={statsReveal.ref} className={styles.statsGrid}>
-					{STATS.map((stat, i) => (
-						<div
-							key={stat.label}
-							className={`${styles.statItem} ${statsReveal.visible ? styles.cardIn : styles.cardHidden}`}
-						>
-							<AnimatedStat stat={stat} visible={statsReveal.visible} />
-							<span className={styles.statLabel}>{stat.label}</span>
-						</div>
+				<div className={styles.statsGrid}>
+					{STATS.map((stat) => (
+						<StatItem key={stat.label} stat={stat} />
 					))}
 				</div>
 			</section>
@@ -864,13 +904,13 @@ export default function Landing() {
 
 			{/* ── Final CTA ─────────────────────────────────────── */}
 			<section className={styles.finalCta}>
-				<div ref={ctaReveal.ref} className={`${styles.finalCtaContent} ${ctaReveal.visible ? styles.revealIn : styles.revealHidden}`}>
+				<ScrollReveal className={styles.finalCtaContent}>
 					<h2 className={styles.finalTitle}>Got test results you don't understand?</h2>
 					<p className={styles.finalSub}>Upload them now. Our AI will explain every number in plain English — free, in under 30 seconds.</p>
 					<button className={styles.btnLarge} onClick={() => setIsModalOpen(true)}>
 						Upload My Results Free <ArrowRight size={24} />
 					</button>
-				</div>
+				</ScrollReveal>
 			</section>
 
 			<InitializeModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onConfirm={handleProceed} />

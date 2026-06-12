@@ -223,7 +223,8 @@ $max-width: 1200px;
 }
 
 .revealIn {
-	animation: fadeUp 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	animation: fadeUp 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	animation-delay: var(--reveal-delay, 0s);
 }
 
 .cardHidden {
@@ -232,7 +233,8 @@ $max-width: 1200px;
 }
 
 .cardIn {
-	animation: fadeUp 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	animation: fadeUp 0.34s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	animation-delay: var(--reveal-delay, 0s);
 }
 
 .slideHidden {
@@ -240,11 +242,13 @@ $max-width: 1200px;
 }
 
 .slideInLeft {
-	animation: slideInLeft 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	animation: slideInLeft 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	animation-delay: var(--reveal-delay, 0s);
 }
 
 .slideInRight {
-	animation: slideInRight 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	animation: slideInRight 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	animation-delay: var(--reveal-delay, 0s);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1094,11 +1098,6 @@ $max-width: 1200px;
 	gap: 16px;
 	padding-bottom: 20px;
 	border-bottom: 1px solid var(--lp-border);
-
-	.slideInRight & {
-		opacity: 0;
-		animation: fadeUp 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-	}
 
 	&:last-child {
 		border-bottom: none;

@@ -155,7 +155,8 @@ const MainScene: React.FC<MainSceneProps> = ({
 			<div className='canvas-wrapper'>
 				<Canvas
 					orthographic
-					dpr={[1, 1.5]}
+					frameloop={isPaused ? "never" : "always"}
+					dpr={isPaused ? 1 : [1, 1.25]}
 					gl={{ powerPreference: "high-performance", antialias: true, stencil: false }}
 					camera={{
 						near: CAMERA_SETTINGS.NEAR,

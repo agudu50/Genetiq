@@ -377,7 +377,7 @@
 	max-width: 36px;
 	border-radius: 8px 8px 3px 3px;
 	transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-	animation: growUp 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.1) both;
+	animation: none;
 	position: relative;
 	cursor: pointer;
 	box-shadow: 0 4px 14px color-mix(in srgb, var(--active-metric-color, #00A69D) 12%, transparent);
@@ -412,7 +412,7 @@
 	&.today {
 		border: 1px solid rgba(255, 255, 255, 0.15);
 		box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06), 0 0 16px color-mix(in srgb, var(--active-metric-color, #00A69D) 40%, transparent);
-		animation: growUp 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.1) both;
+		animation: none;
 
 		html[data-theme="light"] & {
 			border-color: rgba(15, 23, 42, 0.15);
@@ -440,8 +440,8 @@
 	transform: translateX(-50%) translateY(2px);
 	padding: 6px 12px;
 	background: rgba(11, 16, 26, 0.85);
-	backdrop-filter: blur(8px);
-	-webkit-backdrop-filter: blur(8px);
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
 	color: #ffffff;
 	font-size: 11px;
 	font-weight: 800;

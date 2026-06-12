@@ -11,7 +11,7 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .sectionAnimate {
-	animation: fadeSlideIn 0.45s $ease-spring forwards;
+	animation: none;
 }
 
 @keyframes fadeSlideIn {

@@ -130,7 +130,8 @@
 	background: rgba(255, 255, 255, 0.03);
 	border: 1px solid rgba(255, 255, 255, 0.05);
 	border-radius: 100px;
-	backdrop-filter: blur(10px);
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
 	letter-spacing: -0.015em;
 	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 

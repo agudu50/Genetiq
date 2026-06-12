@@ -3,7 +3,6 @@ import {
 	useEffect,
 	useCallback,
 	useTransition,
-	useRef,
 	lazy,
 	Suspense,
 } from "react";
@@ -14,9 +13,10 @@ import { CameraProvider } from "@/Features/DigitalTwin/Context/CameraContext";
 import { WelcomeHeader } from "@/Features/Dashboard/WelcomeHeader/WelcomeHeader";
 import { QuickActions } from "@/Features/Dashboard/QuickActions/QuickActions";
 import { TriageWidget } from "@/Features/Dashboard/TriageWidget/TriageWidget";
-import { HealthHistoryWidget } from "@/Features/Dashboard/HealthHistoryWidget/HealthHistoryWidget";
 import { DeferredMount } from "./DeferredMount";
+import { ViewportMount } from "./ViewportMount";
 import { WidgetFallback } from "./WidgetFallback";
+import { usePanelScrollPerf } from "./usePanelScrollPerf";
 import { useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
 
@@ -39,24 +39,11 @@ const ActivityChart = lazy(() =>
 		default: m.ActivityChart,
 	})),
 );
-
-const attachScrollPerf = (el: HTMLElement | null) => {
-	if (!el) return () => {};
-	let timeout: ReturnType<typeof setTimeout>;
-	const onScroll = () => {
-		document.body.classList.add("is-scrolling");
-		clearTimeout(timeout);
-		timeout = setTimeout(
-			() => document.body.classList.remove("is-scrolling"),
-			150,
-		);
-	};
-	el.addEventListener("scroll", onScroll, { passive: true });
-	return () => {
-		el.removeEventListener("scroll", onScroll);
-		clearTimeout(timeout);
-	};
-};
+const HealthHistoryWidget = lazy(() =>
+	import("@/Features/Dashboard/HealthHistoryWidget/HealthHistoryWidget").then(
+		(m) => ({ default: m.HealthHistoryWidget }),
+	),
+);
 
 const Dashboard = () => {
 	const [, startTransition] = useTransition();
@@ -66,8 +53,20 @@ const Dashboard = () => {
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [mobileWidgetsReady, setMobileWidgetsReady] = useState(false);
-	const panelRef = useRef<HTMLDivElement>(null);
-	const drawerBodyRef = useRef<HTMLDivElement>(null);
+	const { isPanelScrolling, attachPanelScroll } = usePanelScrollPerf();
+	const setPanelRef = useCallback(
+		(el: HTMLDivElement | null) => {
+			attachPanelScroll(el);
+		},
+		[attachPanelScroll],
+	);
+
+	const setDrawerBodyRef = useCallback(
+		(el: HTMLDivElement | null) => {
+			attachPanelScroll(el);
+		},
+		[attachPanelScroll],
+	);
 	const selectedCategory = useSelector(
 		(state: RootState) => state.category.selectedCategory,
 	);
@@ -115,14 +114,6 @@ const Dashboard = () => {
 			setMobileWidgetsReady(true);
 		}
 	}, [isMobile, isDrawerOpen]);
-
-	useEffect(() => {
-		const cleanups = [
-			attachScrollPerf(panelRef.current),
-			attachScrollPerf(drawerBodyRef.current),
-		];
-		return () => cleanups.forEach((cleanup) => cleanup());
-	}, [isMobile, mobileWidgetsReady, isDrawerOpen]);
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
@@ -177,7 +168,7 @@ const Dashboard = () => {
 	const widgetsContent = (
 		<div
 			key={selectedCategory}
-			ref={panelRef}
+			ref={setPanelRef}
 			className={`${styles["Dashboard-right"]} ${
 				isNotFirstAnimation ? styles["loopAnimation"] : styles["firstAnimation"]
 			}`}
@@ -201,21 +192,23 @@ const Dashboard = () => {
 				<QuickActions onToggleChatbot={() => setIsChatbotOpen((prev) => !prev)} />
 			</div>
 
-			<DeferredMount className={styles["span-2"]} minHeight={280} timeout={300}>
-				<HealthHistoryWidget />
-			</DeferredMount>
+			<ViewportMount className={styles["span-2"]} minHeight={280}>
+				<Suspense fallback={<WidgetFallback minHeight={280} />}>
+					<HealthHistoryWidget />
+				</Suspense>
+			</ViewportMount>
 
-			<DeferredMount className={styles["span-2"]} minHeight={360} timeout={600}>
+			<ViewportMount className={styles["span-2"]} minHeight={360}>
 				<Suspense fallback={<WidgetFallback minHeight={360} />}>
 					<ConcernsWidget category={category || "total"} />
 				</Suspense>
-			</DeferredMount>
+			</ViewportMount>
 
-			<DeferredMount className={styles["span-2"]} minHeight={280} timeout={900}>
+			<ViewportMount className={styles["span-2"]} minHeight={280}>
 				<Suspense fallback={<WidgetFallback minHeight={280} />}>
 					<SystemDetailWidget category={category} />
 				</Suspense>
-			</DeferredMount>
+			</ViewportMount>
 		</div>
 	);
 
@@ -239,7 +232,11 @@ const Dashboard = () => {
 										onSidebarSelectionMade={
 											isMobile ? () => setIsSidebarOpen(false) : undefined
 										}
-										isPaused={!isModelVisible || (isMobile && isDrawerOpen)}
+										isPaused={
+											!isModelVisible ||
+											isPanelScrolling ||
+											(isMobile && isDrawerOpen)
+										}
 									/>
 								</Suspense>
 							</div>
@@ -338,7 +335,7 @@ const Dashboard = () => {
 									</svg>
 								</button>
 							</div>
-							<div ref={drawerBodyRef} className={styles["drawer-body"]}>
+							<div ref={setDrawerBodyRef} className={styles["drawer-body"]}>
 								{mobileWidgetsReady ? widgetsContent : null}
 							</div>
 						</div>
