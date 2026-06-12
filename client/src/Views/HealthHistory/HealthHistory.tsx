@@ -63,7 +63,7 @@ const ScoreRing = ({ score }: { score: number }) => {
 	return (
 		<div className={styles.scoreRing}>
 			<svg viewBox="0 0 96 96" width="96" height="96">
-				<circle cx="48" cy="48" r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="8" />
+				<circle cx="48" cy="48" r={r} fill="none" stroke="var(--hh-ring-track)" strokeWidth="8" />
 				<circle
 					cx="48" cy="48" r={r} fill="none"
 					stroke={colour} strokeWidth="8"
