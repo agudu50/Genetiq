@@ -219,20 +219,20 @@ $max-width: 1200px;
 
 .revealHidden {
 	opacity: 0;
-	transform: translateY(24px);
+	transform: translateY(12px);
 }
 
 .revealIn {
-	animation: fadeUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	animation: fadeUp 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .cardHidden {
 	opacity: 0;
-	transform: translateY(20px);
+	transform: translateY(10px);
 }
 
 .cardIn {
-	animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	animation: fadeUp 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .slideHidden {
@@ -240,11 +240,11 @@ $max-width: 1200px;
 }
 
 .slideInLeft {
-	animation: slideInLeft 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	animation: slideInLeft 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .slideInRight {
-	animation: slideInRight 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	animation: slideInRight 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -252,8 +252,6 @@ $max-width: 1200px;
 	.cardIn,
 	.slideInLeft,
 	.slideInRight,
-	.hero.heroIn .heroContent,
-	.hero.heroIn .heroVisual,
 	.nav,
 	.heroImage,
 	.orbitBadge,
@@ -321,7 +319,7 @@ $max-width: 1200px;
 	background-size: 48px 48px;
 	opacity: 0.4;
 	mask-image: radial-gradient(ellipse 85% 65% at 50% 35%, #000 15%, transparent 72%);
-	animation: gridDrift 24s linear infinite;
+	animation: none;
 }
 
 .bgGlow {
@@ -335,7 +333,7 @@ $max-width: 1200px;
 	background: var(--lp-brand-tint);
 	opacity: 0.55;
 	filter: blur(80px);
-	animation: bgGlowPulse 8s ease-in-out infinite;
+	animation: none;
 }
 
 @keyframes gridDrift {
@@ -377,7 +375,6 @@ $max-width: 1200px;
 	background: var(--lp-nav-bg);
 	border-bottom: 1px solid transparent;
 	transition: border-color 0.2s ease, box-shadow 0.2s ease;
-	animation: navIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 
 	&.scrolled {
 		border-bottom-color: var(--lp-border);
@@ -710,19 +707,6 @@ $max-width: 1200px;
 	grid-template-columns: 1fr 1fr;
 	gap: 64px;
 	align-items: center;
-	opacity: 0;
-
-	&.heroIn {
-		opacity: 1;
-
-		.heroContent {
-			animation: fadeUp 0.7s ease both;
-		}
-
-		.heroVisual {
-			animation: fadeUp 0.7s ease 0.15s both;
-		}
-	}
 
 	@media (max-width: 1024px) {
 		grid-template-columns: 1fr;
@@ -827,8 +811,6 @@ $max-width: 1200px;
 	border: 1px solid var(--lp-border);
 	border-radius: 4px;
 	padding: 4px 10px;
-	opacity: 0;
-	animation: tagFadeIn 0.5s ease forwards;
 }
 
 .heroVisual {
@@ -1115,7 +1097,7 @@ $max-width: 1200px;
 
 	.slideInRight & {
 		opacity: 0;
-		animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+		animation: fadeUp 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 	}
 
 	&:last-child {

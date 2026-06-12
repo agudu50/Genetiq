@@ -120,7 +120,7 @@ button:hover {
 	z-index: 100001 !important;
 }
 
-// Global scroll optimization: pause decorative animations and disable pointer events on heavy/WebGL elements during scroll
+// Disable pointer events on heavy/WebGL elements during scroll (dashboard canvas, etc.)
 body.is-scrolling {
 	iframe,
 	canvas,
@@ -128,11 +128,5 @@ body.is-scrolling {
 	embed,
 	object {
 		pointer-events: none !important;
-	}
-
-	*,
-	*::before,
-	*::after {
-		animation-play-state: paused !important;
 	}
 }

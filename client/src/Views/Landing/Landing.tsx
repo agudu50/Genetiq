@@ -151,8 +151,19 @@ const NAV_LINKS = [
 
 function LandingBackground() {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
+	const [canvasReady, setCanvasReady] = useState(false);
 
 	useEffect(() => {
+		if (typeof requestIdleCallback !== "undefined") {
+			const id = requestIdleCallback(() => setCanvasReady(true), { timeout: 1200 });
+			return () => cancelIdleCallback(id);
+		}
+		const id = window.setTimeout(() => setCanvasReady(true), 300);
+		return () => clearTimeout(id);
+	}, []);
+
+	useEffect(() => {
+		if (!canvasReady) return;
 		const canvas = canvasRef.current;
 		if (!canvas) return;
 		const ctx = canvas.getContext("2d");
@@ -235,13 +246,15 @@ function LandingBackground() {
 			cancelAnimationFrame(animId);
 			window.removeEventListener("resize", resize);
 		};
-	}, []);
+	}, [canvasReady]);
 
 	return (
 		<div className={styles.bgLayer} aria-hidden>
 			<div className={styles.bgGrid} />
 			<div className={styles.bgGlow} />
-			<canvas ref={canvasRef} className={styles.bgCanvas} />
+			{canvasReady && (
+				<canvas ref={canvasRef} className={styles.bgCanvas} />
+			)}
 		</div>
 	);
 }
@@ -255,6 +268,13 @@ function useScrollReveal() {
 	useEffect(() => {
 		const el = ref.current;
 		if (!el) return;
+
+		const rect = el.getBoundingClientRect();
+		if (rect.top < window.innerHeight * 0.92) {
+			setVisible(true);
+			return;
+		}
+
 		const obs = new IntersectionObserver(
 			([entry]) => {
 				if (entry.isIntersecting) {
@@ -262,7 +282,7 @@ function useScrollReveal() {
 					obs.disconnect();
 				}
 			},
-			{ threshold: 0.08, rootMargin: "0px 0px -40px 0px" },
+			{ threshold: 0.01, rootMargin: "0px 0px 200px 0px" },
 		);
 		obs.observe(el);
 		return () => obs.disconnect();
@@ -307,7 +327,7 @@ function AnimatedStat({ stat, visible }: { stat: typeof STATS[0]; visible: boole
 
 function Typewriter({ words }: { words: string[] }) {
 	const [wordIdx, setWordIdx] = useState(0);
-	const [text, setText] = useState("");
+	const [text, setText] = useState(words[0] ?? "");
 	const [deleting, setDeleting] = useState(false);
 
 	useEffect(() => {
@@ -399,7 +419,6 @@ function FaqSection() {
 					<div
 						key={i}
 						className={`${styles.faqItem} ${openIdx === i ? styles.faqOpen : ""} ${reveal.visible ? styles.cardIn : styles.cardHidden}`}
-						style={{ animationDelay: `${i * 0.08}s` }}
 					>
 						<button
 							className={styles.faqQuestion}
@@ -488,7 +507,6 @@ export default function Landing() {
 	const [isScrolled, setIsScrolled] = useState(false);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-	const [heroVisible, setHeroVisible] = useState(false);
 
 	const pillarsReveal    = useScrollReveal();
 	const sovereignReveal  = useScrollReveal();
@@ -496,11 +514,6 @@ export default function Landing() {
 	const securityReveal   = useScrollReveal();
 	const statsReveal      = useScrollReveal();
 	const ctaReveal        = useScrollReveal();
-
-	useEffect(() => {
-		const timer = setTimeout(() => setHeroVisible(true), 100);
-		return () => clearTimeout(timer);
-	}, []);
 
 	useEffect(() => {
 		let ticking = false;
@@ -560,7 +573,14 @@ export default function Landing() {
 			<nav className={`${styles.nav} ${isScrolled ? styles.scrolled : ""}`}>
 				<div className={styles.navInner}>
 					<div className={styles.logo} onClick={() => navigate(paths.landing)}>
-						<img src='/assets/genetiq_logo_v2.png' alt='Genetiq Logo' className={styles.logoImage} />
+						<img
+							src='/assets/genetiq_logo_v2.png'
+							alt='Genetiq Logo'
+							className={styles.logoImage}
+							width={36}
+							height={36}
+							fetchPriority='high'
+						/>
 						<span className={styles.logoText}>Genetiq</span>
 					</div>
 
@@ -671,7 +691,7 @@ export default function Landing() {
 			</div>
 
 			{/* ── Hero ─────────────────────────────────────────── */}
-			<section className={`${styles.hero} ${heroVisible ? styles.heroIn : ""}`}>
+			<section className={styles.hero}>
 				<div className={styles.heroContent}>
 					<div className={styles.heroBadge}>
 						<span className={styles.heroBadgeDot} />
@@ -705,6 +725,11 @@ export default function Landing() {
 						src='/assets/digital_twin_hero.png'
 						alt='Digital Twin 3D Preview'
 						className={styles.heroImage}
+						width={440}
+						height={420}
+						fetchPriority='high'
+						loading='eager'
+						decoding='async'
 					/>
 					{/* Orbiting badges */}
 					<div className={`${styles.orbitBadge} ${styles.orbitBadge1}`}>
@@ -730,7 +755,6 @@ export default function Landing() {
 						<div
 							key={pillar.title}
 							className={`${styles.pillarCard} ${pillarsReveal.visible ? styles.cardIn : styles.cardHidden}`}
-							style={{ animationDelay: `${i * 0.15}s` }}
 						>
 							<div className={styles.pillarIconWrapper}>{pillar.icon}</div>
 							<h3 className={styles.pillarTitle}>{pillar.title}</h3>
@@ -755,7 +779,6 @@ export default function Landing() {
 							<div
 								key={item.title}
 								className={`${styles.historyDetailCard} ${sovereignReveal.visible ? styles.cardIn : styles.cardHidden}`}
-								style={{ animationDelay: `${i * 0.2}s` }}
 							>
 								<div className={styles.hd_icon}>{item.icon}</div>
 								<div className={styles.hd_text}>
@@ -784,7 +807,7 @@ export default function Landing() {
 						<div className={styles.badge} style={{ alignSelf: "flex-start" }}>Step by Step</div>
 						<h2 className={styles.sectionTitle} style={{ textAlign: "left" }}>Upload Once, Understand Everything</h2>
 						{ECOSYSTEM.map((feat, i) => (
-							<div key={feat.title} className={styles.ecoItem} style={{ animationDelay: `${i * 0.15}s` }}>
+							<div key={feat.title} className={styles.ecoItem}>
 								<span className={styles.ecoNumber}>{feat.number}</span>
 								<div className={styles.ecoContent}>
 									<h4>{feat.title}</h4>
@@ -810,7 +833,6 @@ export default function Landing() {
 						<div
 							key={tech.title}
 							className={`${styles.techCard} ${securityReveal.visible ? styles.cardIn : styles.cardHidden}`}
-							style={{ animationDelay: `${i * 0.2}s` }}
 						>
 							<h3>{tech.icon} {tech.title}</h3>
 							<p>{tech.desc}</p>
@@ -826,7 +848,6 @@ export default function Landing() {
 						<div
 							key={stat.label}
 							className={`${styles.statItem} ${statsReveal.visible ? styles.cardIn : styles.cardHidden}`}
-							style={{ animationDelay: `${i * 0.12}s` }}
 						>
 							<AnimatedStat stat={stat} visible={statsReveal.visible} />
 							<span className={styles.statLabel}>{stat.label}</span>

@@ -7,8 +7,7 @@ import AuthLayout from "../Layouts/Auth/AuthLayout";
 import { ConfigLayout } from "../Layouts/ConfigLayout";
 import RouteErrorFallback from "./RouteErrorFallback";
 import { lazyWithRetry } from "./lazyWithRetry";
-
-const Landing = lazyWithRetry(() => import("@/Views/Landing/Landing"));
+import Landing from "@/Views/Landing/Landing";
 const Dashboard = lazyWithRetry(() => import("@/Views/Dashboard/Dashboard"));
 const Login = lazyWithRetry(() => import("@/Views/Auth/Login/Login"));
 const Register = lazyWithRetry(() => import("@/Views/Auth/Register/Register"));
@@ -48,11 +47,7 @@ const RoutesConfig: RouteObject[] = [
 			// Standalone Landing page (no layout wrapper)
 			{
 				path: paths.landing,
-				element: (
-					<Lazy>
-						<Landing />
-					</Lazy>
-				),
+				element: <Landing />,
 			},
 
 			{

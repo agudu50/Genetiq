@@ -946,4 +946,9 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 	.Dashboard-right > * {
 		pointer-events: none !important;
 	}
+
+	.Dashboard-layout,
+	.Dashboard-layout * {
+		animation-play-state: paused !important;
+	}
 }
