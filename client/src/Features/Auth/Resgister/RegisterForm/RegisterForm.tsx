@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { paths } from "@/App/Routes/Paths";
 import { toast } from "react-toastify";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, User } from "lucide-react";
+import { AUTH_KEYS, AuthCredentials } from "@/App/Services/AuthCredentials";
 import styles from "./RegisterForm.module.scss";
 
 const GoogleIcon = () => (
@@ -46,7 +47,20 @@ export const RegisterForm = ({ animate = false }: { animate?: boolean }) => {
 			toast.error("Passwords don't match");
 			return;
 		}
+		if (password.length < 6) {
+			toast.error("Password must be at least 6 characters.");
+			return;
+		}
+
 		setIsLoading(true);
+		const saved = await AuthCredentials.save(email, password);
+		if (!saved) {
+			setIsLoading(false);
+			toast.error("Could not save your account. Please try again.");
+			return;
+		}
+
+		localStorage.setItem(AUTH_KEYS.EMAIL, email);
 		await new Promise((r) => setTimeout(r, 1500));
 		setIsLoading(false);
 		navigate(paths.config.root);

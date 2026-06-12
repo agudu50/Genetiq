@@ -14,6 +14,7 @@ import GoalsIcon from "@assets/Navbar/Icons/Goals.svg?react";
 import TestIcon from "@assets/Navbar/Icons/Test.svg?react";
 import { HealthProfileWidget } from "@/Features/Dashboard/HealthProfileWidget/HealthProfileWidget";
 import { AccountSettingsModal } from "./Components/AccountSettingsModal/AccountSettingsModal";
+import { PasswordSecurityModal } from "./Components/PasswordSecurityModal/PasswordSecurityModal";
 
 const Navbar = () => {
 	const { t } = useLanguage();
@@ -22,6 +23,7 @@ const Navbar = () => {
 	const [isMobile, setIsMobile] = useState(false);
 	const [isProfileOpen, setIsProfileOpen] = useState(false);
 	const [isAccountSettingsOpen, setIsAccountSettingsOpen] = useState(false);
+	const [isPasswordSecurityOpen, setIsPasswordSecurityOpen] = useState(false);
 	const profileRef = useRef<HTMLDivElement>(null);
 	const user = useSelector((state: RootState) => state.user);
 	const userInitials = useMemo(() => {
@@ -174,6 +176,29 @@ const Navbar = () => {
 											Account Settings
 										</button>
 										<button
+											type="button"
+											className={styles["footer-btn"]}
+											onClick={() => {
+												setIsProfileOpen(false);
+												setIsPasswordSecurityOpen(true);
+											}}
+										>
+											<svg
+												width='18'
+												height='18'
+												viewBox='0 0 24 24'
+												fill='none'
+												stroke='currentColor'
+												strokeWidth='2'
+												strokeLinecap='round'
+												strokeLinejoin='round'
+											>
+												<rect x='3' y='11' width='18' height='11' rx='2' ry='2' />
+												<path d='M7 11V7a5 5 0 0 1 10 0v4' />
+											</svg>
+											Password &amp; Security
+										</button>
+										<button
 											className={`${styles["footer-btn"]} ${styles["logout-btn"]}`}
 										>
 											<svg
@@ -258,6 +283,10 @@ const Navbar = () => {
 			<AccountSettingsModal
 				isOpen={isAccountSettingsOpen}
 				onClose={() => setIsAccountSettingsOpen(false)}
+			/>
+			<PasswordSecurityModal
+				isOpen={isPasswordSecurityOpen}
+				onClose={() => setIsPasswordSecurityOpen(false)}
 			/>
 		</>
 	);
