@@ -13,6 +13,7 @@ import HistoryIcon from "@assets/Navbar/Icons/History.svg?react";
 import GoalsIcon from "@assets/Navbar/Icons/Goals.svg?react";
 import TestIcon from "@assets/Navbar/Icons/Test.svg?react";
 import { HealthProfileWidget } from "@/Features/Dashboard/HealthProfileWidget/HealthProfileWidget";
+import { AccountSettingsModal } from "./Components/AccountSettingsModal/AccountSettingsModal";
 
 const Navbar = () => {
 	const { t } = useLanguage();
@@ -20,6 +21,7 @@ const Navbar = () => {
 	const location = useLocation();
 	const [isMobile, setIsMobile] = useState(false);
 	const [isProfileOpen, setIsProfileOpen] = useState(false);
+	const [isAccountSettingsOpen, setIsAccountSettingsOpen] = useState(false);
 	const profileRef = useRef<HTMLDivElement>(null);
 	const user = useSelector((state: RootState) => state.user);
 	const userInitials = useMemo(() => {
@@ -148,7 +150,14 @@ const Navbar = () => {
 
 									<div className={styles["profile-dropdown-footer"]}>
 										<LanguageSwitcher />
-										<button className={styles["footer-btn"]}>
+										<button
+											type="button"
+											className={styles["footer-btn"]}
+											onClick={() => {
+												setIsProfileOpen(false);
+												setIsAccountSettingsOpen(true);
+											}}
+										>
 											<svg
 												width='18'
 												height='18'
@@ -246,6 +255,10 @@ const Navbar = () => {
 						</button>
 					</nav>
 				)}
+			<AccountSettingsModal
+				isOpen={isAccountSettingsOpen}
+				onClose={() => setIsAccountSettingsOpen(false)}
+			/>
 		</>
 	);
 };
