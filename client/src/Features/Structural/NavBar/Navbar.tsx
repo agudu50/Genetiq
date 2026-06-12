@@ -1,7 +1,10 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import { RootState } from "@/App/Redux/store";
+import { resetUser } from "@/App/Redux/userSlice";
+import { AuthCredentials } from "@/App/Services/AuthCredentials";
 import { paths } from "@/App/Routes/Paths";
 import styles from "./Navbar.module.scss";
 import NotificationHub from "./Components/NotificationsHub/NotificationsHub";
@@ -17,6 +20,7 @@ import { AccountSettingsModal } from "./Components/AccountSettingsModal/AccountS
 import { PasswordSecurityModal } from "./Components/PasswordSecurityModal/PasswordSecurityModal";
 
 const Navbar = () => {
+	const dispatch = useDispatch();
 	const { t } = useLanguage();
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -26,6 +30,14 @@ const Navbar = () => {
 	const [isPasswordSecurityOpen, setIsPasswordSecurityOpen] = useState(false);
 	const profileRef = useRef<HTMLDivElement>(null);
 	const user = useSelector((state: RootState) => state.user);
+	const handleLogout = () => {
+		setIsProfileOpen(false);
+		AuthCredentials.logout();
+		dispatch(resetUser());
+		toast.success("You've been signed out.");
+		navigate(paths.auth.login, { replace: true });
+	};
+
 	const userInitials = useMemo(() => {
 		if (user.firstName && user.lastName)
 			return `${user.firstName[0]}${user.lastName[0]}`.toUpperCase();
@@ -199,7 +211,9 @@ const Navbar = () => {
 											Password &amp; Security
 										</button>
 										<button
+											type="button"
 											className={`${styles["footer-btn"]} ${styles["logout-btn"]}`}
+											onClick={handleLogout}
 										>
 											<svg
 												width='18'

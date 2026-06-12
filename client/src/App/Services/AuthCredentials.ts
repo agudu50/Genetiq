@@ -79,6 +79,12 @@ export const AuthCredentials = {
 		return { ok: true };
 	},
 
+	logout(): void {
+		localStorage.removeItem(AUTH_KEYS.SESSION);
+		localStorage.removeItem(AUTH_KEYS.REMEMBER);
+		sessionStorage.removeItem(AUTH_KEYS.SESSION);
+	},
+
 	async createPassword(
 		email: string,
 		newPassword: string,
