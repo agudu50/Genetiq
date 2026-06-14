@@ -258,25 +258,27 @@ export const HealthHistory: React.FC = () => {
 			<main className={styles.mainContent}>
 				{/* ── Patient profile banner ──────────────────────────────── */}
 				<section className={styles.profileBanner}>
-					<div className={styles.profileAvatar}>
-						<User size={24} />
-					</div>
-					<div className={styles.profileInfo}>
-						<h1 className={styles.profileName}>
-							{displayName === "Your" ? "Your Health Record" : `${displayName}'s Health Record`}
-						</h1>
-						<div className={styles.profilePills}>
-							{age     && <span className={styles.profilePill}>{age} years old</span>}
-							{gender  && <span className={styles.profilePill}>{gender}</span>}
-							{bloodType && (
-								<span className={`${styles.profilePill} ${styles.bloodPill}`}>
-									<Droplets size={11} />
-									{bloodType}
+					<div className={styles.profileTop}>
+						<div className={styles.profileAvatar}>
+							<User size={24} />
+						</div>
+						<div className={styles.profileInfo}>
+							<h1 className={styles.profileName}>
+								{displayName === "Your" ? "Your Health Record" : `${displayName}'s Health Record`}
+							</h1>
+							<div className={styles.profilePills}>
+								{age     && <span className={styles.profilePill}>{age} years old</span>}
+								{gender  && <span className={styles.profilePill}>{gender}</span>}
+								{bloodType && (
+									<span className={`${styles.profilePill} ${styles.bloodPill}`}>
+										<Droplets size={11} />
+										{bloodType}
+									</span>
+								)}
+								<span className={styles.profilePill}>
+									{records.length} upload{records.length !== 1 ? "s" : ""}
 								</span>
-							)}
-							<span className={styles.profilePill}>
-								{records.length} upload{records.length !== 1 ? "s" : ""}
-							</span>
+							</div>
 						</div>
 					</div>
 
@@ -284,10 +286,13 @@ export const HealthHistory: React.FC = () => {
 						<div className={styles.profileScore}>
 							<div className={styles.profileScoreLabel}>Latest Health Score</div>
 							<div
-								className={styles.profileScoreNum}
-								style={{ color: healthScoreColour(records[0].healthScore) }}
+								className={styles.profileScoreBadge}
+								style={{
+									color: healthScoreColour(records[0].healthScore),
+									"--score-color": healthScoreColour(records[0].healthScore),
+								} as React.CSSProperties}
 							>
-								{records[0].healthScore}
+								<span className={styles.profileScoreNum}>{records[0].healthScore}</span>
 							</div>
 							<div className={styles.profileScoreSub}>out of 100</div>
 						</div>

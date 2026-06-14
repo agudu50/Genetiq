@@ -76,6 +76,8 @@ $blue:   #3b82f6;
 
 	@media (max-width: 768px) { padding: 28px 20px 64px; }
 
+	@media (max-width: 480px) { padding: 20px 14px 56px; }
+
 	&:has(.emptyState) {
 		display: flex;
 		flex-direction: column;
@@ -85,11 +87,17 @@ $blue:   #3b82f6;
 
 		.profileBanner {
 			width: 100%;
-			flex-direction: row;
-			align-items: center;
+			flex-direction: column;
+			align-items: stretch;
 			text-align: left;
 			padding: 28px 32px;
 			position: static;
+		}
+
+		.profileTop {
+			display: flex;
+			align-items: center;
+			gap: 16px;
 		}
 
 		.profileAvatar {
@@ -102,6 +110,19 @@ $blue:   #3b82f6;
 		.profileInfo { align-items: flex-start; }
 		.profilePills { justify-content: flex-start; }
 		.historySection { width: 100%; }
+	}
+}
+
+// ── Profile header row (avatar + identity) ────────────────────────────────────
+.profileTop {
+	display: contents;
+
+	@media (max-width: 1024px) {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+		width: 100%;
+		min-width: 0;
 	}
 }
 
@@ -145,11 +166,17 @@ $blue:   #3b82f6;
 		box-sizing: border-box;
 	}
 
-	@media (max-width: 640px) {
-		display: grid;
-		grid-template-columns: auto 1fr;
+	@media (max-width: 1024px) {
+		flex-direction: column;
+		align-items: stretch;
 		gap: 16px;
-		padding: 22px;
+		padding: 24px;
+	}
+
+	@media (max-width: 640px) {
+		gap: 14px;
+		padding: 18px 16px;
+		border-radius: 20px;
 	}
 }
 
@@ -175,6 +202,13 @@ $blue:   #3b82f6;
 
 		svg { width: 30px; height: 30px; }
 	}
+
+	@media (max-width: 640px) {
+		width: 50px;
+		height: 50px;
+
+		svg { width: 22px; height: 22px; }
+	}
 }
 
 .profileInfo {
@@ -188,12 +222,9 @@ $blue:   #3b82f6;
 		width: 100%;
 	}
 
-	@media (max-width: 640px) {
-		grid-column: 2;
-		grid-row: 1;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
+	@media (max-width: 1024px) {
+		flex: 1;
+		min-width: 0;
 	}
 }
 
@@ -206,8 +237,11 @@ $blue:   #3b82f6;
 	line-height: 1.15;
 
 	@media (max-width: 640px) {
-		font-size: 1.15rem;
-		margin-bottom: 6px;
+		font-size: 1.05rem;
+		margin-bottom: 8px;
+		line-height: 1.25;
+		word-break: break-word;
+		hyphens: auto;
 	}
 }
 
@@ -217,7 +251,11 @@ $blue:   #3b82f6;
 	gap: 8px;
 
 	@media (min-width: 1025px) { justify-content: center; }
-	@media (max-width: 640px) { gap: 6px; }
+
+	@media (max-width: 640px) {
+		gap: 6px;
+		row-gap: 6px;
+	}
 }
 
 .profilePill {
@@ -233,8 +271,9 @@ $blue:   #3b82f6;
 	color: var(--hh-text-2);
 
 	@media (max-width: 640px) {
-		padding: 3px 9px;
-		font-size: 0.72rem;
+		padding: 4px 10px;
+		font-size: 0.7rem;
+		white-space: nowrap;
 	}
 }
 
@@ -268,17 +307,37 @@ $blue:   #3b82f6;
 		margin-top: 24px;
 	}
 
-	@media (max-width: 640px) {
-		grid-column: 1 / span 2;
-		grid-row: 2;
-		flex-direction: row;
-		align-items: center;
-		justify-content: space-between;
-		border-radius: 14px;
-		margin-top: 8px;
-		padding: 12px 16px;
+	@media (max-width: 1024px) {
 		width: 100%;
+		margin-top: 0;
+		display: grid;
+		grid-template-columns: 1fr auto;
+		grid-template-rows: auto auto;
+		align-items: center;
+		column-gap: 14px;
+		row-gap: 2px;
+		padding: 14px 16px;
+		border-radius: 16px;
+		background: var(--hh-card-solid);
 		text-align: left;
+	}
+}
+
+.profileScoreBadge {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+
+	@media (max-width: 1024px) {
+		grid-column: 2;
+		grid-row: 1 / span 2;
+		width: 68px;
+		height: 68px;
+		border-radius: 50%;
+		background: color-mix(in srgb, var(--score-color, #{$teal}) 12%, transparent);
+		border: 2px solid color-mix(in srgb, var(--score-color, #{$teal}) 35%, transparent);
+		box-shadow: 0 8px 20px -8px color-mix(in srgb, var(--score-color, #{$teal}) 45%, transparent);
 	}
 }
 
@@ -290,9 +349,12 @@ $blue:   #3b82f6;
 	color: var(--hh-muted);
 	margin-bottom: 6px;
 
-	@media (max-width: 640px) {
+	@media (max-width: 1024px) {
+		grid-column: 1;
+		grid-row: 1;
 		margin-bottom: 0;
-		font-size: 0.68rem;
+		font-size: 0.62rem;
+		letter-spacing: 0.06em;
 	}
 }
 
@@ -302,7 +364,9 @@ $blue:   #3b82f6;
 	line-height: 1;
 	letter-spacing: -0.04em;
 
-	@media (max-width: 640px) { font-size: 1.9rem; }
+	@media (max-width: 1024px) {
+		font-size: 1.75rem;
+	}
 }
 
 .profileScoreSub {
@@ -311,9 +375,13 @@ $blue:   #3b82f6;
 	font-weight: 600;
 	margin-top: 3px;
 
-	@media (max-width: 640px) {
-		display: inline;
-		margin-left: 4px;
+	@media (max-width: 1024px) {
+		grid-column: 1;
+		grid-row: 2;
+		display: block;
+		margin-left: 0;
+		margin-top: 0;
+		font-size: 0.72rem;
 	}
 }
 
@@ -343,6 +411,20 @@ $blue:   #3b82f6;
 	}
 
 	&:active { transform: translateY(0); }
+
+	@media (max-width: 1024px) {
+		margin-top: 0;
+	}
+
+	@media (max-width: 640px) {
+		padding: 14px 18px;
+		font-size: 0.9rem;
+		border-radius: 14px;
+		min-height: 48px;
+		box-shadow: 0 8px 22px rgba(0, 166, 157, 0.28);
+
+		svg { width: 16px; height: 16px; }
+	}
 }
 
 // ── History section ─────────────────────────────────────────────────────────
