@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import {
+	Calendar,
 	User,
+	UserRound,
+	Files,
 	Upload,
 	ChevronDown,
 	CheckCircle2,
@@ -55,13 +58,13 @@ function healthScoreColour(score: number) {
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-const ScoreRing = ({ score }: { score: number }) => {
+const ScoreRing = ({ score, compact = false }: { score: number; compact?: boolean }) => {
 	const colour = healthScoreColour(score);
 	const r = 40;
 	const circ = 2 * Math.PI * r;
 	const offset = circ - (score / 100) * circ;
 	return (
-		<div className={styles.scoreRing}>
+		<div className={`${styles.scoreRing} ${compact ? styles.scoreRingCompact : ""}`}>
 			<svg viewBox="0 0 96 96" width="96" height="96">
 				<circle cx="48" cy="48" r={r} fill="none" stroke="var(--hh-ring-track)" strokeWidth="8" />
 				<circle
@@ -74,7 +77,7 @@ const ScoreRing = ({ score }: { score: number }) => {
 			</svg>
 			<div className={styles.scoreInner}>
 				<span className={styles.scoreNum} style={{ color: colour }}>{score}</span>
-				<span className={styles.scoreLabel}>/ 100</span>
+				{!compact && <span className={styles.scoreLabel}>/ 100</span>}
 			</div>
 		</div>
 	);
@@ -258,53 +261,72 @@ export const HealthHistory: React.FC = () => {
 			<main className={styles.mainContent}>
 				{/* ── Patient profile banner ──────────────────────────────── */}
 				<section className={styles.profileBanner}>
-					<div className={styles.profileTop}>
-						<div className={styles.profileAvatar}>
-							<User size={24} />
-						</div>
-						<div className={styles.profileInfo}>
-							<h1 className={styles.profileName}>
-								{displayName === "Your" ? "Your Health Record" : `${displayName}'s Health Record`}
-							</h1>
-							<div className={styles.profilePills}>
-								{age     && <span className={styles.profilePill}>{age} years old</span>}
-								{gender  && <span className={styles.profilePill}>{gender}</span>}
-								{bloodType && (
-									<span className={`${styles.profilePill} ${styles.bloodPill}`}>
-										<Droplets size={11} />
-										{bloodType}
+					<div className={styles.profileCardGlow} aria-hidden />
+
+					<div className={styles.profileCardHeader}>
+						<div className={styles.profileTop}>
+							<div className={styles.profileAvatar}>
+								<User size={24} />
+							</div>
+							<div className={styles.profileInfo}>
+								<span className={styles.profileEyebrow}>Patient profile</span>
+								<h1 className={styles.profileName}>
+									<span className={styles.profileNameMain}>
+										{displayName === "Your" ? "Your" : `${displayName}'s`}
 									</span>
-								)}
-								<span className={styles.profilePill}>
-									{records.length} upload{records.length !== 1 ? "s" : ""}
-								</span>
+									<span className={styles.profileNameAccent}>Health Record</span>
+								</h1>
 							</div>
 						</div>
 					</div>
 
-					{records.length > 0 && (
-						<div className={styles.profileScore}>
-							<div className={styles.profileScoreLabel}>Latest Health Score</div>
-							<div
-								className={styles.profileScoreBadge}
-								style={{
-									color: healthScoreColour(records[0].healthScore),
-									"--score-color": healthScoreColour(records[0].healthScore),
-								} as React.CSSProperties}
-							>
-								<span className={styles.profileScoreNum}>{records[0].healthScore}</span>
+					<div className={styles.profileMetaGrid}>
+						{age && (
+							<div className={styles.metaTile}>
+								<span className={styles.metaIcon}><Calendar size={15} /></span>
+								<span className={styles.metaValue}>{age} years old</span>
 							</div>
-							<div className={styles.profileScoreSub}>out of 100</div>
+						)}
+						{gender && (
+							<div className={styles.metaTile}>
+								<span className={styles.metaIcon}><UserRound size={15} /></span>
+								<span className={styles.metaValue}>{gender}</span>
+							</div>
+						)}
+						{bloodType && (
+							<div className={`${styles.metaTile} ${styles.metaTileBlood}`}>
+								<span className={styles.metaIcon}><Droplets size={15} /></span>
+								<span className={styles.metaValue}>{bloodType}</span>
+							</div>
+						)}
+						<div className={styles.metaTile}>
+							<span className={styles.metaIcon}><Files size={15} /></span>
+							<span className={styles.metaValue}>
+								{records.length} upload{records.length !== 1 ? "s" : ""}
+							</span>
+						</div>
+					</div>
+
+					{records.length > 0 && (
+						<div className={styles.profileScorePanel}>
+							<div className={styles.profileScoreCopy}>
+								<span className={styles.profileScoreLabel}>Latest Health Score</span>
+								<span className={styles.profileScoreSub}>out of 100</span>
+							</div>
+							<ScoreRing score={records[0].healthScore} />
 						</div>
 					)}
 
-					<button
-						className={styles.newUploadBannerBtn}
-						onClick={() => navigate(paths.config.importOrUpload, { state: { skipToUpload: true } })}
-					>
-						<Upload size={13} />
-						<span>New Upload</span>
-					</button>
+					<div className={styles.profileCardFooter}>
+						<button
+							type="button"
+							className={styles.newUploadBannerBtn}
+							onClick={() => navigate(paths.config.importOrUpload, { state: { skipToUpload: true } })}
+						>
+							<Upload size={16} />
+							<span>New Upload</span>
+						</button>
+					</div>
 				</section>
 
 				{/* ── Upload history timeline ─────────────────────────────── */}
