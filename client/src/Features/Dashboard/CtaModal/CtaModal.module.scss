@@ -1,146 +1,104 @@
 @use "@/App/Styles/_mixins" as mixins;
 
-.CtaModal-container {
+$teal: #00a69d;
+
+.container {
 	position: fixed;
 	bottom: 24px;
 	left: 24px;
-	width: 280px;
-	padding: 20px 24px;
-	border-radius: 20px;
-	border: 1px solid rgba(0, 166, 157, 0.18);
-	box-shadow:
-		0 10px 30px -10px rgba(0, 166, 157, 0.15),
-		0 1px 3px rgba(0, 0, 0, 0.05);
-	background: rgba(255, 255, 255, 0.7);
-	backdrop-filter: blur(20px) saturate(180%);
-	-webkit-backdrop-filter: blur(20px) saturate(180%);
 	z-index: 99;
+	width: 272px;
+	padding: 18px 20px 20px;
+	border-radius: 16px;
+	border: 1px solid rgba(0, 166, 157, 0.14);
+	background: rgba(255, 255, 255, 0.88);
+	backdrop-filter: blur(16px) saturate(160%);
+	-webkit-backdrop-filter: blur(16px) saturate(160%);
+	box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
 	display: flex;
 	flex-direction: column;
-	gap: 14px;
-	overflow: hidden;
-	transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-	animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	gap: 12px;
+	transition: transform 0.35s ease, opacity 0.35s ease;
+	animation: slideIn 0.5s ease forwards;
 
 	html[data-theme="dark"] & {
-		background: rgba(10, 14, 26, 0.65);
-		border-color: rgba(0, 166, 157, 0.25);
-		box-shadow:
-			0 12px 40px -10px rgba(0, 0, 0, 0.5),
-			0 0 20px rgba(0, 166, 157, 0.05);
-	}
-
-	&:hover {
-		transform: translateY(-2px);
-		border-color: rgba(0, 166, 157, 0.3);
-		box-shadow:
-			0 14px 35px -10px rgba(0, 166, 157, 0.22),
-			0 2px 8px rgba(0, 0, 0, 0.08);
-
-		html[data-theme="dark"] & {
-			border-color: rgba(0, 166, 157, 0.4);
-			box-shadow:
-				0 16px 45px -10px rgba(0, 0, 0, 0.6),
-				0 0 30px rgba(0, 166, 157, 0.12);
-		}
-	}
-
-	&-closed {
-		animation: slideOut 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-	}
-
-	@include mixins.media_920 {
-		display: none;
+		background: rgba(12, 17, 30, 0.82);
+		border-color: rgba(255, 255, 255, 0.08);
+		box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
 	}
 }
 
-@keyframes slideOut {
-	0% {
-		transform: translateX(0) scale(1);
-		opacity: 1;
-	}
-	100% {
-		transform: translateX(-120%) scale(0.95);
+.containerClosed {
+	animation: slideOut 0.4s ease forwards;
+	pointer-events: none;
+
+	.closeBtn {
 		opacity: 0;
+		pointer-events: none;
+	}
+
+	.reopenTab {
+		pointer-events: auto;
 	}
 }
 
-@keyframes slideIn {
-	0% {
-		transform: translateX(-120%) scale(0.95);
-		opacity: 0;
-	}
-	100% {
-		transform: translateX(0) scale(1);
-		opacity: 1;
-	}
-}
-
-.CtaModal-head {
+.header {
 	display: flex;
-	flex-direction: row;
+	align-items: flex-start;
 	justify-content: space-between;
-	align-items: center;
+	gap: 10px;
 }
 
-.CtaModal-head-text {
+.headline {
 	display: flex;
-	flex-direction: row;
-	gap: 12px;
 	align-items: center;
+	gap: 10px;
+	min-width: 0;
 }
 
-.CtaModal-number {
-	font-weight: 850;
-	font-size: 44px;
+.count {
+	font-size: 2.5rem;
+	font-weight: 800;
 	line-height: 1;
 	letter-spacing: -0.04em;
-	background: linear-gradient(135deg, var(--accent, #00A69D) 0%, #06b6d4 100%);
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
-	background-clip: text;
-	filter: drop-shadow(0 2px 8px rgba(0, 166, 157, 0.15));
+	color: $teal;
+	flex-shrink: 0;
 }
 
-.CtaModal-title {
-	font-weight: 800;
-	font-size: 13px;
-	line-height: 1.3;
-	letter-spacing: -0.02em;
+.title {
+	margin: 0;
+	font-size: 0.8125rem;
+	font-weight: 700;
+	line-height: 1.35;
+	letter-spacing: -0.01em;
 	color: #0f172a;
-	text-transform: uppercase;
+	text-transform: capitalize;
 
 	html[data-theme="dark"] & {
-		color: #ffffff;
+		color: rgba(255, 255, 255, 0.92);
 	}
 }
 
-.CtaModal-cross-container {
-	cursor: pointer;
+.closeBtn {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 24px;
-	height: 24px;
-	border-radius: 50%;
-	background: rgba(15, 23, 42, 0.05);
-	color: #475569;
-	transition: all 0.2s ease;
-
-	html[data-theme="dark"] & {
-		background: rgba(255, 255, 255, 0.06);
-		color: #94a3b8;
-	}
+	flex-shrink: 0;
+	width: 22px;
+	height: 22px;
+	padding: 0;
+	border: none;
+	background: none;
+	color: #94a3b8;
+	cursor: pointer;
+	transition: color 0.2s ease;
 
 	&:hover {
-		background: rgba(239, 68, 68, 0.1);
-		color: #ef4444;
-		transform: rotate(90deg);
+		color: #64748b;
 	}
 
-	&-closed {
-		opacity: 0;
-		pointer-events: none;
+	html[data-theme="dark"] &:hover {
+		color: rgba(255, 255, 255, 0.7);
 	}
 
 	svg {
@@ -153,39 +111,34 @@
 	}
 }
 
-.CtaModal-description {
-	font-weight: 500;
-	font-size: 12.5px;
-	line-height: 1.5;
-	color: #475569;
+.description {
 	margin: 0;
+	font-size: 0.8125rem;
+	font-weight: 400;
+	line-height: 1.55;
+	color: #64748b;
 
 	html[data-theme="dark"] & {
-		color: #94a3b8;
+		color: rgba(255, 255, 255, 0.5);
 	}
 }
 
-.CtaModal-button {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: center;
+.ctaBtn {
 	width: 100%;
-	gap: 8px;
-	padding: 11px 18px;
-	border-radius: 12px;
-	background: linear-gradient(135deg, var(--accent, #00A69D) 0%, #0891b2 100%);
+	padding: 10px 16px;
 	border: none;
-	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+	border-radius: 10px;
+	background: $teal;
+	color: #fff;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	font-family: inherit;
 	cursor: pointer;
-	box-shadow: 0 4px 12px rgba(0, 166, 157, 0.2);
+	transition: background 0.2s ease, transform 0.2s ease;
 
 	&:hover {
+		background: #008f87;
 		transform: translateY(-1px);
-		box-shadow:
-			0 6px 18px rgba(0, 166, 157, 0.35),
-			0 2px 4px rgba(0, 0, 0, 0.1);
-		filter: brightness(1.05);
 	}
 
 	&:active {
@@ -193,34 +146,7 @@
 	}
 }
 
-.CtaModal-button-text {
-	color: #ffffff;
-	font-weight: 800;
-	font-size: 12.5px;
-	line-height: 1;
-	margin: 0;
-	letter-spacing: 0.02em;
-	text-transform: uppercase;
-}
-
-.CtaModal-cart-container {
-	width: 14px;
-	height: 14px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	svg {
-		width: 100%;
-		height: 100%;
-
-		path {
-			fill: #ffffff !important;
-		}
-	}
-}
-
-.CtaModal-chevron {
+.reopenTab {
 	position: absolute;
 	top: 50%;
 	left: 0;
@@ -228,31 +154,21 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 24px;
-	height: 48px;
-	border-radius: 0 12px 12px 0;
-	background: var(--accent, #00A69D);
-	color: #ffffff;
+	width: 22px;
+	height: 44px;
+	padding: 0;
+	border: none;
+	border-radius: 0 10px 10px 0;
+	background: $teal;
+	color: #fff;
 	opacity: 0;
 	pointer-events: none;
-	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 	cursor: pointer;
-	box-shadow: 2px 0 10px rgba(0, 166, 157, 0.25);
-
-	&:hover {
-		width: 28px;
-		background: #0891b2;
-	}
-
-	&-closed {
-		opacity: 1;
-		pointer-events: auto;
-		transform: translateY(-50%) rotate(90deg) translateX(0);
-	}
+	transition: opacity 0.25s ease;
 
 	svg {
-		width: 12px;
-		height: 12px;
+		width: 10px;
+		height: 10px;
 		transform: rotate(90deg);
 
 		path {
@@ -261,18 +177,27 @@
 	}
 }
 
-.CtaModal-shape {
-	position: absolute;
-	top: 0;
-	right: 0;
-	width: 120px;
-	height: 120px;
-	background: radial-gradient(circle, rgba(0, 166, 157, 0.12) 0%, transparent 70%);
-	filter: blur(15px);
-	pointer-events: none;
-	z-index: 0;
+.reopenTabVisible {
+	opacity: 1;
+	pointer-events: auto;
+}
 
-	html[data-theme="dark"] & {
-		background: radial-gradient(circle, rgba(0, 166, 157, 0.18) 0%, transparent 70%);
+@keyframes slideOut {
+	to {
+		transform: translateX(-110%);
+		opacity: 0;
+	}
+}
+
+@keyframes slideIn {
+	from {
+		transform: translateX(-110%);
+		opacity: 0;
+	}
+}
+
+@include mixins.media_920 {
+	.container {
+		display: none;
 	}
 }

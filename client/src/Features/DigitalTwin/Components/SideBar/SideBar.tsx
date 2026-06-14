@@ -229,17 +229,15 @@ const SideBar = ({
 					onModelChange={onModelChange}
 				/>
 
-				<div className={styles["separator"]} />
-
-				{/* Segment Control (Tabs) */}
-				<div className={styles["segment-control"]}>
-					{segments.map((s) => (
+				<div className={styles["segment-list"]}>
+					{segments.map((segment) => (
 						<button
-							key={s.id}
-							className={`${styles["segment-tab"]} ${activeSegment === s.id ? styles["active"] : ""}`}
-							onClick={() => setActiveSegment(s.id)}
+							key={segment.id}
+							type="button"
+							className={`${styles["segment-item"]} ${activeSegment === segment.id ? styles["active"] : ""}`}
+							onClick={() => setActiveSegment(segment.id)}
 						>
-							{s.label.charAt(0)}
+							{segment.label}
 						</button>
 					))}
 				</div>

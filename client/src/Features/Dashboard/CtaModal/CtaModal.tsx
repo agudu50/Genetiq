@@ -1,12 +1,11 @@
 import ReactDOM from "react-dom";
-import styles from "./CtaModal.module.scss";
-import Cross from "@assets/CtaModal/Cross.svg?react";
-import Shape from "@assets/CtaModal/Shape.svg?react";
-import ChevronHollow from "@assets/CtaModal/ChevronHollow.svg?react";
 import { useState } from "react";
 import { useLanguage } from "@/App/i18n/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import { paths } from "@/App/Routes/Paths";
+import Cross from "@assets/CtaModal/Cross.svg?react";
+import ChevronHollow from "@assets/CtaModal/ChevronHollow.svg?react";
+import styles from "./CtaModal.module.scss";
 
 const CtaModal = () => {
 	const { t } = useLanguage();
@@ -15,47 +14,41 @@ const CtaModal = () => {
 
 	return ReactDOM.createPortal(
 		<div
-			className={`${styles["CtaModal-container"]} ${
-				isClosed && styles["CtaModal-container-closed"]
-			}`}
+			className={`${styles.container} ${isClosed ? styles.containerClosed : ""}`}
 		>
-			<div className={styles["CtaModal-head"]}>
-				<div className={styles["CtaModal-head-text"]}>
-					<div className={styles["CtaModal-number"]}>6</div>
-					<div className={styles["CtaModal-title"]}>
-						{t("cta_new_insights")}
-					</div>
+			<div className={styles.header}>
+				<div className={styles.headline}>
+					<span className={styles.count}>6</span>
+					<h3 className={styles.title}>{t("cta_new_insights")}</h3>
 				</div>
-				<div
-					className={`${styles["CtaModal-cross-container"]} ${
-						isClosed && styles["CtaModal-cross-container-closed"]
-					}`}
+				<button
+					type="button"
+					className={styles.closeBtn}
 					onClick={() => setIsClosed(true)}
+					aria-label="Dismiss"
 				>
 					<Cross />
-				</div>
+				</button>
 			</div>
-			<div className={styles["CtaModal-body"]}>
-				<p className={styles["CtaModal-description"]}>{t("cta_description")}</p>
-			</div>
-			<button 
-				className={styles["CtaModal-button"]}
+
+			<p className={styles.description}>{t("cta_description")}</p>
+
+			<button
+				type="button"
+				className={styles.ctaBtn}
 				onClick={() => navigate(paths.config.tests)}
 			>
-				<p className={styles["CtaModal-button-text"]}>
-					{t("cta_order_dna_test")}
-				</p>
+				{t("cta_order_dna_test")}
 			</button>
 
-			<div
-				className={`${styles["CtaModal-chevron"]} ${
-					isClosed && styles["CtaModal-chevron-closed"]
-				}`}
+			<button
+				type="button"
+				className={`${styles.reopenTab} ${isClosed ? styles.reopenTabVisible : ""}`}
 				onClick={() => setIsClosed(false)}
+				aria-label="Show insights"
 			>
 				<ChevronHollow />
-			</div>
-			<Shape className={styles["CtaModal-shape"]} />
+			</button>
 		</div>,
 		document.body,
 	);
