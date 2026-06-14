@@ -10,9 +10,7 @@
 	padding: 8px 10px !important;
 	border: 1px solid rgba(255, 255, 255, 0.08) !important;
 	border-radius: 12px !important;
-	background: rgba(15, 23, 42, 0.55) !important;
-	backdrop-filter: blur(12px);
-	-webkit-backdrop-filter: blur(12px);
+	background: #121a2e !important;
 	cursor: pointer;
 	display: flex;
 	align-items: center;
@@ -21,8 +19,9 @@
 	-webkit-tap-highlight-color: transparent;
 
 	html[data-theme="light"] & {
-		background: rgba(255, 255, 255, 0.72) !important;
-		border-color: rgba(0, 166, 157, 0.14) !important;
+		background: #ffffff !important;
+		border-color: rgba(15, 23, 42, 0.1) !important;
+		box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
 	}
 
 	&:hover {
@@ -98,16 +97,14 @@
 	padding: 4px;
 	border-radius: 12px;
 	border: 1px solid rgba(255, 255, 255, 0.08);
-	background: rgba(15, 23, 42, 0.92);
-	backdrop-filter: blur(16px);
-	-webkit-backdrop-filter: blur(16px);
+	background: #121a2e;
 	box-shadow: 0 10px 32px rgba(0, 0, 0, 0.35);
 	z-index: 10;
 	animation: fadeIn 0.15s ease;
 
 	html[data-theme="light"] & {
-		background: rgba(255, 255, 255, 0.96);
-		border-color: rgba(0, 166, 157, 0.12);
+		background: #ffffff;
+		border-color: rgba(15, 23, 42, 0.1);
 		box-shadow: 0 10px 32px rgba(15, 23, 42, 0.1);
 	}
 }

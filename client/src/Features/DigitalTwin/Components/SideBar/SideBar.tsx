@@ -223,26 +223,29 @@ const SideBar = ({
 			className={styles["SideBar-container"]}
 		>
 			<div className={styles["sidebar-inner"]}>
-				<Dropdown
-					value={dropdownValue}
-					onChange={handleDropdownChange}
-					onModelChange={onModelChange}
-				/>
+				<div className={styles["sidebar-controls"]}>
+					<Dropdown
+						value={dropdownValue}
+						onChange={handleDropdownChange}
+						onModelChange={onModelChange}
+					/>
 
-				<div className={styles["segment-list"]}>
-					{segments.map((segment) => (
-						<button
-							key={segment.id}
-							type="button"
-							className={`${styles["segment-item"]} ${activeSegment === segment.id ? styles["active"] : ""}`}
-							onClick={() => setActiveSegment(segment.id)}
-						>
-							{segment.label}
-						</button>
-					))}
+					<div className={styles["segment-list"]}>
+						{segments.map((segment) => (
+							<button
+								key={segment.id}
+								type="button"
+								className={`${styles["segment-item"]} ${activeSegment === segment.id ? styles["active"] : ""}`}
+								onClick={() => setActiveSegment(segment.id)}
+							>
+								{segment.label}
+							</button>
+						))}
+					</div>
 				</div>
 
-				<div className={styles["icons-grid"]}>
+				<div className={styles["icons-scroll"]}>
+					<div className={styles["icons-grid"]}>
 					<IconButton
 						active={activeButton === "total"}
 						tooltip='Total Body'
@@ -283,6 +286,7 @@ const SideBar = ({
 							))}
 						</motion.div>
 					</AnimatePresence>
+				</div>
 				</div>
 			</div>
 		</motion.div>
