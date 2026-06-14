@@ -45,8 +45,8 @@ $max-width: 1200px;
 }
 
 // ─── Mixins ──────────────────────────────────────────────────────────────────
-@mixin container {
-	max-width: $max-width;
+@mixin container($max: $max-width) {
+	max-width: $max;
 	margin: 0 auto;
 	padding-left: 24px;
 	padding-right: 24px;
@@ -387,12 +387,11 @@ $max-width: 1200px;
 }
 
 .navInner {
-	@include container;
 	height: 100%;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	max-width: 1400px;
+	@include container(1400px);
 }
 
 .logo {
@@ -440,9 +439,9 @@ $max-width: 1200px;
 }
 
 .btnNavOutline {
-	@include btn-outline;
 	padding: 10px 18px;
 	font-size: 0.875rem;
+	@include btn-outline;
 }
 
 .navActions {
@@ -459,9 +458,9 @@ $max-width: 1200px;
 }
 
 .btnNavPrimary {
-	@include btn-solid;
 	padding: 10px 18px;
 	font-size: 0.875rem;
+	@include btn-solid;
 }
 
 // ─── Mobile navbar ───────────────────────────────────────────────────────────
@@ -643,19 +642,19 @@ $max-width: 1200px;
 }
 
 .btnMobileOutline {
-	@include btn-outline;
 	justify-content: center;
 	width: 100%;
 	padding: 12px 18px;
 	font-size: 0.9375rem;
+	@include btn-outline;
 }
 
 .btnMobilePrimary {
-	@include btn-solid;
 	justify-content: center;
 	width: 100%;
 	padding: 12px 18px;
 	font-size: 0.9375rem;
+	@include btn-solid;
 }
 
 @media (max-width: 480px) {
@@ -702,8 +701,6 @@ $max-width: 1200px;
 
 // ─── Hero ────────────────────────────────────────────────────────────────────
 .hero {
-	@include container;
-	max-width: 1400px;
 	margin-top: 72px;
 	padding-top: 80px;
 	padding-bottom: 80px;
@@ -711,6 +708,7 @@ $max-width: 1200px;
 	grid-template-columns: 1fr 1fr;
 	gap: 64px;
 	align-items: center;
+	@include container(1400px);
 
 	@media (max-width: 1024px) {
 		grid-template-columns: 1fr;
@@ -788,15 +786,15 @@ $max-width: 1200px;
 }
 
 .btnPrimary {
-	@include btn-solid;
 	padding: 14px 28px;
 	font-size: 1rem;
+	@include btn-solid;
 }
 
 .btnSecondary {
-	@include btn-outline;
 	padding: 14px 28px;
 	font-size: 1rem;
+	@include btn-outline;
 }
 
 .dataPulseRow {
@@ -885,9 +883,9 @@ $max-width: 1200px;
 
 // ─── Sections ────────────────────────────────────────────────────────────────
 .section {
-	@include container;
 	padding-top: 72px;
 	padding-bottom: 72px;
+	@include container;
 }
 
 .sectionHeader {
@@ -935,9 +933,9 @@ $max-width: 1200px;
 }
 
 .pillarCard {
-	@include card;
 	padding: 28px;
 	transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+	@include card;
 
 	&:hover {
 		border-color: rgba($brand, 0.35);
@@ -997,8 +995,8 @@ $max-width: 1200px;
 }
 
 .historyGrid {
-	@include container;
 	margin-top: 40px;
+	@include container;
 }
 
 .historyContent {
@@ -1012,11 +1010,11 @@ $max-width: 1200px;
 }
 
 .historyDetailCard {
-	@include card;
 	display: flex;
 	gap: 16px;
 	padding: 24px;
 	transition: box-shadow 0.25s ease, transform 0.25s ease;
+	@include card;
 
 	&:hover {
 		box-shadow: var(--lp-shadow-md);
@@ -1054,13 +1052,13 @@ $max-width: 1200px;
 
 // ─── Ecosystem ───────────────────────────────────────────────────────────────
 .ecosystemGrid {
-	@include container;
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	gap: 64px;
 	align-items: center;
 	padding-top: 72px;
 	padding-bottom: 72px;
+	@include container;
 
 	@media (max-width: 1024px) {
 		grid-template-columns: 1fr;
@@ -1136,8 +1134,8 @@ $max-width: 1200px;
 	padding-right: 0;
 
 	.sectionHeader {
-		@include container;
 		padding-top: 72px;
+		@include container;
 	}
 
 	.techGrid {
@@ -1146,10 +1144,10 @@ $max-width: 1200px;
 }
 
 .techGrid {
-	@include container;
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
 	gap: 24px;
+	@include container;
 
 	@media (max-width: 768px) {
 		grid-template-columns: 1fr;
@@ -1157,9 +1155,9 @@ $max-width: 1200px;
 }
 
 .techCard {
-	@include card;
 	padding: 28px;
 	transition: box-shadow 0.25s ease, transform 0.25s ease;
+	@include card;
 
 	&:hover {
 		box-shadow: var(--lp-shadow-md);
@@ -1195,11 +1193,11 @@ $max-width: 1200px;
 }
 
 .statsGrid {
-	@include container;
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
 	gap: 32px;
 	text-align: center;
+	@include container;
 
 	@media (max-width: 900px) {
 		grid-template-columns: repeat(2, 1fr);
@@ -1235,9 +1233,9 @@ $max-width: 1200px;
 
 // ─── FAQ ─────────────────────────────────────────────────────────────────────
 .faqSection {
-	@include container;
 	padding-top: 72px;
 	padding-bottom: 72px;
+	@include container;
 }
 
 .faqList {
@@ -1249,9 +1247,9 @@ $max-width: 1200px;
 }
 
 .faqItem {
-	@include card;
 	overflow: hidden;
 	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+	@include card;
 }
 
 .faqOpen {
@@ -1310,21 +1308,21 @@ $max-width: 1200px;
 
 // ─── Builder ─────────────────────────────────────────────────────────────────
 .builderSection {
-	@include container;
 	padding-top: 72px;
 	padding-bottom: 72px;
 	background: var(--lp-bg-alt);
 	border-top: 1px solid var(--lp-border);
+	@include container;
 }
 
 .builderCard {
-	@include card;
 	display: grid;
 	grid-template-columns: auto 1fr;
 	gap: 32px;
 	padding: 32px;
 	margin-top: 8px;
 	transition: box-shadow 0.25s ease;
+	@include card;
 
 	&:hover {
 		box-shadow: var(--lp-shadow-md);
@@ -1446,9 +1444,8 @@ $max-width: 1200px;
 }
 
 .finalCtaContent {
-	@include container;
 	text-align: center;
-	max-width: 560px;
+	@include container(560px);
 }
 
 .finalTitle {
@@ -1466,9 +1463,9 @@ $max-width: 1200px;
 }
 
 .btnLarge {
-	@include btn-solid;
 	padding: 16px 32px;
 	font-size: 1.0625rem;
+	@include btn-solid;
 }
 
 // ─── Modal ───────────────────────────────────────────────────────────────────
@@ -1581,15 +1578,15 @@ $max-width: 1200px;
 }
 
 .btnModalOutline {
-	@include btn-outline;
 	padding: 10px 18px;
 	font-size: 0.875rem;
+	@include btn-outline;
 }
 
 .btnModalPrimary {
-	@include btn-solid;
 	padding: 10px 18px;
 	font-size: 0.875rem;
+	@include btn-solid;
 }
 
 // ─── Footer ──────────────────────────────────────────────────────────────────
@@ -1600,8 +1597,7 @@ $max-width: 1200px;
 }
 
 .footerInner {
-	@include container;
-	max-width: 1400px;
+	@include container(1400px);
 }
 
 .footerTop {
