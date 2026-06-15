@@ -757,15 +757,6 @@ const Tests = () => {
 
 	return (
 		<div className={styles["tests-container"]}>
-			{/* Futuristic geometric mesh background overlay */}
-			<div className={styles["bg-grid-overlay"]} />
-
-			{/* Drifting premium ambient background blobs */}
-			<div className={styles["bg-glow-blob-1"]} />
-			<div className={styles["bg-glow-blob-2"]} />
-			<div className={styles["bg-glow-blob-3"]} />
-			<div className={styles["bg-glow-blob-4"]} />
-			
 			<div className={styles["tests-content"]}>
 				
 				{/* Header Info Panel */}
@@ -795,20 +786,90 @@ const Tests = () => {
 									transition={{ duration: 0.35 }}
 									className={styles["systems-hub"]}
 								>
-									<div className={styles["hub-intro"]}>
-										<h2>Select Diagnostic Target</h2>
-										<p>Choose which organ system or biological pathway you want to examine. Complete the exam with a perfect score to seal a cryptographically encrypted verification credential inside your secure health vault.</p>
+									<div className={styles["diagnostic-stats-bar"]}>
+										<div className={styles["stats-item"]}>
+											<span className={styles["stats-dot-active"]} />
+											<div className={styles["stats-text"]}>
+												<span className={styles["stats-label"]}>Personal Health Vault</span>
+												<strong className={styles["stats-val"]}>Fully Secured</strong>
+											</div>
+										</div>
+										<div className={styles["stats-item"]}>
+											<Shield size={16} className={styles["stats-icon-purple"]} />
+											<div className={styles["stats-text"]}>
+												<span className={styles["stats-label"]}>Security Protection</span>
+												<strong className={styles["stats-val"]}>Verified Safe</strong>
+											</div>
+										</div>
+										<div className={styles["stats-item"]}>
+											<Trophy size={16} className={styles["stats-icon-gold"]} />
+											<div className={styles["stats-text"]}>
+												<span className={styles["stats-label"]}>Available Quizzes</span>
+												<strong className={styles["stats-val"]}>{EXAM_SYSTEMS.length} Body Systems</strong>
+											</div>
+										</div>
+										<div className={styles["stats-item"]}>
+											<Sparkles size={16} className={styles["stats-icon-teal"]} />
+											<div className={styles["stats-text"]}>
+												<span className={styles["stats-label"]}>Total Questions</span>
+												<strong className={styles["stats-val"]}>20 Health Questions</strong>
+											</div>
+										</div>
 									</div>
 
-									{/* Daily Epigenetic Insights & Rotating Bio-Tips */}
+									<div className={styles["systems-section"]}>
+										<div className={styles["hub-intro"]}>
+											<span className={styles["section-eyebrow"]}>Interactive exams</span>
+											<h2>Select a diagnostic target</h2>
+											<p>Choose an organ system to examine. Score perfectly to seal a verified credential in your secure health vault.</p>
+										</div>
+
+										<div className={styles["systems-grid"]}>
+										{EXAM_SYSTEMS.map((sys) => {
+											return (
+												<div 
+													key={sys.id} 
+													className={`${styles["system-card"]} ${styles[sys.colorClass]}`}
+												>
+													<div className={styles["sys-card-header"]}>
+														<div className={styles["sys-icon-box"]}>
+															{sys.icon}
+														</div>
+														<div className={styles["sys-meta-badges-row"]}>
+															<div className={styles["sys-meta-badge"]}>{sys.questions.length} Questions</div>
+														</div>
+													</div>
+													<h3 className={styles["sys-title"]}>{sys.name}</h3>
+													<p className={styles["sys-desc"]}>{sys.description}</p>
+													
+													<div className={styles["sys-focus-line"]}>
+														<strong>Focus: </strong>{sys.focus}
+													</div>
+ 
+													<button
+														className={styles["sys-action-btn"]}
+														onClick={() => startExam(sys)}
+													>
+														Examine System
+														<ArrowRight size={14} />
+													</button>
+												</div>
+											);
+										})}
+										</div>
+									</div>
+
 									<div className={`${styles["daily-tips-container"]} ${newRotationTriggered ? styles["rotating-active"] : ""}`}>
 										<div className={styles["daily-tips-header"]}>
 											<div className={styles["header-row-meta"]}>
 												<Sparkles size={16} className={styles["sparkles-icon"]} />
-												<h3>Daily Molecular Epigenetic Bio-Tips</h3>
+												<div>
+													<span className={styles["section-eyebrow"]}>Daily insights</span>
+													<h3>Molecular epigenetic bio-tips</h3>
+												</div>
 											</div>
 											<div className={styles["header-actions-row"]}>
-												<span className={styles["daily-rotate-badge"]}>🌐 WHO, NIH & CDC Guidelines</span>
+												<span className={styles["daily-rotate-badge"]}>WHO, NIH & CDC</span>
 												<button
 													type="button"
 													className={styles["resync-btn"]}
@@ -820,35 +881,10 @@ const Tests = () => {
 													title="Simulate 24h Rotation & Re-sync"
 												>
 													<RefreshCw size={11} />
-													Sync Guidelines
+													Sync
 												</button>
 											</div>
 										</div>
-
-										{/* Premium dynamic guidelines banner */}
-										<motion.div 
-											initial={{ opacity: 0, y: -12 }}
-											animate={{ opacity: 1, y: 0 }}
-											transition={{ duration: 0.5, delay: 0.1 }}
-											className={styles["daily-tips-announcement"]}
-										>
-											<div className={styles["announcement-glow"]} />
-											<div className={styles["announcement-content"]}>
-												<div className={styles["announcement-icon-wrap"]}>
-													<Globe size={18} className={styles["announcement-globe-icon"]} />
-													<span className={styles["announcement-pulse-dot"]} />
-												</div>
-												<div className={styles["announcement-text"]}>
-													<h4>Daily Bio-Tips Updated!</h4>
-													<p>
-														We put today's personalized health tips together using official clinical guidelines from the 
-														<span className={styles["guideline-badge"]} title="World Health Organization">WHO</span>, 
-														<span className={styles["guideline-badge"]} title="National Institutes of Health">NIH</span>, and 
-														<span className={styles["guideline-badge"]} title="Centers for Disease Control and Prevention">CDC</span>.
-													</p>
-												</div>
-											</div>
-										</motion.div>
 
 										<div className={styles["daily-tips-grid"]}>
 											{dailyTips.map((tip, index) => {
@@ -910,78 +946,12 @@ const Tests = () => {
 										</div>
 									</div>
 
-									{/* Diagnostic Enclave Stats Bar */}
-									<div className={styles["diagnostic-stats-bar"]}>
-										<div className={styles["stats-item"]}>
-											<span className={styles["stats-dot-active"]} />
-											<div className={styles["stats-text"]}>
-												<span className={styles["stats-label"]}>Personal Health Vault</span>
-												<strong className={styles["stats-val"]}>Fully Secured</strong>
-											</div>
-										</div>
-										<div className={styles["stats-item"]}>
-											<Shield size={16} className={styles["stats-icon-purple"]} />
-											<div className={styles["stats-text"]}>
-												<span className={styles["stats-label"]}>Security Protection</span>
-												<strong className={styles["stats-val"]}>Verified Safe</strong>
-											</div>
-										</div>
-										<div className={styles["stats-item"]}>
-											<Trophy size={16} className={styles["stats-icon-gold"]} />
-											<div className={styles["stats-text"]}>
-												<span className={styles["stats-label"]}>Available Quizzes</span>
-												<strong className={styles["stats-val"]}>{EXAM_SYSTEMS.length} Body Systems</strong>
-											</div>
-										</div>
-										<div className={styles["stats-item"]}>
-											<Sparkles size={16} className={styles["stats-icon-teal"]} />
-											<div className={styles["stats-text"]}>
-												<span className={styles["stats-label"]}>Total Questions</span>
-												<strong className={styles["stats-val"]}>20 Health Questions</strong>
-											</div>
-										</div>
-									</div>
-
-									<div className={styles["systems-grid"]}>
-										{EXAM_SYSTEMS.map((sys) => {
-											return (
-												<div 
-													key={sys.id} 
-													className={`${styles["system-card"]} ${styles[sys.colorClass]}`}
-												>
-													<div className={styles["sys-card-header"]}>
-														<div className={styles["sys-icon-box"]}>
-															{sys.icon}
-														</div>
-														<div className={styles["sys-meta-badges-row"]}>
-															<div className={styles["sys-meta-badge"]}>{sys.questions.length} Questions</div>
-														</div>
-													</div>
-													<h3 className={styles["sys-title"]}>{sys.name}</h3>
-													<p className={styles["sys-desc"]}>{sys.description}</p>
-													
-													<div className={styles["sys-focus-line"]}>
-														<strong>Focus: </strong>{sys.focus}
-													</div>
- 
-													<button
-														className={styles["sys-action-btn"]}
-														onClick={() => startExam(sys)}
-													>
-														Examine System
-														<ArrowRight size={14} />
-													</button>
-												</div>
-											);
-										})}
-									</div>
-
-									{/* Advanced Molecular Insights Library */}
 									<div className={styles["insights-library"]}>
 										<div className={styles["library-header"]}>
 											<Sparkles size={20} className={styles["sparkle-icon"]} />
-											<h2>Your Personal Biomarker Library</h2>
-											<p>Learn about the key health markers that Genetiq tracks. This information is automatically calculated and compiled from your uploaded lab results, synced smart devices, and health history to give you personalized health insights.</p>
+											<span className={styles["section-eyebrow"]}>Reference</span>
+											<h2>Your personal biomarker library</h2>
+											<p>Key health markers Genetiq tracks from your labs, devices, and health history.</p>
 										</div>
 										
 										<div className={styles["insights-grid"]}>
