@@ -1,9 +1,16 @@
 .main-layout {
 	min-height: 100vh;
+	min-height: 100dvh;
 	display: flex;
 	flex-direction: column;
 	background: transparent;
 	position: relative;
+
+	&:has([data-dashboard]) {
+		height: 100vh;
+		height: 100dvh;
+		overflow: hidden;
+	}
 }
 
 .content-wrapper {
@@ -11,11 +18,24 @@
 	display: flex;
 	flex-direction: column;
 	width: 100%;
+	min-height: 0;
 	position: relative;
 	z-index: 1;
 
+	// Dashboard uses an internal scroll panel — fill viewport below navbar.
+	&:has([data-dashboard]) {
+		flex: 1;
+		min-height: 0;
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+	}
+
 	@media (max-width: 1024px) {
 		padding-top: 60px; /* Fixed navbar height offset */
+		height: 100dvh;
+		max-height: 100dvh;
+		overflow: hidden;
 	}
 
 	@media (max-width: 768px) {

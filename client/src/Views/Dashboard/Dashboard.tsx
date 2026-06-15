@@ -3,6 +3,7 @@ import {
 	useEffect,
 	useCallback,
 	useTransition,
+	useRef,
 	lazy,
 	Suspense,
 } from "react";
@@ -53,9 +54,12 @@ const Dashboard = () => {
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [mobileWidgetsReady, setMobileWidgetsReady] = useState(false);
+	const panelScrollRef = useRef<HTMLDivElement | null>(null);
+	const leftColumnRef = useRef<HTMLDivElement | null>(null);
 	const { attachPanelScroll } = usePanelScrollPerf();
 	const setPanelRef = useCallback(
 		(el: HTMLDivElement | null) => {
+			panelScrollRef.current = el;
 			attachPanelScroll(el);
 		},
 		[attachPanelScroll],
@@ -110,12 +114,6 @@ const Dashboard = () => {
 	}, []);
 
 	useEffect(() => {
-		if (isMobile && isDrawerOpen) {
-			setMobileWidgetsReady(true);
-		}
-	}, [isMobile, isDrawerOpen]);
-
-	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
 			if (e.key === "Escape") {
 				if (isDrawerOpen) setIsDrawerOpen(false);
@@ -127,15 +125,25 @@ const Dashboard = () => {
 	}, [isDrawerOpen, isSidebarOpen]);
 
 	useEffect(() => {
-		if (isDrawerOpen && isMobile) {
-			document.body.style.overflow = "hidden";
+		if (!isMobile) return;
+
+		const root = document.documentElement;
+		if (isDrawerOpen) {
+			root.classList.add("dashboard-drawer-open");
 		} else {
-			document.body.style.overflow = "";
+			root.classList.remove("dashboard-drawer-open");
 		}
+
 		return () => {
-			document.body.style.overflow = "";
+			root.classList.remove("dashboard-drawer-open");
 		};
 	}, [isDrawerOpen, isMobile]);
+
+	useEffect(() => {
+		if (isMobile) {
+			setMobileWidgetsReady(true);
+		}
+	}, [isMobile]);
 
 	const toggleDrawer = useCallback(() => {
 		startTransition(() => {
@@ -156,6 +164,44 @@ const Dashboard = () => {
 			setIsNotFirstAnimation(true);
 		}
 	}, [selectedCategory]);
+
+	// Forward mouse wheel over the 3D model column into the widgets scroll panel.
+	useEffect(() => {
+		if (isMobile) return;
+
+		const leftColumn = leftColumnRef.current;
+		const scrollPanel = panelScrollRef.current;
+		if (!leftColumn || !scrollPanel) return;
+
+		const onWheel = (event: WheelEvent) => {
+			if (scrollPanel.scrollHeight <= scrollPanel.clientHeight) return;
+
+			const target = event.target as HTMLElement | null;
+			if (target?.closest("button, a, input, select, textarea, [role='button']")) {
+				return;
+			}
+
+			const delta =
+				Math.abs(event.deltaY) >= Math.abs(event.deltaX)
+					? event.deltaY
+					: event.deltaX;
+			if (delta === 0) return;
+
+			const maxScroll = scrollPanel.scrollHeight - scrollPanel.clientHeight;
+			const nextScroll = Math.min(
+				maxScroll,
+				Math.max(0, scrollPanel.scrollTop + delta),
+			);
+
+			if (nextScroll === scrollPanel.scrollTop) return;
+
+			event.preventDefault();
+			scrollPanel.scrollTop = nextScroll;
+		};
+
+		leftColumn.addEventListener("wheel", onWheel, { passive: false });
+		return () => leftColumn.removeEventListener("wheel", onWheel);
+	}, [isMobile, pageIn]);
 
 	useEffect(() => {
 		const delay = isNotFirstAnimation ? 80 : 200;
@@ -213,7 +259,10 @@ const Dashboard = () => {
 	);
 
 	return (
-		<div className={`${styles["Dashboard-layout"]} ${pageIn ? styles.pageIn : ""}`}>
+		<div
+			data-dashboard
+			className={`${styles["Dashboard-layout"]} ${pageIn ? styles.pageIn : ""}`}
+		>
 			<CameraProvider>
 				<div className={styles["Dashboard-content"]}>
 					<div className={styles.bgLayer} aria-hidden>
@@ -221,7 +270,7 @@ const Dashboard = () => {
 						<div className={styles.bgGlow} />
 					</div>
 
-					<div className={styles["Dashboard-left"]}>
+					<div ref={leftColumnRef} className={styles["Dashboard-left"]}>
 						<div className={styles["Dashboard-dt-container"]}>
 							<div className={styles["Dashboard-model"]}>
 								<Suspense fallback={<WidgetFallback minHeight={400} />}>
