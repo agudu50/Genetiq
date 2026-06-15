@@ -224,9 +224,12 @@ export const HealthHistoryWidget = () => {
 					</div>
 					<div className={styles.titleText}>
 						<h3 className={styles.title}>{t("clinical_history")}</h3>
-						<p className={styles.subtitle}>
-							{combinedItems.length} {t("clinical_records") || "records"}
-						</p>
+						<div className={styles.titleMeta}>
+							<span className={styles.recordsPill}>
+								{combinedItems.length}{" "}
+								{t("clinical_records") || "records"}
+							</span>
+						</div>
 					</div>
 				</div>
 
@@ -274,10 +277,13 @@ export const HealthHistoryWidget = () => {
 							<div className={styles.itemCard}>
 								<div className={styles.itemAccent} aria-hidden />
 
+								<div className={styles.itemIconMobile} aria-hidden>
+									{renderIcon(item.icon)}
+								</div>
+
 								<div className={styles.content}>
 									<div className={styles.row}>
 										<span className={styles.itemType}>
-											{renderIcon(item.icon)}
 											{t(item.type)}
 										</span>
 										<span className={styles.itemDate}>
@@ -286,7 +292,7 @@ export const HealthHistoryWidget = () => {
 										</span>
 									</div>
 
-									<h4 className={styles.itemTitle}>{t(item.title)}</h4>
+									<h4 className={styles.itemTitle}>{item.title}</h4>
 
 									<div className={styles.statusRow}>
 										<span

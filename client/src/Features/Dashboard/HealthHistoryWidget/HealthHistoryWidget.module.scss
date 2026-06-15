@@ -130,11 +130,6 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 	align-items: center;
 	gap: 16px;
 	z-index: 2;
-
-	@media (max-width: 600px) {
-		flex-direction: column;
-		align-items: stretch;
-	}
 }
 
 .titleBlock {
@@ -192,15 +187,37 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 	}
 }
 
+.titleMeta {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 2px;
+}
+
+.recordsPill {
+	display: inline-flex;
+	align-items: center;
+	padding: 3px 10px;
+	border-radius: 100px;
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	color: var(--text-secondary, #94a3b8);
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+
+	html[data-theme="light"] & {
+		color: #64748b;
+		background: #f1f5f9;
+		border-color: #e2e8f0;
+	}
+}
+
 .headerActions {
 	display: flex;
 	gap: 8px;
 	align-items: center;
 	flex-shrink: 0;
-
-	@media (max-width: 600px) {
-		width: 100%;
-	}
 }
 
 .handoverBtn {
@@ -465,14 +482,13 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 	text-transform: uppercase;
 	color: var(--accent-color);
 
-	svg {
-		opacity: 0.85;
-		flex-shrink: 0;
-	}
-
 	html[data-theme="light"] & {
 		filter: saturate(1.1);
 	}
+}
+
+.itemIconMobile {
+	display: none;
 }
 
 .itemDate {
@@ -628,6 +644,212 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 		html[data-theme="light"] & {
 			background: rgba(15, 23, 42, 0.05);
 		}
+	}
+}
+
+// ─── Mobile enhancements ──────────────────────────────────────────────────────
+
+@media (max-width: 768px) {
+	.container {
+		padding: 16px;
+		gap: 14px;
+		border-radius: 18px;
+
+		&:hover {
+			transform: none;
+		}
+	}
+
+	.cardAccentLine {
+		left: 16px;
+		right: 16px;
+	}
+
+	.cardGlowBlob {
+		width: 160px;
+		height: 160px;
+		top: -40px;
+		right: -30px;
+		opacity: 0.65;
+	}
+
+	.header {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 12px;
+	}
+
+	.titleBlock {
+		gap: 12px;
+	}
+
+	.titleIconWrap {
+		width: 40px;
+		height: 40px;
+		border-radius: 12px;
+	}
+
+	.title {
+		font-size: 16px;
+	}
+
+	.recordsPill {
+		font-size: 10px;
+		padding: 3px 9px;
+	}
+
+	.headerActions {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 8px;
+		width: 100%;
+	}
+
+	.handoverBtn,
+	.viewAll {
+		justify-content: center;
+		min-height: 44px;
+		padding: 10px 12px;
+		font-size: 11px;
+		border-radius: 12px;
+		-webkit-tap-highlight-color: transparent;
+
+		span {
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
+
+	.handoverBtn:active,
+	.viewAll:active {
+		transform: scale(0.98);
+	}
+
+	.timeline {
+		padding-left: 0;
+		gap: 8px;
+	}
+
+	.timelineSpine {
+		display: none;
+	}
+
+	.historyItem {
+		margin-bottom: 0;
+		gap: 0;
+		-webkit-tap-highlight-color: transparent;
+
+		&:active .itemCard {
+			transform: scale(0.99);
+			background: rgba(255, 255, 255, 0.07);
+
+			html[data-theme="light"] & {
+				background: #f8fafc;
+			}
+		}
+	}
+
+	.timelineNode {
+		display: none;
+	}
+
+	.itemCard {
+		padding: 12px;
+		border-radius: 14px;
+		gap: 10px;
+		align-items: flex-start;
+
+		.historyItem:hover & {
+			transform: none;
+		}
+	}
+
+	.itemIconMobile {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 36px;
+		height: 36px;
+		border-radius: 11px;
+		flex-shrink: 0;
+		color: var(--accent-color);
+		background: color-mix(in srgb, var(--accent-color) 14%, transparent);
+		border: 1px solid color-mix(in srgb, var(--accent-color) 24%, transparent);
+	}
+
+	.itemAccent {
+		top: 10px;
+		bottom: 10px;
+		opacity: 0.75;
+	}
+
+	.content {
+		padding-left: 0;
+		gap: 4px;
+	}
+
+	.row {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 3px;
+	}
+
+	.itemType {
+		font-size: 9px;
+		letter-spacing: 0.08em;
+	}
+
+	.itemDate {
+		font-size: 10px;
+		order: -1;
+	}
+
+	.itemTitle {
+		font-size: 13px;
+		font-weight: 700;
+		white-space: normal;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		line-height: 1.35;
+	}
+
+	.statusBadge {
+		font-size: 9px;
+		padding: 3px 8px;
+	}
+
+	.itemArrow {
+		opacity: 0.45;
+		transform: none;
+		align-self: center;
+		width: 24px;
+		height: 24px;
+		margin-top: 2px;
+	}
+}
+
+@media (max-width: 400px) {
+	.handoverBtn span,
+	.viewAll span {
+		font-size: 10px;
+	}
+}
+
+@media (hover: none) and (pointer: coarse) {
+	.itemArrow {
+		opacity: 0.45;
+		transform: none;
+	}
+
+	.historyItem:hover .itemCard {
+		transform: none;
+	}
+
+	.container:hover {
+		transform: none;
+		box-shadow: inherit;
 	}
 }
 
