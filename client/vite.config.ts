@@ -9,8 +9,38 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default defineConfig({
-	base: "/", // Adjust if deploying to a subdirectory
+	base: "/",
 	plugins: [react(), svgr()],
+	build: {
+		rollupOptions: {
+			output: {
+				manualChunks(id) {
+					if (!id.includes("node_modules")) return;
+
+					if (
+						id.includes("three") ||
+						id.includes("@react-three") ||
+						id.includes("postprocessing")
+					) {
+						return "three-vendor";
+					}
+					if (id.includes("framer-motion")) {
+						return "motion-vendor";
+					}
+					if (
+						id.includes("react-dom") ||
+						id.includes("react-router") ||
+						id.includes("/react/")
+					) {
+						return "react-vendor";
+					}
+					if (id.includes("@reduxjs") || id.includes("react-redux")) {
+						return "redux-vendor";
+					}
+				},
+			},
+		},
+	},
 	resolve: {
 		alias: {
 			"@": path.resolve(__dirname, "src"),

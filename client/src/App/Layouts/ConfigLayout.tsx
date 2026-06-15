@@ -1,11 +1,14 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useNavigation } from "react-router-dom";
 import { paths } from "@/App/Routes/Paths";
 import ThemeSwitcher from "@/Features/Structural/ThemeSwitcher/ThemeSwitcher";
 import LanguageSwitcher from "@/Features/Structural/LanguageSwitcher/LanguageSwitcher";
+import { RouteLoadingFallback } from "@/App/Components/RouteLoadingFallback/RouteLoadingFallback";
 import styles from "./ConfigLayout.module.scss";
 
 export const ConfigLayout = () => {
 	const navigate = useNavigate();
+	const navigation = useNavigation();
+	const isNavigating = navigation.state === "loading";
 
 	return (
 		<div className={styles.container}>
@@ -27,6 +30,7 @@ export const ConfigLayout = () => {
 
 			{/* ── Page content ── */}
 			<main className={styles.main}>
+				{isNavigating && <RouteLoadingFallback overlay />}
 				<Outlet />
 			</main>
 		</div>

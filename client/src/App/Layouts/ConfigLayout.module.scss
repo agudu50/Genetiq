@@ -125,4 +125,6 @@ $brand: #007c72;
 	display: flex;
 	flex-direction: column;
 	width: 100%;
+	position: relative;
+	min-height: 0;
 }

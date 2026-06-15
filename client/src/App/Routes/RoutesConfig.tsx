@@ -7,6 +7,7 @@ import AuthLayout from "../Layouts/Auth/AuthLayout";
 import { ConfigLayout } from "../Layouts/ConfigLayout";
 import RouteErrorFallback from "./RouteErrorFallback";
 import { lazyWithRetry } from "./lazyWithRetry";
+import { RouteLoadingFallback } from "@/App/Components/RouteLoadingFallback/RouteLoadingFallback";
 import Landing from "@/Views/Landing/Landing";
 const Dashboard = lazyWithRetry(() => import("@/Views/Dashboard/Dashboard"));
 const Login = lazyWithRetry(() => import("@/Views/Auth/Login/Login"));
@@ -35,7 +36,7 @@ const Terms = lazyWithRetry(() => import("@/Views/Legal/Terms/Terms"));
 const Privacy = lazyWithRetry(() => import("@/Views/Legal/Privacy/Privacy"));
 
 const Lazy = ({ children }: { children: React.ReactNode }) => (
-	<Suspense fallback={null}>{children}</Suspense>
+	<Suspense fallback={<RouteLoadingFallback />}>{children}</Suspense>
 );
 
 const RoutesConfig: RouteObject[] = [

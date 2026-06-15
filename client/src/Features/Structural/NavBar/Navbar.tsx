@@ -6,6 +6,7 @@ import { RootState } from "@/App/Redux/store";
 import { resetUser } from "@/App/Redux/userSlice";
 import { AuthCredentials } from "@/App/Services/AuthCredentials";
 import { paths } from "@/App/Routes/Paths";
+import { prefetchRoute } from "@/App/Routes/routePrefetch";
 import styles from "./Navbar.module.scss";
 import NotificationHub from "./Components/NotificationsHub/NotificationsHub";
 import LanguageSwitcher from "@/Features/Structural/LanguageSwitcher/LanguageSwitcher";
@@ -65,6 +66,13 @@ const Navbar = () => {
 		return pathToKey[currentPath] || "dashboard_nav";
 	}, [location.pathname]);
 
+	const goTo = (path: string) => {
+		prefetchRoute(path);
+		navigate(path);
+	};
+
+	const prefetchOnIntent = (path: string) => () => prefetchRoute(path);
+
 	useEffect(() => {
 		const check = () => setIsMobile(window.innerWidth <= 768);
 		check();
@@ -91,7 +99,7 @@ const Navbar = () => {
 			<div className={styles["navbar-container"]}>
 				<div
 					className={styles["logo-wrapper"]}
-					onClick={() => navigate(paths.dashboard.root)}
+					onClick={() => goTo(paths.dashboard.root)}
 				>
 					<img
 						src='/assets/genetiq_logo_v2.png'
@@ -106,25 +114,33 @@ const Navbar = () => {
 					<nav className={styles["desktop-nav"]}>
 						<button
 							className={`${styles["nav-item"]} ${activeTab === "dashboard_nav" ? styles["nav-active"] : ""}`}
-							onClick={() => navigate(paths.dashboard.root)}
+							onClick={() => goTo(paths.dashboard.root)}
+							onMouseEnter={prefetchOnIntent(paths.dashboard.root)}
+							onFocus={prefetchOnIntent(paths.dashboard.root)}
 						>
 							{t("dashboard_nav") || "Dashboard"}
 						</button>
 						<button
 							className={`${styles["nav-item"]} ${activeTab === "goals_nav" ? styles["nav-active"] : ""}`}
-							onClick={() => navigate(paths.config.goals)}
+							onClick={() => goTo(paths.config.goals)}
+							onMouseEnter={prefetchOnIntent(paths.config.goals)}
+							onFocus={prefetchOnIntent(paths.config.goals)}
 						>
 							{t("goals_nav") || "Goals"}
 						</button>
 						<button
 							className={`${styles["nav-item"]} ${activeTab === "history_nav" ? styles["nav-active"] : ""}`}
-							onClick={() => navigate(paths.clinicalHistory)}
+							onClick={() => goTo(paths.clinicalHistory)}
+							onMouseEnter={prefetchOnIntent(paths.clinicalHistory)}
+							onFocus={prefetchOnIntent(paths.clinicalHistory)}
 						>
 							{t("history_nav") || "History"}
 						</button>
 						<button
 							className={`${styles["nav-item"]} ${activeTab === "tests_nav" ? styles["nav-active"] : ""}`}
-							onClick={() => navigate(paths.config.tests)}
+							onClick={() => goTo(paths.config.tests)}
+							onMouseEnter={prefetchOnIntent(paths.config.tests)}
+							onFocus={prefetchOnIntent(paths.config.tests)}
 						>
 							{t("tests_nav") || "Tests"}
 						</button>
@@ -250,7 +266,8 @@ const Navbar = () => {
 					<nav className={styles["bottom-tabs"]}>
 						<button
 							className={`${styles["tab-item"]} ${activeTab === "dashboard_nav" ? styles["tab-active"] : ""}`}
-							onClick={() => navigate(paths.dashboard.root)}
+							onClick={() => goTo(paths.dashboard.root)}
+							onTouchStart={prefetchOnIntent(paths.dashboard.root)}
 						>
 							<span className={styles["tab-icon"]}>
 								<DashboardIcon />
@@ -261,7 +278,8 @@ const Navbar = () => {
 						</button>
 						<button
 							className={`${styles["tab-item"]} ${activeTab === "goals_nav" ? styles["tab-active"] : ""}`}
-							onClick={() => navigate(paths.config.goals)}
+							onClick={() => goTo(paths.config.goals)}
+							onTouchStart={prefetchOnIntent(paths.config.goals)}
 						>
 							<span className={styles["tab-icon"]}>
 								<GoalsIcon />
@@ -272,7 +290,8 @@ const Navbar = () => {
 						</button>
 						<button
 							className={`${styles["tab-item"]} ${activeTab === "history_nav" ? styles["tab-active"] : ""}`}
-							onClick={() => navigate(paths.clinicalHistory)}
+							onClick={() => goTo(paths.clinicalHistory)}
+							onTouchStart={prefetchOnIntent(paths.clinicalHistory)}
 						>
 							<span className={styles["tab-icon"]}>
 								<HistoryIcon />
@@ -283,7 +302,8 @@ const Navbar = () => {
 						</button>
 						<button
 							className={`${styles["tab-item"]} ${activeTab === "tests_nav" ? styles["tab-active"] : ""}`}
-							onClick={() => navigate(paths.config.tests)}
+							onClick={() => goTo(paths.config.tests)}
+							onTouchStart={prefetchOnIntent(paths.config.tests)}
 						>
 							<span className={styles["tab-icon"]}>
 								<TestIcon />
