@@ -33,12 +33,26 @@
 
 	@media (max-width: 1024px) {
 		padding-top: 60px; /* Fixed navbar height offset */
-		height: 100dvh;
-		max-height: 100dvh;
-		overflow: hidden;
+
+		// Dashboard keeps a fixed viewport with internal scroll panels.
+		&:has([data-dashboard]) {
+			height: 100dvh;
+			max-height: 100dvh;
+			overflow: hidden;
+		}
 	}
 
 	@media (max-width: 768px) {
 		padding-top: 52px;
+
+		// Goals, History, Tests, etc. — allow natural page scroll on mobile.
+		&:not(:has([data-dashboard])) {
+			min-height: auto;
+			height: auto;
+			max-height: none;
+			overflow: visible;
+			// Clearance for the floating bottom tab bar (12px offset + 60px height).
+			padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+		}
 	}
 }
