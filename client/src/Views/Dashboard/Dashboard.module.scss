@@ -51,18 +51,20 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 
 .bgGlow {
 	position: absolute;
-	top: 8%;
-	left: 6%;
+	top: 12%;
+	right: 8%;
+	left: auto;
 	width: min(480px, 55vw);
 	height: min(480px, 55vw);
 	border-radius: 50%;
-	background: radial-gradient(circle, rgba($teal-primary, 0.14) 0%, transparent 68%);
+	background: radial-gradient(circle, rgba(255, 255, 255, 0.04) 0%, transparent 68%);
 	filter: blur(64px);
 	animation: none;
+	opacity: 0.5;
 
 	html[data-theme="light"] & {
-		background: radial-gradient(circle, rgba($teal-primary, 0.1) 0%, transparent 68%);
-		opacity: 0.85;
+		background: radial-gradient(circle, rgba(15, 23, 42, 0.04) 0%, transparent 68%);
+		opacity: 0.6;
 	}
 }
 
@@ -175,33 +177,19 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 	border-radius: 20px;
 	box-shadow: 
 		0 24px 80px -15px rgba(0, 0, 0, 0.6), 
-		inset 0 1px 0 rgba(255, 255, 255, 0.04),
-		0 0 40px rgba($teal-primary, 0.01);
+		inset 0 1px 0 rgba(255, 255, 255, 0.04);
 	overflow: hidden;
 	transition: border-color 0.3s ease, box-shadow 0.3s ease;
 
 	&::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background: radial-gradient(circle at 50% 50%, rgba($teal-primary, 0.04) 0%, transparent 80%);
-		pointer-events: none;
-		z-index: 2;
-		opacity: 0.6;
-		transition: opacity 0.3s ease;
-		animation: none;
+		display: none;
 	}
 
 	&:hover {
-		border-color: rgba($teal-primary, 0.2);
+		border-color: rgba(255, 255, 255, 0.1);
 		box-shadow: 
 			0 24px 80px -15px rgba(0, 0, 0, 0.65), 
-			inset 0 1px 0 rgba(255, 255, 255, 0.06),
-			0 0 50px rgba($teal-primary, 0.03);
-		
-		&::before {
-			opacity: 1;
-		}
+			inset 0 1px 0 rgba(255, 255, 255, 0.06);
 	}
 
 	html[data-theme="light"] & {
@@ -213,14 +201,13 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 			inset 0 1px 0 rgba(255, 255, 255, 0.9);
 
 		&::before {
-			background: radial-gradient(circle at 50% 40%, rgba($teal-primary, 0.06) 0%, transparent 70%);
-			opacity: 1;
+			display: none;
 		}
 
 		&:hover {
 			border-color: rgba($teal-primary, 0.35);
 			box-shadow:
-				0 4px 20px rgba(0, 166, 157, 0.08),
+				0 4px 20px rgba(15, 23, 42, 0.08),
 				0 16px 48px rgba(15, 23, 42, 0.08),
 				inset 0 1px 0 rgba(255, 255, 255, 1);
 		}
