@@ -123,4 +123,41 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 		);
 		pointer-events: none;
 	}
+
+	@media (max-width: 768px) {
+		gap: 6px;
+		padding-left: 0;
+
+		&::before {
+			display: none;
+		}
+	}
+}
+
+@media (max-width: 768px) {
+	.section {
+		gap: 14px;
+	}
+
+	.titleIcon {
+		width: 38px;
+		height: 38px;
+		border-radius: 12px;
+	}
+
+	.title {
+		font-size: 16px;
+	}
+
+	.subtitle {
+		font-size: 11px;
+	}
+
+	.list {
+		gap: 12px;
+	}
+
+	.group {
+		gap: 6px;
+	}
 }

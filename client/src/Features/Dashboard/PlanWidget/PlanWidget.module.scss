@@ -63,6 +63,18 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 
 	@media (max-width: 480px) {
 		padding: 16px;
+		border-radius: 18px;
+
+		&:hover {
+			transform: none;
+		}
+	}
+}
+
+@media (hover: none) and (pointer: coarse) {
+	.PlanWidget-content:hover {
+		transform: none;
+		box-shadow: inherit;
 	}
 }
 

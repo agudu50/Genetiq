@@ -17,10 +17,10 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 	justify-content: space-between;
 	align-items: flex-start;
 	gap: 16px;
+}
 
-	@media (max-width: 600px) {
-		flex-direction: column;
-	}
+.itemIconMobile {
+	display: none;
 }
 
 .titleBlock {
@@ -77,14 +77,16 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 	}
 }
 
-.actionCount {
-	flex-shrink: 0;
-	padding: 6px 12px;
+.actionsPill {
+	display: inline-flex;
+	align-items: center;
+	align-self: flex-start;
+	margin-top: 4px;
+	padding: 3px 10px;
 	border-radius: 100px;
 	font-size: 11px;
-	font-weight: 750;
-	letter-spacing: 0.03em;
-	text-transform: uppercase;
+	font-weight: 700;
+	letter-spacing: 0.02em;
 	color: $teal-primary;
 	background: rgba($teal-primary, 0.1);
 	border: 1px solid rgba($teal-primary, 0.2);
@@ -92,6 +94,10 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 	html[data-theme="light"] & {
 		background: rgba($teal-primary, 0.08);
 	}
+}
+
+.actionCount {
+	display: none;
 }
 
 // ─── Sections ─────────────────────────────────────────────────────────────────
@@ -616,5 +622,219 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 		background: rgba(15, 23, 42, 0.04);
 		border-color: rgba(15, 23, 42, 0.08);
 		color: #64748b;
+	}
+}
+
+// ─── Mobile enhancements ──────────────────────────────────────────────────────
+
+@media (max-width: 768px) {
+	.container {
+		gap: 16px;
+	}
+
+	.titleIconWrap {
+		width: 40px;
+		height: 40px;
+		border-radius: 12px;
+	}
+
+	.title {
+		font-size: 16px;
+	}
+
+	.subtitle {
+		font-size: 11px;
+	}
+
+	.actionsPill {
+		font-size: 10px;
+		padding: 3px 9px;
+	}
+
+	.sections {
+		gap: 14px;
+	}
+
+	.section {
+		padding: 12px;
+		border-radius: 14px;
+		gap: 10px;
+
+		&:hover {
+			border-color: rgba(255, 255, 255, 0.05);
+
+			html[data-theme="light"] & {
+				border-color: rgba(15, 23, 42, 0.06);
+			}
+		}
+	}
+
+	.sectionHead {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 10px;
+		padding-bottom: 0;
+	}
+
+	.sectionTitleWrap {
+		gap: 10px;
+	}
+
+	.sectionIcon {
+		width: 34px;
+		height: 34px;
+		border-radius: 10px;
+	}
+
+	.sectionTitle {
+		font-size: 13px;
+	}
+
+	.sectionMeta {
+		font-size: 10px;
+	}
+
+	.sectionViewAll {
+		justify-content: center;
+		min-height: 40px;
+		padding: 9px 12px;
+		font-size: 11px;
+		border-radius: 11px;
+		-webkit-tap-highlight-color: transparent;
+
+		&:active {
+			transform: scale(0.98);
+		}
+	}
+
+	.timeline {
+		padding-left: 0;
+		gap: 6px;
+	}
+
+	.timelineSpine {
+		display: none;
+	}
+
+	.timelineItem {
+		margin-bottom: 0;
+		gap: 0;
+		-webkit-tap-highlight-color: transparent;
+
+		&:active .itemCard {
+			transform: scale(0.99);
+			background: rgba(255, 255, 255, 0.07);
+
+			html[data-theme="light"] & {
+				background: #f8fafc;
+			}
+		}
+	}
+
+	.timelineNode {
+		display: none;
+	}
+
+	.itemCard {
+		padding: 11px;
+		border-radius: 12px;
+		gap: 10px;
+		align-items: flex-start;
+
+		.timelineItem:hover & {
+			transform: none;
+		}
+	}
+
+	.itemIconMobile {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 34px;
+		height: 34px;
+		border-radius: 10px;
+		flex-shrink: 0;
+		color: var(--accent-color);
+		background: color-mix(in srgb, var(--accent-color) 12%, transparent);
+		border: 1px solid color-mix(in srgb, var(--accent-color) 22%, transparent);
+
+		svg {
+			color: var(--accent-color);
+		}
+	}
+
+	.itemBody {
+		padding-left: 0;
+		gap: 4px;
+	}
+
+	.itemName {
+		font-size: 12px;
+		-webkit-line-clamp: 3;
+		line-clamp: 3;
+	}
+
+	.itemPreview {
+		font-size: 10px;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		white-space: normal;
+	}
+
+	.itemType {
+		font-size: 8px;
+		padding: 2px 7px;
+	}
+
+	.itemArrow {
+		opacity: 0.45;
+		transform: none;
+		align-self: center;
+		width: 22px;
+		height: 22px;
+	}
+
+	.orDivider {
+		margin: 2px 0;
+	}
+
+	.cta {
+		padding: 14px;
+		border-radius: 14px;
+		gap: 12px;
+	}
+
+	.ctaAvatar {
+		width: 44px;
+		height: 44px;
+		border-radius: 12px;
+	}
+
+	.ctaTitle {
+		font-size: 13px;
+	}
+
+	.ctaDesc {
+		font-size: 11px;
+	}
+
+	.ctaButton {
+		min-height: 42px;
+		width: 100%;
+	}
+}
+
+@media (hover: none) and (pointer: coarse) {
+	.itemArrow {
+		opacity: 0.45;
+		transform: none;
+	}
+
+	.timelineItem:hover .itemCard {
+		transform: none;
+	}
+
+	.section:hover {
+		border-color: inherit;
 	}
 }

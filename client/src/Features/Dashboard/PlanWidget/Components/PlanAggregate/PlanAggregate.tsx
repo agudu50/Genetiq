@@ -73,10 +73,10 @@ export const PlanAggregate = ({
 					<div className={styles.titleText}>
 						<h3 className={styles.title}>{t("plan_recommended_steps")}</h3>
 						<p className={styles.subtitle}>{t("plan_based_on_data")}</p>
+						<span className={styles.actionsPill}>
+							{totalActions} {t("plan_actions") || "actions"}
+						</span>
 					</div>
-				</div>
-				<div className={styles.actionCount}>
-					{totalActions} {t("plan_actions") || "actions"}
 				</div>
 			</header>
 
@@ -152,6 +152,13 @@ export const PlanAggregate = ({
 
 											<div className={styles.itemCard}>
 												<div className={styles.itemAccent} aria-hidden />
+												<div className={styles.itemIconMobile} aria-hidden>
+													<PlanItemIcon
+														icon={item.icon}
+														itemName={item.name}
+														size={16}
+													/>
+												</div>
 												<div className={styles.itemBody}>
 													<p className={styles.itemName}>{t(item.name)}</p>
 													<p className={styles.itemPreview}>
