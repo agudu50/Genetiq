@@ -71,6 +71,8 @@ const MainScene: React.FC<MainSceneProps> = ({
 	};
 
 	const handleModelTransitionComplete = () => {
+		setPreviousModelType(null);
+
 		if (pendingCameraConfig) {
 			if (modelType === "cardio") {
 				moveCamera(pendingCameraConfig.position, pendingCameraConfig.zoom);
@@ -106,8 +108,6 @@ const MainScene: React.FC<MainSceneProps> = ({
 	useEffect(() => {
 		if (!selectedCategory) return;
 
-		console.log("Category reaction:", selectedCategory);
-
 		const config = ZOOM_CONFIGS[selectedCategory];
 		if (config) {
 			const targetModelType =
@@ -128,15 +128,13 @@ const MainScene: React.FC<MainSceneProps> = ({
 			zoom: number;
 		},
 	) => {
-		// If we're already on the right model and not hidden, just update camera
-		if (type === modelType && !isModelHidden) {
+		if (type === modelType && !isModelHidden && !previousModelType) {
 			if (cameraConfig) {
 				moveCamera(cameraConfig.position, cameraConfig.zoom);
 			}
 			return;
 		}
 
-		// Only proceed with model/camera changes if we're switching to a different model
 		setStartNewModelFade(false);
 		setPreviousModelType(modelType);
 		setModelType(type);

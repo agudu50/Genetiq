@@ -14,34 +14,14 @@ const options: DropdownOption[] = [
 interface DropdownProps {
 	value: "total" | "cardio";
 	onChange: (value: "total" | "cardio") => void;
-	onModelChange: (
-		type: "body" | "cardio",
-		cameraConfig: {
-			position: [number, number, number];
-			zoom: number;
-		},
-	) => void;
 }
 
-const Dropdown = ({ value, onChange, onModelChange }: DropdownProps) => {
+const Dropdown = ({ value, onChange }: DropdownProps) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 
 	const selected =
 		options.find((option) => option.value === value) || options[0];
-
-	const zoomConfigs = {
-		total: {
-			position: [0, 6, 200] as [number, number, number],
-			zoom: 10,
-			modelType: "body" as const,
-		},
-		cardio: {
-			position: [0, 15, 200] as [number, number, number],
-			zoom: 20,
-			modelType: "cardio" as const,
-		},
-	};
 
 	// Close dropdown when clicking outside
 	useEffect(() => {
@@ -67,14 +47,6 @@ const Dropdown = ({ value, onChange, onModelChange }: DropdownProps) => {
 
 		onChange(option.value);
 		setIsOpen(false);
-
-		const config = zoomConfigs[option.value];
-		if (config) {
-			onModelChange(config.modelType, {
-				position: config.position,
-				zoom: config.zoom,
-			});
-		}
 	};
 
 	const getOptionIcon = (optionValue: string) => {

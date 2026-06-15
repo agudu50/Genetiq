@@ -75,9 +75,11 @@ const SideBar = ({
 			setActiveButton("CardioLoad");
 			setDropdownValue("cardio");
 			setActiveSegment("vitals");
-			dispatch(setCategory("cardiovascular"));
+		} else {
+			setDropdownValue((prev) => (prev === "cardio" ? "total" : prev));
+			setActiveButton((prev) => (prev === "CardioLoad" ? "total" : prev));
 		}
-	}, [modelType, dispatch]);
+	}, [modelType]);
 
 	const handleCategoryChange = (category: string) => {
 		dispatch(setCategory(category));
@@ -227,7 +229,6 @@ const SideBar = ({
 					<Dropdown
 						value={dropdownValue}
 						onChange={handleDropdownChange}
-						onModelChange={onModelChange}
 					/>
 
 					<div className={styles["segment-list"]}>

@@ -400,7 +400,7 @@ function Model({
 
 		// 1. Optimized Opacity & Visibility Handling (using refs)
 		let currentOpacity = opacity;
-		if (isHidden && modelType !== "cardio") {
+		if (isHidden) {
 			currentOpacity = 0;
 		} else if (isFading && !hasFadedOut) {
 			const fadeSpeed = 0.15;
@@ -461,11 +461,9 @@ function Model({
 		}
 	}, [isNew, shouldRender, startFadeIn]);
 
-	if (
-		(!shouldRender || (isFading && opacity <= 0) || isHidden) &&
-		modelType !== "cardio"
-	)
+	if (!shouldRender || (isFading && hasFadedOut)) {
 		return null;
+	}
 
 	const shouldShowPainArea =
 		modelType === "body" && shouldRender && !isHidden && opacity > 0;
