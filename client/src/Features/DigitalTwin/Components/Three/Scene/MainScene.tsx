@@ -157,7 +157,15 @@ const MainScene: React.FC<MainSceneProps> = ({
 					orthographic
 					frameloop={isPaused ? "never" : "always"}
 					dpr={isPaused ? 1 : [1, 1.15]}
-					gl={{ powerPreference: "high-performance", antialias: true, stencil: false }}
+					gl={{
+						powerPreference: "high-performance",
+						antialias: true,
+						stencil: false,
+						alpha: true,
+					}}
+					onCreated={({ gl }) => {
+						gl.setClearColor(0x000000, 0);
+					}}
 					camera={{
 						near: CAMERA_SETTINGS.NEAR,
 						far: CAMERA_SETTINGS.FAR,

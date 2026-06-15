@@ -22,12 +22,23 @@
 	height: 100%;
 	min-height: 400px;
 	background: url("@assets/DigitalTwin/images/canvas-bg.jpg");
-	background-color: #f0f2f5; // Light Gray background
+	background-color: #f0f2f5;
 	background-size: contain;
-	background-blend-mode: multiply; // Reverted to multiply for better model pop
+	background-blend-mode: multiply;
 	background-position: center;
 	background-repeat: no-repeat;
 	overflow: visible;
+
+	canvas {
+		position: relative;
+		z-index: 0;
+	}
+
+	html[data-theme="dark"] & {
+		background-image: none;
+		background-color: #0a0e1a;
+		background-blend-mode: normal;
+	}
 
 	@media (max-width: 1024px) {
 		min-height: 100%;
@@ -49,13 +60,21 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
-	// Soft white gradients for light background
 	background: linear-gradient(to bottom, #f0f2f5, transparent 15%),
 		linear-gradient(to top, #f0f2f5, transparent 20%),
 		linear-gradient(to left, #f0f2f5, transparent 20%),
 		linear-gradient(to right, #f0f2f5, transparent 20%);
 	pointer-events: none;
 	z-index: 1;
+
+	html[data-theme="dark"] & {
+		background:
+			radial-gradient(ellipse 75% 55% at 50% 42%, rgba(0, 166, 157, 0.1) 0%, transparent 68%),
+			linear-gradient(to bottom, #0a0e1a, transparent 15%),
+			linear-gradient(to top, #0a0e1a, transparent 20%),
+			linear-gradient(to left, #0a0e1a, transparent 20%),
+			linear-gradient(to right, #0a0e1a, transparent 20%);
+	}
 
 	@media (max-width: 1024px) {
 		background: linear-gradient(
@@ -66,6 +85,15 @@
 			linear-gradient(to top, rgba(240, 242, 245, 0.6), transparent 8%),
 			linear-gradient(to left, rgba(240, 242, 245, 0.5), transparent 8%),
 			linear-gradient(to right, rgba(240, 242, 245, 0.5), transparent 8%);
+
+		html[data-theme="dark"] & {
+			background:
+				radial-gradient(ellipse 80% 60% at 50% 45%, rgba(0, 166, 157, 0.08) 0%, transparent 70%),
+				linear-gradient(to bottom, rgba(10, 14, 26, 0.7), transparent 6%),
+				linear-gradient(to top, rgba(10, 14, 26, 0.75), transparent 8%),
+				linear-gradient(to left, rgba(10, 14, 26, 0.65), transparent 8%),
+				linear-gradient(to right, rgba(10, 14, 26, 0.65), transparent 8%);
+		}
 	}
 }
 
@@ -81,7 +109,6 @@
 		rgba(255, 255, 255, 0),
 		rgba(255, 255, 255, 0) 50%,
 		rgba(99, 102, 241, 0.05) 50%,
-		// Subtle blue scanline tint
 		rgba(99, 102, 241, 0.05)
 	);
 	background-size: 100% 4px;
@@ -89,6 +116,17 @@
 	z-index: 1;
 	animation: scanlineScroll 2s linear infinite;
 	opacity: 0.3;
+
+	html[data-theme="dark"] & {
+		background: linear-gradient(
+			to bottom,
+			transparent,
+			transparent 50%,
+			rgba(0, 166, 157, 0.04) 50%,
+			rgba(0, 166, 157, 0.04)
+		);
+		opacity: 0.18;
+	}
 }
 
 @keyframes scanlineScroll {

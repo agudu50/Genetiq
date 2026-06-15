@@ -76,7 +76,15 @@ const MainScene = (props: { useSideBar?: boolean }) => {
 				<Canvas
 					orthographic
 					dpr={[1, 1.5]}
-					gl={{ powerPreference: "high-performance", antialias: true, stencil: false }}
+					gl={{
+						powerPreference: "high-performance",
+						antialias: true,
+						stencil: false,
+						alpha: true,
+					}}
+					onCreated={({ gl }) => {
+						gl.setClearColor(0x000000, 0);
+					}}
 					camera={{
 						near: 0.0001,
 						far: 20000,
