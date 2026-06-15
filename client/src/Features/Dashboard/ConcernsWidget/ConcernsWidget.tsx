@@ -37,8 +37,14 @@ interface ConcernsWidgetProps {
 	category: string;
 }
 
+const CARDIO_DETAIL_CATEGORIES = new Set(["cardiovascular", "CardioLoad"]);
+
+const isCardioDetailCategory = (category: string) =>
+	CARDIO_DETAIL_CATEGORIES.has(category);
+
 export const ConcernsWidget: React.FC<ConcernsWidgetProps> = ({ category }) => {
 	const { t, lang } = useLanguage();
+	const isCardioDetailView = isCardioDetailCategory(category);
 	const [isShowMore, setIsShowMore] = useState(false);
 	const [detailIndex, setDetailIndex] = useState(1);
 	const [selectedConcernForModal, setSelectedConcernForModal] = useState<Concern | null>(null);
@@ -49,9 +55,13 @@ export const ConcernsWidget: React.FC<ConcernsWidgetProps> = ({ category }) => {
 	const uploadRecords = useSelector((state: RootState) => state.uploadHistory.records);
 	const goals = useSelector((state: RootState) => state.goals.items);
 
-	// Map user symptoms/conditions or latest uploaded lab results to relevant concerns
+	// Lab-upload concerns only apply in cardiovascular detail view
 	const filteredConcerns = useMemo(() => {
-		if (uploadRecords && uploadRecords.length > 0) {
+		if (
+			isCardioDetailView &&
+			uploadRecords &&
+			uploadRecords.length > 0
+		) {
 			const latestRecord = uploadRecords[0];
 			const abnormalFindings = latestRecord.findings.filter((f) => f.status !== "normal");
 
@@ -134,7 +144,7 @@ export const ConcernsWidget: React.FC<ConcernsWidgetProps> = ({ category }) => {
 			);
 			return matchesSymptom || matchesCondition;
 		});
-	}, [uploadRecords, user.symptoms, user.medicalConditions, concerns]);
+	}, [uploadRecords, user.symptoms, user.medicalConditions, concerns, isCardioDetailView]);
 
 	const visibleConcerns = useMemo(() => {
 		return filteredConcerns.filter((concern) => {
@@ -164,11 +174,9 @@ export const ConcernsWidget: React.FC<ConcernsWidgetProps> = ({ category }) => {
 	const selectedSystem = detailedSystemConcerns[0];
 	const reasons = selectedSystem.details[detailIndex - 1]?.reasons ?? [];
 	const symptoms = selectedSystem?.details[detailIndex - 1]?.symptoms;
-	const planData =
-		category === "total"
-			? selectedSystem.defaultPlan
-			: (selectedSystem.details[detailIndex - 1]?.plan ??
-				selectedSystem.defaultPlan);
+	const planData = isCardioDetailView
+		? (selectedSystem.details[detailIndex - 1]?.plan ?? selectedSystem.defaultPlan)
+		: selectedSystem.defaultPlan;
 
 	const handleShowMore = () => {
 		setIsShowMore((prev) => !prev);
@@ -176,7 +184,7 @@ export const ConcernsWidget: React.FC<ConcernsWidgetProps> = ({ category }) => {
 
 	return (
 		<div className={styles["ConcernWidget-wrapper"]}>
-			{category === "total" && (
+			{!isCardioDetailView && (
 				<div className={styles.concernsSection}>
 					<div className={styles.head}>
 						<h3 className={styles.headTitle}>{t("key_areas_of_concern")}</h3>
@@ -212,7 +220,7 @@ export const ConcernsWidget: React.FC<ConcernsWidgetProps> = ({ category }) => {
 				<div className={styles["ConcernWidget-cards-layout"]}>
 					<div
 						className={`${styles["ConcernWidget-detail-cards"]} ${
-							category !== "total"
+							isCardioDetailView
 								? styles["ConcernWidget-detail-cards-visible"]
 								: styles["ConcernWidget-detail-cards-hidden"]
 						}`}
@@ -229,7 +237,7 @@ export const ConcernsWidget: React.FC<ConcernsWidgetProps> = ({ category }) => {
 				</div>
 				<div
 					className={`${styles["ConcernWidget-reasons"]} ${
-						category !== "total"
+						isCardioDetailView
 							? styles["ConcernWidget-reasons-visible"]
 							: styles["ConcernWidget-reasons-hidden"]
 					}`}
@@ -239,7 +247,7 @@ export const ConcernsWidget: React.FC<ConcernsWidgetProps> = ({ category }) => {
 
 				<div
 					className={`${styles["ConcernWidget-symptoms"]} ${
-						category !== "total"
+						isCardioDetailView
 							? styles["ConcernWidget-symptoms-visible"]
 							: styles["ConcernWidget-symptoms-hidden"]
 					}`}
