@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
+import { ChevronDown } from "lucide-react";
 import styles from "./ConcernsWidget.module.scss";
-import Chevron from "@assets/ConcernWidget/Chevron.svg?react";
-import Slope from "@assets/ConcernsWidget/Slope.svg?react";
 import { detailedSystemConcerns } from "./helpers/detailedSystemConcerns";
 import { Concern } from "./helpers/concernsMockData";
 import { ConcernsCard } from "./Components/ConcernsCard/ConcernsCard";
@@ -177,48 +176,40 @@ export const ConcernsWidget: React.FC<ConcernsWidgetProps> = ({ category }) => {
 
 	return (
 		<div className={styles["ConcernWidget-wrapper"]}>
-			<div className={styles["ConcernWidget-head"]}>
-				<div className={styles["ConcernWidget-tab-container"]}>
-					<div className={styles["ConcernWidget-tab"]}>
-						{t("key_areas_of_concern")}
+			{category === "total" && (
+				<div className={styles.concernsSection}>
+					<div className={styles.head}>
+						<h3 className={styles.headTitle}>{t("key_areas_of_concern")}</h3>
+						<button
+							type="button"
+							className={styles.showAllBtn}
+							onClick={handleShowMore}
+							aria-expanded={isShowMore}
+						>
+							<span>{isShowMore ? t("show_less") : t("show_all")}</span>
+							<ChevronDown
+								size={14}
+								strokeWidth={2.5}
+								className={isShowMore ? styles.chevronUp : undefined}
+							/>
+						</button>
 					</div>
-					<Slope className={styles["ConcernWidget-slope"]} />
-				</div>
 
-				<div
-					className={styles["ConcernWidget-more"]}
-					onClick={() => handleShowMore()}
-				>
-					<p className={styles["ConcernWidget-more-text"]}>
-						{isShowMore ? t("show_less") : t("show_all")}
-					</p>
-					<div className={styles["ConcernWidget-chevron-container"]}>
-						<Chevron
-							className={`${styles["ConcernWidget-chevron"]} ${
-								isShowMore ? styles["rotate-chevron"] : ""
-							}`}
-						/>
-					</div>
-				</div>
-			</div>
-			<div className={styles["ConcernWidget-content"]}>
-				<div className={styles["ConcernWidget-cards-layout"]}>
-					<div
-						className={`${styles["ConcernWidget-concern-cards"]} ${
-							category !== "total"
-								? styles["ConcernWidget-concern-cards-hidden"]
-								: styles["ConcernWidget-concern-cards-visible"]
-						}`}
-					>
-						{concernsToShow.map((concern: Concern) => (
+					<div className={styles.listCard}>
+						{concernsToShow.map((concern: Concern, index: number) => (
 							<ConcernsCard
 								key={concern.id}
 								concern={concern}
 								onClick={() => setSelectedConcernForModal(concern)}
+								isLast={index === concernsToShow.length - 1}
 							/>
 						))}
 					</div>
+				</div>
+			)}
 
+			<div className={styles["ConcernWidget-content"]}>
+				<div className={styles["ConcernWidget-cards-layout"]}>
 					<div
 						className={`${styles["ConcernWidget-detail-cards"]} ${
 							category !== "total"

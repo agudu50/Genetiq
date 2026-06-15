@@ -206,6 +206,7 @@ const SystemOverview = () => {
 									<ConcernsCard
 										key={concern.id}
 										concern={concern}
+										layout="grid"
 										backgroundColor='blue'
 										onClick={() => setSelectedConcernForModal(concern)}
 									/>
