@@ -1,17 +1,31 @@
 import { useMemo } from "react";
+import {
+	Heart,
+	Activity,
+	Shield,
+	Pill,
+	Sun,
+	Sunset,
+	Moon,
+} from "lucide-react";
 import styles from "./WelcomeHeader.module.scss";
 import { useLanguage } from "@/App/i18n/LanguageContext";
 import { useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
 
+type TrendType = "up" | "down" | "stable" | "empty";
+
 interface QuickStat {
 	label: string;
 	value: string | number;
-	trend?: "up" | "down" | "stable" | "empty";
-	trendValue?: string;
-	icon: React.ReactNode;
+	trend: TrendType;
+	trendValue: string;
 	color: string;
+	icon: React.ReactNode;
 }
+
+const RING_RADIUS = 42;
+const RING_CIRC = 2 * Math.PI * RING_RADIUS;
 
 export const WelcomeHeader = () => {
 	const { t, lang } = useLanguage();
@@ -23,6 +37,9 @@ export const WelcomeHeader = () => {
 		if (currentHour < 18) return t("good_afternoon");
 		return t("good_evening");
 	};
+
+	const GreetingIcon =
+		currentHour < 12 ? Sun : currentHour < 18 ? Sunset : Moon;
 
 	const userName = user.firstName || "John";
 
@@ -36,7 +53,6 @@ export const WelcomeHeader = () => {
 		[lang],
 	);
 
-	// Compute BMI from real user data
 	const bmi = useMemo(() => {
 		const h = Number(user.height);
 		const w = Number(user.weight);
@@ -44,9 +60,8 @@ export const WelcomeHeader = () => {
 		return w / ((h / 100) * (h / 100));
 	}, [user.height, user.weight]);
 
-	// Health score based on profile data
 	const healthScore = useMemo(() => {
-		let score = 60; // base
+		let score = 60;
 		if (user.firstName) score += 5;
 		if (user.age) score += 5;
 		if (user.height && user.weight) score += 5;
@@ -64,33 +79,22 @@ export const WelcomeHeader = () => {
 		return Math.min(score, 100);
 	}, [user]);
 
+	const scoreColor =
+		healthScore >= 80 ? "#10b981" : healthScore >= 60 ? "#f59e0b" : "#ef4444";
+
+	const scoreLabel =
+		healthScore >= 80
+			? t("score_great")
+			: healthScore >= 60
+				? t("score_good")
+				: t("score_improve");
+
+	const ringOffset = RING_CIRC - (healthScore / 100) * RING_CIRC;
+
+	const medicationCount = user.medications.filter((m) => m.name).length;
+
 	const quickStats: QuickStat[] = useMemo(
 		() => [
-			{
-				label: t("health_score"),
-				value: healthScore,
-				trend: healthScore >= 80 ? "up" : healthScore >= 60 ? "stable" : "down",
-				trendValue:
-					healthScore >= 80
-						? t("score_great")
-						: healthScore >= 60
-							? t("score_good")
-							: t("score_improve"),
-				color:
-					healthScore >= 80
-						? "#10b981"
-						: healthScore >= 60
-							? "#f59e0b"
-							: "#ef4444",
-				icon: (
-					<svg width='24' height='24' viewBox='0 0 24 24' fill='none'>
-						<path
-							d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'
-							fill='currentColor'
-						/>
-					</svg>
-				),
-			},
 			{
 				label: t("bmi_label"),
 				value: bmi ? bmi.toFixed(1) : "—",
@@ -119,22 +123,7 @@ export const WelcomeHeader = () => {
 								? "#f59e0b"
 								: "#ef4444"
 					: "#ef4444",
-				icon: (
-					<svg
-						width='24'
-						height='24'
-						viewBox='0 0 24 24'
-						fill='none'
-						stroke='currentColor'
-						strokeWidth='2'
-					>
-						<path
-							d='M22 12h-4l-3 9L9 3l-3 9H2'
-							strokeLinecap='round'
-							strokeLinejoin='round'
-						/>
-					</svg>
-				),
+				icon: <Activity size={16} strokeWidth={2.25} />,
 			},
 			{
 				label: t("conditions"),
@@ -150,118 +139,104 @@ export const WelcomeHeader = () => {
 						? t("status_clear")
 						: t("status_active"),
 				color: user.medicalConditions.length === 0 ? "#10b981" : "#ef4444",
-				icon: (
-					<svg
-						width='24'
-						height='24'
-						viewBox='0 0 24 24'
-						fill='none'
-						stroke='currentColor'
-						strokeWidth='2'
-					>
-						<path
-							d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'
-							strokeLinecap='round'
-							strokeLinejoin='round'
-						/>
-					</svg>
-				),
+				icon: <Shield size={16} strokeWidth={2.25} />,
 			},
 			{
 				label: t("medications"),
-				value: user.medications.filter((m) => m.name).length,
-				trend: "stable",
-				trendValue: t("status_active"),
-				color: "#8b5cf6",
-				icon: (
-					<svg
-						width='24'
-						height='24'
-						viewBox='0 0 24 24'
-						fill='none'
-						stroke='currentColor'
-						strokeWidth='2'
-					>
-						<path
-							d='m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z'
-							strokeLinecap='round'
-							strokeLinejoin='round'
-						/>
-						<path d='m8.5 8.5 7 7' strokeLinecap='round' strokeLinejoin='round' />
-					</svg>
-				),
+				value: medicationCount,
+				trend: medicationCount === 0 ? "up" : "stable",
+				trendValue:
+					medicationCount === 0 ? t("status_clear") : t("status_active"),
+				color: medicationCount === 0 ? "#10b981" : "#8b5cf6",
+				icon: <Pill size={16} strokeWidth={2.25} />,
 			},
 		],
-		[t, bmi, healthScore, user.medicalConditions.length, user.medications],
+		[t, bmi, user.medicalConditions.length, medicationCount],
 	);
 
 	return (
 		<div className={styles.welcomeHeader}>
-			<div className={styles.cardMeshBg} />
-			<div className={styles.cardGlowBlob} />
+			<div className={styles.heroBg} aria-hidden />
+			<div className={styles.heroMesh} aria-hidden />
+			<div className={styles.heroGlow} aria-hidden />
 
-			<div className={styles.greetingSection}>
-				<div className={styles.greeting}>
-					<h1 className={styles.greetingText}>
-						<span className='text-gradient-muted'>{getGreeting()},</span>{" "}
-						<span className='text-gradient-primary'>{userName}</span>
-					</h1>
-					<p className={styles.subtitle}>{t("dashboard_subtitle")}</p>
-				</div>
-				<div className={styles.dateInfo}>
-					<span className={styles.date}>{formattedDate}</span>
-				</div>
-			</div>
+			<div className={styles.heroInner}>
+				<div className={styles.heroTop}>
+					<div className={styles.heroCopy}>
+						<span className={styles.eyebrow}>
+							<GreetingIcon size={12} strokeWidth={2.5} />
+							{formattedDate}
+						</span>
+						<h1 className={styles.greetingText}>
+							<span className={styles.greetingMuted}>{getGreeting()},</span>{" "}
+							<span className={styles.greetingName}>{userName}</span>
+						</h1>
+						<p className={styles.subtitle}>{t("dashboard_subtitle")}</p>
+					</div>
 
-			<div className={styles.quickStats}>
-				{quickStats.map((stat, index) => (
 					<div
-						key={stat.label}
-						className={styles.statCard}
-						style={
-							{
-								"--stat-color": stat.color,
-								"animationDelay": `${index * 0.1}s`,
-							} as React.CSSProperties
-						}
+						className={styles.scoreRingCard}
+						style={{ "--score-color": scoreColor } as React.CSSProperties}
 					>
-						<div className={styles.statHeader}>
-							<div className={styles.statIcon} style={{ color: stat.color }}>
-								{stat.icon}
-							</div>
-							<div
-								className={`${styles.statTrend} ${styles[stat.trend || "stable"]}`}
+						<div className={styles.ringWrap}>
+							<svg
+								className={styles.scoreRingSvg}
+								viewBox="0 0 100 100"
+								aria-hidden
 							>
-								{stat.trend === "up" && (
-									<svg
-										width='12'
-										height='12'
-										viewBox='0 0 16 16'
-										fill='currentColor'
-									>
-										<path d='M8 4l4 4H4l4-4z' />
-									</svg>
-								)}
-								{stat.trend === "down" && (
-									<svg
-										width='12'
-										height='12'
-										viewBox='0 0 16 16'
-										fill='currentColor'
-									>
-										<path d='M8 12l-4-4h8l-4 4z' />
-									</svg>
-								)}
-								<span>{stat.trendValue}</span>
+								<circle
+									className={styles.ringTrack}
+									cx="50"
+									cy="50"
+									r={RING_RADIUS}
+									fill="none"
+								/>
+								<circle
+									className={styles.ringProgress}
+									cx="50"
+									cy="50"
+									r={RING_RADIUS}
+									fill="none"
+									strokeDasharray={RING_CIRC}
+									strokeDashoffset={ringOffset}
+								/>
+							</svg>
+							<div className={styles.ringCenter}>
+								<Heart size={18} strokeWidth={2.25} />
+								<strong>{healthScore}</strong>
 							</div>
 						</div>
-
-						<div className={styles.statBody}>
-							<span className={styles.statValue}>{stat.value}</span>
-							<span className={styles.statLabel}>{stat.label}</span>
+						<div className={styles.scoreRingMeta}>
+							<span className={styles.scoreRingLabel}>{t("health_score")}</span>
+							<span
+								className={`${styles.scoreBadge} ${styles[`scoreBadge_${healthScore >= 80 ? "great" : healthScore >= 60 ? "good" : "low"}`]}`}
+							>
+								{scoreLabel}
+							</span>
 						</div>
 					</div>
-				))}
+				</div>
+
+				<div className={styles.statsStrip}>
+					{quickStats.map((stat) => (
+						<div
+							key={stat.label}
+							className={styles.statTile}
+							style={{ "--stat-color": stat.color } as React.CSSProperties}
+						>
+							<span className={styles.statIcon}>{stat.icon}</span>
+							<div className={styles.statCopy}>
+								<strong className={styles.statValue}>{stat.value}</strong>
+								<span className={styles.statLabel}>{stat.label}</span>
+							</div>
+							<span
+								className={`${styles.statBadge} ${styles[`statBadge_${stat.trend}`]}`}
+							>
+								{stat.trendValue}
+							</span>
+						</div>
+					))}
+				</div>
 			</div>
 		</div>
 	);
