@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
 	Calendar,
-	User,
 	UserRound,
 	Files,
 	Upload,
@@ -54,6 +53,28 @@ function healthScoreColour(score: number) {
 	if (score >= 75) return "#00A69D";
 	if (score >= 51) return "#f59e0b";
 	return "#ef4444";
+}
+
+function healthScoreLabel(score: number) {
+	if (score >= 90) return "Excellent";
+	if (score >= 75) return "Good";
+	if (score >= 51) return "Fair";
+	return "Needs attention";
+}
+
+function titleCase(value: string) {
+	return value
+		.split(/\s+/)
+		.filter(Boolean)
+		.map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+		.join(" ");
+}
+
+function getInitials(name: string) {
+	const parts = name.trim().split(/\s+/).filter(Boolean);
+	if (parts.length === 0) return "?";
+	if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+	return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -245,6 +266,10 @@ export const HealthHistory: React.FC = () => {
 		? `${records[0].firstName || ""} ${records[0].lastName || ""}`.trim()
 		: "";
 	const displayName = userFullName || recordFullName || "Your";
+	const formattedName =
+		displayName === "Your" ? "Your Profile" : titleCase(displayName);
+	const initials = displayName === "Your" ? "?" : getInitials(displayName);
+	const latestScore = records[0]?.healthScore;
 	const bloodType = user.bloodType || records[0]?.bloodType || "";
 	const age       = user.age       || records[0]?.age       || "";
 	const gender    = user.gender    || records[0]?.gender     || "";
@@ -261,67 +286,73 @@ export const HealthHistory: React.FC = () => {
 			<main className={styles.mainContent}>
 				{/* ── Patient profile banner ──────────────────────────────── */}
 				<section className={styles.profileBanner}>
-					<div className={styles.profileCardGlow} aria-hidden />
+					<div className={styles.profileHero}>
+						<div className={styles.profileHeroBg} aria-hidden />
+						<div className={styles.profileHeroMesh} aria-hidden />
 
-					<div className={styles.profileCardHeader}>
-						<div className={styles.profileTop}>
-							<div className={styles.profileAvatar}>
-								<User size={24} />
+						<div className={styles.profileHeroInner}>
+							<div className={styles.profileAvatar} aria-hidden="true">
+								<span className={styles.profileInitials}>{initials}</span>
 							</div>
-							<div className={styles.profileInfo}>
-								<span className={styles.profileEyebrow}>Patient profile</span>
-								<h1 className={styles.profileName}>
-									<span className={styles.profileNameMain}>
-										{displayName === "Your" ? "Your" : `${displayName}'s`}
-									</span>
-									<span className={styles.profileNameAccent}>Health Record</span>
-								</h1>
+
+							<div className={styles.profileIdentity}>
+								<span className={styles.profileEyebrow}>
+									<ShieldCheck size={11} strokeWidth={2.5} />
+									Patient profile
+								</span>
+								<h1 className={styles.profileName}>{formattedName}</h1>
+								<p className={styles.profileSubtitle}>Health Record</p>
 							</div>
+
+							{latestScore != null && (
+								<div className={styles.profileHeroScore}>
+									<ScoreRing score={latestScore} compact />
+									<div className={styles.profileScoreMeta}>
+										<span className={styles.profileScoreLabel}>Health Score</span>
+										<span
+											className={styles.profileScoreStatus}
+											style={{ color: healthScoreColour(latestScore) }}
+										>
+											{healthScoreLabel(latestScore)}
+										</span>
+									</div>
+								</div>
+							)}
 						</div>
 					</div>
 
-					<div className={styles.profileMetaGrid}>
-						{age && (
-							<div className={styles.metaTile}>
-								<span className={styles.metaIcon}><Calendar size={15} /></span>
-								<span className={styles.metaValue}>{age} years old</span>
-							</div>
-						)}
-						{gender && (
-							<div className={styles.metaTile}>
-								<span className={styles.metaIcon}><UserRound size={15} /></span>
-								<span className={styles.metaValue}>{gender}</span>
-							</div>
-						)}
-						{bloodType && (
-							<div className={`${styles.metaTile} ${styles.metaTileBlood}`}>
-								<span className={styles.metaIcon}><Droplets size={15} /></span>
-								<span className={styles.metaValue}>{bloodType}</span>
-							</div>
-						)}
-						<div className={styles.metaTile}>
-							<span className={styles.metaIcon}><Files size={15} /></span>
-							<span className={styles.metaValue}>
+					<div className={styles.profileBody}>
+						<div className={styles.profileChips}>
+							{age && (
+								<span className={styles.profileChip}>
+									<Calendar size={13} />
+									{age} yrs
+								</span>
+							)}
+							{gender && (
+								<span className={styles.profileChip}>
+									<UserRound size={13} />
+									{gender}
+								</span>
+							)}
+							{bloodType && (
+								<span className={`${styles.profileChip} ${styles.profileChipBlood}`}>
+									<Droplets size={13} />
+									{bloodType}
+								</span>
+							)}
+							<span className={styles.profileChip}>
+								<Files size={13} />
 								{records.length} upload{records.length !== 1 ? "s" : ""}
 							</span>
 						</div>
-					</div>
 
-					{records.length > 0 && (
-						<div className={styles.profileScorePanel}>
-							<div className={styles.profileScoreCopy}>
-								<span className={styles.profileScoreLabel}>Latest Health Score</span>
-								<span className={styles.profileScoreSub}>out of 100</span>
-							</div>
-							<ScoreRing score={records[0].healthScore} />
-						</div>
-					)}
-
-					<div className={styles.profileCardFooter}>
 						<button
 							type="button"
 							className={styles.newUploadBannerBtn}
-							onClick={() => navigate(paths.config.importOrUpload, { state: { skipToUpload: true } })}
+							onClick={() =>
+								navigate(paths.config.importOrUpload, { state: { skipToUpload: true } })
+							}
 						>
 							<Upload size={16} />
 							<span>New Upload</span>
