@@ -1,61 +1,169 @@
 @use "@/App/Styles/_mixins" as mixins;
 
-.AgeWidget-container {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: space-between;
+$teal: #00a69d;
+$green: #10b981;
+$amber: #f59e0b;
+$red: #ef4444;
+$blue: #3b82f6;
+
+.container {
 	position: relative;
-	gap: 32px;
-	padding: 24px;
-	border-radius: 20px;
-	margin-top: -2px;
+	width: 100%;
+	max-width: 100%;
+	min-width: 0;
+	box-sizing: border-box;
 	overflow: hidden;
+	border-radius: 24px;
 	@include mixins.dashboard-card;
-	@include mixins.dashboard-card-hover;
 
-	&:hover {
-		box-shadow: 0 6px 24px rgba(102, 126, 234, 0.15);
-		transform: translateY(-2px);
-
-		html[data-theme="light"] & {
-			box-shadow: var(--dash-card-shadow-hover);
-		}
-	}
-
-	@media (max-width: 1412px) {
-		flex-direction: column;
-		align-items: stretch;
-		gap: 24px;
-		padding: 20px;
-	}
-
-	@media (max-width: 768px) {
-		padding: 16px;
-		gap: 20px;
-		border-radius: 16px;
+	@media (max-width: 480px) {
+		border-radius: 20px;
 	}
 }
 
-.AgeWidget-container::after {
-	content: "";
+.heroBg {
 	position: absolute;
 	inset: 0;
-	border-radius: 20px;
-	padding: 1px;
-	z-index: 0;
-
+	pointer-events: none;
 	background: linear-gradient(
-		90deg,
-		rgba(129, 140, 248, 0.3) 0%,
-		rgba(148, 178, 236, 0) 100%
+		145deg,
+		rgba($blue, 0.08) 0%,
+		rgba($teal, 0.06) 42%,
+		transparent 72%
 	);
-	-webkit-mask:
-		linear-gradient(white, white) content-box,
-		linear-gradient(white, white);
-	mask:
-		linear-gradient(white, white) content-box,
-		linear-gradient(white, white);
-	mask-composite: exclude;
-	-webkit-mask-composite: destination-out;
+
+	html[data-theme="light"] & {
+		background: linear-gradient(
+			145deg,
+			rgba($blue, 0.06) 0%,
+			rgba($teal, 0.05) 40%,
+			#ffffff 78%
+		);
+	}
+}
+
+.heroMesh {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	opacity: 0.32;
+	background-image: radial-gradient(rgba($teal, 0.12) 1px, transparent 1.4px);
+	background-size: 22px 22px;
+	mask-image: linear-gradient(180deg, #000 0%, transparent 90%);
+	-webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 90%);
+
+	html[data-theme="dark"] & {
+		opacity: 0.2;
+		background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1.4px);
+	}
+}
+
+.heroGlow {
+	position: absolute;
+	bottom: -80px;
+	left: -40px;
+	width: 220px;
+	height: 220px;
+	border-radius: 50%;
+	background: radial-gradient(circle, rgba($blue, 0.18) 0%, transparent 68%);
+	filter: blur(12px);
+	pointer-events: none;
+}
+
+.inner {
+	position: relative;
+	z-index: 1;
+	padding: 18px 20px 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	min-width: 0;
+
+	@media (max-width: 480px) {
+		padding: 16px 14px 16px;
+		gap: 12px;
+	}
+}
+
+.header {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 8px;
+	min-width: 0;
+	width: 100%;
+}
+
+.headerRow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	width: 100%;
+	min-width: 0;
+	flex-wrap: wrap;
+}
+
+.eyebrow {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 5px 12px;
+	border-radius: 99px;
+	font-size: 0.62rem;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: $teal;
+	background: rgba($teal, 0.1);
+	border: 1px solid rgba($teal, 0.16);
+	flex-shrink: 0;
+}
+
+.deltaBanner {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 12px;
+	border-radius: 99px;
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: -0.01em;
+	line-height: 1.3;
+	max-width: 100%;
+	min-width: 0;
+
+	span {
+		min-width: 0;
+	}
+
+	svg {
+		flex-shrink: 0;
+	}
+}
+
+.deltaBanner_positive {
+	color: $green;
+	background: rgba($green, 0.1);
+	border: 1px solid rgba($green, 0.2);
+}
+
+.deltaBanner_negative {
+	color: $red;
+	background: rgba($red, 0.1);
+	border: 1px solid rgba($red, 0.2);
+}
+
+.deltaBanner_neutral {
+	color: var(--text-secondary, #94a3b8);
+	background: rgba(148, 163, 184, 0.1);
+	border: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.body {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	min-width: 0;
+	width: 100%;
 }

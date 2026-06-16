@@ -1,190 +1,202 @@
-@use "@/App/Styles/_mixins" as *;
+@use "@/App/Styles/_mixins" as mixins;
 
-.AgeSlider-container {
+$teal: #00a69d;
+$green: #10b981;
+$blue: #3b82f6;
+$red: #ef4444;
+$amber: #f59e0b;
+
+.slider {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	width: 100%;
+	min-width: 0;
+}
+
+.sliderHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	min-width: 0;
+}
+
+.sliderTitle {
+	font-size: 0.65rem;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: var(--text-secondary, #94a3b8);
+	flex-shrink: 0;
+
+	html[data-theme="light"] & {
+		color: #64748b;
+	}
+}
+
+.legend {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-shrink: 0;
+}
+
+.legendItem {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 0.62rem;
+	font-weight: 700;
+	color: var(--text-secondary, #94a3b8);
+	white-space: nowrap;
+
+	html[data-theme="light"] & {
+		color: #64748b;
+	}
+}
+
+.legendDot {
+	width: 7px;
+	height: 7px;
+	border-radius: 99px;
+	flex-shrink: 0;
+}
+
+.legendDotBio {
+	background: $green;
+}
+
+.legendDotChrono {
+	background: $blue;
+}
+
+.trackWrap {
+	padding: 22px 12px 10px;
+	border-radius: 14px;
+	@include mixins.dashboard-nested-surface;
+	overflow: hidden;
+}
+
+.track {
+	position: relative;
+	height: 6px;
+	margin: 0 4px;
+}
+
+.trackRail {
+	position: absolute;
+	inset: 0;
+	border-radius: 99px;
+	background: rgba(255, 255, 255, 0.06);
+
+	html[data-theme="light"] & {
+		background: #e8edf3;
+	}
+}
+
+.trackSpan {
+	position: absolute;
+	top: 0;
+	height: 100%;
+	border-radius: 99px;
+	min-width: 3px;
+}
+
+.trackSpanGood {
+	background: linear-gradient(90deg, rgba($green, 0.35), rgba($teal, 0.45));
+}
+
+.trackSpanWarn {
+	background: linear-gradient(90deg, rgba($red, 0.35), rgba($amber, 0.45));
+}
+
+.marker {
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%);
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	gap: 4px;
-	width: 322px;
-	position: relative;
-
-	@media (max-width: 768px) {
-		flex-direction: column;
-		align-items: center;
-		gap: 16px;
-		padding: 0;
-		width: 100%;
-	}
-}
-
-.AgeSlider-title {
-	font-size: 14px;
-	font-weight: 700;
-	line-height: 16px;
-	width: 100%;
-	text-align: left;
-	color: var(--text);
-
-	@include media_1439 {
-		text-align: center;
-	}
-}
-
-.AgeSlider-bar-wrapper {
-	background-size: contain;
-	background-position: center;
-	padding: 4px;
-	width: 100%;
-	border-radius: 24px;
-	overflow: hidden;
-	position: relative;
-	background: color-mix(in srgb, var(--surface) 70%, transparent);
-}
-
-.AgeSlider-bar-wrapper::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	background-size: contain;
-	opacity: 0.2;
-	background-image: url("@assets/AgeWidget/BarGrid.png");
-}
-
-.AgeSlider-bar-wrapper::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: 24px;
-	padding: 1px;
-	background: linear-gradient(
-		270deg,
-		#ff7bd2 6.69%,
-		var(--accent) 49.8%,
-		color-mix(in srgb, var(--accent) 70%, #ffffff 30%) 100%
-	);
-	-webkit-mask:
-		linear-gradient(white, white) content-box,
-		linear-gradient(white, white);
-	mask:
-		linear-gradient(white, white) content-box,
-		linear-gradient(white, white);
-	mask-composite: exclude;
-	-webkit-mask-composite: destination-out;
-}
-
-.AgeSlider-bar {
-	position: relative;
-	height: 24px;
-	display: flex;
-
-	justify-content: center;
-	align-items: center;
-}
-
-.AgeSlider-bar-fill {
-	position: absolute;
-	height: 100%;
-
-	background: linear-gradient(
-		270deg,
-		var(--accent) 0%,
-		color-mix(in srgb, var(--accent) 70%, #ffffff 30%) 100%
-	);
-	left: 0;
-	top: 0;
-	border-radius: 24px 0 0 24px;
-	animation: none;
-}
-
-@keyframes barFillAnimation {
-	0% {
-		width: 0%;
-		opacity: 0;
-	}
-	60% {
-		width: calc(var(--chronoAgePercentage) + 3%);
-		opacity: 1;
-	}
-	80% {
-		width: calc(var(--chronoAgePercentage) - 1%);
-	}
-	100% {
-		width: var(--chronoAgePercentage);
-	}
-}
-
-.AgeSlider-horizontal-line {
-	position: relative;
-	height: 1px;
-	width: calc(100% - 30px);
-	background: color-mix(in srgb, var(--text) 35%, transparent);
-}
-
-.AgeSlider-thumb {
-	position: absolute;
-	top: 60%;
-	transform: translateY(-60%);
-	width: 11px;
-	height: 20px;
-	animation: none;
-}
-
-@keyframes thumbSlideAnimation {
-	0% {
-		left: 0%;
-		opacity: 0;
-	}
-
-	100% {
-		left: var(--bioAgePercentage);
-		opacity: 1;
-	}
-}
-
-.AgeSlider-circle-start {
-	position: absolute;
 	z-index: 2;
-	top: 50%;
-	left: 1%;
-	transform: translateY(-50%);
+	max-width: 36px;
 }
 
-.AgeSlider-circle-end {
-	position: absolute;
-	z-index: 2;
-	top: 50%;
-	right: 1%;
-	transform: translateY(-50%);
+.markerDot {
+	width: 12px;
+	height: 12px;
+	border-radius: 99px;
+	border: 2px solid var(--dash-card-bg, #1e293b);
+	flex-shrink: 0;
+
+	html[data-theme="light"] & {
+		border-color: #fff;
+	}
 }
 
-.AgeSlider-axis {
+.markerBio .markerDot {
+	background: $green;
+	box-shadow: 0 0 0 2px rgba($green, 0.25);
+}
+
+.markerChrono .markerDot {
+	background: $blue;
+	box-shadow: 0 0 0 2px rgba($blue, 0.25);
+}
+
+.markerLabel {
+	font-size: 0.62rem;
+	font-weight: 800;
+	line-height: 1;
+	white-space: nowrap;
+	padding: 2px 5px;
+	border-radius: 5px;
+	color: #fff;
+}
+
+.markerBio .markerLabel {
+	background: rgba($green, 0.92);
+}
+
+.markerChrono .markerLabel {
+	background: rgba($blue, 0.92);
+}
+
+.marker:first-of-type {
+	transform: translate(-20%, -50%);
+}
+
+.marker:last-of-type {
+	transform: translate(-80%, -50%);
+}
+
+.axis {
 	display: flex;
 	justify-content: space-between;
-	width: 100%;
+	padding: 0 8px;
+	min-width: 0;
 }
 
-.AgeSlider-axis-label {
-	color: var(--text);
+.axisLabel {
+	font-size: 0.62rem;
+	font-weight: 700;
+	color: var(--text-secondary, #94a3b8);
+	opacity: 0.8;
+	flex: 1;
 	text-align: center;
-	font-size: 13px;
-	font-weight: 600;
-	line-height: 16px;
-	/* Improve readability in dark mode */
-	opacity: 1;
 
-	@media (max-width: 480px) {
-		font-size: 11px;
+	html[data-theme="light"] & {
+		color: #64748b;
 	}
 
-	&-median {
-		opacity: 1;
-		color: var(--accent);
-	}
 	&:first-child {
-		opacity: 0.85;
+		text-align: left;
+		flex: 0 0 auto;
 	}
 
-	&:nth-last-child(-n + 2) {
-		opacity: 0.85;
+	&:last-child {
+		text-align: right;
+		flex: 0 0 auto;
 	}
 }

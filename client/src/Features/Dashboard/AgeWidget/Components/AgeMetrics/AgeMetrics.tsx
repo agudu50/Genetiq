@@ -1,7 +1,6 @@
 import styles from "./AgeMetrics.module.scss";
-import Shape from "@assets/AgeWidget/Shape.svg?react";
-import Arrows from "@assets/AgeWidget/ConvergeArrowsIcon.svg?react";
 import { useLanguage } from "@/App/i18n/LanguageContext";
+import { Activity, CalendarDays } from "lucide-react";
 
 interface AgeMetricsProps {
 	ageData: {
@@ -13,41 +12,32 @@ interface AgeMetricsProps {
 
 export const AgeMetrics: React.FC<AgeMetricsProps> = ({ ageData }) => {
 	const { t } = useLanguage();
+
 	return (
-		<div className={styles["AgeMetrics-age"]}>
-			<div className={styles["AgeMetrics-shape-container"]}>
-				<Shape className={styles["AgeMetrics-shape"]} />
-				<div className={styles["AgeMetrics-content"]}>
-					<div className={styles["AgeMetrics-content-title"]}>
-						{t("biological_age")}
-					</div>
-					<div
-						className={`${styles["AgeMetrics-content-value"]} ${styles["AgeMetrics-border-green"]}`}
-					>
+		<div className={styles.metrics}>
+			<div className={`${styles.ageCard} ${styles.ageCardBio}`}>
+				<span className={styles.ageCardIcon}>
+					<Activity size={15} strokeWidth={2.25} />
+				</span>
+				<div className={styles.ageCardCopy}>
+					<span className={styles.ageCardLabel}>{t("biological_age")}</span>
+					<strong className={styles.ageCardValue}>
 						{ageData.biologicalAge}
-						<span className={styles["AgeMetrics-content-units"]}>
-							{t("years_short")}
-						</span>
-					</div>
+						<span className={styles.ageCardUnit}>{t("years_short")}</span>
+					</strong>
 				</div>
 			</div>
-			<div className={styles["AgeMetrics-icon-container"]}>
-				<Arrows />
-			</div>
-			<div className={styles["AgeMetrics-shape-container"]}>
-				<Shape className={styles["AgeMetrics-shape-rotated"]} />
-				<div className={styles["AgeMetrics-content-rotated"]}>
-					<div className={styles["AgeMetrics-content-title"]}>
-						{t("chronological_age")}
-					</div>
-					<div
-						className={`${styles["AgeMetrics-content-value"]} ${styles["AgeMetrics-border-blue"]}`}
-					>
+
+			<div className={`${styles.ageCard} ${styles.ageCardChrono}`}>
+				<span className={styles.ageCardIcon}>
+					<CalendarDays size={15} strokeWidth={2.25} />
+				</span>
+				<div className={styles.ageCardCopy}>
+					<span className={styles.ageCardLabel}>{t("chronological_age")}</span>
+					<strong className={styles.ageCardValue}>
 						{ageData.chronoAge}
-						<span className={styles["AgeMetrics-content-units"]}>
-							{t("years_short")}
-						</span>
-					</div>
+						<span className={styles.ageCardUnit}>{t("years_short")}</span>
+					</strong>
 				</div>
 			</div>
 		</div>

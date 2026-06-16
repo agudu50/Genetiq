@@ -1,7 +1,6 @@
 import { useMemo } from "react";
-import Thumb from "@assets/AgeWidget/Thumb.svg?react";
-import Circle from "@assets/AgeWidget/Circle.svg?react";
 import styles from "./AgeSlider.module.scss";
+import { useLanguage } from "@/App/i18n/LanguageContext";
 
 interface AgeSliderProps {
 	ageData: {
@@ -11,66 +10,78 @@ interface AgeSliderProps {
 	};
 }
 
-export const AgeSlider: React.FC<AgeSliderProps> = ({ ageData }) => {
-	const minAge = Math.min(ageData.biologicalAge, ageData.chronoAge);
-	const maxAge = Math.max(ageData.biologicalAge, ageData.chronoAge);
-	const rangeStart = ageData.range?.start ?? 46;
-	const rangeEnd = ageData.range?.end ?? 62;
-	const rangeLength = rangeEnd - rangeStart;
+const toPercent = (age: number, start: number, end: number) =>
+	Math.min(100, Math.max(0, ((age - start) / (end - start)) * 100));
 
-	const bioAgePercentage = ((minAge - rangeStart) * 100) / rangeLength + 1;
-	const chronoAgePercentage = ((maxAge - rangeStart) * 100) / rangeLength;
+export const AgeSlider: React.FC<AgeSliderProps> = ({ ageData }) => {
+	const { t } = useLanguage();
+	const rangeStart = ageData.range.start;
+	const rangeEnd = ageData.range.end;
+
+	const bioPct = toPercent(ageData.biologicalAge, rangeStart, rangeEnd);
+	const chronoPct = toPercent(ageData.chronoAge, rangeStart, rangeEnd);
+	const spanLeft = Math.min(bioPct, chronoPct);
+	const spanWidth = Math.abs(chronoPct - bioPct);
+	const isYounger = ageData.chronoAge > ageData.biologicalAge;
 
 	const axisLabels = useMemo(() => {
-		const labels = [];
-		const step = 10;
-		for (let age = rangeStart; age <= rangeEnd; age += step) {
+		const labels: number[] = [];
+		for (let age = rangeStart; age <= rangeEnd; age += 10) {
 			labels.push(age);
 		}
 		return labels;
 	}, [rangeStart, rangeEnd]);
 
 	return (
-		<div className={styles["AgeSlider-container"]}>
-			<div className={styles["AgeSlider-title"]}>You</div>
-			<div className={styles["AgeSlider-bar-wrapper"]}>
-				<div className={styles["AgeSlider-bar"]}>
-					<Circle className={styles["AgeSlider-circle-start"]} />
-					<div
-						className={styles["AgeSlider-bar-fill"]}
-						style={
-							{
-								"width": `calc(${chronoAgePercentage}%)`,
-								"--chronoAgePercentage": `${chronoAgePercentage}%`,
-							} as React.CSSProperties
-						}
-					></div>
-
-					<div className={styles["AgeSlider-horizontal-line"]}></div>
-					<Circle className={styles["AgeSlider-circle-end"]} />
-					<Thumb
-						className={styles["AgeSlider-thumb"]}
-						style={
-							{
-								"left": `${bioAgePercentage}%`,
-								"--bioAgePercentage": `${bioAgePercentage}%`,
-							} as React.CSSProperties
-						}
-					/>
+		<div className={styles.slider}>
+			<div className={styles.sliderHeader}>
+				<span className={styles.sliderTitle}>{t("age_timeline")}</span>
+				<div className={styles.legend}>
+					<span className={styles.legendItem}>
+						<span className={`${styles.legendDot} ${styles.legendDotBio}`} />
+						{t("age_bio_short")}
+					</span>
+					<span className={styles.legendItem}>
+						<span className={`${styles.legendDot} ${styles.legendDotChrono}`} />
+						{t("age_chrono_short")}
+					</span>
 				</div>
 			</div>
-			<div className={styles["AgeSlider-axis"]}>
-				{axisLabels.map((label, index) => (
+
+			<div className={styles.trackWrap}>
+				<div className={styles.track}>
+					<div className={styles.trackRail} />
+
+					{spanWidth > 0.5 && (
+						<div
+							className={`${styles.trackSpan} ${isYounger ? styles.trackSpanGood : styles.trackSpanWarn}`}
+							style={{ left: `${spanLeft}%`, width: `${spanWidth}%` }}
+						/>
+					)}
+
 					<div
-						key={index}
-						className={`${styles["AgeSlider-axis-label"]} ${
-							index === Math.floor(rangeLength / 2)
-								? styles["AgeSlider-axis-label-median"]
-								: ""
-						}`}
+						className={`${styles.marker} ${styles.markerBio}`}
+						style={{ left: `${bioPct}%` }}
 					>
-						{label}
+						<span className={styles.markerLabel}>{ageData.biologicalAge}</span>
+						<span className={styles.markerDot} />
 					</div>
+
+					<div
+						className={`${styles.marker} ${styles.markerChrono}`}
+						style={{ left: `${chronoPct}%` }}
+					>
+						<span className={styles.markerLabel}>{ageData.chronoAge}</span>
+						<span className={styles.markerDot} />
+					</div>
+				</div>
+			</div>
+
+			<div className={styles.axis}>
+				{axisLabels.map((label) => (
+					<span key={label} className={styles.axisLabel}>
+						{label}
+					</span>
 				))}
 			</div>
 		</div>

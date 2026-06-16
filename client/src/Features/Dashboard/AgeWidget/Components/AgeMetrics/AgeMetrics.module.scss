@@ -1,108 +1,91 @@
-.AgeMetrics-age {
+@use "@/App/Styles/_mixins" as mixins;
+
+$green: #10b981;
+$blue: #3b82f6;
+
+.metrics {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 10px;
+	width: 100%;
+	min-width: 0;
+}
+
+.ageCard {
 	display: flex;
-	flex-direction: row;
 	align-items: center;
+	gap: 10px;
+	min-width: 0;
+	padding: 12px 14px;
+	border-radius: 14px;
+	@include mixins.dashboard-nested-surface;
 }
 
-.AgeMetrics-shape-container {
-	position: relative;
-	width: 100%;
-
-	height: auto;
-	// opacity: 0;
-	animation: flowOut 2s ease forwards;
+.ageCardBio .ageCardIcon {
+	color: $green;
+	background: rgba($green, 0.12);
+	border-color: rgba($green, 0.18);
 }
 
-// @keyframes flowOut {
-// 	0% {
-// 		transform: scale(0.9);
-// 		opacity: 0;
-// 	}
-// 	100% {
-// 		transform: scale(1);
-// 		opacity: 1;
-// 	}
-// }
-
-.AgeMetrics-shape,
-.AgeMetrics-shape-rotated {
-	width: 100%;
-	height: auto;
-	display: block;
+.ageCardChrono .ageCardIcon {
+	color: $blue;
+	background: rgba($blue, 0.12);
+	border-color: rgba($blue, 0.18);
 }
 
-.AgeMetrics-shape-rotated {
-	rotate: 180deg;
+.ageCardIcon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 34px;
+	height: 34px;
+	border-radius: 10px;
+	flex-shrink: 0;
+	border: 1px solid transparent;
 }
 
-.AgeMetrics-content,
-.AgeMetrics-content-rotated {
-	position: absolute;
-	top: 50%;
-	left: 52%;
-	transform: translate(-50%, -50%);
-
+.ageCardCopy {
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
-	color: var(--text);
-	padding: 10px 0 0;
+	gap: 3px;
+	min-width: 0;
+	overflow: hidden;
 }
 
-.AgeMetrics-content-rotated {
-	left: 66%;
-}
-
-.AgeMetrics-content-title {
+.ageCardLabel {
+	font-size: 0.65rem;
 	font-weight: 700;
-	font-size: 14px;
+	color: var(--text-secondary, #94a3b8);
 	line-height: 1.2;
-	text-wrap: nowrap;
-	color: var(--text-secondary);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 
-	@media (max-width: 480px) {
-		font-size: 12px;
+	html[data-theme="light"] & {
+		color: #64748b;
 	}
 }
 
-.AgeMetrics-content-value {
-	padding-left: 8px;
-
-	font-weight: 700;
-	font-size: 32px;
+.ageCardValue {
+	font-size: 1.35rem;
+	font-weight: 900;
 	line-height: 1;
-	color: var(--text);
+	letter-spacing: -0.03em;
+	color: var(--text, #fff);
+	white-space: nowrap;
+
+	html[data-theme="light"] & {
+		color: #0f172a;
+	}
 
 	@media (max-width: 480px) {
-		font-size: 28px;
+		font-size: 1.2rem;
 	}
 }
 
-.AgeMetrics-border-green {
-	border-left: 2px solid rgba(21, 219, 207, 1);
-}
-
-.AgeMetrics-border-blue {
-	border-left: 2px solid #0974fb;
-}
-
-.AgeMetrics-content-units {
-	font-weight: 400;
-	font-size: 14px;
-	line-height: 16px;
-	opacity: 60%;
-}
-
-.AgeMetrics-icon-container {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	flex-shrink: 0;
-	width: 24px;
-	height: 24px;
-	gap: 8px;
-	border-radius: 24px;
-	background-color: var(--glass-bg);
-	border: 1px solid var(--glass-border);
-	color: var(--text-secondary);
+.ageCardUnit {
+	margin-left: 3px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	opacity: 0.55;
 }
