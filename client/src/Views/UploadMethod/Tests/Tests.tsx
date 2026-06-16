@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
 	Brain, Heart, Flame, Layers, Shield, Sparkles, CheckCircle2, 
 	XCircle, ArrowRight, RefreshCw, Trophy, ExternalLink, Copy,
-	Globe
+	Globe, Zap, BookOpen
 } from "lucide-react";
 import { toast } from "react-toastify";
 import styles from "./Tests.module.scss";
@@ -355,6 +355,11 @@ const TwinIcon = memo(() => (
 
 
 
+const getDaySeed = () => {
+	const today = new Date();
+	return today.getFullYear() * 1000 + (today.getMonth() + 1) * 100 + today.getDate();
+};
+
 const Tests = () => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -661,6 +666,40 @@ const Tests = () => {
 	const [showReceipt, setShowReceipt] = useState<boolean>(false);
 	const [receiptTx, setReceiptTx] = useState<{ hash: string; keySize: string; timestamp: string } | null>(null);
 
+	const todayFeaturedSystem = useMemo(
+		() => EXAM_SYSTEMS[getDaySeed() % EXAM_SYSTEMS.length],
+		[],
+	);
+
+	const [dailyQuizDone, setDailyQuizDone] = useState(false);
+	const [quizzesCompleted, setQuizzesCompleted] = useState(0);
+
+	const refreshHeroProgress = useCallback(() => {
+		setDailyQuizDone(
+			localStorage.getItem("genetiq_exam_completed_seed") === String(getDaySeed()),
+		);
+		try {
+			const history = localStorage.getItem("genetiq_quiz_history");
+			setQuizzesCompleted(history ? JSON.parse(history).length : 0);
+		} catch {
+			setQuizzesCompleted(0);
+		}
+	}, []);
+
+	useEffect(() => {
+		refreshHeroProgress();
+		window.addEventListener("genetiq_history_updated", refreshHeroProgress);
+		window.addEventListener("genetiq_tips_read", refreshHeroProgress);
+		return () => {
+			window.removeEventListener("genetiq_history_updated", refreshHeroProgress);
+			window.removeEventListener("genetiq_tips_read", refreshHeroProgress);
+		};
+	}, [refreshHeroProgress]);
+
+	useEffect(() => {
+		refreshHeroProgress();
+	}, [examCompleted, refreshHeroProgress]);
+
 	const currentQuestion = useMemo(() => {
 		if (!activeSystem) return null;
 		return activeSystem.questions[currentQIndex];
@@ -758,19 +797,139 @@ const Tests = () => {
 	return (
 		<div className={styles["tests-container"]}>
 			<div className={styles["tests-content"]}>
-				
-				{/* Header Info Panel */}
-				<div className={styles["header"]}>
-					<div className={styles["header-text"]}>
-						<h1 className={styles["title"]}>
-							<span className='text-gradient-muted'>Health</span>{" "}
-							<span className='text-gradient-primary'>Diagnostics</span>
-						</h1>
-						<p className={styles["subtitle"]}>
-							Analyze biomarkers, take interactive quizzes, and seal verified credentials in your secure vault.
-						</p>
+				{/* Hero */}
+				<section className={styles.pageHero}>
+					<div className={styles.pageHeroBg} aria-hidden />
+					<div className={styles.pageHeroMesh} aria-hidden />
+					<div className={styles.pageHeroGlow} aria-hidden />
+
+					<div className={styles.pageHeroInner}>
+						<div className={styles.heroTop}>
+							<div className={styles.header}>
+								<div className={styles["header-text"]}>
+									<span className={styles.pageEyebrow}>
+										<Sparkles size={12} strokeWidth={2.5} />
+										Health diagnostics
+									</span>
+									<h1 className={styles.title}>
+										<span className={styles.titleMuted}>Health</span>{" "}
+										<span className={styles.titleAccent}>Diagnostics</span>
+									</h1>
+									<p className={styles.subtitle}>
+										Interactive body-system quizzes, daily bio-insights from WHO & NIH guidelines,
+										and a personal biomarker library — all secured on your device.
+									</p>
+									<div className={styles.heroFeaturePills}>
+										<span className={styles.heroFeaturePill}>
+											<Shield size={12} strokeWidth={2.5} />
+											Local secure vault
+										</span>
+										<span className={styles.heroFeaturePill}>
+											<Globe size={12} strokeWidth={2.5} />
+											Evidence-based tips
+										</span>
+										<span className={styles.heroFeaturePill}>
+											<BookOpen size={12} strokeWidth={2.5} />
+											{EXAM_SYSTEMS.length} system quizzes
+										</span>
+									</div>
+								</div>
+							</div>
+
+							<div className={styles.heroAside} aria-hidden>
+								<div className={styles.heroOrb}>
+									<div className={styles.heroOrbRing} />
+									<div className={`${styles.heroOrbIcon} ${styles.heroOrbBrain}`}>
+										<Brain size={18} />
+									</div>
+									<div className={`${styles.heroOrbIcon} ${styles.heroOrbHeart}`}>
+										<Heart size={18} />
+									</div>
+									<div className={`${styles.heroOrbIcon} ${styles.heroOrbMetabolic}`}>
+										<Flame size={18} />
+									</div>
+									<div className={`${styles.heroOrbIcon} ${styles.heroOrbGut}`}>
+										<Layers size={18} />
+									</div>
+									<div className={styles.heroOrbCore}>
+										<Zap size={20} strokeWidth={2.25} />
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div
+							className={`${styles.dailyQuizBanner} ${styles[todayFeaturedSystem.colorClass]} ${
+								dailyQuizDone ? styles.dailyQuizDone : ""
+							}`}
+						>
+							<div className={styles.dailyQuizCopy}>
+								<span className={styles.dailyQuizEyebrow}>
+									{dailyQuizDone ? "Completed today" : "Today's diagnostic focus"}
+								</span>
+								<strong className={styles.dailyQuizTitle}>{todayFeaturedSystem.name}</strong>
+								<p className={styles.dailyQuizDesc}>{todayFeaturedSystem.focus}</p>
+							</div>
+							<button
+								type="button"
+								className={styles.dailyQuizBtn}
+								onClick={() => startExam(todayFeaturedSystem)}
+								disabled={dailyQuizDone}
+							>
+								{dailyQuizDone ? (
+									<>
+										<CheckCircle2 size={16} />
+										Quiz complete
+									</>
+								) : (
+									<>
+										Start today's quiz
+										<ArrowRight size={16} />
+									</>
+								)}
+							</button>
+						</div>
+
+						<div className={styles.heroStatsStrip}>
+							<div className={styles.heroStat}>
+								<span className={`${styles.heroStatIcon} ${styles.heroStatIconGreen}`}>
+									<span className={styles["stats-dot-active"]} />
+								</span>
+								<div className={styles.heroStatCopy}>
+									<span className={styles.heroStatLabel}>Health vault</span>
+									<strong className={styles.heroStatValue}>Fully secured</strong>
+								</div>
+							</div>
+							<div className={styles.heroStat}>
+								<span className={`${styles.heroStatIcon} ${styles.heroStatIconPurple}`}>
+									<Shield size={15} />
+								</span>
+								<div className={styles.heroStatCopy}>
+									<span className={styles.heroStatLabel}>Protection</span>
+									<strong className={styles.heroStatValue}>Verified safe</strong>
+								</div>
+							</div>
+							<div className={styles.heroStat}>
+								<span className={`${styles.heroStatIcon} ${styles.heroStatIconGold}`}>
+									<Trophy size={15} />
+								</span>
+								<div className={styles.heroStatCopy}>
+									<span className={styles.heroStatLabel}>Quizzes taken</span>
+									<strong className={styles.heroStatValue}>{quizzesCompleted} completed</strong>
+								</div>
+							</div>
+							<div className={styles.heroStat}>
+								<span className={`${styles.heroStatIcon} ${styles.heroStatIconTeal}`}>
+									<Sparkles size={15} />
+								</span>
+								<div className={styles.heroStatCopy}>
+									<span className={styles.heroStatLabel}>Question bank</span>
+									<strong className={styles.heroStatValue}>20 questions</strong>
+								</div>
+							</div>
+						</div>
 					</div>
-				</div>
+				</section>
 
 				{/* MODE 1: INTERACTIVE DIAGNOSTIC EXAMS */}
 				{true && (
@@ -786,42 +945,11 @@ const Tests = () => {
 									transition={{ duration: 0.35 }}
 									className={styles["systems-hub"]}
 								>
-									<div className={styles["diagnostic-stats-bar"]}>
-										<div className={styles["stats-item"]}>
-											<span className={styles["stats-dot-active"]} />
-											<div className={styles["stats-text"]}>
-												<span className={styles["stats-label"]}>Personal Health Vault</span>
-												<strong className={styles["stats-val"]}>Fully Secured</strong>
-											</div>
-										</div>
-										<div className={styles["stats-item"]}>
-											<Shield size={16} className={styles["stats-icon-purple"]} />
-											<div className={styles["stats-text"]}>
-												<span className={styles["stats-label"]}>Security Protection</span>
-												<strong className={styles["stats-val"]}>Verified Safe</strong>
-											</div>
-										</div>
-										<div className={styles["stats-item"]}>
-											<Trophy size={16} className={styles["stats-icon-gold"]} />
-											<div className={styles["stats-text"]}>
-												<span className={styles["stats-label"]}>Available Quizzes</span>
-												<strong className={styles["stats-val"]}>{EXAM_SYSTEMS.length} Body Systems</strong>
-											</div>
-										</div>
-										<div className={styles["stats-item"]}>
-											<Sparkles size={16} className={styles["stats-icon-teal"]} />
-											<div className={styles["stats-text"]}>
-												<span className={styles["stats-label"]}>Total Questions</span>
-												<strong className={styles["stats-val"]}>20 Health Questions</strong>
-											</div>
-										</div>
-									</div>
-
 									<div className={styles["systems-section"]}>
 										<div className={styles["hub-intro"]}>
 											<span className={styles["section-eyebrow"]}>Interactive exams</span>
-											<h2>Select a diagnostic target</h2>
-											<p>Choose an organ system to examine. Score perfectly to seal a verified credential in your secure health vault.</p>
+											<h2>Select a body system</h2>
+											<p>Choose a quiz to test your knowledge. Score perfectly to seal a verified credential in your secure health vault.</p>
 										</div>
 
 										<div className={styles["systems-grid"]}>
@@ -836,7 +964,7 @@ const Tests = () => {
 															{sys.icon}
 														</div>
 														<div className={styles["sys-meta-badges-row"]}>
-															<div className={styles["sys-meta-badge"]}>{sys.questions.length} Questions</div>
+															<div className={styles["sys-meta-badge"]}>{sys.questions.length} questions</div>
 														</div>
 													</div>
 													<h3 className={styles["sys-title"]}>{sys.name}</h3>
@@ -847,10 +975,11 @@ const Tests = () => {
 													</div>
  
 													<button
+														type="button"
 														className={styles["sys-action-btn"]}
 														onClick={() => startExam(sys)}
 													>
-														Examine System
+														Start quiz
 														<ArrowRight size={14} />
 													</button>
 												</div>
