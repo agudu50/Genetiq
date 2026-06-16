@@ -18,10 +18,30 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 
 .head {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	justify-content: space-between;
 	gap: 12px;
 	padding: 0 2px;
+}
+
+.headCopy {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-width: 0;
+	flex: 1;
+}
+
+.headSubtitle {
+	margin: 0;
+	font-size: 12.5px;
+	line-height: 1.45;
+	font-weight: 500;
+	color: var(--text-secondary, #94a3b8);
+
+	html[data-theme="light"] & {
+		color: #64748b;
+	}
 }
 
 .headTitle {
@@ -102,6 +122,97 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 		box-shadow:
 			0 1px 2px rgba(15, 23, 42, 0.04),
 			0 6px 20px -6px rgba(15, 23, 42, 0.1);
+	}
+}
+
+.summaryBar {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+	padding: 11px 16px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+	background: rgba(239, 68, 68, 0.04);
+
+	html[data-theme="light"] & {
+		border-bottom-color: #f1f5f9;
+		background: linear-gradient(90deg, rgba(239, 68, 68, 0.05) 0%, rgba(245, 158, 11, 0.04) 100%);
+	}
+
+	svg {
+		flex-shrink: 0;
+		color: #f87171;
+
+		html[data-theme="light"] & {
+			color: #dc2626;
+		}
+	}
+}
+
+.summaryPills {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	flex: 1;
+	min-width: 0;
+}
+
+.summaryPill {
+	display: inline-flex;
+	align-items: center;
+	padding: 3px 9px;
+	border-radius: 99px;
+	font-size: 10px;
+	font-weight: 800;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	border: 1px solid transparent;
+}
+
+.summaryHigh {
+	color: #fca5a5;
+	background: rgba(239, 68, 68, 0.12);
+	border-color: rgba(239, 68, 68, 0.2);
+
+	html[data-theme="light"] & {
+		color: #dc2626;
+		background: rgba(239, 68, 68, 0.08);
+		border-color: rgba(239, 68, 68, 0.15);
+	}
+}
+
+.summaryMedium {
+	color: #fcd34d;
+	background: rgba(245, 158, 11, 0.12);
+	border-color: rgba(245, 158, 11, 0.2);
+
+	html[data-theme="light"] & {
+		color: #d97706;
+		background: rgba(245, 158, 11, 0.08);
+		border-color: rgba(245, 158, 11, 0.15);
+	}
+}
+
+.summaryLow {
+	color: #6ee7b7;
+	background: rgba(16, 185, 129, 0.12);
+	border-color: rgba(16, 185, 129, 0.2);
+
+	html[data-theme="light"] & {
+		color: #059669;
+		background: rgba(16, 185, 129, 0.08);
+		border-color: rgba(16, 185, 129, 0.15);
+	}
+}
+
+.summaryTotal {
+	font-size: 11px;
+	font-weight: 700;
+	color: var(--text-secondary, #94a3b8);
+	white-space: nowrap;
+
+	html[data-theme="light"] & {
+		color: #64748b;
 	}
 }
 
@@ -186,9 +297,18 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 		font-size: 15px;
 	}
 
+	.headSubtitle {
+		font-size: 11.5px;
+	}
+
 	.showAllBtn {
 		font-size: 12px;
 		padding: 5px 8px;
+	}
+
+	.summaryBar {
+		padding: 10px 14px;
+		gap: 8px;
 	}
 
 	.listCard {

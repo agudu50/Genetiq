@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, AlertTriangle } from "lucide-react";
 import styles from "./ConcernsWidget.module.scss";
 import { detailedSystemConcerns } from "./helpers/detailedSystemConcerns";
 import { Concern } from "./helpers/concernsMockData";
@@ -171,6 +171,14 @@ export const ConcernsWidget: React.FC<ConcernsWidgetProps> = ({ category }) => {
 		? visibleConcerns
 		: visibleConcerns.slice(0, 3);
 
+	const severitySummary = useMemo(() => {
+		const counts = { High: 0, Medium: 0, Low: 0 };
+		visibleConcerns.forEach((c) => {
+			if (c.status in counts) counts[c.status as keyof typeof counts] += 1;
+		});
+		return counts;
+	}, [visibleConcerns]);
+
 	const selectedSystem = detailedSystemConcerns[0];
 	const reasons = selectedSystem.details[detailIndex - 1]?.reasons ?? [];
 	const symptoms = selectedSystem?.details[detailIndex - 1]?.symptoms;
@@ -187,23 +195,59 @@ export const ConcernsWidget: React.FC<ConcernsWidgetProps> = ({ category }) => {
 			{!isCardioDetailView && (
 				<div className={styles.concernsSection}>
 					<div className={styles.head}>
-						<h3 className={styles.headTitle}>{t("key_areas_of_concern")}</h3>
-						<button
-							type="button"
-							className={styles.showAllBtn}
-							onClick={handleShowMore}
-							aria-expanded={isShowMore}
-						>
-							<span>{isShowMore ? t("show_less") : t("show_all")}</span>
-							<ChevronDown
-								size={14}
-								strokeWidth={2.5}
-								className={isShowMore ? styles.chevronUp : undefined}
-							/>
-						</button>
+						<div className={styles.headCopy}>
+							<h3 className={styles.headTitle}>{t("key_areas_of_concern")}</h3>
+							<p className={styles.headSubtitle}>{t("concerns_subtitle")}</p>
+						</div>
+						{visibleConcerns.length > 3 && (
+							<button
+								type="button"
+								className={styles.showAllBtn}
+								onClick={handleShowMore}
+								aria-expanded={isShowMore}
+							>
+								<span>{isShowMore ? t("show_less") : t("show_all")}</span>
+								<ChevronDown
+									size={14}
+									strokeWidth={2.5}
+									className={isShowMore ? styles.chevronUp : undefined}
+								/>
+							</button>
+						)}
 					</div>
 
 					<div className={styles.listCard}>
+						{(severitySummary.High > 0 ||
+							severitySummary.Medium > 0 ||
+							severitySummary.Low > 0) && (
+							<div className={styles.summaryBar}>
+								<AlertTriangle size={14} strokeWidth={2.25} aria-hidden />
+								<div className={styles.summaryPills}>
+									{severitySummary.High > 0 && (
+										<span className={`${styles.summaryPill} ${styles.summaryHigh}`}>
+											{severitySummary.High} {t("High")}
+										</span>
+									)}
+									{severitySummary.Medium > 0 && (
+										<span className={`${styles.summaryPill} ${styles.summaryMedium}`}>
+											{severitySummary.Medium} {t("Medium")}
+										</span>
+									)}
+									{severitySummary.Low > 0 && (
+										<span className={`${styles.summaryPill} ${styles.summaryLow}`}>
+											{severitySummary.Low} {t("Low")}
+										</span>
+									)}
+								</div>
+								<span className={styles.summaryTotal}>
+									{visibleConcerns.length}{" "}
+									{visibleConcerns.length === 1
+										? t("concerns_item_singular")
+										: t("concerns_item_plural")}
+								</span>
+							</div>
+						)}
+
 						{concernsToShow.map((concern: Concern, index: number) => (
 							<ConcernsCard
 								key={concern.id}

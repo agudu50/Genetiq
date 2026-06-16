@@ -4,7 +4,15 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setCategory } from "@/App/Redux/categorySlice";
 import { useLanguage } from "@/App/i18n/LanguageContext";
-import { ChevronRight } from "lucide-react";
+import {
+	ChevronRight,
+	Globe,
+	Coins,
+	Brain,
+	Heart,
+	HelpCircle,
+	Sparkles,
+} from "lucide-react";
 
 interface ConcernsCardProps {
 	concern: Concern;
@@ -13,6 +21,22 @@ interface ConcernsCardProps {
 	isLast?: boolean;
 	layout?: "list" | "grid";
 }
+
+const renderConcernIcon = (iconName: string, size = 18) => {
+	const props = { size, strokeWidth: 2.25 as const };
+	switch (iconName) {
+		case "Globe":
+			return <Globe {...props} />;
+		case "Financial":
+			return <Coins {...props} />;
+		case "Brain":
+			return <Brain {...props} />;
+		case "Heart":
+			return <Heart {...props} />;
+		default:
+			return <HelpCircle {...props} />;
+	}
+};
 
 export const ConcernsCard: React.FC<ConcernsCardProps> = ({
 	concern,
@@ -48,6 +72,9 @@ export const ConcernsCard: React.FC<ConcernsCardProps> = ({
 		}
 	};
 
+	const visibleFactors = concern.factors.slice(0, 2);
+	const hiddenFactorCount = Math.max(0, concern.factors.length - visibleFactors.length);
+
 	if (layout === "grid") {
 		return (
 			<button
@@ -60,18 +87,25 @@ export const ConcernsCard: React.FC<ConcernsCardProps> = ({
 				}
 				onClick={handleClick}
 			>
-				<span className={`${styles.severityLabel} ${getStatusClass(concern.status)}`}>
-					{t(concern.status)}
-				</span>
+				<div className={styles.gridTop}>
+					<span className={styles.iconBox}>{renderConcernIcon(concern.icon)}</span>
+					<span className={`${styles.severityBadge} ${getStatusClass(concern.status)}`}>
+						{t(concern.status)}
+					</span>
+				</div>
 				<h4 className={styles.gridTitle}>{t(concern.title)}</h4>
-				<p className={styles.factors}>
-					<span className={styles.factorPrimary}>{t(concern.factors[0])}</span>
-					{concern.factors.length > 1 && (
-						<span className={styles.factorExtra}>
-							+{concern.factors.length - 1} {t("factors")}
+				<div className={styles.factorChips}>
+					{visibleFactors.map((factor) => (
+						<span key={factor} className={styles.factorChip}>
+							{t(factor)}
+						</span>
+					))}
+					{hiddenFactorCount > 0 && (
+						<span className={styles.factorChipMuted}>
+							+{hiddenFactorCount} {t("factors")}
 						</span>
 					)}
-				</p>
+				</div>
 			</button>
 		);
 	}
@@ -86,24 +120,39 @@ export const ConcernsCard: React.FC<ConcernsCardProps> = ({
 				{ "--concern-accent": getAccentColor(concern.status) } as React.CSSProperties
 			}
 			onClick={handleClick}
+			aria-label={`${t(concern.title)} — ${t(concern.status)} priority. ${t("concerns_view_actions")}`}
 		>
 			<div className={styles.severityRail} aria-hidden />
 
+			<span className={styles.iconBox} aria-hidden>
+				{renderConcernIcon(concern.icon)}
+			</span>
+
 			<div className={styles.content}>
-				<div className={styles.topLine}>
-					<span className={`${styles.severityLabel} ${getStatusClass(concern.status)}`}>
+				<div className={styles.titleRow}>
+					<h4 className={styles.title}>{t(concern.title)}</h4>
+					<span className={`${styles.severityBadge} ${getStatusClass(concern.status)}`}>
 						{t(concern.status)}
 					</span>
-					<h4 className={styles.title}>{t(concern.title)}</h4>
 				</div>
-				<p className={styles.factors}>
-					<span className={styles.factorPrimary}>{t(concern.factors[0])}</span>
-					{concern.factors.length > 1 && (
-						<span className={styles.factorExtra}>
-							+{concern.factors.length - 1} {t("factors")}
+
+				<div className={styles.factorChips}>
+					{visibleFactors.map((factor) => (
+						<span key={factor} className={styles.factorChip}>
+							{t(factor)}
+						</span>
+					))}
+					{hiddenFactorCount > 0 && (
+						<span className={styles.factorChipMuted}>
+							+{hiddenFactorCount} {t("factors")}
 						</span>
 					)}
-				</p>
+				</div>
+
+				<span className={styles.actionHint}>
+					<Sparkles size={11} strokeWidth={2.25} aria-hidden />
+					{t("concerns_view_actions")}
+				</span>
 			</div>
 
 			<ChevronRight className={styles.chevron} size={16} strokeWidth={2.25} aria-hidden />
