@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
 	Calendar,
 	UserRound,
@@ -16,6 +16,11 @@ import {
 	InboxIcon,
 	ShieldCheck,
 	ArrowUpDown,
+	Sparkles,
+	ArrowRight,
+	Shield,
+	Zap,
+	Heart,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -281,14 +286,208 @@ export const HealthHistory: React.FC = () => {
 		return sortOrder === "desc" ? timeB - timeA : timeA - timeB;
 	});
 
+	const latestRecord = sortedRecords[0] ?? records[0] ?? null;
+
+	const attentionFindings = useMemo(
+		() =>
+			records.reduce(
+				(acc, record) =>
+					acc + record.findings.filter((f) => f.status !== "normal").length,
+				0,
+			),
+		[records],
+	);
+
+	const normalFindings = useMemo(
+		() =>
+			records.reduce(
+				(acc, record) =>
+					acc + record.findings.filter((f) => f.status === "normal").length,
+				0,
+			),
+		[records],
+	);
+
+	const scrollToHistory = () => {
+		document.getElementById("upload-history")?.scrollIntoView({ behavior: "smooth" });
+	};
+
 	return (
 		<div className={styles.page}>
+			<div className={styles.pageContent}>
+				{/* ── Page hero (matches Health Diagnostics) ─────────────── */}
+				<section className={styles.pageHero}>
+					<div className={styles.pageHeroBg} aria-hidden />
+					<div className={styles.pageHeroMesh} aria-hidden />
+					<div className={styles.pageHeroGlow} aria-hidden />
+
+					<div className={styles.pageHeroInner}>
+						<div className={styles.heroTop}>
+							<div className={styles.heroCopy}>
+								<span className={styles.pageEyebrow}>
+									<Sparkles size={12} strokeWidth={2.5} />
+									Clinical history
+								</span>
+								<h1 className={styles.pageTitle}>
+									<span className={styles.titleMuted}>Clinical</span>{" "}
+									<span className={styles.titleAccent}>History</span>
+								</h1>
+								<p className={styles.pageSubtitle}>
+									Your personal health timeline — lab uploads, AI-explained findings,
+									and scores secured privately on this device.
+								</p>
+								<div className={styles.heroFeaturePills}>
+									<span className={styles.heroFeaturePill}>
+										<Shield size={12} strokeWidth={2.5} />
+										Encrypted vault
+									</span>
+									<span className={styles.heroFeaturePill}>
+										<FileText size={12} strokeWidth={2.5} />
+										AI lab insights
+									</span>
+									<span className={styles.heroFeaturePill}>
+										<Clock size={12} strokeWidth={2.5} />
+										Upload timeline
+									</span>
+								</div>
+							</div>
+
+							<div className={styles.heroAside} aria-hidden>
+								<div className={styles.heroOrb}>
+									<div className={styles.heroOrbRing} />
+									<div className={`${styles.heroOrbIcon} ${styles.heroOrbFile}`}>
+										<FileText size={18} />
+									</div>
+									<div className={`${styles.heroOrbIcon} ${styles.heroOrbHeart}`}>
+										<Heart size={18} />
+									</div>
+									<div className={`${styles.heroOrbIcon} ${styles.heroOrbDrop}`}>
+										<Droplets size={18} />
+									</div>
+									<div className={`${styles.heroOrbIcon} ${styles.heroOrbActivity}`}>
+										<Activity size={18} />
+									</div>
+									<div className={styles.heroOrbCore}>
+										<Zap size={20} strokeWidth={2.25} />
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div
+							className={`${styles.latestRecordBanner} ${
+								records.length === 0 ? styles.latestRecordEmpty : ""
+							}`}
+						>
+							<div className={styles.latestRecordCopy}>
+								<span className={styles.latestRecordEyebrow}>
+									{records.length === 0 ? "Get started" : "Latest upload"}
+								</span>
+								<strong className={styles.latestRecordTitle}>
+									{records.length === 0
+										? "No records yet"
+										: latestRecord?.fileName || `Upload #${records.length}`}
+								</strong>
+								<p className={styles.latestRecordDesc}>
+									{records.length === 0
+										? "Upload lab results to build your clinical timeline and health score."
+										: `Uploaded ${formatDate(latestRecord!.uploadedAt)} at ${formatTime(latestRecord!.uploadedAt)}${
+												latestScore != null
+													? ` · Health score ${latestScore}/100 (${healthScoreLabel(latestScore)})`
+													: ""
+											}`}
+								</p>
+							</div>
+							{records.length === 0 ? (
+								<button
+									type="button"
+									className={styles.latestRecordBtn}
+									onClick={() => navigate(paths.config.importOrUpload)}
+								>
+									Upload results
+									<ArrowRight size={16} />
+								</button>
+							) : (
+								<div className={styles.latestRecordActions}>
+									<button
+										type="button"
+										className={styles.latestRecordBtnSecondary}
+										onClick={scrollToHistory}
+									>
+										View timeline
+									</button>
+									<button
+										type="button"
+										className={styles.latestRecordBtn}
+										onClick={() =>
+											navigate(paths.config.importOrUpload, {
+												state: { skipToUpload: true },
+											})
+										}
+									>
+										New upload
+										<Upload size={15} />
+									</button>
+								</div>
+							)}
+						</div>
+
+						<div className={styles.heroStatsStrip}>
+							<div className={styles.heroStat}>
+								<span className={`${styles.heroStatIcon} ${styles.heroStatIconTeal}`}>
+									<Files size={15} />
+								</span>
+								<div className={styles.heroStatCopy}>
+									<span className={styles.heroStatLabel}>Uploads</span>
+									<strong className={styles.heroStatValue}>
+										{records.length} record{records.length !== 1 ? "s" : ""}
+									</strong>
+								</div>
+							</div>
+							<div className={styles.heroStat}>
+								<span className={`${styles.heroStatIcon} ${styles.heroStatIconAmber}`}>
+									<AlertTriangle size={15} />
+								</span>
+								<div className={styles.heroStatCopy}>
+									<span className={styles.heroStatLabel}>Needs review</span>
+									<strong className={styles.heroStatValue}>
+										{attentionFindings} finding{attentionFindings !== 1 ? "s" : ""}
+									</strong>
+								</div>
+							</div>
+							<div className={styles.heroStat}>
+								<span className={`${styles.heroStatIcon} ${styles.heroStatIconGreen}`}>
+									<CheckCircle2 size={15} />
+								</span>
+								<div className={styles.heroStatCopy}>
+									<span className={styles.heroStatLabel}>Normal markers</span>
+									<strong className={styles.heroStatValue}>
+										{normalFindings} in range
+									</strong>
+								</div>
+							</div>
+							<div className={styles.heroStat}>
+								<span className={`${styles.heroStatIcon} ${styles.heroStatIconPurple}`}>
+									<ShieldCheck size={15} />
+								</span>
+								<div className={styles.heroStatCopy}>
+									<span className={styles.heroStatLabel}>Health score</span>
+									<strong className={styles.heroStatValue}>
+										{latestScore != null ? `${latestScore}/100` : "—"}
+									</strong>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+
 			<main className={styles.mainContent}>
 				{/* ── Patient profile banner ──────────────────────────────── */}
 				<section className={styles.profileBanner}>
 					<div className={styles.profileHero}>
 						<div className={styles.profileHeroBg} aria-hidden />
 						<div className={styles.profileHeroMesh} aria-hidden />
+						<div className={styles.profileHeroGlow} aria-hidden />
 
 						<div className={styles.profileHeroInner}>
 							<div className={styles.profileAvatar} aria-hidden="true">
@@ -361,7 +560,8 @@ export const HealthHistory: React.FC = () => {
 				</section>
 
 				{/* ── Upload history timeline ─────────────────────────────── */}
-				<section className={styles.historySection}>
+				<section className={styles.historySection} id="upload-history">
+					<div className={styles.historyPanel}>
 					<div className={styles.historyHeader}>
 						<div className={styles.historyHeaderLeft}>
 							<FileText size={18} />
@@ -397,6 +597,7 @@ export const HealthHistory: React.FC = () => {
 							))}
 						</div>
 					)}
+					</div>
 				</section>
 				{/* ── Disclaimer ──────────────────────────────────────────── */}
 				{records.length > 0 && (
@@ -406,6 +607,7 @@ export const HealthHistory: React.FC = () => {
 					</div>
 				)}
 			</main>
+			</div>
 		</div>
 	);
 };
