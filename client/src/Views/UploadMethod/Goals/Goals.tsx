@@ -462,54 +462,94 @@ const Goals = () => {
 	const completedGoalsCount = goals.filter((g) => g.completed).length;
 	const sealedMilestonesCount = goals.filter((g) => g.vaultSealHash).length;
 	const totalBioPoints = completedGoalsCount * 10;
+	const dailyProgressPercent =
+		totalGoalsCount > 0
+			? Math.round((completedGoalsCount / totalGoalsCount) * 100)
+			: 0;
 
 	return (
 		<div className={styles["goals-container"]}>
-			<div className={styles["goals-content"]}>
-				{/* Top Header Row */}
-				<div className={styles["header"]}>
-					<div className={styles["header-text"]}>
-						<h1 className={styles["title"]}>
-							<span className={styles["gradient-muted"]}>Action</span>{" "}
-							<span className={styles["gradient-primary"]}>Plan</span>
-						</h1>
-						<p className={styles["subtitle"]}>
-							Turn your body reports into easy daily steps. Update your progress and build your own healthy habits.
-						</p>
-					</div>
+			{/* Hero header */}
+			<section className={styles.pageHero}>
+				<div className={styles.pageHeroBg} aria-hidden />
+				<div className={styles.pageHeroMesh} aria-hidden />
 
-					{/* Day Streak Widget */}
-					<div className={styles["streak-badge"]}>
-						<div className={styles["streak-ring"]}>
-							<svg viewBox='0 0 36 36' className={styles["circular-chart"]}>
-								<path
-									className={styles["circle-bg"]}
-									d='M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831'
-								/>
-								<path
-									className={styles["circle"]}
-									strokeDasharray={`${streakCount * 10}, 100`}
-									d='M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831'
-								/>
-							</svg>
-							<div className={styles["streak-icon-wrapper"]}>
-								<Flame size={16} className={styles["flame-icon"]} />
-							</div>
+				<div className={styles.pageHeroInner}>
+					<div className={styles.header}>
+						<div className={styles.headerText}>
+							<span className={styles.pageEyebrow}>
+								<Target size={12} strokeWidth={2.5} />
+								Your wellness plan
+							</span>
+							<h1 className={styles.title}>
+								<span className={styles.gradientMuted}>Action</span>{" "}
+								<span className={styles.gradientPrimary}>Plan</span>
+							</h1>
+							<p className={styles.subtitle}>
+								Turn your body reports into easy daily steps. Track progress and build lasting healthy habits.
+							</p>
 						</div>
-						<div className={styles["streak-info"]}>
-							<div className={styles["streak-count-row"]}>
-								<span className={styles["streak-number"]}>{streakCount}</span>
-								<span className={styles["streak-days"]}>Days</span>
+
+						<div className={styles.heroStats}>
+							<div className={styles.dailyProgressRing} title="Today's completion">
+								<div className={styles.ringWrap}>
+									<svg viewBox="0 0 36 36" className={styles.circularChart}>
+										<path
+											className={styles.circleBg}
+											d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+										/>
+										<path
+											className={styles.circleProgress}
+											strokeDasharray={`${dailyProgressPercent}, 100`}
+											d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+										/>
+									</svg>
+									<div className={styles.dailyProgressInner}>
+										<span className={styles.dailyProgressNum}>{dailyProgressPercent}%</span>
+									</div>
+								</div>
+								<div className={styles.dailyStatCopy}>
+									<span className={styles.dailyStatLabel}>Completed today</span>
+									<span className={styles.dailyStatValue}>
+										{completedGoalsCount} of {totalGoalsCount}
+									</span>
+								</div>
 							</div>
-							<span className={styles["streak-label"]}>Day Streak</span>
+
+							<div className={styles.streakBadge}>
+								<div className={styles.streakRing}>
+									<svg viewBox="0 0 36 36" className={styles.circularChart}>
+										<path
+											className={styles.circleBg}
+											d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+										/>
+										<path
+											className={styles.circleStreak}
+											strokeDasharray={`${Math.min(streakCount * 10, 100)}, 100`}
+											d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+										/>
+									</svg>
+									<div className={styles.streakIconWrapper}>
+										<Flame size={16} className={styles.flameIcon} />
+									</div>
+								</div>
+								<div className={styles.streakInfo}>
+									<div className={styles.streakCountRow}>
+										<span className={styles.streakNumber}>{streakCount}</span>
+										<span className={styles.streakDays}>Days</span>
+									</div>
+									<span className={styles.streakLabel}>Day Streak</span>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
+			</section>
 
-				{/* Top-Level Navigation Tabs */}
+			<div className={styles.tabShell}>
 				<div className={styles["main-tabs-row"]}>
-					<button 
-						className={`${styles["main-tab-btn"]} ${activeTab === "routine" ? styles["active"] : ""}`}
+					<button
+						className={`${styles["main-tab-btn"]} ${activeTab === "routine" ? styles.active : ""}`}
 						onClick={() => setActiveTab("routine")}
 					>
 						<Target size={15} />
@@ -538,7 +578,7 @@ const Goals = () => {
 					</button>
 				</div>
 
-				{/* Tab Content Panel */}
+				<div className={styles.tabPanel}>
 				<AnimatePresence mode='wait'>
 					{activeTab === "routine" && (
 						<motion.div
@@ -1112,6 +1152,7 @@ const Goals = () => {
 						</motion.div>
 					)}
 				</AnimatePresence>
+				</div>
 
 				{/* Vault Sync Status Footer */}
 				<div className={styles["offline-notice"]}>
