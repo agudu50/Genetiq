@@ -7,7 +7,7 @@ import { RootState } from "@/App/Redux/store";
 interface QuickStat {
 	label: string;
 	value: string | number;
-	trend?: "up" | "down" | "stable";
+	trend?: "up" | "down" | "stable" | "empty";
 	trendValue?: string;
 	icon: React.ReactNode;
 	color: string;
@@ -94,7 +94,13 @@ export const WelcomeHeader = () => {
 			{
 				label: t("bmi_label"),
 				value: bmi ? bmi.toFixed(1) : "—",
-				trend: bmi ? (bmi < 25 ? "up" : bmi < 30 ? "stable" : "down") : "stable",
+				trend: bmi
+					? bmi < 25
+						? "up"
+						: bmi < 30
+							? "stable"
+							: "down"
+					: "empty",
 				trendValue: bmi
 					? bmi < 18.5
 						? t("bmi_low")
@@ -112,7 +118,7 @@ export const WelcomeHeader = () => {
 							: bmi < 30
 								? "#f59e0b"
 								: "#ef4444"
-					: "#6b7280",
+					: "#ef4444",
 				icon: (
 					<svg
 						width='24'
