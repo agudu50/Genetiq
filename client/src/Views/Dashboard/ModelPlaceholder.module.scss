@@ -1,0 +1,74 @@
+.placeholder {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	min-height: 0;
+	flex: 1;
+	overflow: hidden;
+	border-radius: inherit;
+	background: linear-gradient(165deg, #1e293b 0%, #0f172a 100%);
+
+	html[data-theme="light"] & {
+		background: linear-gradient(165deg, #f8fafc 0%, #e2e8f0 100%);
+	}
+}
+
+.image {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	object-position: center bottom;
+	opacity: 0.95;
+}
+
+.overlay {
+	position: absolute;
+	inset: 0;
+	background: radial-gradient(
+		ellipse 75% 70% at 50% 55%,
+		transparent 0%,
+		rgba(15, 23, 42, 0.08) 100%
+	);
+	pointer-events: none;
+
+	html[data-theme="light"] & {
+		background: radial-gradient(
+			ellipse 75% 70% at 50% 55%,
+			transparent 0%,
+			rgba(255, 255, 255, 0.15) 100%
+		);
+	}
+}
+
+.shimmer {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		105deg,
+		transparent 42%,
+		rgba(255, 255, 255, 0.04) 50%,
+		transparent 58%
+	);
+	background-size: 200% 100%;
+	animation: shimmer 1.8s ease-in-out infinite;
+	pointer-events: none;
+	opacity: 0.6;
+}
+
+@keyframes shimmer {
+	0% {
+		background-position: 200% 0;
+	}
+	100% {
+		background-position: -200% 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.shimmer {
+		animation: none;
+		opacity: 0;
+	}
+}
