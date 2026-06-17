@@ -21,7 +21,6 @@
 	width: 100%;
 	height: 100%;
 	min-height: 400px;
-	background: url("@assets/DigitalTwin/images/canvas-bg.jpg");
 	background-color: #f0f2f5;
 	background-size: contain;
 	background-blend-mode: multiply;
@@ -34,10 +33,10 @@
 		z-index: 0;
 	}
 
-	html[data-theme="dark"] & {
-		background-image: none;
-		background-color: #0a0e1a;
-		background-blend-mode: normal;
+	&[data-bg] {
+		html[data-theme="dark"] & {
+			background-blend-mode: inherit;
+		}
 	}
 
 	@media (max-width: 1024px) {
@@ -60,38 +59,34 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background: linear-gradient(to bottom, #f0f2f5, transparent 15%),
-		linear-gradient(to top, #f0f2f5, transparent 20%),
-		linear-gradient(to left, #f0f2f5, transparent 20%),
-		linear-gradient(to right, #f0f2f5, transparent 20%);
+	background: linear-gradient(to bottom, var(--canvas-vignette, #f0f2f5), transparent 15%),
+		linear-gradient(to top, var(--canvas-vignette, #f0f2f5), transparent 20%),
+		linear-gradient(to left, var(--canvas-vignette, #f0f2f5), transparent 20%),
+		linear-gradient(to right, var(--canvas-vignette, #f0f2f5), transparent 20%);
 	pointer-events: none;
 	z-index: 1;
-
-	html[data-theme="dark"] & {
-		background:
-			linear-gradient(to bottom, #0a0e1a, transparent 15%),
-			linear-gradient(to top, #0a0e1a, transparent 20%),
-			linear-gradient(to left, #0a0e1a, transparent 20%),
-			linear-gradient(to right, #0a0e1a, transparent 20%);
-	}
 
 	@media (max-width: 1024px) {
 		background: linear-gradient(
 				to bottom,
-				rgba(240, 242, 245, 0.5),
+				color-mix(in srgb, var(--canvas-vignette, #f0f2f5) 50%, transparent),
 				transparent 6%
 			),
-			linear-gradient(to top, rgba(240, 242, 245, 0.6), transparent 8%),
-			linear-gradient(to left, rgba(240, 242, 245, 0.5), transparent 8%),
-			linear-gradient(to right, rgba(240, 242, 245, 0.5), transparent 8%);
-
-		html[data-theme="dark"] & {
-			background:
-				linear-gradient(to bottom, rgba(10, 14, 26, 0.7), transparent 6%),
-				linear-gradient(to top, rgba(10, 14, 26, 0.75), transparent 8%),
-				linear-gradient(to left, rgba(10, 14, 26, 0.65), transparent 8%),
-				linear-gradient(to right, rgba(10, 14, 26, 0.65), transparent 8%);
-		}
+			linear-gradient(
+				to top,
+				color-mix(in srgb, var(--canvas-vignette, #f0f2f5) 60%, transparent),
+				transparent 8%
+			),
+			linear-gradient(
+				to left,
+				color-mix(in srgb, var(--canvas-vignette, #f0f2f5) 50%, transparent),
+				transparent 8%
+			),
+			linear-gradient(
+				to right,
+				color-mix(in srgb, var(--canvas-vignette, #f0f2f5) 50%, transparent),
+				transparent 8%
+			);
 	}
 }
 
@@ -114,10 +109,10 @@
 	z-index: 1;
 	animation: scanlineScroll 2s linear infinite;
 	opacity: 0.3;
+}
 
-	html[data-theme="dark"] & {
-		display: none;
-	}
+.canvas-wrapper[data-scanline="false"]::after {
+	display: none;
 }
 
 @keyframes scanlineScroll {
@@ -259,7 +254,7 @@
 .canvas-controls {
 	display: flex;
 	flex-direction: column;
-	gap: 6px;
+	gap: 8px;
 	position: absolute;
 	right: 16px;
 	bottom: 16px;
@@ -269,6 +264,7 @@
 	@media (max-width: 1024px) {
 		right: 16px;
 		bottom: 190px; // Clear the floating dock
+		z-index: 10001;
 	}
 
 	@media (max-width: 768px) {
@@ -277,7 +273,6 @@
 	}
 
 	.control-btn {
-		border-radius: 14px;
 		background: rgba(255, 255, 255, 0.92);
 		backdrop-filter: blur(8px);
 		-webkit-backdrop-filter: blur(8px);
@@ -290,12 +285,19 @@
 			0 4px 12px rgba(0, 0, 0, 0.08),
 			0 1px 3px rgba(0, 0, 0, 0.04);
 		transition: all 0.2s ease;
-		width: 44px;
-		height: 44px;
+		width: 56px;
+		height: 56px;
+		border-radius: 16px;
+
+		@media (max-width: 1024px) {
+			width: 60px;
+			height: 60px;
+			border-radius: 18px;
+		}
 
 		span {
 			color: #4a5568;
-			font-size: 20px;
+			font-size: 24px;
 			line-height: 1;
 			display: flex;
 			align-items: center;

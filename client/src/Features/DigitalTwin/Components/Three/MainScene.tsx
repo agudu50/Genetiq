@@ -4,12 +4,16 @@ import CameraController from "@/Features/DigitalTwin/Controller/CameraController
 import SideBar from "@/Features/DigitalTwin/Components/SideBar/SideBar";
 import { useEffect, useState, Suspense } from "react";
 import Model from "./Model/Model";
+import { useCanvasBackground } from "../../hooks/useCanvasBackground";
+import BackgroundPicker from "./Scene/Controls/BackgroundPicker";
 import "./Scene/canvas.scss";
 import { useParams } from "react-router-dom";
 
 const MainScene = (props: { useSideBar?: boolean }) => {
 	const zoomValue = 1.1;
 	const { cameraState, setCameraState } = useCamera();
+	const { backgroundId, preset, selectBackground, wrapperStyle } =
+		useCanvasBackground();
 	const [modelType, setModelType] = useState<"body" | "cardio">("body");
 	const { systemName } = useParams();
 
@@ -72,7 +76,12 @@ const MainScene = (props: { useSideBar?: boolean }) => {
 			{props.useSideBar ? (
 				<SideBar onModelChange={setModelType} modelType={modelType} />
 			) : null}
-			<div className='canvas-wrapper'>
+			<div
+				className='canvas-wrapper'
+				data-bg={backgroundId}
+				data-scanline={preset.showScanline ? "true" : "false"}
+				style={wrapperStyle}
+			>
 				<Canvas
 					orthographic
 					dpr={[1, 1.5]}
@@ -103,6 +112,7 @@ const MainScene = (props: { useSideBar?: boolean }) => {
 					</Suspense>
 				</Canvas>
 				<div className='canvas-controls'>
+					<BackgroundPicker value={backgroundId} onChange={selectBackground} />
 					<button
 						onClick={handleZoomIn}
 						className='control-btn'

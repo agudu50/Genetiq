@@ -12,6 +12,8 @@ import { ModelType } from "./Types/ZoomTypes";
 import Model from "../Model/Model";
 import CameraController from "../../../Controller/CameraController";
 import SideBar from "../../SideBar/SideBar";
+import { useCanvasBackground } from "../../../hooks/useCanvasBackground";
+import BackgroundPicker from "./Controls/BackgroundPicker";
 import ZoomControls from "./Controls/ZoomControls";
 import "./canvas.scss";
 interface MainSceneProps {
@@ -30,6 +32,8 @@ const MainScene: React.FC<MainSceneProps> = ({
 	isPaused = false,
 }) => {
 	const { cameraState, setCameraState } = useCamera();
+	const { backgroundId, preset, selectBackground, wrapperStyle } =
+		useCanvasBackground();
 	const [modelType, setModelType] = useState<ModelType>(() =>
 		selectedCategory === "cardiovascular" ? "cardio" : "body",
 	);
@@ -150,7 +154,12 @@ const MainScene: React.FC<MainSceneProps> = ({
 				onExternalToggle={onSidebarToggle}
 				onSelectionMade={onSidebarSelectionMade}
 			/>
-			<div className='canvas-wrapper'>
+			<div
+				className='canvas-wrapper'
+				data-bg={backgroundId}
+				data-scanline={preset.showScanline ? "true" : "false"}
+				style={wrapperStyle}
+			>
 				<Canvas
 					orthographic
 					frameloop={isPaused ? "never" : "always"}
@@ -198,7 +207,10 @@ const MainScene: React.FC<MainSceneProps> = ({
 						/>
 					</Suspense>
 				</Canvas>
-				<ZoomControls />
+				<div className='canvas-controls'>
+					<BackgroundPicker value={backgroundId} onChange={selectBackground} />
+					<ZoomControls />
+				</div>
 			</div>
 		</div>
 	);
