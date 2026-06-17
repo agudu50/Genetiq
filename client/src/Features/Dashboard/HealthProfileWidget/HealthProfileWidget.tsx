@@ -1,4 +1,17 @@
 import { useMemo, useState } from "react";
+import {
+	User,
+	Crown,
+	Ruler,
+	Scale,
+	Activity,
+	Pencil,
+	Check,
+	Sparkles,
+	Plus,
+	Wallet,
+	AlertCircle,
+} from "lucide-react";
 import styles from "./HealthProfileWidget.module.scss";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/App/Redux/store";
@@ -10,7 +23,6 @@ export const HealthProfileWidget = () => {
 	const dispatch = useDispatch();
 	const user = useSelector((state: RootState) => state.user);
 
-	// ── Local edit state ─────────────────────────────────────────────────────
 	const [editing, setEditing] = useState(false);
 	const [draft, setDraft] = useState({ height: "", weight: "" });
 
@@ -22,11 +34,15 @@ export const HealthProfileWidget = () => {
 	const cancelEdit = () => setEditing(false);
 
 	const saveEdit = () => {
-		dispatch(updateUserInfo({ height: draft.height.trim(), weight: draft.weight.trim() }));
+		dispatch(
+			updateUserInfo({
+				height: draft.height.trim(),
+				weight: draft.weight.trim(),
+			}),
+		);
 		setEditing(false);
 	};
 
-	// ── BMI ─────────────────────────────────────────────────────────────────
 	const bmi = useMemo(() => {
 		const h = Number(user.height);
 		const w = Number(user.weight);
@@ -42,22 +58,29 @@ export const HealthProfileWidget = () => {
 	}, [draft.height, draft.weight]);
 
 	const getBmiCategory = (val: number) => {
-		if (val < 18.5) return { label: "Underweight", color: "#60a5fa", cls: "underweight" };
-		if (val < 25)   return { label: "Normal",      color: "#00A69D", cls: "normal"      };
-		if (val < 30)   return { label: "Overweight",  color: "#fbbf24", cls: "overweight"  };
-		return              { label: "Obese",       color: "#ef4444", cls: "obese"       };
+		if (val < 18.5)
+			return { label: t("bmi_low"), color: "#60a5fa", cls: "underweight" };
+		if (val < 25)
+			return { label: t("bmi_normal"), color: "#00A69D", cls: "normal" };
+		if (val < 30)
+			return { label: t("bmi_high"), color: "#fbbf24", cls: "overweight" };
+		return { label: t("bmi_obese"), color: "#ef4444", cls: "obese" };
 	};
 
-	const bmiInfo      = bmi      ? getBmiCategory(bmi)      : null;
+	const bmiInfo = bmi ? getBmiCategory(bmi) : null;
 	const draftBmiInfo = draftBmi ? getBmiCategory(draftBmi) : null;
 
-	// ── Profile completeness ─────────────────────────────────────────────────
 	const completeness = useMemo(() => {
 		const fields = [
-			user.firstName, user.lastName, user.age, user.gender,
-			user.height, user.weight,
+			user.firstName,
+			user.lastName,
+			user.age,
+			user.gender,
+			user.height,
+			user.weight,
 			user.medicalConditions.length > 0 ? "yes" : "",
-			user.lifestyle.exercise, user.lifestyle.diet,
+			user.lifestyle.exercise,
+			user.lifestyle.diet,
 			user.bloodType,
 			user.allergies.length > 0 ? "yes" : "",
 			user.clinicalHistory,
@@ -65,7 +88,14 @@ export const HealthProfileWidget = () => {
 		return Math.round((fields.filter(Boolean).length / fields.length) * 100);
 	}, [user]);
 
-	// ── Derived display values ───────────────────────────────────────────────
+	const completenessHint = useMemo(() => {
+		if (!user.height || !user.weight) return t("profile_hint_body_metrics");
+		if (!user.firstName || !user.lastName) return t("profile_hint_name");
+		if (!user.age) return t("profile_hint_age");
+		if (!user.clinicalHistory) return t("profile_hint_history");
+		return t("profile_hint_complete");
+	}, [user, t]);
+
 	const initials = useMemo(() => {
 		if (user.firstName && user.lastName)
 			return `${user.firstName[0]}${user.lastName[0]}`.toUpperCase();
@@ -75,260 +105,330 @@ export const HealthProfileWidget = () => {
 
 	const displayName = useMemo(() => {
 		const first = user.firstName?.trim();
-		const last  = user.lastName?.trim();
+		const last = user.lastName?.trim();
 		if (first && last) return `${first} ${last}`;
-		if (first)         return first;
-		return "Genetiq Member";
-	}, [user.firstName, user.lastName]);
+		if (first) return first;
+		return t("profile_member_fallback");
+	}, [user.firstName, user.lastName, t]);
 
-	// ── Render ───────────────────────────────────────────────────────────────
+	const ringOffset = 2 * Math.PI * 22 - (completeness / 100) * (2 * Math.PI * 22);
+
 	return (
 		<div className={styles.profileWidget}>
+			<div className={styles.heroBg} aria-hidden />
+			<div className={styles.heroMesh} aria-hidden />
+			<div className={styles.heroGlow} aria-hidden />
 
-			{/* Identity banner */}
-			<div className={styles.identityBanner}>
-				<div
-					className={styles.avatarRing}
-					style={{ "--progress": `${completeness * 3.6}deg` } as React.CSSProperties}
-				>
-					<div className={styles.avatar}>
-						{initials === "?" ? (
-							<svg className={styles.silhouetteIcon} width='20' height='20' viewBox='0 0 24 24'
-								fill='none' stroke='currentColor' strokeWidth='2.2' strokeLinecap='round' strokeLinejoin='round'>
-								<path d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2' />
-								<circle cx='12' cy='7' r='4' />
-							</svg>
-						) : (
-							<span>{initials}</span>
-						)}
-					</div>
+			<div className={styles.inner}>
+				<div className={styles.topRow}>
+					<span className={styles.eyebrow}>{t("profile_eyebrow")}</span>
+					<span className={styles.completenessPill}>
+						<Sparkles size={11} strokeWidth={2.5} />
+						{completeness}%
+					</span>
 				</div>
 
-				<div className={styles.identityInfo}>
-					<h3 className={styles.displayName}>{displayName}</h3>
-					<div className={styles.badgeRow}>
-						<span className={`${styles.memberBadge} ${user.isPremium ? styles.premiumBadge : styles.freeBadge}`}>
-							{user.isPremium ? (
-								<><svg width='10' height='10' viewBox='0 0 24 24' fill='currentColor'>
-									<path d='M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z' />
-								</svg>Premium</>
-							) : (
-								<><svg width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2.5'>
-									<circle cx='12' cy='12' r='10' /><line x1='12' y1='8' x2='12' y2='12' /><line x1='12' y1='16' x2='12.01' y2='16' />
-								</svg>Free Plan</>
-							)}
-						</span>
-						{user.age    && <span className={styles.metaTag}>{user.age} yrs</span>}
-						{user.gender && <span className={styles.metaTag}>{user.gender}</span>}
-						{user.medicalConditions.length > 0 && (
-							<span className={`${styles.metaTag} ${styles.conditionTag}`}>
-								{user.medicalConditions.length} alerts
-							</span>
-						)}
-						{user.isWalletConnected && user.walletAddress && (
-							<span className={`${styles.metaTag} ${styles.walletTag}`}>
-								<svg width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
-									<path d='M21 12V7H5a2 2 0 0 1 0-4h14v4' /><path d='M3 5v14a2 2 0 0 0 2 2h16v-5' /><path d='M18 12h5v4h-5z' />
-								</svg>
-								{user.walletAddress.slice(0, 6)}...{user.walletAddress.slice(-4)}
-							</span>
-						)}
-					</div>
-				</div>
-			</div>
-
-			{/* ── Vitals section ── */}
-			{editing ? (
-				/* ─── Edit mode ─── */
-				<div className={styles.editPanel}>
-					<p className={styles.editPanelTitle}>
-						<svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
-							<path d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7' />
-							<path d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z' />
+				<div className={styles.identityCard}>
+					<div
+						className={styles.avatarRing}
+						style={{ "--progress": `${completeness * 3.6}deg` } as React.CSSProperties}
+					>
+						<svg className={styles.avatarRingSvg} viewBox="0 0 52 52" aria-hidden>
+							<circle
+								className={styles.avatarRingTrack}
+								cx="26"
+								cy="26"
+								r="22"
+								fill="none"
+							/>
+							<circle
+								className={styles.avatarRingProgress}
+								cx="26"
+								cy="26"
+								r="22"
+								fill="none"
+								strokeDasharray={2 * Math.PI * 22}
+								strokeDashoffset={ringOffset}
+							/>
 						</svg>
-						Edit Body Metrics
-					</p>
-
-					<div className={styles.inputGroup}>
-						<label className={styles.inputLabel}>
-							<svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
-								<path d='M12 22V2M8 6l4-4 4 4M8 18l4 4 4-4' />
-							</svg>
-							Height
-						</label>
-						<div className={styles.inputRow}>
-							<input
-								type='number'
-								min='50'
-								max='300'
-								placeholder='e.g. 175'
-								className={styles.metricInput}
-								value={draft.height}
-								onChange={e => setDraft(d => ({ ...d, height: e.target.value }))}
-							/>
-							<span className={styles.inputUnit}>cm</span>
+						<div className={styles.avatar}>
+							{initials === "?" ? (
+								<User size={20} strokeWidth={2.25} />
+							) : (
+								<span>{initials}</span>
+							)}
 						</div>
 					</div>
 
-					<div className={styles.inputGroup}>
-						<label className={styles.inputLabel}>
-							<svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
-								<rect x='3' y='4' width='18' height='16' rx='3' />
-								<path d='M12 4v4M12 12a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 12l2-3' />
-							</svg>
-							Weight
-						</label>
-						<div className={styles.inputRow}>
-							<input
-								type='number'
-								min='10'
-								max='500'
-								placeholder='e.g. 72'
-								className={styles.metricInput}
-								value={draft.weight}
-								onChange={e => setDraft(d => ({ ...d, weight: e.target.value }))}
-							/>
-							<span className={styles.inputUnit}>kg</span>
+					<div className={styles.identityInfo}>
+						<h3 className={styles.displayName}>{displayName}</h3>
+						<div className={styles.badgeRow}>
+							<span
+								className={`${styles.memberBadge} ${user.isPremium ? styles.premiumBadge : styles.freeBadge}`}
+							>
+								{user.isPremium ? (
+									<>
+										<Crown size={11} strokeWidth={2.5} />
+										{t("premium_plan")}
+									</>
+								) : (
+									<>
+										<Sparkles size={11} strokeWidth={2.5} />
+										{t("free_plan")}
+									</>
+								)}
+							</span>
+							{user.age && (
+								<span className={styles.metaTag}>
+									{user.age} {t("years_short")}
+								</span>
+							)}
+							{user.gender && (
+								<span className={styles.metaTag}>{user.gender}</span>
+							)}
 						</div>
-					</div>
 
-					{/* Live BMI preview */}
-					{draftBmi !== null && draftBmiInfo && (
-						<div className={styles.bmiPreview} style={{ borderColor: `${draftBmiInfo.color}30` }}>
-							<svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke={draftBmiInfo.color} strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
-								<path d='M22 12h-4l-3 9L9 3l-3 9H2' />
-							</svg>
-							<span className={styles.bmiPreviewLabel}>BMI</span>
-							<span className={styles.bmiPreviewValue} style={{ color: draftBmiInfo.color }}>
-								{draftBmi.toFixed(1)}
-							</span>
-							<span className={`${styles.bmiBadge} ${styles[draftBmiInfo.cls]}`}>
-								{draftBmiInfo.label}
-							</span>
-						</div>
+						{(user.medicalConditions.length > 0 ||
+							(user.isWalletConnected && user.walletAddress)) && (
+							<div className={styles.metaRow}>
+								{user.medicalConditions.length > 0 && (
+									<span className={`${styles.metaTag} ${styles.conditionTag}`}>
+										<AlertCircle size={10} strokeWidth={2.5} />
+										{user.medicalConditions.length}{" "}
+										{t("profile_alerts")}
+									</span>
+								)}
+								{user.isWalletConnected && user.walletAddress && (
+									<span className={`${styles.metaTag} ${styles.walletTag}`}>
+										<Wallet size={10} strokeWidth={2.5} />
+										{user.walletAddress.slice(0, 6)}...
+										{user.walletAddress.slice(-4)}
+									</span>
+								)}
+							</div>
+						)}
+					</div>
+				</div>
+
+				<div className={styles.sectionHeader}>
+					<span>{t("profile_body_metrics")}</span>
+					{!editing && (
+						<button
+							type="button"
+							className={styles.sectionAction}
+							onClick={openEdit}
+						>
+							<Pencil size={12} strokeWidth={2.5} />
+							{t("update_profile")}
+						</button>
 					)}
+				</div>
 
-					<div className={styles.editActions}>
-						<button className={styles.cancelBtn} onClick={cancelEdit}>Cancel</button>
-						<button className={styles.saveBtn} onClick={saveEdit}>
-							<svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2.5' strokeLinecap='round' strokeLinejoin='round'>
-								<polyline points='20 6 9 17 4 12' />
-							</svg>
-							Save
+				{editing ? (
+					<div className={styles.editPanel}>
+						<p className={styles.editPanelTitle}>
+							<Pencil size={14} strokeWidth={2.25} />
+							{t("edit_metrics")}
+						</p>
+
+						<div className={styles.inputGroup}>
+							<label className={styles.inputLabel}>
+								<Ruler size={14} strokeWidth={2.25} />
+								{t("height")}
+							</label>
+							<div className={styles.inputRow}>
+								<input
+									type="number"
+									min="50"
+									max="300"
+									placeholder="175"
+									className={styles.metricInput}
+									value={draft.height}
+									onChange={(e) =>
+										setDraft((d) => ({ ...d, height: e.target.value }))
+									}
+								/>
+								<span className={styles.inputUnit}>cm</span>
+							</div>
+						</div>
+
+						<div className={styles.inputGroup}>
+							<label className={styles.inputLabel}>
+								<Scale size={14} strokeWidth={2.25} />
+								{t("weight")}
+							</label>
+							<div className={styles.inputRow}>
+								<input
+									type="number"
+									min="10"
+									max="500"
+									placeholder="72"
+									className={styles.metricInput}
+									value={draft.weight}
+									onChange={(e) =>
+										setDraft((d) => ({ ...d, weight: e.target.value }))
+									}
+								/>
+								<span className={styles.inputUnit}>kg</span>
+							</div>
+						</div>
+
+						{draftBmi !== null && draftBmiInfo && (
+							<div
+								className={styles.bmiPreview}
+								style={{ borderColor: `${draftBmiInfo.color}30` }}
+							>
+								<Activity size={14} strokeWidth={2.25} color={draftBmiInfo.color} />
+								<span className={styles.bmiPreviewLabel}>BMI</span>
+								<span
+									className={styles.bmiPreviewValue}
+									style={{ color: draftBmiInfo.color }}
+								>
+									{draftBmi.toFixed(1)}
+								</span>
+								<span className={`${styles.bmiBadge} ${styles[draftBmiInfo.cls]}`}>
+									{draftBmiInfo.label}
+								</span>
+							</div>
+						)}
+
+						<div className={styles.editActions}>
+							<button
+								type="button"
+								className={styles.cancelBtn}
+								onClick={cancelEdit}
+							>
+								{t("cancel")}
+							</button>
+							<button type="button" className={styles.saveBtn} onClick={saveEdit}>
+								<Check size={14} strokeWidth={2.75} />
+								{t("save")}
+							</button>
+						</div>
+					</div>
+				) : (
+					<div className={styles.vitalsGrid}>
+						<button
+							type="button"
+							className={`${styles.vitalCard} ${!user.height ? styles.isEmpty : ""}`}
+							onClick={openEdit}
+						>
+							<div className={styles.vitalIcon}>
+								<Ruler size={17} strokeWidth={2.25} />
+							</div>
+							<div className={styles.vitalData}>
+								{user.height ? (
+									<>
+										<span className={styles.vitalValue}>{user.height}</span>
+										<span className={styles.vitalUnit}>cm</span>
+									</>
+								) : (
+									<span className={styles.vitalPlaceholder}>—</span>
+								)}
+							</div>
+							<span className={styles.vitalLabel}>{t("height")}</span>
+							{!user.height && (
+								<span className={styles.addHint}>
+									<Plus size={9} strokeWidth={3} />
+									{t("add_metric")}
+								</span>
+							)}
+						</button>
+
+						<button
+							type="button"
+							className={`${styles.vitalCard} ${!user.weight ? styles.isEmpty : ""}`}
+							onClick={openEdit}
+						>
+							<div className={styles.vitalIcon}>
+								<Scale size={17} strokeWidth={2.25} />
+							</div>
+							<div className={styles.vitalData}>
+								{user.weight ? (
+									<>
+										<span className={styles.vitalValue}>{user.weight}</span>
+										<span className={styles.vitalUnit}>kg</span>
+									</>
+								) : (
+									<span className={styles.vitalPlaceholder}>—</span>
+								)}
+							</div>
+							<span className={styles.vitalLabel}>{t("weight")}</span>
+							{!user.weight && (
+								<span className={styles.addHint}>
+									<Plus size={9} strokeWidth={3} />
+									{t("add_metric")}
+								</span>
+							)}
+						</button>
+
+						<button
+							type="button"
+							className={`${styles.vitalCard} ${!bmi ? styles.isEmpty : ""}`}
+							onClick={openEdit}
+							title={
+								bmi
+									? t("bmi_auto_hint")
+									: t("profile_hint_body_metrics")
+							}
+						>
+							{bmi !== null && bmiInfo ? (
+								<>
+									<div
+										className={styles.vitalIcon}
+										style={{ color: bmiInfo.color }}
+									>
+										<Activity size={17} strokeWidth={2.25} />
+									</div>
+									<div className={styles.vitalData}>
+										<span className={styles.vitalValue}>{bmi.toFixed(1)}</span>
+										<span className={`${styles.bmiBadge} ${styles[bmiInfo.cls]}`}>
+											{bmiInfo.label}
+										</span>
+									</div>
+									<span className={styles.vitalLabel}>{t("bmi_label")}</span>
+								</>
+							) : (
+								<>
+									<div className={styles.vitalIcon}>
+										<Activity size={17} strokeWidth={2.25} />
+									</div>
+									<div className={styles.vitalData}>
+										<span className={styles.vitalPlaceholder}>—</span>
+									</div>
+									<span className={styles.vitalLabel}>{t("bmi_label")}</span>
+									<span className={styles.addHint}>{t("bmi_auto")}</span>
+								</>
+							)}
 						</button>
 					</div>
-				</div>
-			) : (
-				/* ─── Display mode ─── */
-				<div className={styles.vitalsGrid}>
-					{/* Height */}
-					<div
-						className={`${styles.vitalCard} ${!user.height ? styles.isEmpty : ""}`}
-						onClick={openEdit}
-						title='Click to edit'
-					>
-						<div className={styles.vitalIcon}>
-							<svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
-								<path d='M12 22V2M8 6l4-4 4 4M8 18l4 4 4-4' />
-							</svg>
-						</div>
-						{user.height ? (
-							<div className={styles.vitalData}>
-								<span className={styles.vitalValue}>{user.height}</span>
-								<span className={styles.vitalUnit}>cm</span>
-							</div>
-						) : (
-							<div className={styles.vitalData}>
-								<span className={styles.vitalPlaceholder}>--</span>
-							</div>
-						)}
-						<span className={styles.vitalLabel}>{t("height") || "Height"}</span>
-						{!user.height && <span className={styles.addHint}>+ Add</span>}
-					</div>
+				)}
 
-					{/* Weight */}
-					<div
-						className={`${styles.vitalCard} ${!user.weight ? styles.isEmpty : ""}`}
-						onClick={openEdit}
-						title='Click to edit'
-					>
-						<div className={styles.vitalIcon}>
-							<svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
-								<rect x='3' y='4' width='18' height='16' rx='3' />
-								<path d='M12 4v4M12 12a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 12l2-3' />
-							</svg>
-						</div>
-						{user.weight ? (
-							<div className={styles.vitalData}>
-								<span className={styles.vitalValue}>{user.weight}</span>
-								<span className={styles.vitalUnit}>kg</span>
+				{!editing && (
+					<div className={styles.completenessCard}>
+						<div className={styles.completenessCopy}>
+							<div className={styles.completenessBar}>
+								<div
+									className={styles.completenessProgress}
+									style={{ width: `${completeness}%` }}
+								/>
 							</div>
-						) : (
-							<div className={styles.vitalData}>
-								<span className={styles.vitalPlaceholder}>--</span>
-							</div>
-						)}
-						<span className={styles.vitalLabel}>{t("weight") || "Weight"}</span>
-						{!user.weight && <span className={styles.addHint}>+ Add</span>}
-					</div>
-
-					{/* BMI – read-only, calculated */}
-					<div
-						className={`${styles.vitalCard} ${!bmi ? styles.isEmpty : ""}`}
-						onClick={openEdit}
-						title={bmi ? "BMI is auto-calculated" : "Add height & weight to calculate"}
-					>
-						{bmi !== null && bmiInfo ? (
-							<>
-								<div className={styles.vitalIcon} style={{ color: bmiInfo.color }}>
-									<svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
-										<path d='M22 12h-4l-3 9L9 3l-3 9H2' />
-									</svg>
-								</div>
-								<div className={styles.vitalData}>
-									<span className={styles.vitalValue}>{bmi.toFixed(1)}</span>
-									<span className={`${styles.bmiBadge} ${styles[bmiInfo.cls]}`}>
-										{bmiInfo.label}
-									</span>
-								</div>
-								<span className={styles.vitalLabel}>BMI</span>
-							</>
-						) : (
-							<>
-								<div className={styles.vitalIcon}>
-									<svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
-										<path d='M22 12h-4l-3 9L9 3l-3 9H2' />
-									</svg>
-								</div>
-								<div className={styles.vitalData}>
-									<span className={styles.vitalPlaceholder}>--</span>
-								</div>
-								<span className={styles.vitalLabel}>BMI Index</span>
-								<span className={styles.addHint}>Auto</span>
-							</>
-						)}
-					</div>
-				</div>
-			)}
-
-			{/* Footer */}
-			{!editing && (
-				<div className={styles.footer}>
-					<div className={styles.completeness}>
-						<div className={styles.completenessBar}>
-							<div className={styles.completenessProgress} style={{ width: `${completeness}%` }} />
+							<p className={styles.completenessText}>
+								{t("profile_complete", { n: completeness })}
+							</p>
+							<p className={styles.completenessHint}>{completenessHint}</p>
 						</div>
-						<span className={styles.completenessText}>{completeness}% profile complete</span>
+						<button
+							type="button"
+							className={styles.updateBtn}
+							onClick={openEdit}
+						>
+							<Pencil size={13} strokeWidth={2.5} />
+							{t("update_profile")}
+						</button>
 					</div>
-					<button className={styles.updateBtn} onClick={openEdit}>
-						<svg width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2.5' strokeLinecap='round' strokeLinejoin='round'>
-							<path d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7' />
-							<path d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z' />
-						</svg>
-						{t("update_profile") || "Edit"}
-					</button>
-				</div>
-			)}
+				)}
+			</div>
 		</div>
 	);
 };
