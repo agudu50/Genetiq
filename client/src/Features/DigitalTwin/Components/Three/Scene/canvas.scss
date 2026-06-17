@@ -254,7 +254,7 @@
 .canvas-controls {
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	gap: 6px;
 	position: absolute;
 	right: 16px;
 	bottom: 16px;
@@ -285,19 +285,19 @@
 			0 4px 12px rgba(0, 0, 0, 0.08),
 			0 1px 3px rgba(0, 0, 0, 0.04);
 		transition: all 0.2s ease;
-		width: 56px;
-		height: 56px;
-		border-radius: 16px;
+		width: 48px;
+		height: 48px;
+		border-radius: 14px;
 
 		@media (max-width: 1024px) {
-			width: 60px;
-			height: 60px;
-			border-radius: 18px;
+			width: 52px;
+			height: 52px;
+			border-radius: 15px;
 		}
 
 		span {
 			color: #4a5568;
-			font-size: 24px;
+			font-size: 20px;
 			line-height: 1;
 			display: flex;
 			align-items: center;
