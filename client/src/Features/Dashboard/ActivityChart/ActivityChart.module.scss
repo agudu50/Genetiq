@@ -1,310 +1,314 @@
 @use "@/App/Styles/_mixins" as mixins;
 
-.chartContainer {
-	display: flex;
-	flex-direction: column;
-	gap: 20px;
-	padding: 24px;
+$teal: #00a69d;
+$blue: #3b82f6;
+
+.container {
+	position: relative;
 	width: 100%;
 	max-width: 100%;
+	min-width: 0;
 	box-sizing: border-box;
-	border-radius: 24px;
-	position: relative;
 	overflow: hidden;
+	border-radius: 24px;
+	height: 100%;
 	@include mixins.dashboard-card;
-	@include mixins.dashboard-card-hover;
-
-	&:hover {
-		border-color: color-mix(in srgb, var(--active-metric-color, #00A69D) 25%, rgba(255, 255, 255, 0.06));
-		box-shadow: 0 16px 40px color-mix(in srgb, var(--active-metric-color, #00A69D) 8%, rgba(0, 0, 0, 0.15)), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-
-		.cardGlowBlob {
-			transform: translate(-10%, -10%) scale(1.1);
-			opacity: 0.85;
-		}
-	}
 
 	@media (max-width: 480px) {
-		padding: 18px 16px;
-		gap: 16px;
 		border-radius: 20px;
 	}
 }
 
-// ─── High-Fidelity Background Telemetry Grid ───
-.cardMeshBg {
+.heroBg {
 	position: absolute;
 	inset: 0;
-	background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-	background-size: 8px 8px;
-	opacity: 0.6;
-	mask-image: radial-gradient(circle at 15% 15%, black, transparent 75%);
-	-webkit-mask-image: radial-gradient(circle at 15% 15%, black, transparent 75%);
 	pointer-events: none;
-	z-index: 0;
+	background: linear-gradient(
+		145deg,
+		rgba($blue, 0.09) 0%,
+		rgba($teal, 0.05) 42%,
+		transparent 72%
+	);
 
 	html[data-theme="light"] & {
-		background-image: radial-gradient(rgba(15, 23, 42, 0.03) 1px, transparent 1px);
-		opacity: 0.8;
+		background: linear-gradient(
+			145deg,
+			rgba($blue, 0.06) 0%,
+			rgba($teal, 0.04) 40%,
+			#ffffff 78%
+		);
 	}
 }
 
-.cardGlowBlob {
+.heroMesh {
 	position: absolute;
-	top: -60px;
-	left: -60px;
-	width: 220px;
-	height: 220px;
-	background: radial-gradient(circle, color-mix(in srgb, var(--active-metric-color, #00A69D) 16%, transparent) 0%, transparent 70%);
-	filter: blur(40px);
-	border-radius: 50%;
+	inset: 0;
 	pointer-events: none;
-	z-index: 0;
-	transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-	animation: none;
+	opacity: 0.28;
+	background-image: radial-gradient(rgba($blue, 0.12) 1px, transparent 1.4px);
+	background-size: 18px 18px;
+	mask-image: linear-gradient(180deg, #000 0%, transparent 90%);
+	-webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 90%);
 
-	html[data-theme="light"] & {
-		background: radial-gradient(circle, color-mix(in srgb, var(--active-metric-color, #00A69D) 10%, transparent) 0%, transparent 70%);
+	html[data-theme="dark"] & {
+		opacity: 0.16;
+		background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1.4px);
 	}
 }
 
-@keyframes chartBlobPulse {
-	0% { transform: scale(1); opacity: 0.75; }
-	100% { transform: scale(1.12); opacity: 0.95; }
+.heroGlow {
+	position: absolute;
+	top: -50px;
+	right: -30px;
+	width: 180px;
+	height: 180px;
+	border-radius: 50%;
+	background: radial-gradient(
+		circle,
+		color-mix(in srgb, var(--metric-color, $blue) 22%, transparent) 0%,
+		transparent 68%
+	);
+	filter: blur(10px);
+	pointer-events: none;
+	transition: background 0.3s ease;
+}
+
+.inner {
+	position: relative;
+	z-index: 1;
+	padding: 18px 16px 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	min-width: 0;
 }
 
 .header {
 	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-	flex-wrap: wrap;
-	gap: 16px;
-	z-index: 1;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 0;
 }
 
-.titleSection {
+.headerTop {
 	display: flex;
-	flex-direction: column;
-	gap: 10px;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.eyebrow {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 4px 10px;
+	border-radius: 99px;
+	font-size: 0.58rem;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: $blue;
+	background: rgba($blue, 0.1);
+	border: 1px solid rgba($blue, 0.16);
+	flex-shrink: 0;
 }
 
 .title {
-	font-size: 16.5px;
-	font-weight: 750;
-	color: var(--text, #ffffff);
+	display: flex;
+	align-items: center;
+	gap: 8px;
 	margin: 0;
-	letter-spacing: -0.015em;
+	font-size: 1rem;
+	font-weight: 800;
+	color: var(--text, #fff);
+	letter-spacing: -0.02em;
+	line-height: 1.2;
+
+	svg {
+		color: var(--metric-color, $blue);
+		flex-shrink: 0;
+	}
 
 	html[data-theme="light"] & {
-		color: #000000;
-		font-weight: 850;
-	}
-
-	@media (max-width: 480px) {
-		font-size: 15px;
+		color: #0f172a;
 	}
 }
 
-.stats {
+.timeRangeSelector {
+	display: inline-flex;
+	padding: 3px;
+	border-radius: 10px;
+	@include mixins.dashboard-nested-surface;
+	flex-shrink: 0;
+}
+
+.rangeBtn {
+	padding: 5px 10px;
+	border: none;
+	border-radius: 7px;
+	background: transparent;
+	font-size: 0.62rem;
+	font-weight: 700;
+	font-family: inherit;
+	color: var(--text-secondary, #94a3b8);
+	cursor: pointer;
+	transition: background 0.2s ease, color 0.2s ease;
+
+	html[data-theme="light"] & {
+		color: #64748b;
+	}
+
+	&:hover {
+		color: var(--text, #fff);
+
+		html[data-theme="light"] & {
+			color: #0f172a;
+		}
+	}
+}
+
+.rangeBtnActive {
+	background: var(--metric-color, $blue);
+	color: #fff !important;
+	box-shadow: 0 4px 12px color-mix(in srgb, var(--metric-color, $blue) 35%, transparent);
+}
+
+.statsStrip {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 8px;
+}
+
+.statTile {
 	display: flex;
-	gap: 20px;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 12px;
+	border-radius: 12px;
+	min-width: 0;
+	@include mixins.dashboard-nested-surface;
 }
 
-// ─── Stat Telemetry Modules ───
-.statItem {
+.statIcon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 9px;
+	flex-shrink: 0;
+	color: var(--metric-color, $blue);
+	background: color-mix(in srgb, var(--metric-color, $blue) 12%, transparent);
+	border: 1px solid color-mix(in srgb, var(--metric-color, $blue) 18%, transparent);
+}
+
+.statCopy {
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
-	padding: 6px 12px;
-	border-radius: 10px;
-	background: rgba(255, 255, 255, 0.02);
-	border: 1px solid rgba(255, 255, 255, 0.04);
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
-
-	html[data-theme="light"] & {
-		background: rgba(15, 23, 42, 0.02);
-		border-color: rgba(15, 23, 42, 0.04);
-		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
-	}
+	min-width: 0;
 }
 
 .statLabel {
-	font-size: 10px;
-	color: var(--text-secondary, #94a3b8);
-	font-weight: 800;
+	font-size: 0.62rem;
+	font-weight: 700;
 	text-transform: uppercase;
-	letter-spacing: 0.06em;
+	letter-spacing: 0.05em;
+	color: var(--text-secondary, #94a3b8);
 
 	html[data-theme="light"] & {
-		color: #1e293b;
-		font-weight: 850;
+		color: #64748b;
 	}
 }
 
 .statValue {
-	font-size: 17px;
-	font-weight: 800;
-	color: var(--text, #ffffff);
+	font-size: 1rem;
+	font-weight: 900;
+	line-height: 1.1;
 	letter-spacing: -0.02em;
-	transition: text-shadow 0.3s ease;
-	text-shadow: 0 0 12px color-mix(in srgb, var(--active-metric-color, #00A69D) 30%, transparent);
+	color: var(--text, #fff);
 
 	html[data-theme="light"] & {
-		color: #000000;
-		text-shadow: 0 0 8px color-mix(in srgb, var(--active-metric-color, #00A69D) 15%, transparent);
-		font-weight: 850;
+		color: #0f172a;
 	}
 }
 
-// ─── Sliding Glass Range Capsule ───
-.timeRangeSelector {
-	display: flex;
-	background: rgba(255, 255, 255, 0.03);
-	border-radius: 12px;
+.controlShell {
 	padding: 4px;
-	border: 1px solid rgba(255, 255, 255, 0.05);
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
-
-	html[data-theme="light"] & {
-		background: rgba(15, 23, 42, 0.03);
-		border-color: rgba(15, 23, 42, 0.05);
-		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
-	}
-
-	@media (max-width: 480px) {
-		display: none;
-	}
-}
-
-.rangeBtn {
-	padding: 8px 16px;
-	font-size: 12px;
-	font-weight: 700;
-	color: var(--text-secondary, #94a3b8);
-	background: transparent;
-	border: none;
-	border-radius: 8px;
-	cursor: pointer;
-	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-
-	html[data-theme="light"] & {
-		color: #1e293b;
-		font-weight: 750;
-	}
-
-	&:hover {
-		color: var(--text, #ffffff);
-
-		html[data-theme="light"] & {
-			color: #000000;
-		}
-	}
-
-	&.active {
-		background: var(--active-metric-color, #00A69D);
-		color: #ffffff;
-		box-shadow: 0 4px 14px color-mix(in srgb, var(--active-metric-color, #00A69D) 40%, transparent);
-
-		html[data-theme="light"] & {
-			color: #ffffff;
-		}
-	}
+	border-radius: 12px;
+	@include mixins.dashboard-nested-surface;
 }
 
 .metricSelector {
 	display: flex;
-	gap: 10px;
-	flex-wrap: wrap;
-	z-index: 1;
-
-	@media (max-width: 480px) {
-		gap: 6px;
-	}
+	gap: 4px;
+	min-width: 0;
 }
 
-// ─── Metric Selection Capsules ───
 .metricBtn {
-	display: flex;
+	flex: 1;
+	min-width: 0;
+	display: inline-flex;
 	align-items: center;
-	gap: 8px;
-	padding: 8px 16px;
-	font-size: 12px;
+	justify-content: center;
+	gap: 5px;
+	padding: 7px 6px;
+	border: none;
+	border-radius: 8px;
+	background: transparent;
+	font-size: 0.62rem;
 	font-weight: 700;
+	font-family: inherit;
 	color: var(--text-secondary, #94a3b8);
-	background: rgba(255, 255, 255, 0.02);
-	border: 1px solid rgba(255, 255, 255, 0.05);
-	border-radius: 100px;
 	cursor: pointer;
-	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 
 	html[data-theme="light"] & {
-		background: rgba(15, 23, 42, 0.02);
-		border-color: rgba(15, 23, 42, 0.05);
-		color: #1e293b;
-		font-weight: 750;
+		color: #64748b;
 	}
 
-	@media (max-width: 480px) {
-		padding: 6px 12px;
-		font-size: 11px;
-		gap: 6px;
-	}
-
-	.metricDot {
-		width: 6px;
-		height: 6px;
-		border-radius: 50%;
-		background: var(--metric-color);
-		opacity: 0.5;
-		transition: all 0.3s ease;
-	}
-
-	&:hover {
-		border-color: color-mix(in srgb, var(--metric-color) 40%, rgba(255, 255, 255, 0.15));
-		color: var(--text, #ffffff);
-
-		html[data-theme="light"] & {
-			color: #000000;
-		}
-	}
-
-	&.active {
-		background: color-mix(in srgb, var(--metric-color) 8%, transparent);
-		border-color: var(--metric-color);
-		color: var(--text, #ffffff);
-		box-shadow: 0 4px 16px color-mix(in srgb, var(--metric-color) 12%, transparent);
-
-		html[data-theme="light"] & {
-			background: color-mix(in srgb, var(--metric-color) 6%, transparent);
-			color: #000000;
-			font-weight: 850;
-		}
-
-		.metricDot {
-			opacity: 1;
-			transform: scale(1.15);
-			box-shadow: 0 0 8px var(--metric-color);
-			animation: none;
-		}
+	@media (max-width: 400px) {
+		font-size: 0.58rem;
+		padding: 6px 4px;
+		gap: 3px;
 	}
 }
 
-@keyframes dotBreathe {
-	0% { opacity: 0.7; transform: scale(1); }
-	100% { opacity: 1; transform: scale(1.25); }
+.metricBtnIcon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	color: var(--btn-color, $blue);
+	opacity: 0.85;
+}
+
+.metricBtnActive {
+	background: color-mix(in srgb, var(--btn-color, $blue) 12%, transparent);
+	color: var(--text, #fff);
+	box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--btn-color, $blue) 28%, transparent);
+
+	html[data-theme="light"] & {
+		color: #0f172a;
+	}
+
+	.metricBtnIcon {
+		opacity: 1;
+	}
 }
 
 .chartArea {
 	display: flex;
-	gap: 16px;
-	height: 200px;
-	padding-top: 16px;
-	z-index: 1;
-	position: relative;
+	gap: 8px;
+	height: 168px;
+	min-width: 0;
 
 	@media (max-width: 480px) {
-		height: 160px;
-		gap: 8px;
+		height: 150px;
 	}
 }
 
@@ -312,54 +316,71 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	width: 50px;
-	padding-bottom: 28px;
-	text-align: right;
+	width: 38px;
+	flex-shrink: 0;
+	padding-bottom: 22px;
 
 	span {
-		font-size: 11px;
+		font-size: 0.58rem;
+		font-weight: 700;
 		color: var(--text-secondary, #94a3b8);
-		font-weight: 600;
-		letter-spacing: -0.01em;
+		text-align: right;
+		line-height: 1;
 
 		html[data-theme="light"] & {
-			color: #1e293b;
-			font-weight: 750;
+			color: #64748b;
 		}
 	}
+}
 
-	@media (max-width: 480px) {
-		width: 35px;
+.chartPanel {
+	position: relative;
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+}
 
-		span {
-			font-size: 9px;
+.gridLines {
+	position: absolute;
+	inset: 0 0 22px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	pointer-events: none;
+
+	span {
+		height: 1px;
+		background: rgba(255, 255, 255, 0.06);
+
+		html[data-theme="light"] & {
+			background: #e8edf3;
 		}
 	}
 }
 
 .barsContainer {
-	display: flex;
+	position: relative;
+	z-index: 1;
 	flex: 1;
-	gap: 12px;
+	display: flex;
+	gap: 6px;
 	align-items: flex-end;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-	padding-bottom: 6px;
+	min-height: 0;
+	padding-bottom: 22px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 
 	html[data-theme="light"] & {
-		border-color: rgba(15, 23, 42, 0.06);
-	}
-
-	@media (max-width: 480px) {
-		gap: 6px;
+		border-bottom-color: #e2e8f0;
 	}
 }
 
 .barWrapper {
 	flex: 1;
+	min-width: 0;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 8px;
 	height: 100%;
 }
 
@@ -369,117 +390,80 @@
 	display: flex;
 	align-items: flex-end;
 	justify-content: center;
+	min-height: 0;
 }
 
-// ─── Glass Glazed Gradient Data Bars ───
 .bar {
-	width: 70%;
-	max-width: 36px;
-	border-radius: 8px 8px 3px 3px;
-	transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-	animation: none;
 	position: relative;
-	cursor: pointer;
-	box-shadow: 0 4px 14px color-mix(in srgb, var(--active-metric-color, #00A69D) 12%, transparent);
-	background: linear-gradient(180deg, var(--active-metric-color, #00A69D) 0%, color-mix(in srgb, var(--active-metric-color, #00A69D) 25%, transparent) 100%);
+	width: 72%;
+	max-width: 28px;
+	min-height: 4px;
+	border-radius: 6px 6px 3px 3px;
+	background: linear-gradient(
+		180deg,
+		var(--metric-color, $blue) 0%,
+		color-mix(in srgb, var(--metric-color, $blue) 35%, transparent) 100%
+	);
+	box-shadow: 0 4px 12px color-mix(in srgb, var(--metric-color, $blue) 22%, transparent);
+	transition: transform 0.2s ease, filter 0.2s ease;
 
-	// Glowing neon cap marker
 	&::before {
 		content: "";
 		position: absolute;
 		top: 0;
 		left: 0;
 		right: 0;
-		height: 3px;
-		background: #ffffff;
-		border-radius: 8px 8px 0 0;
-		box-shadow: 0 1px 8px #ffffff;
-		opacity: 0.9;
-		z-index: 1;
+		height: 2px;
+		border-radius: 6px 6px 0 0;
+		background: rgba(255, 255, 255, 0.55);
 	}
 
 	&:hover {
-		transform: scaleY(1.03) translateY(-1px);
-		filter: brightness(1.12);
-		box-shadow: 0 8px 24px color-mix(in srgb, var(--active-metric-color, #00A69D) 30%, transparent);
+		transform: translateY(-2px);
+		filter: brightness(1.08);
 
-		.barTooltip {
+		.barValue {
 			opacity: 1;
-			transform: translateX(-50%) translateY(-6px);
-		}
-	}
-
-	&.today {
-		border: 1px solid rgba(255, 255, 255, 0.15);
-		box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06), 0 0 16px color-mix(in srgb, var(--active-metric-color, #00A69D) 40%, transparent);
-		animation: none;
-
-		html[data-theme="light"] & {
-			border-color: rgba(15, 23, 42, 0.15);
-			box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.04), 0 0 12px color-mix(in srgb, var(--active-metric-color, #00A69D) 25%, transparent);
+			transform: translateX(-50%) translateY(-4px);
 		}
 	}
 }
 
-@keyframes todayPulse {
-	0% { opacity: 0.9; border-color: rgba(255,255,255,0.1); }
-	100% { opacity: 1; border-color: rgba(255,255,255,0.3); }
+.barToday {
+	box-shadow:
+		0 0 0 2px color-mix(in srgb, var(--metric-color, $blue) 25%, transparent),
+		0 6px 16px color-mix(in srgb, var(--metric-color, $blue) 30%, transparent);
 }
 
-@keyframes growUp {
-	from {
-		height: 0 !important;
-	}
-}
-
-// ─── Glassmorphic Tooltip ───
-.barTooltip {
+.barValue {
 	position: absolute;
 	bottom: 100%;
 	left: 50%;
-	transform: translateX(-50%) translateY(2px);
-	padding: 6px 12px;
-	background: rgba(11, 16, 26, 0.85);
-	backdrop-filter: none;
-	-webkit-backdrop-filter: none;
-	color: #ffffff;
-	font-size: 11px;
+	transform: translateX(-50%) translateY(0);
+	padding: 3px 6px;
+	border-radius: 5px;
+	font-size: 0.58rem;
 	font-weight: 800;
-	border-radius: 8px;
+	color: #fff;
+	background: rgba(15, 23, 42, 0.9);
 	white-space: nowrap;
 	opacity: 0;
-	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 	pointer-events: none;
-	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	z-index: 5;
-
-	&::after {
-		content: "";
-		position: absolute;
-		top: 100%;
-		left: 50%;
-		transform: translateX(-50%);
-		border: 5px solid transparent;
-		border-top-color: rgba(11, 16, 26, 0.85);
-	}
+	transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .barLabel {
-	font-size: 11.5px;
+	margin-top: 6px;
+	font-size: 0.62rem;
+	font-weight: 700;
 	color: var(--text-secondary, #94a3b8);
-	font-weight: 600;
-	transition: all 0.3s ease;
-	letter-spacing: -0.01em;
 
 	html[data-theme="light"] & {
-		color: #1e293b;
-		font-weight: 750;
+		color: #64748b;
 	}
+}
 
-	&.today {
-		color: var(--active-metric-color, #00A69D);
-		font-weight: 800;
-		text-shadow: 0 0 8px color-mix(in srgb, var(--active-metric-color, #00A69D) 20%, transparent);
-	}
+.barLabelToday {
+	color: var(--metric-color, $blue);
+	font-weight: 800;
 }
