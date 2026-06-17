@@ -162,9 +162,29 @@
 
 @media (max-width: 1024px) {
 	.SideBar-container {
+		position: fixed;
 		left: 12px;
-		top: 16px;
-		bottom: 16px;
+		top: calc(72px + env(safe-area-inset-top, 0px) + 14px);
+		bottom: calc(24px + env(safe-area-inset-bottom, 0px));
 		width: 136px;
+		z-index: 1001;
+	}
+}
+
+@media (max-width: 768px) {
+	.SideBar-container {
+		top: calc(60px + env(safe-area-inset-top, 0px) + 12px);
+		bottom: calc(88px + env(safe-area-inset-bottom, 0px) + 12px);
+		left: 10px;
+		width: 132px;
+	}
+}
+
+@media (max-width: 480px) {
+	.SideBar-container {
+		top: calc(56px + env(safe-area-inset-top, 0px) + 10px);
+		bottom: calc(88px + env(safe-area-inset-bottom, 0px) + 10px);
+		left: 8px;
+		width: 128px;
 	}
 }
