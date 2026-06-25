@@ -7,6 +7,7 @@ import {
 	Symptoms,
 } from "@/Features/Dashboard/ConcernsWidget/helpers/detailedSystemConcerns";
 import { ReasonRow } from "@/Features/Dashboard/ConcernsWidget/Components/ReasonRow/ReasonRow";
+import { useLanguage } from "@/App/i18n/LanguageContext";
 
 interface ReasonsTableProps {
 	reasons: Reason[];
@@ -17,6 +18,7 @@ export const ReasonsTable: React.FC<ReasonsTableProps> = ({
 	reasons,
 	symptoms,
 }) => {
+	const { t } = useLanguage();
 	const [isShowMore, setIsShowMore] = useState(false);
 
 	const reasonsToShow = isShowMore ? reasons : reasons.slice(0, 3);
@@ -26,14 +28,16 @@ export const ReasonsTable: React.FC<ReasonsTableProps> = ({
 			<div className={styles["ReasonsTable-head"]}>
 				<div className={styles["header"]}>
 					<div className={styles["ReasonsTable-title"]}>
-						How we know this <span>8</span>
+						{t("how_we_know_this")} <span>{reasons.length}</span>
 					</div>
 					<div
 						className={styles["ReasonsTable-more"]}
 						onClick={() => setIsShowMore((prev) => !prev)}
 					>
 						<p className={styles["ReasonsTable-more-text"]}>
-							{isShowMore ? "Show less" : `Show ${reasons.length - 3} more`}
+							{isShowMore
+								? t("show_less")
+								: `${t("show")} ${Math.max(0, reasons.length - 3)} ${t("more")}`}
 						</p>
 						<div className={styles["ReasonsTable-chevron-container"]}>
 							<Chevron
@@ -44,9 +48,11 @@ export const ReasonsTable: React.FC<ReasonsTableProps> = ({
 						</div>
 					</div>
 				</div>
-				<div className={styles["ReasonsTable-desc"]}>
-					{symptoms?.description}
-				</div>
+				{symptoms?.description && (
+					<div className={styles["ReasonsTable-desc"]}>
+						{symptoms.description}
+					</div>
+				)}
 			</div>
 			<div className={styles["ReasonsTable-table"]}>
 				{reasonsToShow.map((reason) => (

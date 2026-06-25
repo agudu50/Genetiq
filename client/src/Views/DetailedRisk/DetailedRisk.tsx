@@ -76,7 +76,7 @@ const DetailedRisk = () => {
 							symptomList={selectedConcern!.symptoms?.symptomsList}
 						/>
 						<ReasonsTable
-							reasons={selectedSystemInfo!.details[0].reasons}
+							reasons={selectedConcern!.reasons}
 							symptoms={selectedConcern!.symptoms}
 						/>
 						<div className={styles["DetailerRisk-plan"]}>

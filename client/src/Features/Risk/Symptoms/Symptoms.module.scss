@@ -4,76 +4,92 @@
 	align-items: flex-start;
 	gap: 16px;
 	align-self: stretch;
+	width: 100%;
 }
 
 .Symptoms-header-wrapper {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: 4px;
+	gap: 6px;
 	align-self: stretch;
 }
 
 .Symptoms-header-title {
-	color: var(--p-color-text, rgba(33, 38, 46, 1));
-
-	/* heading/sm/semibold */
+	color: var(--text, #ffffff);
 	font-family: var(--Font-family-heading, Inter);
-	font-size: var(--Font-size-M, 16px);
-	font-style: normal;
-	font-weight: 600;
-	line-height: var(--Font-line-height-L, 24px); /* 150% */
+	font-size: 16px;
+	font-weight: 700;
+	letter-spacing: -0.01em;
+
+	html[data-theme="light"] & {
+		color: #0f172a;
+	}
 }
 
 .Symptoms-header-desc {
 	align-self: stretch;
-	color: var(--p-color-text, rgba(81, 89, 103, 1));
-
-	/* body/md/regular */
+	color: var(--text-secondary, rgba(255, 255, 255, 0.6));
 	font-family: var(--Font-family-body, Inter);
 	font-size: var(--Font-size-S, 14px);
-	font-style: normal;
 	font-weight: 400;
-	line-height: var(--Font-line-height-M, 20px); /* 142.857% */
+	line-height: 1.5;
+
+	html[data-theme="light"] & {
+		color: rgba(81, 89, 103, 1);
+	}
 }
 
 .Symptoms-list {
 	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 12px;
+	flex-wrap: wrap;
+	gap: 8px;
 	align-self: stretch;
+	width: 100%;
+}
 
-	&-item {
-		display: flex;
-		padding: 0px 12px 12px 12px;
-		align-items: flex-start;
-		gap: 8px;
-		align-self: stretch;
-		border-radius: 0px 0px 0px 2px;
-		border-bottom: 1px solid var(--p-color-border, rgba(239, 240, 241, 1));
-		border-left: 1px solid var(--p-color-border, rgba(239, 240, 241, 1));
-		backdrop-filter: blur(1px);
-		overflow: hidden;
-		color: var(--p-color-text, rgba(33, 38, 46, 1));
-		text-overflow: ellipsis;
+.Symptoms-list-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 14px;
+	border-radius: 99px;
+	background: rgba(255, 255, 255, 0.035);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	color: var(--text, #ffffff);
+	font-family: var(--Font-family-body, Inter);
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1.4;
+	transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+	cursor: default;
+	position: relative;
 
-		/* body/md/regular */
-		font-family: var(--Font-family-body, Inter);
-		font-size: var(--Font-size-S, 14px);
-		font-style: normal;
-		font-weight: 400;
-		line-height: var(--Font-line-height-M, 20px); /* 142.857% */
+	html[data-theme="light"] & {
+		background: rgba(241, 245, 249, 0.8);
+		border-color: rgba(226, 232, 240, 1);
+		color: #1e293b;
+	}
 
-		&::after {
-			content: "";
-			position: absolute;
-			bottom: 0;
-			left: 0;
-			height: 8px;
-			width: 8px;
-			border-left: 1px solid rgb(140, 147, 143);
-			border-bottom: 1px solid rgb(140, 147, 143);
+	&:hover {
+		transform: translateY(-1px);
+		background: rgba(255, 255, 255, 0.06);
+		border-color: rgba(244, 63, 94, 0.35);
+		box-shadow: 0 4px 12px rgba(244, 63, 94, 0.08);
+
+		html[data-theme="light"] & {
+			background: #ffffff;
+			border-color: rgba(239, 68, 68, 0.3);
+			box-shadow: 0 4px 10px rgba(239, 68, 68, 0.05);
 		}
+	}
+}
+
+.Symptoms-item-icon {
+	color: #fb7185;
+	flex-shrink: 0;
+
+	html[data-theme="light"] & {
+		color: #ef4444;
 	}
 }

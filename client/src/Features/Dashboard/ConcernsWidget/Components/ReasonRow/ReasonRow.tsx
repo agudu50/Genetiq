@@ -26,6 +26,24 @@ export const ReasonRow: React.FC<ReasonRowProps> = ({ reason }) => {
 		return "#10b981";
 	};
 
+	const formatRange = (range: string) => {
+		if (!range) return "";
+		const trimmed = range.trim();
+		if (trimmed.includes("null")) {
+			const parts = trimmed.split("-");
+			if (parts.length === 2) {
+				const [min, max] = parts;
+				if (min.trim() === "null") {
+					return `≤ ${max.trim()}`;
+				}
+				if (max.trim() === "null") {
+					return `≥ ${min.trim()}`;
+				}
+			}
+		}
+		return trimmed.replace("-", " - ");
+	};
+
 	return (
 		<motion.div
 			layout
@@ -65,10 +83,17 @@ export const ReasonRow: React.FC<ReasonRowProps> = ({ reason }) => {
 						<div
 							className={styles["ReasonRow-thumb"]}
 							style={
-								{ "--level": `${reason.level.src}%` } as React.CSSProperties
+								{
+									"--level": `${reason.level.src}%`,
+									borderColor: getStatusColor(reason.status),
+									boxShadow: `0 0 6px ${getStatusColor(reason.status)}, 0 1px 3px rgba(0, 0, 0, 0.4)`,
+								} as React.CSSProperties
 							}
 						>
-							<div className={styles["ReasonRow-thumb-pulse"]} />
+							<div
+								className={styles["ReasonRow-thumb-pulse"]}
+								style={{ borderColor: getStatusColor(reason.status) }}
+							/>
 						</div>
 					) : (
 						<img
@@ -93,7 +118,10 @@ export const ReasonRow: React.FC<ReasonRowProps> = ({ reason }) => {
 						{t(reason.statusText)}
 					</div>
 				</div>
-				<div className={styles["ReasonRow-date"]}>{reason.date}</div>
+				<div className={styles["ReasonRow-range"]}>
+					<span className={styles["ReasonRow-range-label"]}>Ref:</span>{" "}
+					{formatRange(reason.date)}
+				</div>
 			</div>
 			
 			<AnimatePresence initial={false}>
@@ -105,7 +133,10 @@ export const ReasonRow: React.FC<ReasonRowProps> = ({ reason }) => {
 						transition={{ duration: 0.25, ease: "easeInOut" }}
 						className={styles["ReasonRow-description-wrapper"]}
 					>
-						<div className={styles["ReasonRow-description"]}>
+						<div
+							className={styles["ReasonRow-description"]}
+							style={{ borderLeftColor: getStatusColor(reason.status) }}
+						>
 							{t(reason.description)}
 						</div>
 					</motion.div>
