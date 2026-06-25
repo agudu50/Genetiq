@@ -84,6 +84,7 @@
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 1;
+	line-clamp: 1;
 	flex: 1 0 0;
 	overflow: hidden;
 	color: var(--text, #ffffff);
@@ -215,6 +216,7 @@
 	max-width: 96px;
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 1;
+	line-clamp: 1;
 	overflow: hidden;
 	color: #cc4047;
 	text-align: center;
