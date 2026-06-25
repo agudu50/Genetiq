@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Symptoms } from "../../helpers/detailedSystemConcerns";
 import styles from "./SymptomsList.module.scss";
+import { AlertCircle } from "lucide-react";
 
 interface SymptomsProps {
 	symptoms?: Symptoms;
@@ -71,6 +72,7 @@ export const SymptomsList: React.FC<SymptomsProps> = ({ symptoms }) => {
 							styles["SymptomsList-symptom-hidden"]
 						}`}
 					>
+						<AlertCircle size={11} strokeWidth={2.5} className={styles["symptomIcon"]} />
 						{symptom}
 					</div>
 				))}
