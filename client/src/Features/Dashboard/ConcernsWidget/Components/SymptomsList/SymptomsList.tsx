@@ -1,11 +1,45 @@
 import { useState, useEffect, useRef } from "react";
 import { Symptoms } from "../../helpers/detailedSystemConcerns";
 import styles from "./SymptomsList.module.scss";
-import { AlertCircle } from "lucide-react";
+import {
+	HeartPulse,
+	Wind,
+	BatteryLow,
+	Activity,
+	EyeOff,
+	Footprints,
+	Brain,
+	MessageSquareOff,
+	Moon,
+	Droplet,
+	Flame,
+	ZapOff,
+	ShieldAlert,
+	AlertCircle,
+} from "lucide-react";
 
 interface SymptomsProps {
 	symptoms?: Symptoms;
 }
+
+const getSymptomIcon = (symptom: string) => {
+	const lower = symptom.toLowerCase();
+	if (lower.includes("palpitation")) return <HeartPulse size={11} strokeWidth={2.5} className={styles["symptomIcon"]} />;
+	if (lower.includes("breath") || lower.includes("breathing")) return <Wind size={11} strokeWidth={2.5} className={styles["symptomIcon"]} />;
+	if (lower.includes("fatigue") || lower.includes("weakness")) return <BatteryLow size={11} strokeWidth={2.5} className={styles["symptomIcon"]} />;
+	if (lower.includes("chest pain") || lower.includes("angina")) return <Flame size={11} strokeWidth={2.5} className={styles["symptomIcon"]} />;
+	if (lower.includes("dizziness") || lower.includes("balance") || lower.includes("lightheaded")) return <Activity size={11} strokeWidth={2.5} className={styles["symptomIcon"]} />;
+	if (lower.includes("numbness")) return <ZapOff size={11} strokeWidth={2.5} className={styles["symptomIcon"]} />;
+	if (lower.includes("speech") || lower.includes("speak") || lower.includes("confusion")) return <MessageSquareOff size={11} strokeWidth={2.5} className={styles["symptomIcon"]} />;
+	if (lower.includes("vision") || lower.includes("eye")) return <EyeOff size={11} strokeWidth={2.5} className={styles["symptomIcon"]} />;
+	if (lower.includes("walk") || lower.includes("gait")) return <Footprints size={11} strokeWidth={2.5} className={styles["symptomIcon"]} />;
+	if (lower.includes("headache")) return <Brain size={11} strokeWidth={2.5} className={styles["symptomIcon"]} />;
+	if (lower.includes("nosebleed")) return <Droplet size={11} strokeWidth={2.5} className={styles["symptomIcon"]} />;
+	if (lower.includes("collapse")) return <ShieldAlert size={11} strokeWidth={2.5} className={styles["symptomIcon"]} />;
+	if (lower.includes("pulse")) return <HeartPulse size={11} strokeWidth={2.5} className={styles["symptomIcon"]} />;
+	if (lower.includes("consciousness") || lower.includes("unconscious")) return <Moon size={11} strokeWidth={2.5} className={styles["symptomIcon"]} />;
+	return <AlertCircle size={11} strokeWidth={2.5} className={styles["symptomIcon"]} />;
+};
 
 export const SymptomsList: React.FC<SymptomsProps> = ({ symptoms }) => {
 	const [numberOfVisibleSymptoms, setNumberOfVisibleSymptoms] = useState(0);
@@ -72,7 +106,7 @@ export const SymptomsList: React.FC<SymptomsProps> = ({ symptoms }) => {
 							styles["SymptomsList-symptom-hidden"]
 						}`}
 					>
-						<AlertCircle size={11} strokeWidth={2.5} className={styles["symptomIcon"]} />
+						{getSymptomIcon(symptom)}
 						{symptom}
 					</div>
 				))}
