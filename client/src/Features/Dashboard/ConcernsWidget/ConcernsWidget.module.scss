@@ -239,7 +239,7 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 
 .ConcernWidget-detail-cards {
 	gap: 16px;
-	grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 
 	@media (max-width: 768px) {
 		&-visible {

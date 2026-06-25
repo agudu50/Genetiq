@@ -5,7 +5,7 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 .DetailsCard-card {
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
+	gap: 12px;
 	width: 100%;
 	min-width: 0;
 	padding: 16px;
@@ -14,11 +14,11 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 	font: inherit;
 	color: inherit;
 	cursor: pointer;
-	border-radius: 14px;
-	background: rgba(255, 255, 255, 0.03);
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
-	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 16px;
+	background: rgba(30, 41, 59, 0.45);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border: 1px solid rgba(255, 255, 255, 0.06);
 	transition: all 0.25s $ease;
 	-webkit-tap-highlight-color: transparent;
 	position: relative;
@@ -29,38 +29,41 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 		backdrop-filter: none;
 		-webkit-backdrop-filter: none;
 		border-color: #e2e8f0;
-		box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+		box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
 	}
 
 	&:hover {
-		border-color: color-mix(in srgb, var(--concern-accent) 40%, rgba(255, 255, 255, 0.1));
-		transform: translateY(-2px);
+		border-color: color-mix(in srgb, var(--concern-accent) 45%, rgba(255, 255, 255, 0.12));
+		transform: translateY(-3px);
+		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 0 0 1px rgba(255, 255, 255, 0.05);
 
 		html[data-theme="light"] & {
-			border-color: color-mix(in srgb, var(--concern-accent) 25%, #e2e8f0);
-			box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+			border-color: color-mix(in srgb, var(--concern-accent) 30%, #cbd5e1);
+			box-shadow: 0 6px 20px rgba(15, 23, 42, 0.05);
 		}
 
 		.DetailsCard-iconBox {
 			transform: scale(1.05);
-			border-color: color-mix(in srgb, var(--concern-accent) 35%, transparent);
+			border-color: color-mix(in srgb, var(--concern-accent) 45%, transparent);
 		}
 	}
 
 	&-active {
 		border-color: var(--concern-accent);
-		background: rgba(255, 255, 255, 0.05);
+		background: linear-gradient(135deg, rgba(30, 41, 59, 0.55) 0%, rgba(15, 23, 42, 0.8) 100%),
+			radial-gradient(circle at 100% 0%, var(--concern-glow) 0%, transparent 60%);
 		box-shadow:
 			0 12px 32px rgba(0, 0, 0, 0.25),
 			0 2px 4px rgba(0, 0, 0, 0.06),
 			inset 0 0 0 1px var(--concern-accent);
 
 		html[data-theme="light"] & {
-			background: #f8fafc;
+			background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%),
+				radial-gradient(circle at 100% 0%, var(--concern-glow) 0%, transparent 50%);
 			border-color: var(--concern-accent);
 			box-shadow:
-				0 12px 32px rgba(15, 23, 42, 0.08),
-				0 2px 4px rgba(15, 23, 42, 0.04),
+				0 12px 28px rgba(15, 23, 42, 0.06),
+				0 2px 4px rgba(15, 23, 42, 0.02),
 				inset 0 0 0 1px var(--concern-accent);
 		}
 	}
@@ -73,7 +76,7 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 	right: 0;
 	height: 3px;
 	background: var(--concern-accent);
-	box-shadow: 0 1px 10px var(--concern-glow);
+	box-shadow: 0 1px 12px var(--concern-glow);
 	opacity: 0;
 	transition: opacity 0.3s ease;
 
@@ -105,7 +108,7 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 
 .DetailsCard-pulseRing {
 	position: absolute;
-	inset: -4px;
+	inset: -5px;
 	border-radius: 14px;
 	border: 1.5px solid var(--concern-accent);
 	pointer-events: none;
@@ -117,19 +120,19 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
-	width: 40px;
-	height: 40px;
+	width: 42px;
+	height: 42px;
 	border-radius: 12px;
 	color: var(--concern-accent);
-	background: color-mix(in srgb, var(--concern-accent) 12%, transparent);
-	border: 1px solid color-mix(in srgb, var(--concern-accent) 22%, transparent);
+	background: color-mix(in srgb, var(--concern-accent) 12%, rgba(255, 255, 255, 0.01));
+	border: 1px solid color-mix(in srgb, var(--concern-accent) 22%, rgba(255, 255, 255, 0.04));
 	transition: transform 0.25s $ease, border-color 0.25s $ease;
 	position: relative;
 	z-index: 1;
 
 	@media (max-width: 768px) {
-		width: 36px;
-		height: 36px;
+		width: 38px;
+		height: 38px;
 		border-radius: 10px;
 	}
 }
@@ -138,23 +141,55 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 	display: inline-flex;
 	align-items: center;
 	flex-shrink: 0;
-	padding: 3px 8px;
+	padding: 4px 10px;
 	border-radius: 99px;
 	font-size: 9px;
 	font-weight: 800;
 	letter-spacing: 0.06em;
 	text-transform: uppercase;
 	border: 1px solid transparent;
+	line-height: 1;
+}
+
+.live-pulse-dot {
+	width: 5px;
+	height: 5px;
+	background-color: #ef4444;
+	border-radius: 50%;
+	display: inline-block;
+	margin-right: 5px;
+	box-shadow: 0 0 6px rgba(239, 68, 68, 0.8);
+	animation: pulseLiveDot 1.5s infinite ease-in-out;
+
+	html[data-theme="light"] & {
+		background-color: #dc2626;
+		box-shadow: 0 0 4px rgba(220, 38, 38, 0.6);
+	}
+}
+
+@keyframes pulseLiveDot {
+	0% {
+		transform: scale(0.9);
+		opacity: 0.6;
+	}
+	50% {
+		transform: scale(1.4);
+		opacity: 1;
+	}
+	100% {
+		transform: scale(0.9);
+		opacity: 0.6;
+	}
 }
 
 .status-high {
 	color: #fca5a5;
 	background: rgba(239, 68, 68, 0.12);
-	border-color: rgba(239, 68, 68, 0.22);
+	border-color: rgba(239, 68, 68, 0.25);
 
 	html[data-theme="light"] & {
 		color: #dc2626;
-		background: rgba(239, 68, 68, 0.08);
+		background: rgba(239, 68, 68, 0.06);
 		border-color: rgba(239, 68, 68, 0.15);
 	}
 }
@@ -162,11 +197,11 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 .status-medium {
 	color: #fcd34d;
 	background: rgba(245, 158, 11, 0.12);
-	border-color: rgba(245, 158, 11, 0.22);
+	border-color: rgba(245, 158, 11, 0.25);
 
 	html[data-theme="light"] & {
 		color: #d97706;
-		background: rgba(245, 158, 11, 0.08);
+		background: rgba(245, 158, 11, 0.06);
 		border-color: rgba(245, 158, 11, 0.15);
 	}
 }
@@ -174,11 +209,11 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 .status-low {
 	color: #6ee7b7;
 	background: rgba(16, 185, 129, 0.12);
-	border-color: rgba(16, 185, 129, 0.22);
+	border-color: rgba(16, 185, 129, 0.25);
 
 	html[data-theme="light"] & {
 		color: #059669;
-		background: rgba(16, 185, 129, 0.08);
+		background: rgba(16, 185, 129, 0.06);
 		border-color: rgba(16, 185, 129, 0.15);
 	}
 }
@@ -186,7 +221,7 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 .DetailsCard-body {
 	display: flex;
 	flex-direction: column;
-	gap: 6px;
+	gap: 8px;
 	width: 100%;
 	position: relative;
 	z-index: 2;
@@ -194,9 +229,9 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 
 .DetailsCard-body-title {
 	margin: 0;
-	font-size: 14px;
+	font-size: 14.5px;
 	font-weight: 750;
-	line-height: 1.35;
+	line-height: 1.4;
 	letter-spacing: -0.015em;
 	color: var(--text, #ffffff);
 
@@ -210,7 +245,7 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: 5px;
+	gap: 6px;
 }
 
 .factorChip {
@@ -218,14 +253,13 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 	align-items: center;
 	padding: 3px 8px;
 	border-radius: 6px;
-	font-size: 10.5px;
-	font-weight: 650;
+	font-size: 11px;
+	font-weight: 600;
 	line-height: 1.3;
-	color: var(--text-secondary, #cbd5e1);
-	background: rgba(255, 255, 255, 0.04);
+	color: var(--text-secondary, rgba(255, 255, 255, 0.65));
+	background: rgba(255, 255, 255, 0.03);
 	border: 1px solid rgba(255, 255, 255, 0.06);
 	transition: all 0.2s ease;
-	cursor: pointer;
 
 	html[data-theme="light"] & {
 		color: #475569;
@@ -277,12 +311,11 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 	position: absolute;
 	bottom: -40px;
 	right: -40px;
-	width: 120px;
-	height: 120px;
+	width: 130px;
+	height: 130px;
 	border-radius: 100%;
 	background: radial-gradient(circle, var(--concern-glow) 0%, transparent 70%);
-	filter: blur(15px);
+	filter: blur(16px);
 	pointer-events: none;
 	z-index: 1;
 }
-

@@ -3,7 +3,7 @@ import { Detail } from "../../helpers/detailedSystemConcerns";
 import styles from "./DetailsCard.module.scss";
 import Check from "@assets/ConcernsWidget/Check.svg?react";
 import { useLanguage } from "@/App/i18n/LanguageContext";
-import { Heart, Brain, Activity } from "lucide-react";
+import { Heart, Brain, Activity, TrendingUp, HeartOff } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface DetailsCardProps {
@@ -20,6 +20,12 @@ const renderDetailIcon = (title: string, size = 18) => {
 	}
 	if (t.includes("fibrillation") || t.includes("heartbeat") || t.includes("afib")) {
 		return <Activity {...props} />;
+	}
+	if (t.includes("hypertension") || t.includes("pressure")) {
+		return <TrendingUp {...props} />;
+	}
+	if (t.includes("failure")) {
+		return <HeartOff {...props} />;
 	}
 	return <Heart {...props} />;
 };
@@ -92,6 +98,9 @@ export const DetailsCard: React.FC<DetailsCardProps> = ({
 				
 				<div className={styles["DetailsCard-headRight"]}>
 					<span className={`${styles.severityBadge} ${getStatusClass(detail.status)}`}>
+						{detail.status === "High" && (
+							<span className={styles["live-pulse-dot"]} />
+						)}
 						{t(detail.status)}
 					</span>
 					
