@@ -7,19 +7,27 @@
 }
 
 .SymptomsList-head {
-	color: rgba(81, 89, 103, 1);
+	color: var(--text-secondary, rgba(255, 255, 255, 0.7));
 	font-size: 10px;
-	font-weight: 400;
+	font-weight: 450;
 	line-height: 14px;
 	letter-spacing: 0.2px;
 	text-transform: uppercase;
+
+	html[data-theme="light"] & {
+		color: rgba(81, 89, 103, 1);
+	}
 }
 
 .SymptomsList-description {
-	color: rgba(33, 38, 46, 1);
+	color: var(--text, #ffffff);
 	font-size: 12px;
 	font-weight: 400;
 	line-height: 16px;
+
+	html[data-theme="light"] & {
+		color: rgba(33, 38, 46, 1);
+	}
 }
 
 .SymptomsList-list {
@@ -35,14 +43,21 @@
 	flex-direction: column;
 	align-items: flex-start;
 	gap: 8px;
-	padding: 4px 8px;
+	padding: 4px 10px;
 	border-radius: 100px;
-	background: linear-gradient(293deg, rgba(255, 255, 255, 0.7) 0.1%, #fff 100%);
+	background: rgba(255, 255, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.08);
 
-	color: rgba(33, 38, 46, 1);
+	color: var(--text, #ffffff);
 	font-size: 12px;
 	font-weight: 400;
 	line-height: 16px;
+
+	html[data-theme="light"] & {
+		background: linear-gradient(293deg, rgba(255, 255, 255, 0.7) 0.1%, #fff 100%);
+		border: 1px solid #e4ebf9;
+		color: rgba(33, 38, 46, 1);
+	}
 
 	&-hidden {
 		position: absolute;
@@ -55,12 +70,19 @@
 	flex-direction: column;
 	align-items: flex-start;
 	gap: 8px;
-	padding: 4px 8px;
+	padding: 4px 10px;
 	border-radius: 100px;
-	background: linear-gradient(293deg, rgba(255, 255, 255, 0.7) 0.1%, #fff 100%);
+	background: rgba(255, 255, 255, 0.08);
+	border: 1px solid rgba(255, 255, 255, 0.1);
 
-	color: rgba(33, 38, 46, 1);
+	color: var(--accent, #00A69D);
 	font-size: 12px;
-	font-weight: 400;
+	font-weight: 600;
 	line-height: 16px;
+
+	html[data-theme="light"] & {
+		background: linear-gradient(293deg, rgba(255, 255, 255, 0.7) 0.1%, #fff 100%);
+		border: 1px solid #e4ebf9;
+		color: rgba(33, 38, 46, 1);
+	}
 }

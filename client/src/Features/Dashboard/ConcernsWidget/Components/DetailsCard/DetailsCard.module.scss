@@ -1,193 +1,237 @@
 @use "@/App/Styles/_mixins" as mixins;
 
+$ease: cubic-bezier(0.22, 1, 0.36, 1);
+
 .DetailsCard-card {
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
-	border-radius: 14px;
-	padding: 14px;
-	background: linear-gradient(
-		135deg,
-		rgba(255, 255, 255, 0.95) 0%,
-		rgba(248, 250, 255, 0.9) 100%
-	);
-	border: 1px solid rgba(228, 235, 249, 0.5);
-	transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+	gap: 10px;
+	width: 100%;
+	min-width: 0;
+	padding: 16px;
+	box-sizing: border-box;
+	text-align: left;
+	font: inherit;
+	color: inherit;
 	cursor: pointer;
+	border-radius: 14px;
+	background: rgba(255, 255, 255, 0.03);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	transition: all 0.25s $ease;
+	-webkit-tap-highlight-color: transparent;
 	position: relative;
 	overflow: hidden;
 
-	&::before {
-		content: "";
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		height: 3px;
-		background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-		opacity: 0;
-		transition: opacity 0.3s ease;
+	html[data-theme="light"] & {
+		background: #ffffff;
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+		border-color: #e2e8f0;
+		box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
 	}
 
 	&:hover {
-		border-color: rgba(102, 126, 234, 0.35);
-		transform: translateY(-3px);
-		box-shadow:
-			0 8px 24px rgba(102, 126, 234, 0.12),
-			0 2px 8px rgba(0, 0, 0, 0.05);
+		border-color: color-mix(in srgb, var(--concern-accent) 40%, rgba(255, 255, 255, 0.1));
+		transform: translateY(-2px);
 
-		&::before {
-			opacity: 1;
+		html[data-theme="light"] & {
+			border-color: color-mix(in srgb, var(--concern-accent) 25%, #e2e8f0);
+			box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
 		}
 
-		.DetailsCard-question-container {
-			opacity: 1;
+		.DetailsCard-iconBox {
+			transform: scale(1.05);
+			border-color: color-mix(in srgb, var(--concern-accent) 35%, transparent);
 		}
 	}
 
 	&-active {
-		border-color: rgba(102, 126, 234, 0.5);
+		border-color: var(--concern-accent);
+		background: rgba(255, 255, 255, 0.05);
 		box-shadow:
-			0 4px 16px rgba(102, 126, 234, 0.15),
-			0 2px 4px rgba(0, 0, 0, 0.06);
+			0 12px 32px rgba(0, 0, 0, 0.25),
+			0 2px 4px rgba(0, 0, 0, 0.06),
+			inset 0 0 0 1px var(--concern-accent);
 
-		&::before {
-			opacity: 1;
+		html[data-theme="light"] & {
+			background: #f8fafc;
+			border-color: var(--concern-accent);
+			box-shadow:
+				0 12px 32px rgba(15, 23, 42, 0.08),
+				0 2px 4px rgba(15, 23, 42, 0.04),
+				inset 0 0 0 1px var(--concern-accent);
 		}
+	}
+}
+
+.DetailsCard-glowStrip {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 3px;
+	background: var(--concern-accent);
+	box-shadow: 0 1px 10px var(--concern-glow);
+	opacity: 0;
+	transition: opacity 0.3s ease;
+
+	.DetailsCard-card-active & {
+		opacity: 1;
 	}
 }
 
 .DetailsCard-head {
 	display: flex;
-	flex-direction: row;
+	align-items: center;
 	justify-content: space-between;
-	align-items: center;
-	height: 20px;
-}
-
-.DetailsCard-icon-container {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	border-radius: 10px;
-	width: 36px;
-	height: 36px;
-	background: linear-gradient(135deg, #e4ebf9 0%, #d6e0f5 100%);
-	transition: all 0.3s ease;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-
-	.DetailsCard-card:hover & {
-		transform: scale(1.06);
-		box-shadow: 0 3px 10px rgba(102, 126, 234, 0.18);
-	}
-}
-
-.DetailsCard-status {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 6px;
-	padding: 5px 10px 5px 7px;
-	border-radius: 24px;
-	background-color: #ffffff;
+	gap: 12px;
+	width: 100%;
 	position: relative;
-	transition: all 0.25s ease;
-	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-
-	&:hover {
-		background-color: #f8f9fb;
-		transform: scale(1.02);
-	}
-
-	&-red {
-		.DetailsCard-status-exclamation {
-			background: linear-gradient(135deg, #ef4444, #dc2626);
-			box-shadow: 0 2px 6px rgba(239, 68, 68, 0.35);
-		}
-	}
-
-	&-orange {
-		.DetailsCard-status-exclamation {
-			background: linear-gradient(135deg, #f59e0b, #d97706);
-			box-shadow: 0 2px 6px rgba(245, 158, 11, 0.35);
-		}
-	}
-
-	&-green {
-		.DetailsCard-status-exclamation {
-			background: linear-gradient(135deg, #10b981, #059669);
-			box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35);
-		}
-	}
+	z-index: 2;
 }
 
-.DetailsCard-status::after {
-	content: "";
+.DetailsCard-headRight {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.DetailsCard-iconWrapper {
+	position: relative;
+	display: inline-flex;
+}
+
+.DetailsCard-pulseRing {
 	position: absolute;
-	inset: 0;
-	border-radius: 24px;
-	padding: 1px;
-
-	background: linear-gradient(
-		90deg,
-		rgba(148, 178, 236, 0.6) 0%,
-		rgba(148, 178, 236, 0.2) 100%
-	);
-	-webkit-mask:
-		linear-gradient(white, white) content-box,
-		linear-gradient(white, white);
-	mask:
-		linear-gradient(white, white) content-box,
-		linear-gradient(white, white);
-	mask-composite: exclude;
-	-webkit-mask-composite: destination-out;
+	inset: -4px;
+	border-radius: 14px;
+	border: 1.5px solid var(--concern-accent);
+	pointer-events: none;
+	z-index: 0;
 }
 
-.DetailsCard-status-exclamation {
+.DetailsCard-iconBox {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 10px;
-	border-radius: 100%;
-	width: 14px;
-	height: 14px;
-	color: white;
-	font-weight: 700;
+	flex-shrink: 0;
+	width: 40px;
+	height: 40px;
+	border-radius: 12px;
+	color: var(--concern-accent);
+	background: color-mix(in srgb, var(--concern-accent) 12%, transparent);
+	border: 1px solid color-mix(in srgb, var(--concern-accent) 22%, transparent);
+	transition: transform 0.25s $ease, border-color 0.25s $ease;
+	position: relative;
+	z-index: 1;
+
+	@media (max-width: 768px) {
+		width: 36px;
+		height: 36px;
+		border-radius: 10px;
+	}
 }
 
-.DetailsCard-status-text {
-	font-weight: 500;
-	font-size: 12px;
-	line-height: 14px;
-	color: #0b101a;
-	letter-spacing: -0.1px;
+.severityBadge {
+	display: inline-flex;
+	align-items: center;
+	flex-shrink: 0;
+	padding: 3px 8px;
+	border-radius: 99px;
+	font-size: 9px;
+	font-weight: 800;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	border: 1px solid transparent;
 }
 
-.DetailsCard-body-title {
-	color: #0b101a;
-	font-weight: 600;
-	font-size: 15px;
-	line-height: 20px;
-	letter-spacing: -0.2px;
+.status-high {
+	color: #fca5a5;
+	background: rgba(239, 68, 68, 0.12);
+	border-color: rgba(239, 68, 68, 0.22);
+
+	html[data-theme="light"] & {
+		color: #dc2626;
+		background: rgba(239, 68, 68, 0.08);
+		border-color: rgba(239, 68, 68, 0.15);
+	}
+}
+
+.status-medium {
+	color: #fcd34d;
+	background: rgba(245, 158, 11, 0.12);
+	border-color: rgba(245, 158, 11, 0.22);
+
+	html[data-theme="light"] & {
+		color: #d97706;
+		background: rgba(245, 158, 11, 0.08);
+		border-color: rgba(245, 158, 11, 0.15);
+	}
+}
+
+.status-low {
+	color: #6ee7b7;
+	background: rgba(16, 185, 129, 0.12);
+	border-color: rgba(16, 185, 129, 0.22);
+
+	html[data-theme="light"] & {
+		color: #059669;
+		background: rgba(16, 185, 129, 0.08);
+		border-color: rgba(16, 185, 129, 0.15);
+	}
 }
 
 .DetailsCard-body {
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
+	gap: 6px;
+	width: 100%;
+	position: relative;
+	z-index: 2;
 }
 
-.DetailsCard-body-description {
-	color: #6b7280;
+.DetailsCard-body-title {
 	margin: 0;
-	font-weight: 400;
-	font-size: 13px;
-	line-height: 18px;
+	font-size: 14px;
+	font-weight: 750;
+	line-height: 1.35;
+	letter-spacing: -0.015em;
+	color: var(--text, #ffffff);
+
+	html[data-theme="light"] & {
+		color: #0f172a;
+		font-weight: 800;
+	}
 }
 
-.ConcernsCard-highlight-red {
-	color: #dc2626;
-	font-weight: 500;
+.factorChips {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 5px;
+}
+
+.factorChip {
+	display: inline-flex;
+	align-items: center;
+	padding: 3px 8px;
+	border-radius: 6px;
+	font-size: 10.5px;
+	font-weight: 650;
+	line-height: 1.3;
+	color: var(--text-secondary, #cbd5e1);
+	background: rgba(255, 255, 255, 0.04);
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	transition: all 0.2s ease;
+	cursor: pointer;
+
+	html[data-theme="light"] & {
+		color: #475569;
+		background: #f1f5f9;
+		border-color: #e2e8f0;
+	}
 }
 
 .DetailsCard-checkbox-container {
@@ -197,28 +241,28 @@
 	position: relative;
 	width: 20px;
 	height: 20px;
-	cursor: pointer;
-}
-
-.DetailsCard-checkbox {
-	opacity: 0;
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	cursor: pointer;
-	margin: 0;
 }
 
 .DetailsCard-custom-checkbox {
-	width: 16px;
-	height: 16px;
-	border: 0px solid #d1d5db;
+	width: 20px;
+	height: 20px;
+	border: 1.5px solid rgba(255, 255, 255, 0.15);
 	border-radius: 100%;
-	background-color: inherit;
+	background-color: transparent;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	transition: all 0.3s ease;
+	transition: all 0.25s ease;
+
+	html[data-theme="light"] & {
+		border-color: #cbd5e1;
+	}
+
+	&.checked {
+		border-color: transparent;
+		background: var(--concern-accent);
+		box-shadow: 0 0 8px var(--concern-glow);
+	}
 
 	svg {
 		width: 10px;
@@ -229,31 +273,16 @@
 	}
 }
 
-.DetailsCard-checkbox:checked + .DetailsCard-custom-checkbox {
-	border: 0px;
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-	box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
-}
-
-.DetailsCard-checkbox-container:hover .DetailsCard-custom-checkbox {
-	border-color: #2563eb;
-}
-
-.DetailsCard-question-container {
-	transition: all 0.3s ease;
-	opacity: 0;
+.DetailsCard-bgGlow {
 	position: absolute;
-	width: 100%;
-	height: 28px;
-	bottom: 12px;
-	right: 12px;
-	background: linear-gradient(270deg, #fff 0%, rgba(255, 255, 255, 0) 90%);
+	bottom: -40px;
+	right: -40px;
+	width: 120px;
+	height: 120px;
+	border-radius: 100%;
+	background: radial-gradient(circle, var(--concern-glow) 0%, transparent 70%);
+	filter: blur(15px);
+	pointer-events: none;
+	z-index: 1;
 }
 
-.DetailsCard-question {
-	position: absolute;
-	bottom: 0;
-	right: 0;
-	height: 16px;
-	width: 16px;
-}

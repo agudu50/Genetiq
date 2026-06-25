@@ -154,7 +154,6 @@ export const detailedSystemConcerns: SystemConcerns[] = [
 						"Fatigue or weakness",
 						"Chest pain",
 						"Dizziness or lightheadedness",
-						"Fatigue or weakness",
 					],
 				},
 				plan: planMockData,

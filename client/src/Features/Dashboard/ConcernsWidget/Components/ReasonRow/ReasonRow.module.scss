@@ -6,13 +6,18 @@
 	gap: 0px;
 	width: 100%;
 	padding: 6px 12px;
-	border-radius: 2px;
+	border-radius: 4px;
 	box-sizing: border-box;
 	transition: all 0.2s ease;
-	background: #ffffff;
+	background: rgba(255, 255, 255, 0.02);
 	position: relative;
-	border: 1px solid #e4ebf9;
+	border: 1px solid rgba(255, 255, 255, 0.06);
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+	html[data-theme="light"] & {
+		background: #ffffff;
+		border: 1px solid #e4ebf9;
+	}
 
 	&::after {
 		content: "";
@@ -27,13 +32,16 @@
 
 	&:hover {
 		cursor: pointer;
-		transition: all 0.2s ease;
-		background: #faf8f8;
+		background: rgba(255, 255, 255, 0.04);
 		border: 1px solid rgba(59, 141, 245, 0.4);
-		box-sizing: border-box;
 		box-shadow:
-			10 10px 20px rgba(0, 0, 0, 0.1),
+			0 10px 20px rgba(0, 0, 0, 0.1),
 			0 4px 6px rgba(0, 0, 0, 0.1);
+
+		html[data-theme="light"] & {
+			background: #faf8f8;
+			border: 1px solid rgba(59, 141, 245, 0.4);
+		}
 	}
 
 	&-open {
@@ -78,11 +86,15 @@
 	-webkit-line-clamp: 1;
 	flex: 1 0 0;
 	overflow: hidden;
-	color: #0b101a;
+	color: var(--text, #ffffff);
 	text-overflow: ellipsis;
 	font-size: 12px;
 	font-weight: 400;
 	line-height: 16px;
+
+	html[data-theme="light"] & {
+		color: #0b101a;
+	}
 }
 
 .ReasonRow-test {
@@ -93,10 +105,14 @@
 }
 
 .ReasonRow-test-name {
-	color: rgba(81, 89, 103, 1);
+	color: var(--text-secondary, rgba(255, 255, 255, 0.7));
 	font-size: 12px;
 	font-weight: 400;
 	line-height: 16px;
+
+	html[data-theme="light"] & {
+		color: rgba(81, 89, 103, 1);
+	}
 }
 
 .ReasonRow-level {
@@ -159,17 +175,25 @@
 }
 
 .ReasonRow-value-number {
-	color: rgba(33, 38, 46, 1);
+	color: var(--text, #ffffff);
 	font-size: 12px;
 	font-weight: 400;
 	line-height: 16px;
+
+	html[data-theme="light"] & {
+		color: rgba(33, 38, 46, 1);
+	}
 }
 
 .ReasonRow-value-unit {
-	color: rgba(108, 117, 132, 1);
+	color: var(--text-secondary, rgba(255, 255, 255, 0.7));
 	font-size: 12px;
 	font-weight: 400;
 	line-height: 16px;
+
+	html[data-theme="light"] & {
+		color: rgba(108, 117, 132, 1);
+	}
 }
 
 .ReasonRow-status-wrapper {
@@ -201,35 +225,49 @@
 	line-height: 14px;
 
 	&-red {
-		color: #cc4047;
+		color: #ef4444;
+		border-color: rgba(239, 68, 68, 0.3);
+		background-color: rgba(239, 68, 68, 0.1);
 	}
 
 	&-orange {
-		color: rgba(204, 108, 19, 1);
+		color: #f59e0b;
+		border-color: rgba(245, 158, 11, 0.3);
+		background-color: rgba(245, 158, 11, 0.1);
 	}
 
 	&-green {
-		color: rgb(108, 202, 108);
+		color: #10b981;
+		border-color: rgba(16, 185, 129, 0.3);
+		background-color: rgba(16, 185, 129, 0.1);
 	}
 }
 
 .ReasonRow-date {
 	flex: 1 0 0;
-	color: rgba(81, 89, 103, 1);
+	color: var(--text-secondary, rgba(255, 255, 255, 0.7));
 	text-align: right;
 	font-size: 12px;
 	font-weight: 400;
 	line-height: 16px;
+
+	html[data-theme="light"] & {
+		color: rgba(81, 89, 103, 1);
+	}
 }
 
 .ReasonRow-description {
 	max-height: 0;
 	overflow: hidden;
 	transition: all 0.3s ease;
-	color: rgba(81, 89, 103, 1);
+	color: var(--text-secondary, rgba(255, 255, 255, 0.7));
 	font-size: 12px;
 	font-weight: 400;
 	line-height: 16px;
+
+	html[data-theme="light"] & {
+		color: rgba(81, 89, 103, 1);
+	}
 
 	&-open {
 		transition: all 0.3s ease;
