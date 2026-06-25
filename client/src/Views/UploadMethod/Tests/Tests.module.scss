@@ -207,27 +207,32 @@
 }
 
 .heroTop {
+	position: relative;
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: center;
+	text-align: center;
 	gap: 24px;
-
-	@media (max-width: 860px) {
-		flex-direction: column;
-		align-items: stretch;
-	}
+	width: 100%;
 
 	.header {
-		flex: 1;
-		min-width: 0;
+		width: 100%;
+		max-width: 720px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		margin: 0 auto;
 	}
 }
 
 .heroFeaturePills {
 	display: flex;
 	flex-wrap: wrap;
+	justify-content: center;
 	gap: 8px;
-	margin-top: 14px;
+	margin: 16px auto 0;
 }
 
 .heroFeaturePill {
@@ -249,13 +254,23 @@
 }
 
 .heroAside {
-	flex-shrink: 0;
+	position: absolute;
+	right: 28px;
+	top: 50%;
+	transform: translateY(-50%);
+	pointer-events: none;
+	opacity: 0.85;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	z-index: 0;
+
+	@media (max-width: 1024px) {
+		opacity: 0.25;
+	}
 
 	@media (max-width: 860px) {
-		align-self: center;
+		display: none;
 	}
 }
 
@@ -424,12 +439,14 @@
 }
 
 .pageEyebrow {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	align-self: center;
-	margin-left: auto;
-	margin-right: auto;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	align-self: center !important;
+	margin-left: auto !important;
+	margin-right: auto !important;
+	margin-bottom: 12px !important;
+	width: max-content !important;
 	gap: 6px;
 	padding: 6px 14px;
 	border-radius: 99px;
@@ -440,7 +457,6 @@
 	color: var(--accent, #00a69d);
 	background: rgba(0, 166, 157, 0.12);
 	border: 1px solid rgba(0, 166, 157, 0.22);
-	margin-bottom: 12px;
 	box-shadow: 0 4px 14px rgba(0, 166, 157, 0.08);
 
 	svg {
@@ -564,39 +580,42 @@
 // ─── Header ─────────────────────────────────────────────────────────────────
 .header {
 	display: flex;
-	justify-content: space-between;
+	flex-direction: column;
 	align-items: center;
-	gap: 20px;
-	flex-wrap: wrap;
-
-	@media (max-width: 768px) {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 14px;
-	}
+	justify-content: center;
+	text-align: center;
+	width: 100%;
+	max-width: 720px;
+	margin: 0 auto;
+	gap: 12px;
 }
 
 .header-text {
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	align-items: center;
+	text-align: center;
+	gap: 12px;
+	width: 100%;
 }
 
 .title {
-	font-size: clamp(30px, 5vw, 40px);
+	font-size: clamp(32px, 5vw, 44px);
 	font-weight: 800;
 	color: var(--t-text);
-	margin: 0;
+	margin: 0 auto;
+	text-align: center;
 	letter-spacing: -0.03em;
-	line-height: 1.12;
+	line-height: 1.15;
 }
 
 .subtitle {
-	font-size: 15px;
+	font-size: 15.5px;
 	color: var(--t-text-3);
-	margin: 0;
-	max-width: 620px;
-	line-height: 1.55;
+	margin: 6px auto 0;
+	max-width: 600px;
+	text-align: center;
+	line-height: 1.6;
 }
 
 // ─── Diagnostics hub ────────────────────────────────────────────────────────
