@@ -210,29 +210,29 @@
 	position: relative;
 	display: flex;
 	align-items: center;
-	justify-content: center;
-	text-align: center;
+	justify-content: flex-start;
+	text-align: left;
 	gap: 24px;
 	width: 100%;
 
 	.header {
 		width: 100%;
-		max-width: 720px;
+		max-width: 100%;
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		text-align: center;
-		margin: 0 auto;
+		align-items: flex-start;
+		justify-content: flex-start;
+		text-align: left;
+		margin: 0;
 	}
 }
 
 .heroFeaturePills {
 	display: flex;
 	flex-wrap: wrap;
-	justify-content: center;
+	justify-content: flex-start;
 	gap: 8px;
-	margin: 16px auto 0;
+	margin: 16px 0 0;
 }
 
 .heroFeaturePill {
@@ -581,20 +581,20 @@
 .header {
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	text-align: center;
+	align-items: flex-start;
+	justify-content: flex-start;
+	text-align: left;
 	width: 100%;
-	max-width: 720px;
-	margin: 0 auto;
+	max-width: 100%;
+	margin: 0;
 	gap: 12px;
 }
 
 .header-text {
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	text-align: center;
+	align-items: flex-start;
+	text-align: left;
 	gap: 12px;
 	width: 100%;
 }
@@ -603,8 +603,8 @@
 	font-size: clamp(32px, 5vw, 44px);
 	font-weight: 800;
 	color: var(--t-text);
-	margin: 0 auto;
-	text-align: center;
+	margin: 0;
+	text-align: left;
 	letter-spacing: -0.03em;
 	line-height: 1.15;
 }
@@ -612,9 +612,9 @@
 .subtitle {
 	font-size: 15.5px;
 	color: var(--t-text-3);
-	margin: 6px auto 0;
+	margin: 6px 0 0;
 	max-width: 600px;
-	text-align: center;
+	text-align: left;
 	line-height: 1.6;
 }
 
