@@ -837,8 +837,9 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 	backdrop-filter: blur(8px);
 	-webkit-backdrop-filter: blur(8px);
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	justify-content: center;
+	padding-top: 96px; /* Spaced cleanly below the top navbar */
 	z-index: 999999;
 	animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -847,12 +848,14 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 	position: relative;
 	width: 100%;
 	max-width: 520px;
-	max-height: 85vh;
+	height: 700px;
+	max-height: 80vh;
 	overflow: visible;
 	animation: modalScaleIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 
 	@media (max-width: 768px) {
 		max-width: calc(100% - 32px);
+		height: 80vh;
 	}
 }
 

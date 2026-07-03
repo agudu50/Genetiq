@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/App/Redux/store";
 import {
@@ -9,31 +9,55 @@ import {
 	clearMessages,
 	clearAlerts,
 	setAnalyzing,
+	setLanguage,
 } from "@/App/Redux/triageSlice";
-import { Send, Bot, AlertTriangle, RefreshCw } from "lucide-react";
+import { setCategory } from "@/App/Redux/categorySlice";
+import { chatWithGemma, checkGemmaHealth, getTranslation } from "@/App/Services/GemmaService";
+import type { GemmaLanguage } from "@/App/Services/GemmaService";
+import { Send, Bot, AlertTriangle, RefreshCw, Globe, Wifi, WifiOff } from "lucide-react";
 import styles from "./TriageWidget.module.scss";
 
-export const TriageWidget: React.FC = () => {
+const LANGUAGES: { id: GemmaLanguage; label: string; flag: string }[] = [
+	{ id: "english", label: "English", flag: "🇬🇧" },
+	{ id: "twi", label: "Twi", flag: "🇬🇭" },
+	{ id: "ga", label: "Ga", flag: "🇬🇭" },
+	{ id: "ewe", label: "Ewe", flag: "🇬🇭" },
+	{ id: "fante", label: "Fante", flag: "🇬🇭" },
+];
+
+export interface TriageWidgetProps {
+	onClose?: () => void;
+}
+
+export const TriageWidget: React.FC<TriageWidgetProps> = ({ onClose }) => {
 	const dispatch = useDispatch();
 	const chatEndRef = useRef<HTMLDivElement>(null);
+	const [gemmaOnline, setGemmaOnline] = useState(false);
+	const [showLangDropdown, setShowLangDropdown] = useState(false);
 
-	const { symptomsInput, messages, isAnalyzing } = useSelector(
+	const { symptomsInput, messages, isAnalyzing, selectedLanguage } = useSelector(
 		(state: RootState) => state.triage,
 	);
+
+	// Check Gemma health on mount
+	useEffect(() => {
+		checkGemmaHealth().then((h) => setGemmaOnline(h.available && h.modelLoaded));
+	}, []);
 
 	// Auto-scroll to bottom of chat when new messages or typing state changes
 	useEffect(() => {
 		chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
 	}, [messages, isAnalyzing]);
 
+	// Ghana-focused quick symptom suggestions
 	const quickSymptoms = [
-		{ label: "🫁 Breathless", text: "Shortness of breath" },
-		{ label: "🫀 Chest Pain", text: "Chest pain and high heart rate" },
-		{ label: "🧠 Migraine", text: "Severe headache and dizziness" },
-		{ label: "🤢 Nausea", text: "Nausea and stomach ache" },
+		{ label: "🦟 Malaria symptoms", text: "I have fever, chills, headache, and body pain — I think it might be malaria" },
+		{ label: "🤒 Typhoid fever", text: "I have stomach pain, high fever, and diarrhea for several days" },
+		{ label: "😮‍💨 Breathing trouble", text: "I have difficulty breathing and persistent cough" },
+		{ label: "🩸 Feeling weak", text: "I feel very weak, tired, and dizzy — my skin looks pale" },
 	];
 
-	const handleAnalyze = () => {
+	const handleAnalyze = async () => {
 		if (!symptomsInput.trim()) return;
 
 		const userInput = symptomsInput.trim();
@@ -47,95 +71,71 @@ export const TriageWidget: React.FC = () => {
 			}),
 		);
 
-		// Start Analyzing Spinner / Typing dots
+		// Start Analyzing
 		dispatch(setAnalyzing(true));
 		dispatch(setSymptomsInput(""));
 
-		let system = "General";
-		let condition = "Symptom Analysis Complete";
-		let urgency: "Green" | "Yellow" | "Red" = "Green";
-		let requiresAction = false;
-		let recommendation =
-			"I recommend monitoring your symptoms. If they persist or worsen, please consult a healthcare professional.";
+		try {
+			const result = await chatWithGemma({
+				message: userInput,
+				language: selectedLanguage,
+			});
 
-		const lowerInput = userInput.toLowerCase();
-		if (
-			lowerInput.includes("chest") ||
-			lowerInput.includes("heart") ||
-			lowerInput.includes("pain")
-		) {
-			system = "Cardiovascular";
-			condition = "Elevated Heart Risk Detected";
-			urgency = "Red";
-			requiresAction = true;
-			recommendation =
-				"Given your symptoms, please seek immediate medical attention. Cardiovascular symptoms should always be evaluated by a doctor.";
-		} else if (
-			lowerInput.includes("breath") ||
-			lowerInput.includes("cough") ||
-			lowerInput.includes("wheez")
-		) {
-			system = "Respiratory";
-			condition = "Potential Airway Restriction";
-			urgency = "Yellow";
-			requiresAction = true;
-			recommendation =
-				"Try to rest in a well-ventilated area and stay hydrated. Consider using an inhaler if prescribed. If breathing difficulties worsen, seek urgent care.";
-		} else if (
-			lowerInput.includes("head") ||
-			lowerInput.includes("migraine") ||
-			lowerInput.includes("dizz")
-		) {
-			system = "Neurological";
-			condition = "Neurological Strain";
-			urgency = "Yellow";
-			requiresAction = true;
-			recommendation =
-				"Rest in a quiet, dark room and stay hydrated. Monitor for any cognitive changes or severe pain.";
-		} else if (
-			lowerInput.includes("stomach") ||
-			lowerInput.includes("nausea") ||
-			lowerInput.includes("belly")
-		) {
-			system = "Gastrointestinal";
-			condition = "Digestive Irregularity";
-			urgency = "Green";
-			requiresAction = false;
-			recommendation =
-				"Stick to bland foods and drink plenty of fluids. Rest and avoid strenuous activity.";
-		}
+			// Add alert
+			dispatch(
+				addAlert({
+					id: `alert-${Date.now()}`,
+					system: result.system,
+					condition: result.condition,
+					description: result.message.substring(0, 150) + "...",
+					urgency: result.urgency,
+					requiresAction: result.urgency !== "Green",
+				}),
+			);
 
-		const newAlert = {
-			id: `alert-${Date.now()}`,
-			system,
-			condition,
-			description: `Based on your reported symptoms, our AI models indicate ${condition}. On-chain medical history has been cross-referenced.`,
-			urgency,
-			requiresAction,
-		};
-
-		// Mock delay for AI reasoning
-		setTimeout(() => {
-			dispatch(addAlert(newAlert));
+			// Add bot message
 			dispatch(
 				addMessage({
 					id: `bot-${Date.now()}`,
 					role: "bot",
-					text: `I've analyzed your symptoms. It looks like a ${condition} related to your ${system} system. ${recommendation}`,
+					text: result.message,
 				}),
 			);
+
+			// 🧬 Zoom the 3D Digital Twin to the relevant body system
+			if (result.bodySystem && result.bodySystem !== "total") {
+				dispatch(setCategory(result.bodySystem));
+			}
+		} catch (error) {
+			dispatch(
+				addMessage({
+					id: `bot-err-${Date.now()}`,
+					role: "bot",
+					text: "I'm sorry, I encountered an error. Please try again or visit your nearest health facility.",
+				}),
+			);
+		} finally {
 			dispatch(setAnalyzing(false));
-		}, 1200);
+		}
 	};
 
 	const handleReset = () => {
 		dispatch(clearMessages());
 		dispatch(clearAlerts());
+		// Reset 3D twin to default view
+		dispatch(setCategory("total"));
 	};
 
 	const handleChipClick = (text: string) => {
 		dispatch(appendSymptom(text));
 	};
+
+	const handleLanguageChange = (lang: GemmaLanguage) => {
+		dispatch(setLanguage(lang));
+		setShowLangDropdown(false);
+	};
+
+	const currentLang = LANGUAGES.find((l) => l.id === selectedLanguage) || LANGUAGES[0];
 
 	return (
 		<div className={styles.widgetContainer}>
@@ -147,18 +147,75 @@ export const TriageWidget: React.FC = () => {
 						<div className={styles.onlineDot} />
 					</div>
 					<div>
-						<h3 className={styles.title}>AI Symptom Triage</h3>
-						<span className={styles.statusLabel}>AI Physician Assistant</span>
+						<h3 className={styles.title}>
+							Gemma 4 Health Assistant
+						</h3>
+						<span className={styles.statusLabel}>
+							{gemmaOnline ? (
+								<><Wifi size={10} /> Gemma 4 Local</>
+							) : (
+								<><WifiOff size={10} /> Offline Mode</>
+							)}
+						</span>
 					</div>
 				</div>
-				<button 
-					onClick={handleReset} 
-					className={styles.resetButton}
-					title="Clear Chat History"
-				>
-					<RefreshCw size={14} />
-					<span>Reset</span>
-				</button>
+				<div className={styles.headerActions}>
+					{/* Language selector */}
+					<div className={styles.langSelector}>
+						<button
+							className={styles.langButton}
+							onClick={() => setShowLangDropdown(!showLangDropdown)}
+							title="Select language"
+						>
+							<Globe size={13} />
+							<span>{currentLang.flag} {currentLang.label}</span>
+						</button>
+						{showLangDropdown && (
+							<div className={styles.langDropdown}>
+								{LANGUAGES.map((lang) => (
+									<button
+										key={lang.id}
+										className={`${styles.langOption} ${lang.id === selectedLanguage ? styles.langOptionActive : ""}`}
+										onClick={() => handleLanguageChange(lang.id)}
+									>
+										<span>{lang.flag}</span>
+										<span>{lang.label}</span>
+									</button>
+								))}
+							</div>
+						)}
+					</div>
+					<button 
+						onClick={handleReset} 
+						className={styles.resetButton}
+						title="Clear Chat History"
+					>
+						<RefreshCw size={14} />
+						<span>Reset</span>
+					</button>
+					{onClose && (
+						<button
+							type="button"
+							className={styles.closeButton}
+							onClick={onClose}
+							aria-label="Close AI Assistant"
+							title="Close"
+						>
+							<svg
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="2.5"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								style={{ width: 14, height: 14 }}
+							>
+								<line x1="18" y1="6" x2="6" y2="18" />
+								<line x1="6" y1="6" x2="18" y2="18" />
+							</svg>
+						</button>
+					)}
+				</div>
 			</div>
 
 			{/* ── Chat Feed ── */}
@@ -213,7 +270,13 @@ export const TriageWidget: React.FC = () => {
 					onKeyDown={(e) => {
 						if (e.key === "Enter") handleAnalyze();
 					}}
-					placeholder='Type your symptoms...'
+					placeholder={
+						selectedLanguage === "twi"
+							? "Kyerɛ wo yare ahoɔ..."
+							: selectedLanguage === "ga"
+								? "Kɛ wo hewale shishi..."
+								: "Describe your symptoms..."
+					}
 					className={styles.chatInput}
 					disabled={isAnalyzing}
 				/>
@@ -234,8 +297,9 @@ export const TriageWidget: React.FC = () => {
 			<div className={styles.disclaimer}>
 				<AlertTriangle size={12} className={styles.warningIcon} />
 				<span>
-					AI assessments are not medical diagnoses. Always consult a healthcare
-					professional.
+					{getTranslation("This analysis is for information only", selectedLanguage)}.{" "}
+					{selectedLanguage !== "english" && "AI assessments are not medical diagnoses. "}
+					Always consult a healthcare professional.
 				</span>
 			</div>
 		</div>

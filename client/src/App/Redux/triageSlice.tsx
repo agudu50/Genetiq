@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import type { GemmaLanguage } from "@/App/Services/GemmaService";
 
 export type TriageUrgency = "Green" | "Yellow" | "Red" | null;
 
@@ -22,6 +23,7 @@ interface TriageState {
 	activeAlerts: TriageAlert[];
 	messages: ChatMessage[];
 	isAnalyzing: boolean;
+	selectedLanguage: GemmaLanguage;
 }
 
 const initialState: TriageState = {
@@ -45,6 +47,7 @@ const initialState: TriageState = {
 		},
 	],
 	isAnalyzing: false,
+	selectedLanguage: "english" as GemmaLanguage,
 };
 
 const triageSlice = createSlice({
@@ -85,6 +88,9 @@ const triageSlice = createSlice({
 		setAnalyzing: (state, action: PayloadAction<boolean>) => {
 			state.isAnalyzing = action.payload;
 		},
+		setLanguage: (state, action: PayloadAction<GemmaLanguage>) => {
+			state.selectedLanguage = action.payload;
+		},
 	},
 });
 
@@ -96,6 +102,7 @@ export const {
 	clearAlerts,
 	clearMessages,
 	setAnalyzing,
+	setLanguage,
 } = triageSlice.actions;
 
 export default triageSlice.reducer;

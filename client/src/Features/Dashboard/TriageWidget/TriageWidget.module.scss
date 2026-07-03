@@ -476,3 +476,150 @@
 	flex-shrink: 0;
 	margin-top: 1px;
 }
+
+// ─── Header Actions & Language Selector ──────────────────────────────────────
+
+.headerActions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.langSelector {
+	position: relative;
+}
+
+.langButton {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	padding: 5px 10px;
+	border-radius: 8px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.05);
+	color: rgba(255, 255, 255, 0.7);
+	font-size: 11px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	white-space: nowrap;
+
+	&:hover {
+		background: rgba(0, 166, 157, 0.12);
+		border-color: rgba(0, 166, 157, 0.3);
+		color: #00A69D;
+	}
+
+	html[data-theme="light"] & {
+		border-color: rgba(0, 0, 0, 0.1);
+		background: rgba(0, 0, 0, 0.03);
+		color: #475569;
+
+		&:hover {
+			background: rgba(0, 166, 157, 0.08);
+			color: #00A69D;
+		}
+	}
+}
+
+.langDropdown {
+	position: absolute;
+	top: calc(100% + 6px);
+	right: 0;
+	z-index: 50;
+	background: rgba(15, 23, 42, 0.95);
+	backdrop-filter: blur(20px);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 12px;
+	padding: 6px;
+	min-width: 140px;
+	box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+	animation: dropdownIn 0.15s ease;
+
+	html[data-theme="light"] & {
+		background: rgba(255, 255, 255, 0.97);
+		border-color: rgba(0, 0, 0, 0.08);
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+	}
+}
+
+@keyframes dropdownIn {
+	from {
+		opacity: 0;
+		transform: translateY(-4px) scale(0.97);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+.langOption {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	padding: 7px 12px;
+	border: none;
+	border-radius: 8px;
+	background: transparent;
+	color: rgba(255, 255, 255, 0.7);
+	font-size: 12px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.15s ease;
+
+	&:hover {
+		background: rgba(0, 166, 157, 0.15);
+		color: #00A69D;
+	}
+
+	html[data-theme="light"] & {
+		color: #475569;
+
+		&:hover {
+			background: rgba(0, 166, 157, 0.08);
+			color: #00A69D;
+		}
+	}
+}
+
+.langOptionActive {
+	background: rgba(0, 166, 157, 0.15);
+	color: #00A69D;
+	font-weight: 700;
+
+	html[data-theme="light"] & {
+		background: rgba(0, 166, 157, 0.1);
+		color: #00A69D;
+	}
+}
+
+.closeButton {
+	@include mixins.modal-close-btn(28px, 14px);
+	border-radius: 8px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.05);
+	color: rgba(255, 255, 255, 0.7);
+	transition: all 0.2s ease;
+	flex-shrink: 0;
+
+	&:hover {
+		background: #ef4444;
+		border-color: #ef4444;
+		color: #ffffff;
+		transform: scale(1.05);
+	}
+
+	html[data-theme="light"] & {
+		border-color: rgba(0, 0, 0, 0.1);
+		background: rgba(0, 0, 0, 0.03);
+		color: #475569;
+
+		&:hover {
+			background: #ef4444;
+			border-color: #ef4444;
+			color: #ffffff;
+		}
+	}
+}

@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
@@ -9,7 +9,14 @@ import { paths } from "@/App/Routes/Paths";
 import {
 	Upload, FileText, ShieldCheck, Zap, ChevronRight,
 	X, CheckCircle, ArrowLeft, Loader2, Sparkles, ChevronDown,
+	Wifi, WifiOff, Brain, Stethoscope,
 } from "lucide-react";
+import {
+	analyzeLabResults,
+	checkGemmaHealth,
+	getTranslation,
+} from "@/App/Services/GemmaService";
+import type { GemmaLanguage, GemmaAnalysisResult } from "@/App/Services/GemmaService";
 import styles from "./ImportOrUpload.module.scss";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -27,6 +34,21 @@ interface UploadedFile {
 const GENDER_OPTIONS  = ["Male", "Female", "Non-binary", "Prefer not to say"];
 const BLOOD_OPTIONS   = ["A+", "A−", "B+", "B−", "AB+", "AB−", "O+", "O−", "Unknown"];
 
+const LANGUAGES: { id: GemmaLanguage; label: string; flag: string; code: string }[] = [
+	{ id: "english", label: "English", flag: "🇬🇧", code: "EN" },
+	{ id: "twi", label: "Twi", flag: "🇬🇭", code: "TW" },
+	{ id: "ga", label: "Ga", flag: "🇬🇭", code: "GA" },
+	{ id: "ewe", label: "Ewe", flag: "🇬🇭", code: "EW" },
+	{ id: "fante", label: "Fante", flag: "🇬🇭", code: "FT" },
+];
+
+const PRESETS = [
+	{ id: "malaria_rdt", emoji: "🦟", title: "Malaria RDT Strip", desc: "Positive for P. falciparum malaria" },
+	{ id: "cbc_anemia", emoji: "🩸", title: "CBC — Severe Anemia", desc: "Critically low hemoglobin levels" },
+	{ id: "typhoid", emoji: "📝", title: "Typhoid Lab Result", desc: "Widal test positive for S. typhi" },
+	{ id: "urinalysis", emoji: "🧪", title: "Urinalysis Report", desc: "Dehydration and urinary infection" },
+];
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 const ImportOrUpload = () => {
@@ -41,6 +63,10 @@ const ImportOrUpload = () => {
 	const [files, setFiles] = useState<UploadedFile[]>([]);
 	const [dragging, setDragging] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
+	const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
+	const [selectedLanguage, setSelectedLanguage] = useState<GemmaLanguage>("english");
+	const [gemmaOnline, setGemmaOnline] = useState(false);
+	const [analysisResult, setAnalysisResult] = useState<GemmaAnalysisResult | null>(null);
 
 	const user = useSelector((state: RootState) => state.user);
 
@@ -53,6 +79,11 @@ const ImportOrUpload = () => {
 		height:    user.height    || "",
 		weight:    user.weight    || "",
 	});
+
+	// Check Gemma server on mount
+	useEffect(() => {
+		checkGemmaHealth().then((h) => setGemmaOnline(h.available && h.modelLoaded));
+	}, []);
 
 	// ── Step 1: Personal info submit ──────────────────────────────────────────
 
@@ -71,12 +102,11 @@ const ImportOrUpload = () => {
 
 	const addFiles = (list: FileList | null) => {
 		if (!list) return;
+		setSelectedPreset(null); // Clear preset if files uploaded
 		const newFiles: UploadedFile[] = Array.from(list).map((file) => ({
 			file, progress: 0, done: false,
 		}));
 		setFiles((p) => [...p, ...newFiles]);
-
-		// Simulate upload progress for each file
 		newFiles.forEach((f) => simulateProgress(f.file));
 	};
 
@@ -116,38 +146,66 @@ const ImportOrUpload = () => {
 		addFiles(e.dataTransfer.files);
 	}, []);
 
-	// ── Step 2: Analyze ───────────────────────────────────────────────────────
+	// ── Preset selection ──────────────────────────────────────────────────────
 
-	// The mock AI findings — in production these come from the real AI API
-	const MOCK_FINDINGS: LabFinding[] = [
-		{ id: "1", name: "Blood Sugar (Glucose)", marker: "Blood Sugar (Glucose)", value: "5.2 mmol/L", status: "normal", statusLabel: "Normal ✓", note: "Your blood sugar is at a healthy level. This means your body is managing energy well. Keep eating balanced meals and staying active." },
-		{ id: "2", name: "Bad Cholesterol (LDL)", marker: "Bad Cholesterol (LDL)", value: "3.8 mmol/L", status: "elevated", statusLabel: "A little high", note: "LDL is the type of cholesterol that can build up in your arteries over time. Yours is slightly above the ideal range. Try eating less fried food, butter, and red meat — and add more fish, nuts, and oats to your diet." },
-		{ id: "3", name: "Red Blood Cells (Haemoglobin)", marker: "Red Blood Cells (Haemoglobin)", value: "14.2 g/dL", status: "normal", statusLabel: "Normal ✓", note: "Your red blood cells are healthy. They carry oxygen around your body, and yours are doing a great job. No signs of anaemia." },
-		{ id: "4", name: "Vitamin D", marker: "Vitamin D", value: "38 nmol/L", status: "low", statusLabel: "Lower than ideal", note: "Most people don't get enough Vitamin D, especially in winter. It helps your bones, mood, and immune system. Try 15 minutes of sunlight daily and consider a Vitamin D supplement (1000–2000 IU)." },
-		{ id: "5", name: "Thyroid (TSH)", marker: "Thyroid", value: "2.1 mIU/L", status: "normal", statusLabel: "Normal ✓", note: "Your thyroid gland — which controls your energy and metabolism — is working exactly as it should. Nothing to worry about here." },
-		{ id: "6", name: "Iron Stores (Ferritin)", marker: "Iron Stores (Ferritin)", value: "8 µg/L", status: "action", statusLabel: "Low — see a doctor", note: "Ferritin measures how much iron your body has stored. Yours is very low, which can cause tiredness, weakness, and difficulty concentrating. Please speak to your doctor soon — you may need an iron supplement." },
-	];
+	const handlePresetClick = (presetId: string) => {
+		setSelectedPreset(presetId === selectedPreset ? null : presetId);
+		setFiles([]); // Clear files if preset selected
+	};
 
-	const MOCK_RECS: Recommendation[] = [
-		{ icon: "🥗", title: "Eat more iron-rich foods", body: "Add spinach, lentils, kidney beans, and lean red meat to your meals. Pair them with Vitamin C (like orange juice) to help your body absorb iron better." },
-		{ icon: "☀️", title: "Get more Vitamin D", body: "Spend 15–20 minutes outside in sunlight each day. If that's hard, a daily Vitamin D3 supplement (1000–2000 IU) is a simple fix." },
-		{ icon: "🐟", title: "Help your cholesterol", body: "Swap butter for olive oil, eat more oily fish (like salmon or mackerel) twice a week, and snack on nuts instead of crisps." },
-		{ icon: "🩺", title: "Book a doctor's appointment", body: "Your iron level needs medical attention. Your GP can confirm the cause and recommend the right treatment — this is the most important step right now." },
-	];
+	// ── Step 2: Analyze with Gemma ────────────────────────────────────────────
 
-	const handleAnalyze = () => {
+	const handleAnalyze = async () => {
 		setStep("analyzing");
 		dispatch(updateUserInfo({ ...info, uploadStatus: "processing" }));
-		setTimeout(() => {
+
+		try {
+			// Convert first uploaded file to base64 if present
+			let imageBase64: string | undefined;
+			if (files.length > 0 && !selectedPreset) {
+				const file = files[0].file;
+				if (file.type.startsWith("image/")) {
+					imageBase64 = await fileToBase64(file);
+				}
+			}
+
+			const result = await analyzeLabResults({
+				imageBase64,
+				presetId: selectedPreset || undefined,
+				patientAge: info.age || "35",
+				patientGender: info.gender || "unknown",
+				language: selectedLanguage,
+			});
+
+			setAnalysisResult(result);
+
+			// Convert Gemma findings to Redux format
+			const findings: LabFinding[] = result.findings.map((f) => ({
+				id: f.id,
+				name: f.name,
+				marker: f.marker,
+				value: f.value,
+				status: f.status,
+				statusLabel: f.statusLabel,
+				note: f.note,
+			}));
+
+			const recommendations: Recommendation[] = result.recommendations.map((r) => ({
+				icon: r.icon,
+				title: r.title,
+				body: r.body,
+			}));
+
 			dispatch(updateUserInfo({ uploadStatus: "completed" }));
-			// Save the full upload record into Redux for the Clinical History page
 			dispatch(addUploadRecord({
 				id: crypto.randomUUID(),
 				uploadedAt: new Date().toISOString(),
-				fileName: files.map((f) => f.file.name).join(", "),
-				healthScore: 75,
-				findings: MOCK_FINDINGS,
-				recommendations: MOCK_RECS,
+				fileName: selectedPreset
+					? PRESETS.find((p) => p.id === selectedPreset)?.title || "Preset Analysis"
+					: files.map((f) => f.file.name).join(", "),
+				healthScore: result.healthScore,
+				findings,
+				recommendations,
 				firstName: info.firstName,
 				lastName: info.lastName,
 				age: info.age,
@@ -155,165 +213,206 @@ const ImportOrUpload = () => {
 				bloodType: info.bloodType,
 			}));
 			setStep("done");
-		}, 3000);
+		} catch (error) {
+			console.error("Analysis error:", error);
+			dispatch(updateUserInfo({ uploadStatus: "completed" }));
+			setStep("done");
+		}
 	};
 
+	const fileToBase64 = (file: File): Promise<string> =>
+		new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onload = () => {
+				const result = reader.result as string;
+				resolve(result.split(",")[1]); // Remove data:...;base64, prefix
+			};
+			reader.onerror = reject;
+			reader.readAsDataURL(file);
+		});
+
 	const allDone   = files.length > 0 && files.every((f) => f.done);
-	const anyFile   = files.length > 0;
+	const canAnalyze = allDone || !!selectedPreset;
+
+	// Helper to translate status labels
+	const t = (text: string) => getTranslation(text, selectedLanguage);
 
 	// ─────────────────────────────────────────────────────────────────────────
 
 	return (
 		<div className={styles.page}>
 
-			{/* ── Analyzing overlay ───────────────────────────────────────── */}
+			{/* ── Analyzing overlay ───────────────────────────────────── */}
 			{step === "analyzing" && (
 				<div className={styles.overlay}>
 					<div className={styles.overlayCard}>
 						<div className={styles.spinnerRing} />
-						<h2>Analysing your results…</h2>
-						<p>Our AI is reading every value and building your personalised plan.</p>
+						<h2>
+							{gemmaOnline ? "Gemma 4 is analysing your results…" : "Analysing your results…"}
+						</h2>
+						<p>
+							{gemmaOnline
+								? "Gemma 4 AI is processing your lab data with multimodal vision."
+								: "Our AI is reading every value and building your personalised plan."
+							}
+						</p>
+						<div className={styles.gemmaStatusBadge}>
+							{gemmaOnline ? (
+								<><Wifi size={12} /> Powered by Gemma 4 Local</>
+							) : (
+								<><Brain size={12} /> Smart Offline Mode</>
+							)}
+						</div>
 					</div>
 				</div>
 			)}
 
-			{/* ── AI Results screen ─────────────────────────────────────── */}
-			{step === "done" && (
+			{/* ── AI Results screen ─────────────────────────────────── */}
+			{step === "done" && analysisResult && (
 				<div className={styles.resultsPage}>
 
-					{/* ── Score hero ─────────────────────────────────────── */}
+					{/* ── Score hero ─────────────────────────────────── */}
 					<div className={styles.resultsHero}>
-						{/* On desktop: just the ring. On mobile: ring + label below */}
 						<div className={styles.scoreMobileWrapper}>
 							<div className={styles.scoreRing}>
 								<svg viewBox="0 0 120 120" className={styles.ringsvg}>
 									<circle cx="60" cy="60" r="52" fill="none" className={styles.ringTrack} strokeWidth="8"/>
 									<circle cx="60" cy="60" r="52" fill="none" className={styles.ringProgress} strokeWidth="8"
-										strokeDasharray="326.7" strokeDashoffset="81.7"
+										strokeDasharray="326.7"
+										strokeDashoffset={326.7 - (326.7 * analysisResult.healthScore / 100)}
 										strokeLinecap="round" transform="rotate(-90 60 60)"/>
 								</svg>
 								<div className={styles.scoreInner}>
-									<span className={styles.scoreNum}>75</span>
-									<span className={styles.scoreLabel}>Health Score</span>
+									<span className={styles.scoreNum}>{analysisResult.healthScore}</span>
+									<span className={styles.scoreLabel}>{t("Health Score")}</span>
 								</div>
 							</div>
-							{/* Mobile-only label below ring */}
-							<span className={styles.scoreLabelMobile}>Health Score</span>
+							<span className={styles.scoreLabelMobile}>{t("Health Score")}</span>
 						</div>
 
 						<div className={styles.heroText}>
 							<div className={styles.resultsBadge}>
-								<CheckCircle size={13}/> Analysis complete
+								<CheckCircle size={13}/> {t("Your results are ready")}
 							</div>
-							<h1>Your results are <span className={styles.teal}>ready</span></h1>
-							<p>
-								We looked at your lab results and put everything into simple, easy-to-understand language.
-								Your score of <strong>75 out of 100</strong> means your health is generally good,
-								with a couple of things worth keeping an eye on.
-							</p>
+							<h1>{t("Your results are ready")}</h1>
+							<p>{analysisResult.summary}</p>
+
+							{/* Language selector */}
+							<div className={styles.langRow}>
+								{LANGUAGES.map((lang) => (
+									<button
+										key={lang.id}
+										className={`${styles.langPill} ${lang.id === selectedLanguage ? styles.langPillActive : ""}`}
+										onClick={() => setSelectedLanguage(lang.id)}
+									>
+										{lang.flag} {lang.label}
+									</button>
+								))}
+							</div>
 						</div>
 					</div>
 
-					{/* ── Score breakdown ────────────────────────────────── */}
+					{/* ── Score breakdown ────────────────────────────── */}
 					<div className={styles.scoreBreakdown}>
-						<div className={`${styles.scoreBar} ${styles.good}`}>
-							<span>0 – 50</span><span>Needs attention</span>
+						<div className={`${styles.scoreBar} ${analysisResult.healthScore <= 50 ? styles.active : ""} ${styles.good}`}>
+							<span>0 – 50</span><span>{t("Needs attention")}</span>
 						</div>
-						<div className={`${styles.scoreBar} ${styles.warning}`}>
-							<span>51 – 74</span><span>Room to improve</span>
+						<div className={`${styles.scoreBar} ${analysisResult.healthScore > 50 && analysisResult.healthScore <= 74 ? styles.active : ""} ${styles.warning}`}>
+							<span>51 – 74</span><span>{t("Room to improve")}</span>
 						</div>
-						<div className={`${styles.scoreBar} ${styles.great} ${styles.active}`}>
-							<span>75 – 89</span><span>Good — you're here ✓</span>
+						<div className={`${styles.scoreBar} ${analysisResult.healthScore > 74 && analysisResult.healthScore <= 89 ? styles.active : ""} ${styles.great}`}>
+							<span>75 – 89</span><span>{t("Good")}</span>
 						</div>
-						<div className={styles.scoreBar}>
-							<span>90 – 100</span><span>Excellent</span>
+						<div className={`${styles.scoreBar} ${analysisResult.healthScore > 89 ? styles.active : ""}`}>
+							<span>90 – 100</span><span>{t("Excellent")}</span>
 						</div>
 					</div>
 
-					{/* ── Key findings ───────────────────────────────────── */}
+					{/* ── Key findings ───────────────────────────────── */}
 					<div className={styles.section}>
 						<div className={styles.sectionHead}>
-							<h2 className={styles.sectionTitle}>What we found</h2>
-							<p className={styles.sectionSub}>Each result explained in plain English — no medical jargon.</p>
+							<h2 className={styles.sectionTitle}>{t("What we found")}</h2>
+							<p className={styles.sectionSub}>{t("Each result explained in plain English — no medical jargon.")}</p>
 						</div>
 
 						<div className={styles.findingsGrid}>
-							{[
-								{ status: "good", marker: "Blood Sugar", sub: "Glucose", value: "5.2", unit: "mmol/L", summary: "Normal ✓", note: "Your blood sugar is at a healthy level. This means your body is managing energy well. Keep eating balanced meals and staying active." },
-								{ status: "warning", marker: "Bad Cholesterol", sub: "LDL", value: "3.8", unit: "mmol/L", summary: "A little high", note: "LDL is the type of cholesterol that can build up in your arteries over time. Yours is slightly above the ideal range. Try eating less fried food, butter, and red meat — and add more fish, nuts, and oats to your diet." },
-								{ status: "good", marker: "Red Blood Cells", sub: "Haemoglobin", value: "14.2", unit: "g/dL", summary: "Normal ✓", note: "Your red blood cells are healthy. They carry oxygen around your body, and yours are doing a great job. No signs of anaemia." },
-								{ status: "warning", marker: "Vitamin D", sub: "25-OH", value: "38", unit: "nmol/L", summary: "Lower than ideal", note: "Most people don’t get enough Vitamin D, especially in winter. It helps your bones, mood, and immune system. Try 15 minutes of sunlight daily and consider a Vitamin D supplement (1000–2000 IU)." },
-								{ status: "good", marker: "Thyroid", sub: "TSH", value: "2.1", unit: "mIU/L", summary: "Normal ✓", note: "Your thyroid gland — which controls your energy and metabolism — is working exactly as it should. Nothing to worry about here." },
-								{ status: "critical", marker: "Iron Stores", sub: "Ferritin", value: "8", unit: "µg/L", summary: "Low — see a doctor", note: "Ferritin measures how much iron your body has stored. Yours is very low, which can cause tiredness, weakness, and difficulty concentrating. Please speak to your doctor soon — you may need an iron supplement." },
-							].map((f) => (
-								<div key={f.marker} className={`${styles.findingCard} ${styles[`card-${f.status}`]}`}>
-									<div className={styles.cardBody}>
-										<div className={styles.cardTop}>
-											<div className={styles.cardNames}>
-												<span className={styles.cardMarker}>{f.marker}</span>
-												<span className={styles.cardSub}>{f.sub}</span>
+							{analysisResult.findings.map((f) => {
+								const statusClass = f.status === "normal" ? "good"
+									: f.status === "action" ? "critical"
+									: "warning";
+								return (
+									<div key={f.id} className={`${styles.findingCard} ${styles[`card-${statusClass}`]}`}>
+										<div className={styles.cardBody}>
+											<div className={styles.cardTop}>
+												<div className={styles.cardNames}>
+													<span className={styles.cardMarker}>{t(f.name) || f.name}</span>
+													<span className={styles.cardSub}>{t(f.marker) || f.marker}</span>
+												</div>
+												<span className={`${styles.cardBadge} ${styles[`badge-${statusClass}`]}`}>
+													{t(f.statusLabel) || f.statusLabel}
+												</span>
 											</div>
-											<span className={`${styles.cardBadge} ${styles[`badge-${f.status}`]}`}>{f.summary}</span>
+											<div className={styles.cardValue}>
+												<span className={styles.cardNum}>{f.value}</span>
+											</div>
+											<div className={styles.cardDivider} />
+											<p className={styles.cardNote}>{t(f.note) || f.note}</p>
 										</div>
-										<div className={styles.cardValue}>
-											<span className={styles.cardNum}>{f.value}</span>
-											<span className={styles.cardUnit}>{f.unit}</span>
-										</div>
-										<div className={styles.cardDivider} />
-										<p className={styles.cardNote}>{f.note}</p>
 									</div>
-								</div>
-							))}
+								);
+							})}
 						</div>
 					</div>
 
-					{/* ── What to do next ────────────────────────────────── */}
+					{/* ── What to do next ────────────────────────────── */}
 					<div className={styles.section}>
 						<div className={styles.sectionHead}>
-							<h2 className={styles.sectionTitle}>What to do next</h2>
-							<p className={styles.sectionSub}>Simple steps based on your results.</p>
+							<h2 className={styles.sectionTitle}>{t("What to do next")}</h2>
+							<p className={styles.sectionSub}>{t("Simple steps based on your results.")}</p>
 						</div>
 						<div className={styles.recsList}>
-							{[
-								{ icon: "🥗", title: "Eat more iron-rich foods", body: "Add spinach, lentils, kidney beans, and lean red meat to your meals. Pair them with Vitamin C (like orange juice) to help your body absorb iron better." },
-								{ icon: "☀️", title: "Get more Vitamin D", body: "Spend 15–20 minutes outside in sunlight each day. If that's hard, a daily Vitamin D3 supplement (1000–2000 IU) is a simple fix." },
-								{ icon: "🐟", title: "Help your cholesterol", body: "Swap butter for olive oil, eat more oily fish (like salmon or mackerel) twice a week, and snack on nuts instead of crisps." },
-								{ icon: "🩺", title: "Book a doctor's appointment", body: "Your iron level needs medical attention. Your GP can confirm the cause and recommend the right treatment — this is the most important step right now." },
-							].map((r) => (
+							{analysisResult.recommendations.map((r) => (
 								<div key={r.title} className={styles.recCard}>
 									<span className={styles.recIcon}>{r.icon}</span>
 									<div>
-										<div className={styles.recTitle}>{r.title}</div>
-										<div className={styles.recBody}>{r.body}</div>
+										<div className={styles.recTitle}>{t(r.title) || r.title}</div>
+										<div className={styles.recBody}>{t(r.body) || r.body}</div>
 									</div>
 								</div>
 							))}
 						</div>
 					</div>
 
-					{/* ── Disclaimer ─────────────────────────────────────── */}
+					{/* ── Disclaimer ─────────────────────────────────── */}
 					<div className={styles.disclaimer}>
 						<ShieldCheck size={14} />
-						<span>This analysis is for information only and does not replace professional medical advice. Always speak to a qualified doctor about your health.</span>
+						<span>
+							{t("This analysis is for information only") ||
+								"This analysis is for information only and does not replace professional medical advice."}{" "}
+							{t("Always speak to a qualified doctor about your health.")}
+							{" "}{t("Visit your nearest CHPS compound") || ""}
+						</span>
 					</div>
 
-					{/* ── CTAs ───────────────────────────────────────────── */}
+					{/* ── CTAs ───────────────────────────────────────── */}
 					<div className={styles.resultsCtas}>
 						<button className={styles.primaryBtn} onClick={() => navigate(paths.dashboard.root)}>
-							<Sparkles size={16} /> Go to my dashboard
+							<Sparkles size={16} /> {t("Go to my dashboard")}
 						</button>
 						<button className={styles.outlineBtn} onClick={() => navigate(paths.clinicalHistory)}>
-							<FileText size={16} /> View clinical history
+							<FileText size={16} /> {t("View clinical history")}
 						</button>
 						<button
 							className={styles.ghostBtn}
 							onClick={() => {
 								setFiles([]);
+								setSelectedPreset(null);
+								setAnalysisResult(null);
 								setStep("upload");
 								window.scrollTo({ top: 0, behavior: "smooth" });
 							}}
 						>
-							<Upload size={14} /> Upload more results
+							<Upload size={14} /> {t("Upload more results")}
 						</button>
 					</div>
 
@@ -347,185 +446,248 @@ const ImportOrUpload = () => {
 				{/* Step 1 — Personal Info */}
 				{step === "personal" && (
 					<div className={styles.content}>
-							<div className={styles.titleBlock}>
-								<h1>Tell us about <span className={styles.teal}>yourself</span></h1>
-								<p>We use this to personalise your health insights. Takes 30 seconds.</p>
-							</div>
-
-							<form className={styles.card} onSubmit={handlePersonalSubmit}>
-								<div className={styles.formGrid}>
-									<div className={styles.field}>
-										<label>First name</label>
-										<input placeholder="e.g. James" value={info.firstName} onChange={set("firstName")} required />
-									</div>
-									<div className={styles.field}>
-										<label>Last name</label>
-										<input placeholder="e.g. Smith" value={info.lastName} onChange={set("lastName")} required />
-									</div>
-									<div className={styles.field}>
-										<label>Age</label>
-										<input type="number" min="1" max="120" placeholder="e.g. 34" value={info.age} onChange={set("age")} required />
-									</div>
-									<div className={styles.field}>
-										<label>Gender</label>
-										<div className={styles.selectWrap}>
-											<select value={info.gender} onChange={set("gender")}>
-												<option value="" disabled>Select gender</option>
-												{GENDER_OPTIONS.map((g) => <option key={g}>{g}</option>)}
-											</select>
-											<ChevronDown size={16} className={styles.selectChevron} />
-										</div>
-									</div>
-									<div className={styles.field}>
-										<label>Blood type <span className={styles.optional}>(optional)</span></label>
-										<div className={styles.selectWrap}>
-											<select value={info.bloodType} onChange={set("bloodType")}>
-												<option value="">Unknown</option>
-												{BLOOD_OPTIONS.map((b) => <option key={b}>{b}</option>)}
-											</select>
-											<ChevronDown size={16} className={styles.selectChevron} />
-										</div>
-									</div>
-									<div className={styles.field}>
-										<label>Height <span className={styles.optional}>(optional)</span></label>
-										<div className={styles.unitInput}>
-											<input
-												type="number" min="50" max="300"
-												placeholder="e.g. 175"
-												value={info.height}
-												onChange={set("height")}
-											/>
-											<span className={styles.unitLabel}>cm</span>
-										</div>
-									</div>
-									<div className={styles.field}>
-										<label>Weight <span className={styles.optional}>(optional)</span></label>
-										<div className={styles.unitInput}>
-											<input
-												type="number" min="10" max="500"
-												placeholder="e.g. 72"
-												value={info.weight}
-												onChange={set("weight")}
-											/>
-											<span className={styles.unitLabel}>kg</span>
-										</div>
-									</div>
-								</div>
-
-								{/* Live BMI preview */}
-								{(() => {
-									const h = Number(info.height);
-									const w = Number(info.weight);
-									if (!h || !w) return null;
-									const bmi = w / ((h / 100) * (h / 100));
-									const cat =
-										bmi < 18.5 ? { label: "Underweight", color: "#60a5fa" } :
-										bmi < 25   ? { label: "Normal",      color: "#00A69D" } :
-										bmi < 30   ? { label: "Overweight",  color: "#fbbf24" } :
-										             { label: "Obese",       color: "#ef4444" };
-									return (
-										<div className={styles.bmiPreview}>
-											<span className={styles.bmiPreviewLabel}>BMI</span>
-											<span className={styles.bmiPreviewValue} style={{ color: cat.color }}>{bmi.toFixed(1)}</span>
-											<span className={styles.bmiPreviewCat} style={{ color: cat.color }}>— {cat.label}</span>
-										</div>
-									);
-								})()}
-
-								<button type="submit" className={styles.primaryBtn}>
-									Continue <ChevronRight size={16} />
-								</button>
-							</form>
-						</div>
-					)}
-
-					{/* Step 2 — Upload */}
-				{step === "upload" && (
-					<div className={styles.content}>
 						<div className={styles.titleBlock}>
-							<h1>Upload your <span className={styles.teal}>lab results</span></h1>
-							<p>PDF, image, or CSV — our AI reads every format and explains it all in plain English.</p>
+							<h1>Tell us about <span className={styles.teal}>yourself</span></h1>
+							<p>We use this to personalise your health insights. Takes 30 seconds.</p>
 						</div>
 
-							{/* Trust row */}
-							<div className={styles.trustRow}>
-								{[
-									{ icon: <ShieldCheck size={14}/>, text: "256-bit encrypted" },
-									{ icon: <FileText size={14}/>,    text: "PDF · CSV · JPG · PNG" },
-									{ icon: <Zap size={14}/>,         text: "Analysed in seconds" },
-								].map((t) => (
-									<span key={t.text} className={styles.trustPill}>
-										{t.icon} {t.text}
-									</span>
-								))}
-							</div>
-
-							{/* Drop zone */}
-							<div
-								className={`${styles.dropZone} ${dragging ? styles.dropActive : ""}`}
-								onDragOver={onDragOver}
-								onDragLeave={onDragLeave}
-								onDrop={onDrop}
-								onClick={() => fileInputRef.current?.click()}
-							>
-								<input
-									ref={fileInputRef}
-									type="file"
-									multiple
-									accept=".pdf,.jpg,.jpeg,.png,.csv"
-									style={{ display: "none" }}
-									onChange={(e) => addFiles(e.target.files)}
-								/>
-								<div className={styles.dropIcon}><Upload size={32} /></div>
-								<p className={styles.dropTitle}>Drop files here or <span>click to browse</span></p>
-								<p className={styles.dropSub}>PDF, JPG, PNG, CSV · Max 25 MB per file</p>
-							</div>
-
-							{/* File list */}
-							{anyFile && (
-								<div className={styles.fileList}>
-									{files.map(({ file, progress, done }) => (
-										<div key={file.name} className={styles.fileRow}>
-											<div className={styles.fileIcon}>
-												{done ? <CheckCircle size={18} /> : <FileText size={18} />}
-											</div>
-											<div className={styles.fileMeta}>
-												<span className={styles.fileName}>{file.name}</span>
-												<span className={styles.fileSize}>{(file.size / 1024).toFixed(0)} KB</span>
-												{!done && (
-													<div className={styles.progressBar}>
-														<div className={styles.progressFill} style={{ width: `${progress}%` }} />
-													</div>
-												)}
-											</div>
-											{done && (
-												<button className={styles.removeBtn} onClick={() => removeFile(file)}>
-													<X size={14} />
-												</button>
-											)}
-											{!done && <Loader2 size={16} className={styles.spinner} />}
-										</div>
-									))}
+						<form className={styles.card} onSubmit={handlePersonalSubmit}>
+							<div className={styles.formGrid}>
+								<div className={styles.field}>
+									<label>First name</label>
+									<input placeholder="e.g. Kwame" value={info.firstName} onChange={set("firstName")} required />
 								</div>
-							)}
-
-							{/* CTA */}
-							<div className={styles.ctaRow}>
-								<button
-									className={styles.primaryBtn}
-									disabled={!allDone}
-									onClick={handleAnalyze}
-								>
-									<Sparkles size={16} />
-									{allDone ? "Analyse my results" : anyFile ? "Uploading…" : "Add files to continue"}
-								</button>
-								<button className={styles.ghostBtn} onClick={() => navigate(paths.dashboard.root)}>
-									Skip for now
-								</button>
+								<div className={styles.field}>
+									<label>Last name</label>
+									<input placeholder="e.g. Mensah" value={info.lastName} onChange={set("lastName")} required />
+								</div>
+								<div className={styles.field}>
+									<label>Age</label>
+									<input type="number" min="1" max="120" placeholder="e.g. 34" value={info.age} onChange={set("age")} required />
+								</div>
+								<div className={styles.field}>
+									<label>Gender</label>
+									<div className={styles.selectWrap}>
+										<select value={info.gender} onChange={set("gender")}>
+											<option value="" disabled>Select gender</option>
+											{GENDER_OPTIONS.map((g) => <option key={g}>{g}</option>)}
+										</select>
+										<ChevronDown size={16} className={styles.selectChevron} />
+									</div>
+								</div>
+								<div className={styles.field}>
+									<label>Blood type <span className={styles.optional}>(optional)</span></label>
+									<div className={styles.selectWrap}>
+										<select value={info.bloodType} onChange={set("bloodType")}>
+											<option value="">Unknown</option>
+											{BLOOD_OPTIONS.map((b) => <option key={b}>{b}</option>)}
+										</select>
+										<ChevronDown size={16} className={styles.selectChevron} />
+									</div>
+								</div>
+								<div className={styles.field}>
+									<label>Height <span className={styles.optional}>(optional)</span></label>
+									<div className={styles.unitInput}>
+										<input
+											type="number" min="50" max="300"
+											placeholder="e.g. 175"
+											value={info.height}
+											onChange={set("height")}
+										/>
+										<span className={styles.unitLabel}>cm</span>
+									</div>
+								</div>
+								<div className={styles.field}>
+									<label>Weight <span className={styles.optional}>(optional)</span></label>
+									<div className={styles.unitInput}>
+										<input
+											type="number" min="10" max="500"
+											placeholder="e.g. 72"
+											value={info.weight}
+											onChange={set("weight")}
+										/>
+										<span className={styles.unitLabel}>kg</span>
+									</div>
+								</div>
 							</div>
+
+							{/* Live BMI preview */}
+							{(() => {
+								const h = Number(info.height);
+								const w = Number(info.weight);
+								if (!h || !w) return null;
+								const bmi = w / ((h / 100) * (h / 100));
+								const cat =
+									bmi < 18.5 ? { label: "Underweight", color: "#60a5fa" } :
+									bmi < 25   ? { label: "Normal",      color: "#00A69D" } :
+									bmi < 30   ? { label: "Overweight",  color: "#fbbf24" } :
+									             { label: "Obese",       color: "#ef4444" };
+								return (
+									<div className={styles.bmiPreview}>
+										<span className={styles.bmiPreviewLabel}>BMI</span>
+										<span className={styles.bmiPreviewValue} style={{ color: cat.color }}>{bmi.toFixed(1)}</span>
+										<span className={styles.bmiPreviewCat} style={{ color: cat.color }}>— {cat.label}</span>
+									</div>
+								);
+							})()}
+
+							<button type="submit" className={styles.primaryBtn}>
+								Continue <ChevronRight size={16} />
+							</button>
+						</form>
+					</div>
+				)}
+
+				{/* Step 2 — Upload */}
+			{step === "upload" && (
+				<div className={styles.content}>
+					<div className={styles.titleBlock}>
+						<h1>Upload your <span className={styles.teal}>lab results</span></h1>
+						<p>PDF, image, or CSV — our AI reads every format and explains it all in plain English.</p>
+					</div>
+
+					{/* Gemma Status + Language Row */}
+					<div className={styles.gemmaBar}>
+						<div className={styles.gemmaStatus}>
+							{gemmaOnline ? (
+								<><Wifi size={13} className={styles.gemmaOnlineIcon} /> <span>Gemma 4 Local — Running</span></>
+							) : (
+								<><WifiOff size={13} className={styles.gemmaOfflineIcon} /> <span>Offline Mode — No Internet Required</span></>
+							)}
+						</div>
+						<div className={styles.langRowCompact}>
+							{LANGUAGES.map((lang) => (
+								<button
+									key={lang.id}
+									className={`${styles.langPillSmall} ${lang.id === selectedLanguage ? styles.langPillSmallActive : ""}`}
+									onClick={() => setSelectedLanguage(lang.id)}
+									title={`View results in ${lang.label}`}
+								>
+									<span>{lang.flag}</span>
+									<span className={styles.langCode}>{lang.code}</span>
+								</button>
+							))}
+						</div>
+					</div>
+
+					{/* Ghanaian Medical Presets */}
+					<div className={styles.presetsSection}>
+						<div className={styles.presetsHeader}>
+							<Stethoscope size={16} />
+							<span>🇬🇭 Ghanaian Medical Case Presets</span>
+						</div>
+						<p className={styles.presetsSub}>Don't have a file? Try one of these common Ghanaian medical cases:</p>
+						<div className={styles.presetsGrid}>
+							{PRESETS.map((preset) => (
+								<button
+									key={preset.id}
+									className={`${styles.presetCard} ${selectedPreset === preset.id ? styles.presetCardActive : ""}`}
+									onClick={() => handlePresetClick(preset.id)}
+								>
+									<span className={styles.presetEmoji}>{preset.emoji}</span>
+									<div className={styles.presetText}>
+										<span className={styles.presetTitle}>{preset.title}</span>
+										<span className={styles.presetDesc}>{preset.desc}</span>
+									</div>
+									{selectedPreset === preset.id && (
+										<CheckCircle size={16} className={styles.presetCheck} />
+									)}
+								</button>
+							))}
+						</div>
+					</div>
+
+					{/* Divider */}
+					<div className={styles.orDivider}>
+						<span>or upload your own file</span>
+					</div>
+
+					{/* Trust row */}
+					<div className={styles.trustRow}>
+						{[
+							{ icon: <ShieldCheck size={14}/>, text: "256-bit encrypted" },
+							{ icon: <FileText size={14}/>,    text: "PDF · CSV · JPG · PNG" },
+							{ icon: <Zap size={14}/>,         text: "Analysed in seconds" },
+						].map((t) => (
+							<span key={t.text} className={styles.trustPill}>
+								{t.icon} {t.text}
+							</span>
+						))}
+					</div>
+
+					{/* Drop zone */}
+					<div
+						className={`${styles.dropZone} ${dragging ? styles.dropActive : ""}`}
+						onDragOver={onDragOver}
+						onDragLeave={onDragLeave}
+						onDrop={onDrop}
+						onClick={() => fileInputRef.current?.click()}
+					>
+						<input
+							ref={fileInputRef}
+							type="file"
+							multiple
+							accept=".pdf,.jpg,.jpeg,.png,.csv"
+							style={{ display: "none" }}
+							onChange={(e) => addFiles(e.target.files)}
+						/>
+						<div className={styles.dropIcon}><Upload size={32} /></div>
+						<p className={styles.dropTitle}>Drop files here or <span>click to browse</span></p>
+						<p className={styles.dropSub}>PDF, JPG, PNG, CSV · Max 25 MB per file</p>
+					</div>
+
+					{/* File list */}
+					{files.length > 0 && (
+						<div className={styles.fileList}>
+							{files.map(({ file, progress, done }) => (
+								<div key={file.name} className={styles.fileRow}>
+									<div className={styles.fileIcon}>
+										{done ? <CheckCircle size={18} /> : <FileText size={18} />}
+									</div>
+									<div className={styles.fileMeta}>
+										<span className={styles.fileName}>{file.name}</span>
+										<span className={styles.fileSize}>{(file.size / 1024).toFixed(0)} KB</span>
+										{!done && (
+											<div className={styles.progressBar}>
+												<div className={styles.progressFill} style={{ width: `${progress}%` }} />
+											</div>
+										)}
+									</div>
+									{done && (
+										<button className={styles.removeBtn} onClick={() => removeFile(file)}>
+											<X size={14} />
+										</button>
+									)}
+									{!done && <Loader2 size={16} className={styles.spinner} />}
+								</div>
+							))}
 						</div>
 					)}
-				</>
+
+					{/* CTA */}
+					<div className={styles.ctaRow}>
+						<button
+							className={styles.primaryBtn}
+							disabled={!canAnalyze}
+							onClick={handleAnalyze}
+						>
+							<Sparkles size={16} />
+							{canAnalyze
+								? `Analyse with ${gemmaOnline ? "Gemma 4" : "AI"}`
+								: allDone
+									? "Analyse my results"
+									: files.length > 0
+										? "Uploading…"
+										: "Select a preset or upload files"
+							}
+						</button>
+						<button className={styles.ghostBtn} onClick={() => navigate(paths.dashboard.root)}>
+							Skip for now
+						</button>
+					</div>
+				</div>
+			)}
+			</>
 			)}
 		</div>
 	);
