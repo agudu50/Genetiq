@@ -265,6 +265,852 @@ $teal2: #008f87;
 
 .teal { color: $teal; }
 
+// ── Personal info step (redesigned) ───────────────────────────────────────────
+
+.personalStage {
+	width: 100%;
+	max-width: 1100px;
+	margin: 0 auto;
+	padding: 40px 48px 64px;
+	box-sizing: border-box;
+	display: grid;
+	grid-template-columns: 360px 1fr;
+	align-items: start;
+	gap: 48px;
+
+	@media (max-width: 900px) {
+		grid-template-columns: 1fr;
+		max-width: 680px;
+		gap: 24px;
+		padding: 24px 32px 64px;
+	}
+
+	@media (max-width: 640px) {
+		padding: 16px 20px 48px;
+		gap: 20px;
+	}
+}
+
+.personalHero {
+	position: sticky;
+	top: 40px;
+	border-radius: 20px;
+	padding: 28px;
+	border: 1px solid var(--iou-border);
+	background: var(--iou-card);
+	box-shadow:
+		0 1px 2px rgba(0, 0, 0, 0.04),
+		0 8px 24px rgba(0, 0, 0, 0.06);
+
+	html[data-theme="light"] & {
+		box-shadow:
+			0 1px 2px rgba(15, 23, 42, 0.04),
+			0 12px 32px rgba(15, 23, 42, 0.05);
+	}
+}
+
+.personalHeroTop {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 20px;
+}
+
+.personalHeroLead {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	gap: 16px;
+}
+
+.personalProgressRing {
+	position: relative;
+	flex-shrink: 0;
+	width: 72px;
+	height: 72px;
+
+	svg {
+		width: 100%;
+		height: 100%;
+		transform: rotate(-90deg);
+	}
+
+	circle {
+		fill: none;
+		stroke-width: 5;
+		stroke-linecap: round;
+	}
+}
+
+.personalProgressTrack {
+	stroke: rgba($teal, 0.12);
+}
+
+.personalProgressFill {
+	stroke: $teal;
+	transition: stroke-dashoffset 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.personalProgressPct {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 13px;
+	font-weight: 800;
+	color: var(--iou-heading);
+	letter-spacing: -0.02em;
+}
+
+.personalGreeting {
+	margin: 0;
+	font-size: 1.05rem;
+	font-weight: 700;
+	color: var(--iou-heading);
+	letter-spacing: -0.01em;
+	animation: fadeIn 0.3s ease;
+}
+
+.personalIconBadge {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 48px;
+	height: 48px;
+	border-radius: 12px;
+	flex-shrink: 0;
+	color: $teal;
+	background: var(--iou-surface);
+	border: 1px solid var(--iou-border);
+}
+
+.personalHeroCopy {
+	min-width: 0;
+	flex: 1;
+}
+
+.personalHeroMeta {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 12px;
+	margin-bottom: 16px;
+}
+
+.personalEyebrow {
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: $teal;
+}
+
+.personalCompleteness {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 4px 10px;
+	border-radius: 99px;
+	font-size: 11px;
+	font-weight: 700;
+	color: var(--iou-text);
+	background: rgba($teal, 0.1);
+	border: 1px solid rgba($teal, 0.18);
+}
+
+.personalStepJourney {
+	display: flex;
+	align-items: center;
+	gap: 0;
+	margin-top: 24px;
+	padding: 12px 14px;
+	border-radius: 12px;
+	background: var(--iou-surface);
+	border: 1px solid var(--iou-border);
+}
+
+.personalStepDot {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
+	flex: 1;
+	min-width: 0;
+	font-size: 10px;
+	font-weight: 600;
+	color: var(--iou-muted);
+	text-align: center;
+	letter-spacing: 0.02em;
+
+	span {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 28px;
+		height: 28px;
+		border-radius: 50%;
+		font-size: 12px;
+		font-weight: 800;
+		color: var(--iou-muted);
+		background: var(--iou-card);
+		border: 2px solid var(--iou-border);
+		transition: all 0.25s ease;
+	}
+}
+
+.personalStepDotActive {
+	color: var(--iou-heading);
+
+	span {
+		color: #fff;
+		background: $teal;
+		border-color: $teal;
+	}
+}
+
+.personalStepConnector {
+	flex: 0 0 32px;
+	height: 2px;
+	margin-bottom: 18px;
+	border-radius: 99px;
+	background: var(--iou-border);
+}
+
+.personalTitle {
+	margin: 0;
+	font-size: clamp(1.65rem, 4vw, 2.15rem);
+	font-weight: 800;
+	letter-spacing: -0.03em;
+	line-height: 1.15;
+	color: var(--iou-heading);
+}
+
+.personalSubtitle {
+	margin: 8px 0 0;
+	font-size: 0.92rem;
+	line-height: 1.55;
+	color: var(--iou-muted);
+	max-width: 46ch;
+}
+
+.personalTrustRow {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-top: 20px;
+	padding-top: 20px;
+	border-top: 1px solid var(--iou-divider);
+
+	@media (max-width: 900px) {
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+}
+
+.personalTrustCard {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 12px 14px;
+	border-radius: 12px;
+	font-size: 12px;
+	line-height: 1.4;
+	color: var(--iou-muted);
+	background: var(--iou-surface);
+	border: 1px solid var(--iou-border);
+	transition: border-color 0.2s, background 0.2s;
+
+	@media (max-width: 900px) {
+		flex: 1 1 calc(50% - 5px);
+		min-width: 140px;
+	}
+
+	&:hover {
+		border-color: var(--iou-border);
+		background: var(--iou-surface-hover, var(--iou-surface));
+	}
+
+	svg {
+		color: $teal;
+		flex-shrink: 0;
+		margin-top: 1px;
+	}
+
+	strong {
+		display: block;
+		font-size: 12.5px;
+		font-weight: 700;
+		color: var(--iou-heading);
+		margin-bottom: 2px;
+	}
+
+	span {
+		display: block;
+		font-size: 11px;
+		opacity: 0.85;
+	}
+}
+
+.personalTrustPill {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	padding: 12px 16px;
+	border-radius: 14px;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--iou-text);
+	background: var(--iou-surface);
+	border: 1px solid var(--iou-border);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+	transition: transform 0.2s, box-shadow 0.2s;
+
+	&:hover {
+		transform: translateY(-1px);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+		background: var(--iou-surface-hover);
+	}
+
+	svg {
+		color: $teal;
+		flex-shrink: 0;
+	}
+}
+
+.personalCard {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 28px;
+	padding: 32px;
+	border-radius: 24px;
+	border: 1px solid var(--iou-border);
+	background: var(--iou-card);
+	color-scheme: light;
+	box-shadow:
+		0 20px 48px rgba(0, 0, 0, 0.14),
+		inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+	html[data-theme="dark"] & {
+		color-scheme: dark;
+	}
+
+	html[data-theme="light"] & {
+		box-shadow: var(--dash-card-shadow, 0 8px 24px rgba(15, 23, 42, 0.06));
+	}
+
+	@media (max-width: 640px) {
+		padding: 20px;
+		gap: 24px;
+	}
+}
+
+.personalCardProgress {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding-bottom: 4px;
+}
+
+.personalCardProgressHead {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-size: 11px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: var(--iou-muted);
+}
+
+.personalCardProgressTrack {
+	height: 6px;
+	border-radius: 99px;
+	background: var(--iou-surface);
+	border: 1px solid var(--iou-border);
+	overflow: hidden;
+}
+
+.personalCardProgressBar {
+	height: 100%;
+	border-radius: 99px;
+	background: linear-gradient(90deg, $teal 0%, $teal2 100%);
+	transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+	box-shadow: 0 0 12px rgba($teal, 0.35);
+}
+
+.personalSectionHead {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.personalSectionNum {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 28px;
+	height: 28px;
+	border-radius: 8px;
+	font-size: 10px;
+	font-weight: 800;
+	letter-spacing: 0.04em;
+	color: $teal;
+	background: rgba($teal, 0.1);
+	border: 1px solid rgba($teal, 0.18);
+}
+
+.personalSection {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	padding-bottom: 20px;
+	border-bottom: 1px solid var(--iou-divider);
+
+	&:last-of-type {
+		border-bottom: none;
+		padding-bottom: 0;
+	}
+}
+
+.personalSectionTitle {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+	font-size: 13px;
+	font-weight: 700;
+	color: var(--iou-heading);
+	letter-spacing: 0.01em;
+
+	svg {
+		color: $teal;
+		flex-shrink: 0;
+	}
+}
+
+.personalOptionalBadge {
+	margin-left: auto;
+	padding: 3px 8px;
+	border-radius: 99px;
+	font-size: 10px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: var(--iou-muted);
+	background: var(--iou-surface);
+	border: 1px solid var(--iou-border);
+}
+
+.personalSectionHint {
+	margin: -6px 0 0;
+	font-size: 12.5px;
+	line-height: 1.5;
+	color: var(--iou-muted);
+}
+
+.personalGrid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 14px 16px;
+
+	@media (max-width: 540px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.personalField {
+	display: flex;
+	flex-direction: column;
+	gap: 7px;
+
+	label {
+		font-size: 12px;
+		font-weight: 650;
+		color: var(--iou-label);
+		letter-spacing: 0.02em;
+	}
+}
+
+.personalFieldFull {
+	grid-column: 1 / -1;
+}
+
+.personalFieldCheck {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0 12px;
+	color: $teal;
+	border-left: 1px solid var(--iou-input-border);
+}
+
+.personalInputFilled {
+	border-color: rgba($teal, 0.35);
+	background: rgba($teal, 0.03);
+
+	input {
+		padding-right: 4px;
+	}
+}
+
+.personalChipGroup {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.personalChip {
+	padding: 10px 14px;
+	border-radius: 10px;
+	border: var(--iou-input-border-width) solid var(--iou-input-border);
+	background: var(--iou-input-bg);
+	color: var(--iou-text);
+	font-size: 13px;
+	font-weight: 600;
+	font-family: inherit;
+	cursor: pointer;
+	transition: border-color 0.2s, background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.15s;
+
+	&:hover {
+		border-color: rgba($teal, 0.35);
+		background: rgba($teal, 0.04);
+	}
+
+	&:active {
+		transform: scale(0.98);
+	}
+}
+
+.personalChipActive {
+	color: #fff;
+	border-color: transparent;
+	background: linear-gradient(135deg, $teal 0%, $teal2 100%);
+	box-shadow: 0 4px 14px rgba($teal, 0.28);
+
+	&:hover {
+		background: linear-gradient(135deg, $teal 0%, $teal2 100%);
+		filter: brightness(1.04);
+	}
+}
+
+.personalBloodGrid {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	gap: 8px;
+
+	@media (max-width: 540px) {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+.personalBloodChip {
+	padding: 10px 6px;
+	border-radius: 10px;
+	border: var(--iou-input-border-width) solid var(--iou-input-border);
+	background: var(--iou-input-bg);
+	color: var(--iou-text);
+	font-size: 13px;
+	font-weight: 700;
+	font-family: inherit;
+	cursor: pointer;
+	transition: border-color 0.2s, background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.15s;
+
+	&:hover {
+		border-color: rgba($teal, 0.35);
+		background: rgba($teal, 0.04);
+	}
+
+	&:active {
+		transform: scale(0.97);
+	}
+}
+
+.personalBloodChipActive {
+	color: $teal;
+	border-color: rgba($teal, 0.45);
+	background: rgba($teal, 0.1);
+	box-shadow: inset 0 0 0 1px rgba($teal, 0.12);
+}
+
+.personalInputWrap,
+.personalSelectWrap {
+	position: relative;
+	display: flex;
+	align-items: stretch;
+	border-radius: 12px;
+	border: var(--iou-input-border-width) solid var(--iou-input-border);
+	background: var(--iou-input-bg);
+	transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+
+	&:focus-within {
+		border-color: rgba($teal, 0.55);
+		box-shadow: 0 0 0 3px rgba($teal, 0.12);
+	}
+
+	input,
+	select {
+		flex: 1;
+		width: 100%;
+		min-width: 0;
+		box-sizing: border-box;
+		background: transparent;
+		border: none;
+		outline: none;
+		padding: 12px 14px;
+		color: var(--iou-text);
+		font-size: 0.92rem;
+		font-weight: var(--iou-input-weight);
+		font-family: inherit;
+		appearance: none;
+
+		&::placeholder {
+			color: var(--iou-placeholder);
+		}
+	}
+
+	select {
+		padding-right: 40px;
+		cursor: pointer;
+
+		option {
+			background: var(--iou-select-option-bg);
+			color: var(--iou-select-option-text);
+		}
+	}
+}
+
+.personalSuffix {
+	display: flex;
+	align-items: center;
+	padding: 0 12px;
+	font-size: 11px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: $teal;
+	border-left: 1px solid var(--iou-input-border);
+	white-space: nowrap;
+}
+
+.personalSelectWrap {
+	.selectChevron {
+		position: absolute;
+		right: 12px;
+		top: 50%;
+		transform: translateY(-50%);
+		color: $teal;
+		pointer-events: none;
+		opacity: 0.75;
+	}
+
+	&:focus-within .selectChevron {
+		opacity: 1;
+	}
+}
+
+.personalBmiCard {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 16px;
+	border-radius: 14px;
+	border: 1px solid var(--iou-border);
+	background: var(--iou-surface);
+	animation: fadeIn 0.25s ease;
+
+	&.bmiUnderweight {
+		border-color: rgba(96, 165, 250, 0.25);
+		background: rgba(96, 165, 250, 0.06);
+	}
+	&.bmiNormal {
+		border-color: rgba($teal, 0.25);
+		background: rgba($teal, 0.06);
+	}
+	&.bmiOverweight {
+		border-color: rgba(251, 191, 36, 0.25);
+		background: rgba(251, 191, 36, 0.06);
+	}
+	&.bmiObese {
+		border-color: rgba(239, 68, 68, 0.25);
+		background: rgba(239, 68, 68, 0.06);
+	}
+}
+
+.personalBmiIcon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 10px;
+	color: $teal;
+	background: rgba($teal, 0.12);
+	flex-shrink: 0;
+
+	.bmiUnderweight & { color: #60a5fa; background: rgba(96, 165, 250, 0.12); }
+	.bmiOverweight & { color: #fbbf24; background: rgba(251, 191, 36, 0.12); }
+	.bmiObese & { color: #ef4444; background: rgba(239, 68, 68, 0.12); }
+}
+
+.personalBmiCopy {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	flex: 1;
+	min-width: 0;
+}
+
+.personalBmiScale {
+	margin-top: 4px;
+}
+
+.personalBmiScaleTrack {
+	position: relative;
+	display: flex;
+	height: 6px;
+	border-radius: 99px;
+	overflow: hidden;
+}
+
+.personalBmiZoneUnder {
+	flex: 4;
+	background: rgba(96, 165, 250, 0.45);
+}
+
+.personalBmiZoneNormal {
+	flex: 4;
+	background: rgba($teal, 0.55);
+}
+
+.personalBmiZoneOver {
+	flex: 2;
+	background: rgba(251, 191, 36, 0.55);
+}
+
+.personalBmiZoneObese {
+	flex: 4;
+	background: rgba(239, 68, 68, 0.45);
+}
+
+.personalBmiMarker {
+	position: absolute;
+	top: 50%;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: var(--iou-heading);
+	border: 2px solid #fff;
+	box-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
+	transform: translate(-50%, -50%);
+	transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.personalBmiScaleLabels {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 4px;
+	font-size: 9px;
+	font-weight: 600;
+	color: var(--iou-muted);
+	opacity: 0.7;
+}
+
+.personalBmiLabel {
+	font-size: 10px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--iou-muted);
+}
+
+.personalBmiValue {
+	font-size: 22px;
+	font-weight: 800;
+	line-height: 1;
+	color: var(--iou-heading);
+}
+
+.personalBmiBadge {
+	margin-left: auto;
+	padding: 5px 10px;
+	border-radius: 99px;
+	font-size: 11px;
+	font-weight: 700;
+	color: $teal;
+	background: rgba($teal, 0.12);
+	border: 1px solid rgba($teal, 0.2);
+	white-space: nowrap;
+
+	.bmiUnderweight & { color: #60a5fa; background: rgba(96, 165, 250, 0.12); border-color: rgba(96, 165, 250, 0.2); }
+	.bmiOverweight & { color: #d97706; background: rgba(251, 191, 36, 0.12); border-color: rgba(251, 191, 36, 0.2); }
+	.bmiObese & { color: #ef4444; background: rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.2); }
+}
+
+.personalFooter {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	padding-top: 4px;
+}
+
+.personalFooterNote {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+	font-size: 12px;
+	line-height: 1.45;
+	color: var(--iou-muted);
+
+	svg {
+		color: $teal;
+		flex-shrink: 0;
+	}
+}
+
+.personalSubmitBtn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	width: 100%;
+	padding: 15px 24px;
+	border: none;
+	border-radius: 14px;
+	font-size: 0.95rem;
+	font-weight: 700;
+	font-family: inherit;
+	color: #fff;
+	cursor: pointer;
+	background: linear-gradient(135deg, $teal 0%, $teal2 100%);
+	box-shadow: 0 10px 28px rgba($teal, 0.28);
+	transition: transform 0.15s, box-shadow 0.2s, filter 0.2s, opacity 0.2s;
+
+	&:hover:not(:disabled) {
+		transform: translateY(-1px);
+		box-shadow: 0 14px 32px rgba($teal, 0.34);
+		filter: brightness(1.03);
+	}
+
+	&:active:not(:disabled) {
+		transform: translateY(0);
+	}
+
+	&:disabled {
+		cursor: not-allowed;
+		opacity: 0.55;
+		box-shadow: none;
+		background: var(--iou-surface);
+		color: var(--iou-muted);
+		border: 1px solid var(--iou-border);
+	}
+}
+
 // ── Form card ─────────────────────────────────────────────────────────────────
 
 .card {
@@ -2228,6 +3074,7 @@ $teal2: #008f87;
 		font-weight: var(--iou-input-weight);
 		color: var(--iou-text);
 		font-family: inherit;
+		appearance: textfield;
 		-moz-appearance: textfield;
 
 		&::placeholder {

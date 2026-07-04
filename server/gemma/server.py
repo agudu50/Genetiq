@@ -20,11 +20,14 @@ import os
 import re
 import sys
 import tempfile
-import time
 import traceback
 from contextlib import asynccontextmanager
 from io import BytesIO
-from typing import Optional
+from typing import Any, Optional
+
+_GEMMA_DIR = os.path.dirname(os.path.abspath(__file__))
+if _GEMMA_DIR not in sys.path:
+    sys.path.insert(0, _GEMMA_DIR)
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -40,8 +43,8 @@ logger = logging.getLogger("genetiq-gemma")
 
 # ─── Globals ──────────────────────────────────────────────────────────────────
 
-model = None
-processor = None
+model: Any = None
+processor: Any = None
 MODEL_ID = "google/gemma-4-12B-it"
 
 
@@ -53,12 +56,7 @@ MODEL_ID = "google/gemma-4-12B-it"
 # ==============================================================================
 
 def load_model(model_id: str):
-    """
-    Load Google Gemma model weights dynamically using Hugging Face Transformers.
-    
-    Tries AutoModelForMultimodalLM (multimodal vision) first.
-    Falls back to AutoModelForCausalLM (text-only chat) if config class doesn't support visual inputs.
-    """
+    """Load Gemma weights with AutoProcessor + AutoModelForCausalLM (multimodal-capable)."""
     global model, processor
 
     logger.info(f"🚀 Initializing Gemma Model Load: {model_id}")
@@ -73,48 +71,33 @@ def load_model(model_id: str):
             # Use all physical cores for CPU inference
             torch.set_num_threads(max(1, os.cpu_count() or 1))
 
-        # ─── MULTIMODAL VISION MODEL LOADING ───
-        # Used for vision OCR, RDT strips scanning, and multimodal medical images
-        from transformers import AutoModelForMultimodalLM, AutoProcessor
-        logger.info("🤖 Loading model weights under AutoModelForMultimodalLM...")
+        # ─── UNIFIED MULTIMODAL MODEL LOADING (Gemma 4) ───
+        # Gemma 4 is encoder-free, meaning it uses AutoModelForCausalLM for everything
+        # (text, vision, audio) but requires AutoProcessor to process multimodal inputs.
+        from transformers import AutoProcessor, AutoModelForCausalLM
+        logger.info("🤖 Loading model weights under AutoModelForCausalLM with AutoProcessor...")
+        
+        # Load the processor (handles images, audio, and text)
         processor = AutoProcessor.from_pretrained(model_id)
+        
         if device == "cuda":
-            model = AutoModelForMultimodalLM.from_pretrained(
+            model = AutoModelForCausalLM.from_pretrained(
                 model_id,
-                dtype="auto",
+                torch_dtype=torch.bfloat16,
                 device_map="auto",
             )
         else:
             # bfloat16 halves memory vs float32 — critical to avoid swapping on low-RAM machines
-            model = AutoModelForMultimodalLM.from_pretrained(
+            model = AutoModelForCausalLM.from_pretrained(
                 model_id,
                 torch_dtype=torch.bfloat16,
             )
-        logger.info(f"✅ Multimodal Model loaded successfully: {model_id}")
+        logger.info(f"✅ Unified Multimodal Model loaded successfully: {model_id}")
         logger.info(f"   Device: {next(model.parameters()).device}")
     except Exception as e:
-        logger.warning(f"Failed to load as Multimodal model ({e}). Retrying as CausalLM (text-only)...")
-        try:
-            from transformers import AutoModelForCausalLM, AutoTokenizer
-            processor = AutoTokenizer.from_pretrained(model_id)
-            if device == "cuda":
-                model = AutoModelForCausalLM.from_pretrained(
-                    model_id,
-                    dtype="auto",
-                    device_map="auto",
-                )
-            else:
-                logger.info("Loading CausalLM on CPU in bfloat16...")
-                model = AutoModelForCausalLM.from_pretrained(
-                    model_id,
-                    torch_dtype=torch.bfloat16,
-                )
-            logger.info(f"✅ Text-only CausalLM Model loaded successfully: {model_id}")
-            logger.info(f"   Device: {next(model.parameters()).device}")
-        except Exception as e2:
-            logger.error(f"❌ Failed to load as CausalLM either: {e2}")
-            logger.error(traceback.format_exc())
-            logger.warning("Server will start in FALLBACK mode (no model loaded)")
+        logger.error(f"❌ Failed to load model: {e}")
+        logger.error(traceback.format_exc())
+        logger.warning("Server will start in FALLBACK mode (no model loaded)")
 
 
 # ─── Lifespan ─────────────────────────────────────────────────────────────────
@@ -149,6 +132,7 @@ app.add_middleware(
 
 # ─── Imports from prompts ─────────────────────────────────────────────────────
 
+from inference import Message, run_gemma_inference
 from prompts import (
     CHAT_SYSTEM_PROMPT,
     CHAT_SYSTEM_PROMPT_SHORT,
@@ -283,170 +267,18 @@ class TranslateRequest(BaseModel):
 
 # ─── Helper: Generate with Gemma ─────────────────────────────────────────────
 
-# ─── Helper: Generate with Gemma ─────────────────────────────────────────────
-# This core function processes the conversation prompt, formats it according
-# to the Gemma chat template, performs model inference with parameters requested,
-# and extracts the raw response tokens.
-# ─────────────────────────────────────────────────────────────────────────────
 
-def generate_response(messages: list, max_tokens: int = 2048) -> str:
-    start_time = time.time()
-    """
-    Main inference loop for local Gemma.
-    
-    1. Prepares user and system messages using Hugging Face's tokenizer/processor templates.
-    2. Dynamically flattens contents if using a text-only model.
-    3. Handles tensor device mapping (automatically maps input tensors to GPU/CUDA).
-    4. Executes model.generate() with custom temperature, top_p, and top_k parameters.
-    5. Decodes and cleans the output tokens to extract the dynamic text response.
-    """
+def generate_response(messages: list[Message], max_tokens: int = 2048) -> str:
+    """Run local Gemma inference via the shared inference module."""
     if model is None or processor is None:
         raise HTTPException(
             status_code=503,
             detail="Model not loaded. Server is in fallback mode.",
         )
-
-    import torch
-    from transformers import PreTrainedTokenizerBase
-
-    on_cpu = not torch.cuda.is_available()
-    # On CPU, cap generation length so responses come back in a reasonable time
-    if on_cpu:
-        max_tokens = min(max_tokens, 320)
-
-    # Check if the loaded processor is a text-only tokenizer or a multimodal visual processor
-    is_tokenizer = isinstance(processor, PreTrainedTokenizerBase)
-
-    # Flatten system role if not supported by the template.
-    # Prepend any system message to the next user message, or convert it to a user message.
-    messages_to_use = []
-    system_prompt = ""
-    for msg in messages:
-        role = msg.get("role")
-        content = msg.get("content")
-        if role == "system":
-            if isinstance(content, list):
-                text_parts = [p.get("text", "") for p in content if p.get("type") == "text"]
-                system_prompt += "\n\n" + "".join(text_parts)
-            else:
-                system_prompt += "\n\n" + str(content)
-            continue
-        
-        if role == "user" and system_prompt.strip():
-            if isinstance(content, list):
-                new_content = [{"type": "text", "text": system_prompt.strip() + "\n\n"}] + content
-            else:
-                new_content = system_prompt.strip() + "\n\n" + str(content)
-            system_prompt = ""
-            messages_to_use.append({"role": "user", "content": new_content})
-        else:
-            messages_to_use.append(msg)
-            
-    if system_prompt.strip():
-        messages_to_use.append({"role": "user", "content": system_prompt.strip()})
-
-    # Flatten content structure if this is a text-only tokenizer.
-    # Text tokenizers expect a simple string 'content', whereas multimodal processors 
-    # expect a list containing text chunks and image URLs.
-    if is_tokenizer:
-        final_messages = []
-        for msg in messages_to_use:
-            role = msg.get("role")
-            content = msg.get("content")
-            if isinstance(content, list):
-                text_content = ""
-                for part in content:
-                    if part.get("type") == "text":
-                        text_content += part.get("text", "")
-                final_messages.append({"role": role, "content": text_content})
-            else:
-                final_messages.append(msg)
-        messages_to_use = final_messages
-
-    # Build template options for apply_chat_template.
-    # Gemma requires specific delimiters (e.g. <start_of_turn>, <end_of_turn>) 
-    # to maintain prompt alignment during multiturn conversation.
-    template_kwargs = {
-        "tokenize": True,
-        "return_dict": True,
-        "return_tensors": "pt",
-        "add_generation_prompt": True,
-    }
-    # Multimodal processors for Gemma 4 support disabling the thinking tokens if required
-    if not is_tokenizer:
-        template_kwargs["enable_thinking"] = False
-
-    try:
-        inputs = processor.apply_chat_template(
-            messages_to_use,
-            **template_kwargs
-        )
-    except Exception:
-        # Fallback if return_dict is not supported by older tokenizer models
-        token_ids = processor.apply_chat_template(
-            messages_to_use,
-            tokenize=True,
-            add_generation_prompt=True,
-            return_tensors="pt"
-        )
-        inputs = {"input_ids": token_ids}
-
-    # Move input tensors to the target execution device (e.g., CUDA GPU)
-    if hasattr(inputs, "items"):
-        inputs = dict(inputs)
-
-    device_inputs = {}
-    if isinstance(inputs, dict):
-        for k, v in inputs.items():
-            device_inputs[k] = v.to(model.device) if hasattr(v, "to") else v
-        input_len = device_inputs["input_ids"].shape[-1]
-    else:
-        device_inputs = inputs.to(model.device)
-        input_len = device_inputs.shape[-1]
-
-    # Greedy decoding on CPU is ~2x faster than sampling for structured JSON replies
-    gen_kwargs: dict = {"max_new_tokens": max_tokens}
-    if on_cpu:
-        gen_kwargs["do_sample"] = False
-    else:
-        gen_kwargs.update(
-            temperature=1.0,
-            top_p=0.95,
-            top_k=64,
-            do_sample=True,
-        )
-
-    # Run PyTorch inference without tracking gradients for maximum speed/efficiency
-    with torch.no_grad():
-        if isinstance(device_inputs, dict):
-            outputs = model.generate(**device_inputs, **gen_kwargs)
-        else:
-            outputs = model.generate(device_inputs, **gen_kwargs)
-
-    # Decode target tokens only, skipping the input prompt token length
-    new_tokens = outputs[0][input_len:]
-    response = processor.decode(new_tokens, skip_special_tokens=True)
-
-    elapsed = time.time() - start_time
-    logger.info(
-        f"⚡ Generated {len(new_tokens)} tokens in {elapsed:.1f}s "
-        f"({len(new_tokens) / max(elapsed, 0.001):.1f} tok/s)"
-    )
-
-    
-    # If the multimodal processor has custom parse_response, apply it (common in PaliGemma).
-    # Plain tokenizers expose this method but raise if no response_schema is defined.
-    if hasattr(processor, "parse_response"):
-        try:
-            parsed = processor.parse_response(response)
-            return parsed if isinstance(parsed, str) else str(parsed)
-        except Exception:
-            pass
-
-    return response
+    return run_gemma_inference(model, processor, logger, messages, max_tokens)
 
 
-async def generate_response_async(messages: list, max_tokens: int = 2048) -> str:
+async def generate_response_async(messages: list[Message], max_tokens: int = 2048) -> str:
     """Run blocking model inference in a worker thread so the event loop
     (health checks, other requests) stays responsive during generation."""
     return await asyncio.to_thread(generate_response, messages, max_tokens)

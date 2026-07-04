@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
@@ -9,7 +9,8 @@ import { paths } from "@/App/Routes/Paths";
 import {
 	Upload, FileText, ShieldCheck, Zap, ChevronRight,
 	X, CheckCircle, ArrowLeft, Loader2, Sparkles, ChevronDown,
-	Wifi, WifiOff, Brain, Stethoscope,
+	Wifi, WifiOff, Brain, Stethoscope, User, Droplets,
+	Ruler, Scale, Activity, Clock, Check, Lock,
 } from "lucide-react";
 import {
 	analyzeLabResults,
@@ -33,6 +34,9 @@ interface UploadedFile {
 
 const GENDER_OPTIONS  = ["Male", "Female", "Non-binary", "Prefer not to say"];
 const BLOOD_OPTIONS   = ["A+", "A−", "B+", "B−", "AB+", "AB−", "O+", "O−", "Unknown"];
+
+const PROGRESS_RING_R = 36;
+const PROGRESS_RING_C = 2 * Math.PI * PROGRESS_RING_R;
 
 const LANGUAGES: { id: GemmaLanguage; label: string; flag: string; code: string }[] = [
 	{ id: "english", label: "English", flag: "🇬🇧", code: "EN" },
@@ -79,6 +83,41 @@ const ImportOrUpload = () => {
 		height:    user.height    || "",
 		weight:    user.weight    || "",
 	});
+
+	const profileCompleteness = useMemo(() => {
+		const fields = [
+			info.firstName,
+			info.lastName,
+			info.age,
+			info.gender,
+			info.height,
+			info.weight,
+			info.bloodType,
+		];
+		return Math.round((fields.filter(Boolean).length / fields.length) * 100);
+	}, [info]);
+
+	const requiredFieldsLeft = useMemo(() => {
+		let left = 0;
+		if (!info.firstName.trim()) left++;
+		if (!info.lastName.trim()) left++;
+		if (!info.age) left++;
+		if (!info.gender) left++;
+		return left;
+	}, [info]);
+
+	const canContinue = requiredFieldsLeft === 0;
+
+	const liveBmi = useMemo(() => {
+		const h = Number(info.height);
+		const w = Number(info.weight);
+		if (!h || !w) return null;
+		const bmi = w / ((h / 100) * (h / 100));
+		if (bmi < 18.5) return { value: bmi, label: "Underweight", cls: "underweight" as const };
+		if (bmi < 25) return { value: bmi, label: "Normal", cls: "normal" as const };
+		if (bmi < 30) return { value: bmi, label: "Overweight", cls: "overweight" as const };
+		return { value: bmi, label: "Obese", cls: "obese" as const };
+	}, [info.height, info.weight]);
 
 	// Check Gemma server on mount
 	useEffect(() => {
@@ -568,95 +607,332 @@ const ImportOrUpload = () => {
 
 				{/* Step 1 — Personal Info */}
 				{step === "personal" && (
-					<div className={styles.content}>
-						<div className={styles.titleBlock}>
-							<h1>Tell us about <span className={styles.teal}>yourself</span></h1>
-							<p>We use this to personalise your health insights. Takes 30 seconds.</p>
-						</div>
+					<div className={styles.personalStage}>
+						<div className={styles.personalHero}>
+							<div className={styles.personalHeroTop}>
+								<div className={styles.personalHeroLead}>
+									<div className={styles.personalIconBadge}>
+										<User size={22} strokeWidth={2.25} />
+									</div>
+									<div
+										className={styles.personalProgressRing}
+										role="img"
+										aria-label={`Profile ${profileCompleteness}% complete`}
+									>
+										<svg viewBox="0 0 88 88" aria-hidden>
+											<circle
+												className={styles.personalProgressTrack}
+												cx="44"
+												cy="44"
+												r={PROGRESS_RING_R}
+											/>
+											<circle
+												className={styles.personalProgressFill}
+												cx="44"
+												cy="44"
+												r={PROGRESS_RING_R}
+												strokeDasharray={PROGRESS_RING_C}
+												strokeDashoffset={
+													PROGRESS_RING_C - (profileCompleteness / 100) * PROGRESS_RING_C
+												}
+											/>
+										</svg>
+										<span className={styles.personalProgressPct}>{profileCompleteness}%</span>
+									</div>
+								</div>
 
-						<form className={styles.card} onSubmit={handlePersonalSubmit}>
-							<div className={styles.formGrid}>
-								<div className={styles.field}>
-									<label>First name</label>
-									<input placeholder="e.g. Kwame" value={info.firstName} onChange={set("firstName")} required />
-								</div>
-								<div className={styles.field}>
-									<label>Last name</label>
-									<input placeholder="e.g. Mensah" value={info.lastName} onChange={set("lastName")} required />
-								</div>
-								<div className={styles.field}>
-									<label>Age</label>
-									<input type="number" min="1" max="120" placeholder="e.g. 34" value={info.age} onChange={set("age")} required />
-								</div>
-								<div className={styles.field}>
-									<label>Gender</label>
-									<div className={styles.selectWrap}>
-										<select value={info.gender} onChange={set("gender")}>
-											<option value="" disabled>Select gender</option>
-											{GENDER_OPTIONS.map((g) => <option key={g}>{g}</option>)}
-										</select>
-										<ChevronDown size={16} className={styles.selectChevron} />
+								<div className={styles.personalHeroCopy}>
+									<div className={styles.personalHeroMeta}>
+										<span className={styles.personalEyebrow}>Step 1 of 2</span>
+										{info.firstName.trim() ? (
+											<p className={styles.personalGreeting}>
+												Hi, {info.firstName.trim()}
+											</p>
+										) : null}
 									</div>
-								</div>
-								<div className={styles.field}>
-									<label>Blood type <span className={styles.optional}>(optional)</span></label>
-									<div className={styles.selectWrap}>
-										<select value={info.bloodType} onChange={set("bloodType")}>
-											<option value="">Unknown</option>
-											{BLOOD_OPTIONS.map((b) => <option key={b}>{b}</option>)}
-										</select>
-										<ChevronDown size={16} className={styles.selectChevron} />
-									</div>
-								</div>
-								<div className={styles.field}>
-									<label>Height <span className={styles.optional}>(optional)</span></label>
-									<div className={styles.unitInput}>
-										<input
-											type="number" min="50" max="300"
-											placeholder="e.g. 175"
-											value={info.height}
-											onChange={set("height")}
-										/>
-										<span className={styles.unitLabel}>cm</span>
-									</div>
-								</div>
-								<div className={styles.field}>
-									<label>Weight <span className={styles.optional}>(optional)</span></label>
-									<div className={styles.unitInput}>
-										<input
-											type="number" min="10" max="500"
-											placeholder="e.g. 72"
-											value={info.weight}
-											onChange={set("weight")}
-										/>
-										<span className={styles.unitLabel}>kg</span>
-									</div>
+									<h1 className={styles.personalTitle}>
+										Tell us about <span className={styles.teal}>yourself</span>
+									</h1>
+									<p className={styles.personalSubtitle}>
+										We use this to personalise your health insights. Takes 30 seconds.
+									</p>
 								</div>
 							</div>
 
-							{/* Live BMI preview */}
-							{(() => {
-								const h = Number(info.height);
-								const w = Number(info.weight);
-								if (!h || !w) return null;
-								const bmi = w / ((h / 100) * (h / 100));
-								const cat =
-									bmi < 18.5 ? { label: "Underweight", color: "#60a5fa" } :
-									bmi < 25   ? { label: "Normal",      color: "#00A69D" } :
-									bmi < 30   ? { label: "Overweight",  color: "#fbbf24" } :
-									             { label: "Obese",       color: "#ef4444" };
-								return (
-									<div className={styles.bmiPreview}>
-										<span className={styles.bmiPreviewLabel}>BMI</span>
-										<span className={styles.bmiPreviewValue} style={{ color: cat.color }}>{bmi.toFixed(1)}</span>
-										<span className={styles.bmiPreviewCat} style={{ color: cat.color }}>— {cat.label}</span>
-									</div>
-								);
-							})()}
+							<div className={styles.personalStepJourney} aria-hidden>
+								<div className={`${styles.personalStepDot} ${styles.personalStepDotActive}`}>
+									<span>1</span>
+									About you
+								</div>
+								<div className={styles.personalStepConnector} />
+								<div className={styles.personalStepDot}>
+									<span>2</span>
+									Upload
+								</div>
+							</div>
 
-							<button type="submit" className={styles.primaryBtn}>
-								Continue <ChevronRight size={16} />
-							</button>
+							<div className={styles.personalTrustRow}>
+								<div className={styles.personalTrustCard}>
+									<ShieldCheck size={16} />
+									<div>
+										<strong>Private &amp; secure</strong>
+										<span>Stored locally on your device</span>
+									</div>
+								</div>
+								<div className={styles.personalTrustCard}>
+									<Clock size={16} />
+									<div>
+										<strong>About 30 seconds</strong>
+										<span>Quick setup, no account needed</span>
+									</div>
+								</div>
+								<div className={styles.personalTrustCard}>
+									<Activity size={16} />
+									<div>
+										<strong>Better lab insights</strong>
+										<span>Personalised reference ranges</span>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<form className={styles.personalCard} onSubmit={handlePersonalSubmit}>
+							<div className={styles.personalCardProgress}>
+								<div className={styles.personalCardProgressHead}>
+									<span>Profile progress</span>
+									<span>{profileCompleteness}%</span>
+								</div>
+								<div className={styles.personalCardProgressTrack}>
+									<div
+										className={styles.personalCardProgressBar}
+										style={{ width: `${profileCompleteness}%` }}
+									/>
+								</div>
+							</div>
+
+							<section className={styles.personalSection}>
+								<div className={styles.personalSectionHead}>
+									<span className={styles.personalSectionNum}>01</span>
+									<h2 className={styles.personalSectionTitle}>
+										<User size={15} /> Personal info
+									</h2>
+								</div>
+								<div className={styles.personalGrid}>
+									<div className={styles.personalField}>
+										<label htmlFor="iou-first-name">First name</label>
+										<div className={`${styles.personalInputWrap} ${info.firstName ? styles.personalInputFilled : ""}`}>
+											<input
+												id="iou-first-name"
+												placeholder="e.g. Kwame"
+												value={info.firstName}
+												onChange={set("firstName")}
+												required
+											/>
+											{info.firstName ? (
+												<span className={styles.personalFieldCheck} aria-hidden>
+													<Check size={14} strokeWidth={3} />
+												</span>
+											) : null}
+										</div>
+									</div>
+									<div className={styles.personalField}>
+										<label htmlFor="iou-last-name">Last name</label>
+										<div className={`${styles.personalInputWrap} ${info.lastName ? styles.personalInputFilled : ""}`}>
+											<input
+												id="iou-last-name"
+												placeholder="e.g. Mensah"
+												value={info.lastName}
+												onChange={set("lastName")}
+												required
+											/>
+											{info.lastName ? (
+												<span className={styles.personalFieldCheck} aria-hidden>
+													<Check size={14} strokeWidth={3} />
+												</span>
+											) : null}
+										</div>
+									</div>
+									<div className={styles.personalField}>
+										<label htmlFor="iou-age">Age</label>
+										<div className={`${styles.personalInputWrap} ${info.age ? styles.personalInputFilled : ""}`}>
+											<input
+												id="iou-age"
+												type="number"
+												min="1"
+												max="120"
+												placeholder="e.g. 34"
+												value={info.age}
+												onChange={set("age")}
+												required
+											/>
+											<span className={styles.personalSuffix}>yrs</span>
+										</div>
+									</div>
+									<div className={`${styles.personalField} ${styles.personalFieldFull}`}>
+										<label id="iou-gender-label">Gender</label>
+										<div
+											className={styles.personalChipGroup}
+											role="group"
+											aria-labelledby="iou-gender-label"
+										>
+											{GENDER_OPTIONS.map((g) => (
+												<button
+													key={g}
+													type="button"
+													className={`${styles.personalChip} ${info.gender === g ? styles.personalChipActive : ""}`}
+													onClick={() => setInfo((p) => ({ ...p, gender: g }))}
+													aria-pressed={info.gender === g}
+												>
+													{g}
+												</button>
+											))}
+										</div>
+									</div>
+								</div>
+							</section>
+
+							<section className={styles.personalSection}>
+								<div className={styles.personalSectionHead}>
+									<span className={styles.personalSectionNum}>02</span>
+									<h2 className={styles.personalSectionTitle}>
+										<Droplets size={15} /> Health details
+									</h2>
+								</div>
+								<div className={`${styles.personalField} ${styles.personalFieldFull}`}>
+									<label id="iou-blood-label">
+										Blood type <span className={styles.optional}>(optional)</span>
+									</label>
+									<div
+										className={styles.personalBloodGrid}
+										role="group"
+										aria-labelledby="iou-blood-label"
+									>
+										{BLOOD_OPTIONS.map((b) => {
+											const isUnknown = b === "Unknown";
+											const selected = isUnknown
+												? !info.bloodType || info.bloodType === "Unknown"
+												: info.bloodType === b;
+											return (
+												<button
+													key={b}
+													type="button"
+													className={`${styles.personalBloodChip} ${selected ? styles.personalBloodChipActive : ""}`}
+													onClick={() =>
+														setInfo((p) => ({
+															...p,
+															bloodType: isUnknown ? "" : b,
+														}))
+													}
+													aria-pressed={selected}
+												>
+													{b}
+												</button>
+											);
+										})}
+									</div>
+								</div>
+							</section>
+
+							<section className={styles.personalSection}>
+								<div className={styles.personalSectionHead}>
+									<span className={styles.personalSectionNum}>03</span>
+									<h2 className={styles.personalSectionTitle}>
+										<Ruler size={15} /> Body metrics
+										<span className={styles.personalOptionalBadge}>Optional</span>
+									</h2>
+								</div>
+								<p className={styles.personalSectionHint}>
+									Height and weight help us calculate BMI and tailor your results.
+								</p>
+								<div className={styles.personalGrid}>
+									<div className={styles.personalField}>
+										<label htmlFor="iou-height">Height</label>
+										<div className={`${styles.personalInputWrap} ${info.height ? styles.personalInputFilled : ""}`}>
+											<input
+												id="iou-height"
+												type="number"
+												min="50"
+												max="300"
+												placeholder="e.g. 175"
+												value={info.height}
+												onChange={set("height")}
+											/>
+											<span className={styles.personalSuffix}>cm</span>
+										</div>
+									</div>
+									<div className={styles.personalField}>
+										<label htmlFor="iou-weight">Weight</label>
+										<div className={`${styles.personalInputWrap} ${info.weight ? styles.personalInputFilled : ""}`}>
+											<input
+												id="iou-weight"
+												type="number"
+												min="10"
+												max="500"
+												placeholder="e.g. 72"
+												value={info.weight}
+												onChange={set("weight")}
+											/>
+											<span className={styles.personalSuffix}>kg</span>
+										</div>
+									</div>
+								</div>
+
+								{liveBmi && (
+									<div className={`${styles.personalBmiCard} ${styles[`bmi${liveBmi.cls.charAt(0).toUpperCase()}${liveBmi.cls.slice(1)}`]}`}>
+										<div className={styles.personalBmiIcon}>
+											<Scale size={18} />
+										</div>
+										<div className={styles.personalBmiCopy}>
+											<span className={styles.personalBmiLabel}>BMI preview</span>
+											<span className={styles.personalBmiValue}>{liveBmi.value.toFixed(1)}</span>
+											<div className={styles.personalBmiScale}>
+												<div className={styles.personalBmiScaleTrack}>
+													<span className={styles.personalBmiZoneUnder} />
+													<span className={styles.personalBmiZoneNormal} />
+													<span className={styles.personalBmiZoneOver} />
+													<span className={styles.personalBmiZoneObese} />
+													<span
+														className={styles.personalBmiMarker}
+														style={{
+															left: `${Math.min(100, Math.max(0, ((liveBmi.value - 15) / 25) * 100))}%`,
+														}}
+													/>
+												</div>
+												<div className={styles.personalBmiScaleLabels}>
+													<span>15</span>
+													<span>25</span>
+													<span>30</span>
+													<span>40</span>
+												</div>
+											</div>
+										</div>
+										<span className={styles.personalBmiBadge}>{liveBmi.label}</span>
+									</div>
+								)}
+							</section>
+
+							<div className={styles.personalFooter}>
+								<p className={styles.personalFooterNote}>
+									<Lock size={14} />
+									Your data stays on this device unless you choose to sync.
+								</p>
+								<button
+									type="submit"
+									className={styles.personalSubmitBtn}
+									disabled={!canContinue}
+								>
+									{canContinue ? (
+										<>
+											Continue to upload
+											<ChevronRight size={18} strokeWidth={2.5} />
+										</>
+									) : (
+										<>
+											{requiredFieldsLeft} required field{requiredFieldsLeft !== 1 ? "s" : ""} left
+										</>
+									)}
+								</button>
+							</div>
 						</form>
 					</div>
 				)}

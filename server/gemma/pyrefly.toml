@@ -1,0 +1,16 @@
+project-includes = ["*.py"]
+python-version = "3.13"
+ignore-missing-imports = [
+  "torch",
+  "torch.*",
+  "transformers",
+  "transformers.*",
+  "PIL",
+  "PIL.*",
+  "fastapi",
+  "fastapi.*",
+  "uvicorn",
+  "uvicorn.*",
+  "pydantic",
+  "pydantic.*",
+]
