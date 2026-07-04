@@ -663,150 +663,187 @@ const ImportOrUpload = () => {
 
 				{/* Step 2 — Upload */}
 			{step === "upload" && (
-				<div className={styles.content}>
-					<div className={styles.titleBlock}>
-						<h1>Upload your <span className={styles.teal}>lab results</span></h1>
-						<p>PDF, image, or CSV — our AI reads every format and explains it all in plain English.</p>
-					</div>
+				<div className={styles.uploadPage}>
 
-					{/* Gemma Status + Language Row */}
-					<div className={styles.gemmaBar}>
-						<div className={styles.gemmaStatus}>
-							{gemmaOnline ? (
-								<><Wifi size={13} className={styles.gemmaOnlineIcon} /> <span>Gemma 4 Local — Running</span></>
-							) : (
-								<><WifiOff size={13} className={styles.gemmaOfflineIcon} /> <span>Offline Mode — No Internet Required</span></>
-							)}
-						</div>
-						<div className={styles.langRowCompact}>
-							{LANGUAGES.map((lang) => (
-								<button
-									key={lang.id}
-									className={`${styles.langPillSmall} ${lang.id === selectedLanguage ? styles.langPillSmallActive : ""}`}
-									onClick={() => setSelectedLanguage(lang.id)}
-									title={`View results in ${lang.label}`}
-								>
-									<span>{lang.flag}</span>
-									<span className={styles.langCode}>{lang.code}</span>
-								</button>
-							))}
-						</div>
-					</div>
+					{/* ── Left Column: Hero + Status ──────────────────── */}
+					<div className={styles.uploadHero}>
+						<div className={styles.uploadHeroInner}>
+							{/* AI Status indicator */}
+							<div className={styles.uploadAiStatus}>
+								<div className={`${styles.uploadAiDot} ${gemmaOnline ? styles.uploadAiDotOnline : styles.uploadAiDotOffline}`} />
+								<span>{gemmaOnline ? "Gemma AI — Live" : "Offline Mode"}</span>
+							</div>
 
-					{/* Ghanaian Medical Presets */}
-					<div className={styles.presetsSection}>
-						<div className={styles.presetsHeader}>
-							<Stethoscope size={16} />
-							<span>🇬🇭 Ghanaian Medical Case Presets</span>
-						</div>
-						<p className={styles.presetsSub}>Don't have a file? Try one of these common Ghanaian medical cases:</p>
-						<div className={styles.presetsGrid}>
-							{PRESETS.map((preset) => (
-								<button
-									key={preset.id}
-									className={`${styles.presetCard} ${selectedPreset === preset.id ? styles.presetCardActive : ""}`}
-									onClick={() => handlePresetClick(preset.id)}
-								>
-									<span className={styles.presetEmoji}>{preset.emoji}</span>
-									<div className={styles.presetText}>
-										<span className={styles.presetTitle}>{preset.title}</span>
-										<span className={styles.presetDesc}>{preset.desc}</span>
+							<h1>
+								Upload your{" "}
+								<span className={styles.uploadHeroAccent}>lab results</span>
+							</h1>
+							<p className={styles.uploadHeroSub}>
+								Our AI reads your lab report — PDF, image, or CSV — and translates every
+								value into clear, actionable health insights.
+							</p>
+
+							{/* Language pills */}
+							<div className={styles.uploadLangRow}>
+								{LANGUAGES.map((lang) => (
+									<button
+										key={lang.id}
+										className={`${styles.uploadLangPill} ${lang.id === selectedLanguage ? styles.uploadLangPillActive : ""}`}
+										onClick={() => setSelectedLanguage(lang.id)}
+										title={`Results in ${lang.label}`}
+									>
+										<span>{lang.flag}</span>
+										<span className={styles.uploadLangCode}>{lang.label}</span>
+									</button>
+								))}
+							</div>
+
+							{/* Trust features */}
+							<div className={styles.uploadFeatures}>
+								<div className={styles.uploadFeature}>
+									<div className={styles.uploadFeatureIcon}><ShieldCheck size={16} /></div>
+									<div>
+										<span className={styles.uploadFeatureTitle}>End-to-end encrypted</span>
+										<span className={styles.uploadFeatureDesc}>256-bit AES, processed locally</span>
 									</div>
-									{selectedPreset === preset.id && (
-										<CheckCircle size={16} className={styles.presetCheck} />
-									)}
-								</button>
-							))}
-						</div>
-					</div>
-
-					{/* Divider */}
-					<div className={styles.orDivider}>
-						<span>or upload your own file</span>
-					</div>
-
-					{/* Trust row */}
-					<div className={styles.trustRow}>
-						{[
-							{ icon: <ShieldCheck size={14}/>, text: "256-bit encrypted" },
-							{ icon: <FileText size={14}/>,    text: "PDF · CSV · JPG · PNG" },
-							{ icon: <Zap size={14}/>,         text: "Analysed in seconds" },
-						].map((t) => (
-							<span key={t.text} className={styles.trustPill}>
-								{t.icon} {t.text}
-							</span>
-						))}
-					</div>
-
-					{/* Drop zone */}
-					<div
-						className={`${styles.dropZone} ${dragging ? styles.dropActive : ""}`}
-						onDragOver={onDragOver}
-						onDragLeave={onDragLeave}
-						onDrop={onDrop}
-						onClick={() => fileInputRef.current?.click()}
-					>
-						<input
-							ref={fileInputRef}
-							type="file"
-							multiple
-							accept=".pdf,.jpg,.jpeg,.png,.csv"
-							style={{ display: "none" }}
-							onChange={(e) => addFiles(e.target.files)}
-						/>
-						<div className={styles.dropIcon}><Upload size={32} /></div>
-						<p className={styles.dropTitle}>Drop files here or <span>click to browse</span></p>
-						<p className={styles.dropSub}>PDF, JPG, PNG, CSV · Max 25 MB per file</p>
-					</div>
-
-					{/* File list */}
-					{files.length > 0 && (
-						<div className={styles.fileList}>
-							{files.map(({ file, progress, done }) => (
-								<div key={file.name} className={styles.fileRow}>
-									<div className={styles.fileIcon}>
-										{done ? <CheckCircle size={18} /> : <FileText size={18} />}
-									</div>
-									<div className={styles.fileMeta}>
-										<span className={styles.fileName}>{file.name}</span>
-										<span className={styles.fileSize}>{(file.size / 1024).toFixed(0)} KB</span>
-										{!done && (
-											<div className={styles.progressBar}>
-												<div className={styles.progressFill} style={{ width: `${progress}%` }} />
-											</div>
-										)}
-									</div>
-									{done && (
-										<button className={styles.removeBtn} onClick={() => removeFile(file)}>
-											<X size={14} />
-										</button>
-									)}
-									{!done && <Loader2 size={16} className={styles.spinner} />}
 								</div>
-							))}
+								<div className={styles.uploadFeature}>
+									<div className={styles.uploadFeatureIcon}><Zap size={16} /></div>
+									<div>
+										<span className={styles.uploadFeatureTitle}>Instant analysis</span>
+										<span className={styles.uploadFeatureDesc}>Results in under 60 seconds</span>
+									</div>
+								</div>
+								<div className={styles.uploadFeature}>
+									<div className={styles.uploadFeatureIcon}><Brain size={16} /></div>
+									<div>
+										<span className={styles.uploadFeatureTitle}>Powered by Gemma AI</span>
+										<span className={styles.uploadFeatureDesc}>Medical-grade language model</span>
+									</div>
+								</div>
+							</div>
 						</div>
-					)}
+					</div>
 
-					{/* CTA */}
-					<div className={styles.ctaRow}>
-						<button
-							className={styles.primaryBtn}
-							disabled={!canAnalyze}
-							onClick={handleAnalyze}
+					{/* ── Right Column: Upload Area ───────────────────── */}
+					<div className={styles.uploadMain}>
+
+						{/* Preset section */}
+						<div className={styles.uploadSection}>
+							<div className={styles.uploadSectionHead}>
+								<Stethoscope size={15} />
+								<h2>Medical Case Presets</h2>
+								<span className={styles.uploadSectionTag}>🇬🇭 Ghana</span>
+							</div>
+							<p className={styles.uploadSectionSub}>
+								Don't have a file? Select a preloaded case to preview the analysis.
+							</p>
+							<div className={styles.uploadPresetsGrid}>
+								{PRESETS.map((preset) => (
+									<button
+										key={preset.id}
+										className={`${styles.uploadPresetCard} ${selectedPreset === preset.id ? styles.uploadPresetCardActive : ""}`}
+										onClick={() => handlePresetClick(preset.id)}
+									>
+										<span className={styles.uploadPresetEmoji}>{preset.emoji}</span>
+										<div className={styles.uploadPresetText}>
+											<span className={styles.uploadPresetTitle}>{preset.title}</span>
+											<span className={styles.uploadPresetDesc}>{preset.desc}</span>
+										</div>
+										{selectedPreset === preset.id && (
+											<CheckCircle size={16} className={styles.uploadPresetCheck} />
+										)}
+									</button>
+								))}
+							</div>
+						</div>
+
+						{/* Divider */}
+						<div className={styles.uploadDivider}>
+							<span>or upload your own file</span>
+						</div>
+
+						{/* Drop zone */}
+						<div
+							className={`${styles.uploadDropZone} ${dragging ? styles.uploadDropZoneActive : ""} ${files.length > 0 ? styles.uploadDropZoneCompact : ""}`}
+							onDragOver={onDragOver}
+							onDragLeave={onDragLeave}
+							onDrop={onDrop}
+							onClick={() => fileInputRef.current?.click()}
 						>
-							<Sparkles size={16} />
-							{canAnalyze
-								? `Analyse with ${gemmaOnline ? "Gemma 4" : "AI"}`
-								: allDone
-									? "Analyse my results"
-									: files.length > 0
-										? "Uploading…"
-										: "Select a preset or upload files"
-							}
-						</button>
-						<button className={styles.ghostBtn} onClick={() => navigate(paths.dashboard.root)}>
-							Skip for now
-						</button>
+							<input
+								ref={fileInputRef}
+								type="file"
+								multiple
+								accept=".pdf,.jpg,.jpeg,.png,.csv"
+								style={{ display: "none" }}
+								onChange={(e) => addFiles(e.target.files)}
+							/>
+							<div className={styles.uploadDropIcon}>
+								<Upload size={24} />
+							</div>
+							<div className={styles.uploadDropText}>
+								<p className={styles.uploadDropTitle}>
+									Drop files here or <span>browse</span>
+								</p>
+								<p className={styles.uploadDropFormats}>
+									PDF · JPG · PNG · CSV — Max 25 MB
+								</p>
+							</div>
+						</div>
+
+						{/* File list */}
+						{files.length > 0 && (
+							<div className={styles.uploadFileList}>
+								{files.map(({ file, progress, done }) => (
+									<div key={file.name} className={`${styles.uploadFileRow} ${done ? styles.uploadFileRowDone : ""}`}>
+										<div className={styles.uploadFileIcon}>
+											{done ? <CheckCircle size={16} /> : <FileText size={16} />}
+										</div>
+										<div className={styles.uploadFileMeta}>
+											<span className={styles.uploadFileName}>{file.name}</span>
+											<span className={styles.uploadFileSize}>
+												{(file.size / 1024).toFixed(0)} KB
+												{done && " · Ready"}
+											</span>
+											{!done && (
+												<div className={styles.uploadProgressBar}>
+													<div className={styles.uploadProgressFill} style={{ width: `${progress}%` }} />
+												</div>
+											)}
+										</div>
+										{done && (
+											<button className={styles.uploadRemoveBtn} onClick={(e) => { e.stopPropagation(); removeFile(file); }}>
+												<X size={14} />
+											</button>
+										)}
+										{!done && <Loader2 size={15} className={styles.uploadSpinner} />}
+									</div>
+								))}
+							</div>
+						)}
+
+						{/* CTA */}
+						<div className={styles.uploadCtaRow}>
+							<button
+								className={styles.uploadAnalyzeBtn}
+								disabled={!canAnalyze}
+								onClick={handleAnalyze}
+							>
+								<Sparkles size={16} />
+								{canAnalyze
+									? `Analyse with ${gemmaOnline ? "Gemma AI" : "AI"}`
+									: allDone
+										? "Analyse my results"
+										: files.length > 0
+											? "Uploading…"
+											: "Select a preset or upload files"
+								}
+							</button>
+							<button className={styles.uploadSkipBtn} onClick={() => navigate(paths.dashboard.root)}>
+								Skip for now
+							</button>
+						</div>
 					</div>
 				</div>
 			)}

@@ -1577,6 +1577,631 @@ $teal2: #008f87;
 	to { transform: rotate(360deg); }
 }
 
+// ── Upload Page Redesign ──────────────────────────────────────────────────────
+
+.uploadPage {
+	display: grid;
+	grid-template-columns: 380px 1fr;
+	gap: 0;
+	width: 100%;
+	min-height: calc(100vh - 120px);
+
+	@media (max-width: 960px) {
+		grid-template-columns: 1fr;
+		min-height: auto;
+	}
+}
+
+// Left column — sticky hero
+.uploadHero {
+	position: sticky;
+	top: 0;
+	height: 100vh;
+	display: flex;
+	align-items: center;
+	padding: 48px 40px;
+	box-sizing: border-box;
+	border-right: 1px solid var(--iou-border);
+
+	@media (max-width: 960px) {
+		position: relative;
+		height: auto;
+		border-right: none;
+		border-bottom: 1px solid var(--iou-border);
+		padding: 32px 24px;
+	}
+}
+
+.uploadHeroInner {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+
+	h1 {
+		font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+		font-weight: 900;
+		letter-spacing: -0.04em;
+		line-height: 1.1;
+		margin: 0;
+		color: var(--iou-heading);
+	}
+
+	@media (max-width: 960px) {
+		gap: 16px;
+
+		h1 { font-size: 1.5rem; }
+	}
+}
+
+.uploadHeroAccent {
+	color: $teal;
+	position: relative;
+
+	&::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: -2px;
+		height: 3px;
+		background: linear-gradient(90deg, $teal, rgba($teal, 0.3));
+		border-radius: 2px;
+	}
+}
+
+.uploadHeroSub {
+	font-size: 0.92rem;
+	color: var(--iou-muted);
+	margin: 0;
+	line-height: 1.65;
+
+	@media (max-width: 960px) { font-size: 0.85rem; }
+}
+
+// AI Status indicator
+.uploadAiStatus {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 14px;
+	border-radius: 99px;
+	background: var(--iou-surface);
+	border: 1px solid var(--iou-border);
+	width: fit-content;
+
+	span {
+		font-size: 0.75rem;
+		font-weight: 700;
+		color: var(--iou-muted-soft);
+		letter-spacing: 0.02em;
+	}
+}
+
+.uploadAiDot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+.uploadAiDotOnline {
+	background: #10b981;
+	box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+	animation: pulseDot 2s ease-in-out infinite;
+}
+
+.uploadAiDotOffline {
+	background: #f59e0b;
+	box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+	animation: pulseDot 2s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+	0%, 100% { opacity: 0.7; }
+	50% { opacity: 1; }
+}
+
+// Language pills
+.uploadLangRow {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.uploadLangPill {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 12px;
+	border-radius: 10px;
+	border: 1px solid var(--iou-border);
+	background: var(--iou-card);
+	cursor: pointer;
+	transition: all 0.2s ease;
+	font-family: inherit;
+	color: inherit;
+
+	&:hover {
+		border-color: rgba($teal, 0.3);
+		background: rgba($teal, 0.05);
+	}
+}
+
+.uploadLangPillActive {
+	border-color: rgba($teal, 0.5) !important;
+	background: rgba($teal, 0.1) !important;
+	box-shadow: 0 0 12px rgba($teal, 0.1);
+}
+
+.uploadLangCode {
+	font-size: 0.72rem;
+	font-weight: 700;
+	color: var(--iou-muted-soft);
+
+	.uploadLangPillActive & {
+		color: $teal;
+	}
+}
+
+// Trust features
+.uploadFeatures {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	margin-top: 8px;
+
+	@media (max-width: 960px) {
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: 10px;
+	}
+}
+
+.uploadFeature {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+
+	div:last-child {
+		display: flex;
+		flex-direction: column;
+		gap: 1px;
+	}
+
+	@media (max-width: 960px) {
+		flex: 1;
+		min-width: 140px;
+	}
+}
+
+.uploadFeatureIcon {
+	width: 36px;
+	height: 36px;
+	border-radius: 10px;
+	background: rgba($teal, 0.08);
+	border: 1px solid rgba($teal, 0.12);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: $teal;
+	flex-shrink: 0;
+
+	@media (max-width: 960px) {
+		width: 32px;
+		height: 32px;
+	}
+}
+
+.uploadFeatureTitle {
+	font-size: 0.78rem;
+	font-weight: 700;
+	color: var(--iou-text);
+}
+
+.uploadFeatureDesc {
+	font-size: 0.7rem;
+	color: var(--iou-muted);
+}
+
+// Right column — scrollable content
+.uploadMain {
+	padding: 40px 48px;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	overflow-y: auto;
+
+	@media (max-width: 960px) {
+		padding: 28px 24px 48px;
+		gap: 20px;
+	}
+}
+
+// Section header
+.uploadSection {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.uploadSectionHead {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+
+	svg { color: $teal; flex-shrink: 0; }
+
+	h2 {
+		font-size: 1rem;
+		font-weight: 800;
+		color: var(--iou-heading);
+		margin: 0;
+		letter-spacing: -0.02em;
+	}
+}
+
+.uploadSectionTag {
+	margin-left: auto;
+	font-size: 0.68rem;
+	font-weight: 700;
+	padding: 3px 10px;
+	border-radius: 99px;
+	background: rgba($teal, 0.08);
+	border: 1px solid rgba($teal, 0.15);
+	color: $teal;
+	white-space: nowrap;
+}
+
+.uploadSectionSub {
+	font-size: 0.82rem;
+	color: var(--iou-muted);
+	margin: 0;
+	line-height: 1.5;
+}
+
+// Presets grid (2 col on right panel)
+.uploadPresetsGrid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 10px;
+
+	@media (max-width: 540px) { grid-template-columns: 1fr; }
+}
+
+.uploadPresetCard {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 14px 16px;
+	border-radius: 14px;
+	border: 1px solid var(--iou-border);
+	background: var(--iou-card);
+	cursor: pointer;
+	transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+	text-align: left;
+	font-family: inherit;
+	color: inherit;
+	position: relative;
+
+	&:hover {
+		border-color: rgba($teal, 0.3);
+		background: var(--iou-card-hover);
+		transform: translateY(-1px);
+		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+
+		.uploadPresetEmoji {
+			transform: scale(1.08);
+			background: rgba($teal, 0.12);
+			border-color: rgba($teal, 0.25);
+		}
+	}
+}
+
+.uploadPresetCardActive {
+	border-color: rgba($teal, 0.5) !important;
+	background: rgba($teal, 0.06) !important;
+	box-shadow: 0 0 20px rgba($teal, 0.08) !important;
+
+	.uploadPresetEmoji {
+		background: rgba($teal, 0.15) !important;
+		border-color: rgba($teal, 0.35) !important;
+	}
+}
+
+.uploadPresetEmoji {
+	width: 38px;
+	height: 38px;
+	border-radius: 10px;
+	background: var(--iou-surface);
+	border: 1px solid var(--iou-border);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 18px;
+	flex-shrink: 0;
+	transition: all 0.25s ease;
+}
+
+.uploadPresetText {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.uploadPresetTitle {
+	font-size: 0.82rem;
+	font-weight: 700;
+	color: var(--iou-heading);
+	letter-spacing: -0.01em;
+}
+
+.uploadPresetDesc {
+	font-size: 0.72rem;
+	color: var(--iou-muted);
+	line-height: 1.3;
+}
+
+.uploadPresetCheck {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	color: $teal;
+	filter: drop-shadow(0 0 4px rgba($teal, 0.4));
+}
+
+// Divider
+.uploadDivider {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+
+	&::before,
+	&::after {
+		content: "";
+		flex: 1;
+		height: 1px;
+		background: var(--iou-divider);
+	}
+
+	span {
+		font-size: 0.72rem;
+		font-weight: 600;
+		color: var(--iou-muted);
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		white-space: nowrap;
+	}
+}
+
+// Drop zone — horizontal layout
+.uploadDropZone {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	padding: 28px 24px;
+	border: 2px dashed var(--iou-border);
+	border-radius: 16px;
+	cursor: pointer;
+	transition: all 0.25s ease;
+
+	&:hover, &.uploadDropZoneActive {
+		border-color: rgba($teal, 0.45);
+		background: rgba($teal, 0.03);
+
+		.uploadDropIcon {
+			background: rgba($teal, 0.15);
+			border-color: rgba($teal, 0.3);
+			transform: scale(1.05);
+		}
+	}
+}
+
+.uploadDropZoneCompact {
+	padding: 18px 20px;
+}
+
+.uploadDropIcon {
+	width: 48px;
+	height: 48px;
+	border-radius: 12px;
+	background: rgba($teal, 0.08);
+	border: 1px solid rgba($teal, 0.12);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: $teal;
+	flex-shrink: 0;
+	transition: all 0.25s ease;
+}
+
+.uploadDropText {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.uploadDropTitle {
+	font-size: 0.88rem;
+	font-weight: 600;
+	color: var(--iou-text);
+	margin: 0;
+
+	span {
+		color: $teal;
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+}
+
+.uploadDropFormats {
+	font-size: 0.72rem;
+	color: var(--iou-muted);
+	margin: 0;
+}
+
+// File list
+.uploadFileList {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.uploadFileRow {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 14px;
+	background: var(--iou-card);
+	border: 1px solid var(--iou-border);
+	border-radius: 12px;
+	animation: fadeIn 0.2s ease;
+}
+
+.uploadFileRowDone {
+	border-color: rgba($teal, 0.15);
+}
+
+.uploadFileIcon {
+	width: 32px;
+	height: 32px;
+	border-radius: 8px;
+	background: rgba($teal, 0.08);
+	border: 1px solid rgba($teal, 0.12);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: $teal;
+	flex-shrink: 0;
+
+	.uploadFileRowDone & {
+		background: rgba($teal, 0.12);
+	}
+}
+
+.uploadFileMeta {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	min-width: 0;
+}
+
+.uploadFileName {
+	font-size: 0.82rem;
+	font-weight: 600;
+	color: var(--iou-text);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.uploadFileSize {
+	font-size: 0.7rem;
+	color: var(--iou-muted);
+}
+
+.uploadProgressBar {
+	height: 3px;
+	border-radius: 99px;
+	background: var(--iou-progress-track);
+	overflow: hidden;
+}
+
+.uploadProgressFill {
+	height: 100%;
+	background: $teal;
+	border-radius: 99px;
+	transition: width 0.3s ease;
+}
+
+.uploadRemoveBtn {
+	background: none;
+	border: none;
+	color: var(--iou-muted);
+	cursor: pointer;
+	padding: 4px;
+	border-radius: 6px;
+	transition: all 0.2s;
+	flex-shrink: 0;
+
+	&:hover { color: #ff6b6b; background: rgba(255,107,107,0.08); }
+}
+
+.uploadSpinner {
+	color: var(--iou-muted);
+	animation: spin 1s linear infinite;
+	flex-shrink: 0;
+}
+
+// CTA row
+.uploadCtaRow {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-top: 8px;
+
+	@media (max-width: 480px) {
+		flex-direction: column;
+		align-items: stretch;
+	}
+}
+
+.uploadAnalyzeBtn {
+	flex: 1;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 14px 28px;
+	background: $teal;
+	color: #fff;
+	border: none;
+	border-radius: 12px;
+	font-size: 0.92rem;
+	font-weight: 700;
+	font-family: inherit;
+	cursor: pointer;
+	transition: all 0.2s ease;
+
+	&:hover:not(:disabled) {
+		background: $teal2;
+		transform: translateY(-1px);
+		box-shadow: 0 8px 24px rgba($teal, 0.3);
+	}
+
+	&:active:not(:disabled) { transform: translateY(0); }
+
+	&:disabled {
+		opacity: 0.45;
+		cursor: not-allowed;
+	}
+}
+
+.uploadSkipBtn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 14px 20px;
+	background: transparent;
+	border: 1px solid var(--iou-ghost-border);
+	border-radius: 12px;
+	color: var(--iou-muted);
+	font-size: 0.88rem;
+	font-weight: 600;
+	font-family: inherit;
+	cursor: pointer;
+	transition: all 0.2s;
+	white-space: nowrap;
+
+	&:hover {
+		border-color: var(--iou-ghost-hover-border);
+		color: var(--iou-text);
+		background: var(--iou-ghost-hover-bg);
+	}
+}
+
 // ── Height / Weight unit inputs ───────────────────────────────────────────────
 
 .unitInput {
