@@ -155,7 +155,7 @@ export async function analyzeLabResults(opts: {
 // ─── Chat with Gemma ─────────────────────────────────────────────────────────
 
 const MEDICAL_KEYWORDS_RE =
-	/fever|pain|painful|aching|aches?|hurts?|hurt|head|headache|migraine|cough|symptom|vomit|diarr|chill|nausea|dizz|weak|tired|breath|chest|stomach|malaria|typhoid|urin|bleed|swell|rash|sick|ill|unwell|sore|cramp|infection|anemia|diabet|pressure|body\s*pain|throat|ear|eye/i;
+	/fever|pain|painful|aching|aches?|hurts?|hurt|head|headache|migraine|cough|symptom|vomit|diarr|chill|nausea|dizz|weak|tired|breath|chest|stomach|malaria|typhoid|urin|bleed|swell|rash|sick|ill|unwell|sore|cramp|infection|anemia|diabet|pressure|body\s*pain|throat|ear|eye|appetite|weight\s*loss|can'?t\s*eat|not\s*eating|constipat|bloat|fatigue|insomnia|sleep|palpit|swollen|jaundice|dehydrat/i;
 
 /** Detect symptom descriptions even when phrasing is informal ("my head is aching"). */
 function hasMedicalIntent(text: string): boolean {
@@ -164,6 +164,22 @@ function hasMedicalIntent(text: string): boolean {
 	if (
 		/\b(head|stomach|chest|back|throat|ear|eyes?|neck|joint|muscle)\b/.test(lower) &&
 		/\b(ach|pain|hurt|sore|swell|bleed|stiff|numb|tingl)/.test(lower)
+	) {
+		return true;
+	}
+	if (
+		/\b(lost|losing|loss|no|lack|poor|low|reduced|decreased)\b/.test(lower) &&
+		/\b(appetite|weight|energy|sleep|hair|hearing|vision)\b/.test(lower)
+	) {
+		return true;
+	}
+	if (
+		/\b(i have|i've|i am|im experiencing|suffering from|what might|what could|why do i|feel(ing)?)\b/.test(
+			lower,
+		) &&
+		/\b(pain|fever|ache|symptom|problem|issue|wrong|sick|unwell|tired|weak|dizzy|nausea|vomit|cough|head|stomach|appetite|weight|sleep|breath|swell|rash|infection|eating|eat)\b/.test(
+			lower,
+		)
 	) {
 		return true;
 	}
@@ -588,6 +604,29 @@ function simulateChat(opts: {
 	if (smallTalk) return smallTalk;
 
 	const lower = opts.message.toLowerCase();
+
+	// Appetite loss / poor eating
+	if (
+		/\bappetite\b/.test(lower) ||
+		/\b(lost|losing|loss|no|lack|poor|low|reduced)\b.*\b(appetite|eating|eat)\b/.test(lower) ||
+		/\b(can'?t|cannot|unable to)\s*eat\b/.test(lower) ||
+		/\bnot\s*eating\b/.test(lower)
+	) {
+		const withFever = lower.includes("fever") || lower.includes("chill");
+		const withStomach =
+			lower.includes("stomach") ||
+			lower.includes("nausea") ||
+			lower.includes("vomit") ||
+			lower.includes("diarr");
+		return {
+			message:
+				"Loss of appetite can happen for many reasons. In Ghana, common causes include malaria, typhoid, stomach infections, stress, dehydration, or side effects from medication.\n\nTry these steps:\n• Eat small, light meals — plain Koko (porridge), boiled rice, or mashed plantain\n• Sip fluids often: water, ORS, or coconut water even if you don't feel hungry\n• Avoid heavy, oily, or very spicy food for now\n• Rest and monitor for fever, vomiting, or stomach pain\n\nPlease visit your nearest CHPS compound or clinic if:\n• Appetite loss lasts more than 3–5 days\n• You have fever, chills, or night sweats (get a malaria RDT)\n• You are losing weight quickly or cannot keep fluids down\n\n⚠️ Go to hospital urgently if you have severe abdominal pain, yellow eyes/skin (jaundice), confusion, or signs of dehydration.",
+			bodySystem: withFever ? "Hematology" : withStomach ? "Gastroenterolgy" : "Gastroenterolgy",
+			urgency: withFever ? "Yellow" : "Green",
+			condition: withFever ? "Appetite loss with fever — rule out malaria/typhoid" : "Loss of appetite",
+			system: withFever ? "Hematology / Blood" : "Gastrointestinal / Digestive",
+		};
+	}
 
 	// Headache / head pain
 	if (

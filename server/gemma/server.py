@@ -172,7 +172,25 @@ MEDICAL_KEYWORDS_RE = re.compile(
     r"fever|pain|painful|aching|aches?|hurts?|hurt|head|headache|migraine|cough|symptom|"
     r"vomit|diarr|chill|nausea|dizz|weak|tired|breath|chest|stomach|malaria|typhoid|urin|"
     r"bleed|swell|rash|sick|ill|unwell|sore|cramp|infection|anemia|diabet|pressure|"
-    r"body\s*pain|throat|ear|eye",
+    r"body\s*pain|throat|ear|eye|appetite|weight\s*loss|can'?t\s*eat|not\s*eating|"
+    r"constipat|bloat|fatigue|insomnia|sleep|palpit|swollen|jaundice|dehydrat",
+    re.IGNORECASE,
+)
+
+LOSS_SYMPTOM_RE = re.compile(
+    r"\b(lost|losing|loss|no|lack|poor|low|reduced|decreased)\b", re.IGNORECASE
+)
+SYMPTOM_NOUN_RE = re.compile(
+    r"\b(appetite|weight|energy|sleep|hair|hearing|vision)\b", re.IGNORECASE
+)
+HEALTH_QUESTION_RE = re.compile(
+    r"\b(i have|i've|i am|im experiencing|suffering from|what might|what could|why do i|feel(ing)?)\b",
+    re.IGNORECASE,
+)
+HEALTH_TOPIC_RE = re.compile(
+    r"\b(pain|fever|ache|symptom|problem|issue|wrong|sick|unwell|tired|weak|dizzy|"
+    r"nausea|vomit|cough|head|stomach|appetite|weight|sleep|breath|swell|rash|"
+    r"infection|eating|eat)\b",
     re.IGNORECASE,
 )
 
@@ -188,7 +206,13 @@ def has_medical_keywords(text: str) -> bool:
     lower = text.lower()
     if MEDICAL_KEYWORDS_RE.search(lower):
         return True
-    return bool(BODY_PART_RE.search(lower) and DISCOMFORT_RE.search(lower))
+    if BODY_PART_RE.search(lower) and DISCOMFORT_RE.search(lower):
+        return True
+    if LOSS_SYMPTOM_RE.search(lower) and SYMPTOM_NOUN_RE.search(lower):
+        return True
+    if HEALTH_QUESTION_RE.search(lower) and HEALTH_TOPIC_RE.search(lower):
+        return True
+    return False
 
 
 def get_small_talk_response(message: str, language: str) -> dict | None:

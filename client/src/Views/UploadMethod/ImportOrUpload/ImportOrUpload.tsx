@@ -271,150 +271,273 @@ const ImportOrUpload = () => {
 			{step === "done" && analysisResult && (
 				<div className={styles.resultsPage}>
 
-					{/* ── Score hero ─────────────────────────────────── */}
-					<div className={styles.resultsHero}>
-						<div className={styles.scoreMobileWrapper}>
-							<div className={styles.scoreRing}>
-								<svg viewBox="0 0 120 120" className={styles.ringsvg}>
-									<circle cx="60" cy="60" r="52" fill="none" className={styles.ringTrack} strokeWidth="8"/>
-									<circle cx="60" cy="60" r="52" fill="none" className={styles.ringProgress} strokeWidth="8"
-										strokeDasharray="326.7"
-										strokeDashoffset={326.7 - (326.7 * analysisResult.healthScore / 100)}
-										strokeLinecap="round" transform="rotate(-90 60 60)"/>
-								</svg>
-								<div className={styles.scoreInner}>
-									<span className={styles.scoreNum}>{analysisResult.healthScore}</span>
-									<span className={styles.scoreLabel}>{t("Health Score")}</span>
+					{/* ── Unavailable State (custom image with text-only model) ── */}
+					{analysisResult.healthScore === 0 && analysisResult.findings.length === 0 ? (
+						<>
+							{/* Notice Hero */}
+							<div className={styles.unavailableHero}>
+								<div className={styles.unavailableIconWrap}>
+									<div className={styles.unavailableIcon}>
+										<Stethoscope size={32} />
+									</div>
+									<div className={styles.unavailablePulse} />
+								</div>
+
+								<div className={styles.unavailableContent}>
+									<div className={styles.unavailableBadge}>
+										<WifiOff size={12} /> Vision Model Required
+									</div>
+									<h1>Image Analysis Not Available</h1>
+									<p>
+										The current AI model <strong>(Gemma 2 2B)</strong> is text-only and cannot read lab images directly.
+										Custom image analysis requires a multimodal vision model with GPU support.
+									</p>
 								</div>
 							</div>
-							<span className={styles.scoreLabelMobile}>{t("Health Score")}</span>
-						</div>
 
-						<div className={styles.heroText}>
-							<div className={styles.resultsBadge}>
-								<CheckCircle size={13}/> {t("Your results are ready")}
-							</div>
-							<h1>{t("Your results are ready")}</h1>
-							<p>{analysisResult.summary}</p>
+							{/* What You Can Do */}
+							<div className={styles.section}>
+								<div className={styles.sectionHead}>
+									<h2 className={styles.sectionTitle}>What you can do instead</h2>
+									<p className={styles.sectionSub}>Two ways to use the analysis interface right now</p>
+								</div>
 
-							{/* Language selector */}
-							<div className={styles.langRow}>
-								{LANGUAGES.map((lang) => (
+								<div className={styles.unavailableActions}>
+									{/* Preset Option */}
 									<button
-										key={lang.id}
-										className={`${styles.langPill} ${lang.id === selectedLanguage ? styles.langPillActive : ""}`}
-										onClick={() => setSelectedLanguage(lang.id)}
+										className={styles.unavailableActionCard}
+										onClick={() => {
+											setFiles([]);
+											setSelectedPreset(null);
+											setAnalysisResult(null);
+											setStep("upload");
+											window.scrollTo({ top: 0, behavior: "smooth" });
+										}}
 									>
-										{lang.flag} {lang.label}
+										<div className={styles.unavailableActionIcon} data-color="teal">
+											<Stethoscope size={22} />
+										</div>
+										<div className={styles.unavailableActionText}>
+											<span className={styles.unavailableActionLabel}>Recommended</span>
+											<h3>Try a Medical Case Preset</h3>
+											<p>Select a preloaded Ghanaian clinical case (Malaria, Anemia, Typhoid, or Urinalysis) to see the full analysis experience.</p>
+										</div>
+										<ChevronRight size={18} className={styles.unavailableActionArrow} />
 									</button>
-								))}
+
+									{/* GPU Upgrade Option */}
+									<div className={styles.unavailableActionCard} data-disabled>
+										<div className={styles.unavailableActionIcon} data-color="purple">
+											<Sparkles size={22} />
+										</div>
+										<div className={styles.unavailableActionText}>
+											<span className={styles.unavailableActionLabel}>Coming Soon</span>
+											<h3>Upgrade to Gemma 4 Vision</h3>
+											<p>With a GPU-enabled setup, Gemma 4 can read and analyze any lab photo you upload using multimodal AI vision.</p>
+										</div>
+										<ChevronRight size={18} className={styles.unavailableActionArrow} />
+									</div>
+								</div>
 							</div>
-						</div>
-					</div>
 
-					{/* ── Score breakdown ────────────────────────────── */}
-					<div className={styles.scoreBreakdown}>
-						<div className={`${styles.scoreBar} ${analysisResult.healthScore <= 50 ? styles.active : ""} ${styles.good}`}>
-							<span>0 – 50</span><span>{t("Needs attention")}</span>
-						</div>
-						<div className={`${styles.scoreBar} ${analysisResult.healthScore > 50 && analysisResult.healthScore <= 74 ? styles.active : ""} ${styles.warning}`}>
-							<span>51 – 74</span><span>{t("Room to improve")}</span>
-						</div>
-						<div className={`${styles.scoreBar} ${analysisResult.healthScore > 74 && analysisResult.healthScore <= 89 ? styles.active : ""} ${styles.great}`}>
-							<span>75 – 89</span><span>{t("Good")}</span>
-						</div>
-						<div className={`${styles.scoreBar} ${analysisResult.healthScore > 89 ? styles.active : ""}`}>
-							<span>90 – 100</span><span>{t("Excellent")}</span>
-						</div>
-					</div>
+							{/* Capabilities Overview */}
+							<div className={styles.unavailableCapabilities}>
+								<h3>Current model can still help with:</h3>
+								<div className={styles.unavailableCapGrid}>
+									<div className={styles.unavailableCapItem}>
+										<CheckCircle size={16} />
+										<span>Preset lab data analysis</span>
+									</div>
+									<div className={styles.unavailableCapItem}>
+										<CheckCircle size={16} />
+										<span>Medical symptom chat</span>
+									</div>
+									<div className={styles.unavailableCapItem}>
+										<CheckCircle size={16} />
+										<span>Health triage assessment</span>
+									</div>
+									<div className={styles.unavailableCapItem}>
+										<CheckCircle size={16} />
+										<span>Multi-language support</span>
+									</div>
+								</div>
+							</div>
 
-					{/* ── Key findings ───────────────────────────────── */}
-					<div className={styles.section}>
-						<div className={styles.sectionHead}>
-							<h2 className={styles.sectionTitle}>{t("What we found")}</h2>
-							<p className={styles.sectionSub}>{t("Each result explained in plain English — no medical jargon.")}</p>
-						</div>
+							{/* Disclaimer */}
+							<div className={styles.disclaimer}>
+								<ShieldCheck size={14} />
+								<span>
+									{t("This analysis is for information only") ||
+										"This analysis is for information only and does not replace professional medical advice."}{" "}
+									{t("Always speak to a qualified doctor about your health.")}
+								</span>
+							</div>
 
-						<div className={styles.findingsGrid}>
-							{analysisResult.findings.map((f) => {
-								const statusClass = f.status === "normal" ? "good"
-									: f.status === "action" ? "critical"
-									: "warning";
-								return (
-									<div key={f.id} className={`${styles.findingCard} ${styles[`card-${statusClass}`]}`}>
-										<div className={styles.cardBody}>
-											<div className={styles.cardTop}>
-												<div className={styles.cardNames}>
-													<span className={styles.cardMarker}>{t(f.name) || f.name}</span>
-													<span className={styles.cardSub}>{t(f.marker) || f.marker}</span>
-												</div>
-												<span className={`${styles.cardBadge} ${styles[`badge-${statusClass}`]}`}>
-													{t(f.statusLabel) || f.statusLabel}
-												</span>
-											</div>
-											<div className={styles.cardValue}>
-												<span className={styles.cardNum}>{f.value}</span>
-											</div>
-											<div className={styles.cardDivider} />
-											<p className={styles.cardNote}>{t(f.note) || f.note}</p>
+							{/* CTAs */}
+							<div className={styles.resultsCtas}>
+								<button className={styles.primaryBtn} onClick={() => {
+									setFiles([]);
+									setSelectedPreset(null);
+									setAnalysisResult(null);
+									setStep("upload");
+									window.scrollTo({ top: 0, behavior: "smooth" });
+								}}>
+									<Upload size={16} /> Try preset cases
+								</button>
+								<button className={styles.outlineBtn} onClick={() => navigate(paths.dashboard.root)}>
+									<Sparkles size={16} /> {t("Go to my dashboard")}
+								</button>
+							</div>
+						</>
+					) : (
+						/* ── Normal Results Layout (presets / real analysis) ── */
+						<>
+							{/* ── Score hero ─────────────────────────────────── */}
+							<div className={styles.resultsHero}>
+								<div className={styles.scoreMobileWrapper}>
+									<div className={styles.scoreRing}>
+										<svg viewBox="0 0 120 120" className={styles.ringsvg}>
+											<circle cx="60" cy="60" r="52" fill="none" className={styles.ringTrack} strokeWidth="8"/>
+											<circle cx="60" cy="60" r="52" fill="none" className={styles.ringProgress} strokeWidth="8"
+												strokeDasharray="326.7"
+												strokeDashoffset={326.7 - (326.7 * analysisResult.healthScore / 100)}
+												strokeLinecap="round" transform="rotate(-90 60 60)"/>
+										</svg>
+										<div className={styles.scoreInner}>
+											<span className={styles.scoreNum}>{analysisResult.healthScore}</span>
+											<span className={styles.scoreLabel}>{t("Health Score")}</span>
 										</div>
 									</div>
-								);
-							})}
-						</div>
-					</div>
+									<span className={styles.scoreLabelMobile}>{t("Health Score")}</span>
+								</div>
 
-					{/* ── What to do next ────────────────────────────── */}
-					<div className={styles.section}>
-						<div className={styles.sectionHead}>
-							<h2 className={styles.sectionTitle}>{t("What to do next")}</h2>
-							<p className={styles.sectionSub}>{t("Simple steps based on your results.")}</p>
-						</div>
-						<div className={styles.recsList}>
-							{analysisResult.recommendations.map((r) => (
-								<div key={r.title} className={styles.recCard}>
-									<span className={styles.recIcon}>{r.icon}</span>
-									<div>
-										<div className={styles.recTitle}>{t(r.title) || r.title}</div>
-										<div className={styles.recBody}>{t(r.body) || r.body}</div>
+								<div className={styles.heroText}>
+									<div className={styles.resultsBadge}>
+										<CheckCircle size={13}/> {t("Your results are ready")}
+									</div>
+									<h1>{t("Your results are ready")}</h1>
+									<p>{analysisResult.summary}</p>
+
+									{/* Language selector */}
+									<div className={styles.langRow}>
+										{LANGUAGES.map((lang) => (
+											<button
+												key={lang.id}
+												className={`${styles.langPill} ${lang.id === selectedLanguage ? styles.langPillActive : ""}`}
+												onClick={() => setSelectedLanguage(lang.id)}
+											>
+												{lang.flag} {lang.label}
+											</button>
+										))}
 									</div>
 								</div>
-							))}
-						</div>
-					</div>
+							</div>
 
-					{/* ── Disclaimer ─────────────────────────────────── */}
-					<div className={styles.disclaimer}>
-						<ShieldCheck size={14} />
-						<span>
-							{t("This analysis is for information only") ||
-								"This analysis is for information only and does not replace professional medical advice."}{" "}
-							{t("Always speak to a qualified doctor about your health.")}
-							{" "}{t("Visit your nearest CHPS compound") || ""}
-						</span>
-					</div>
+							{/* ── Score breakdown ────────────────────────────── */}
+							<div className={styles.scoreBreakdown}>
+								<div className={`${styles.scoreBar} ${analysisResult.healthScore <= 50 ? styles.active : ""} ${styles.good}`}>
+									<span>0 – 50</span><span>{t("Needs attention")}</span>
+								</div>
+								<div className={`${styles.scoreBar} ${analysisResult.healthScore > 50 && analysisResult.healthScore <= 74 ? styles.active : ""} ${styles.warning}`}>
+									<span>51 – 74</span><span>{t("Room to improve")}</span>
+								</div>
+								<div className={`${styles.scoreBar} ${analysisResult.healthScore > 74 && analysisResult.healthScore <= 89 ? styles.active : ""} ${styles.great}`}>
+									<span>75 – 89</span><span>{t("Good")}</span>
+								</div>
+								<div className={`${styles.scoreBar} ${analysisResult.healthScore > 89 ? styles.active : ""}`}>
+									<span>90 – 100</span><span>{t("Excellent")}</span>
+								</div>
+							</div>
 
-					{/* ── CTAs ───────────────────────────────────────── */}
-					<div className={styles.resultsCtas}>
-						<button className={styles.primaryBtn} onClick={() => navigate(paths.dashboard.root)}>
-							<Sparkles size={16} /> {t("Go to my dashboard")}
-						</button>
-						<button className={styles.outlineBtn} onClick={() => navigate(paths.clinicalHistory)}>
-							<FileText size={16} /> {t("View clinical history")}
-						</button>
-						<button
-							className={styles.ghostBtn}
-							onClick={() => {
-								setFiles([]);
-								setSelectedPreset(null);
-								setAnalysisResult(null);
-								setStep("upload");
-								window.scrollTo({ top: 0, behavior: "smooth" });
-							}}
-						>
-							<Upload size={14} /> {t("Upload more results")}
-						</button>
-					</div>
+							{/* ── Key findings ───────────────────────────────── */}
+							<div className={styles.section}>
+								<div className={styles.sectionHead}>
+									<h2 className={styles.sectionTitle}>{t("What we found")}</h2>
+									<p className={styles.sectionSub}>{t("Each result explained in plain English — no medical jargon.")}</p>
+								</div>
+
+								<div className={styles.findingsGrid}>
+									{analysisResult.findings.map((f) => {
+										const statusClass = f.status === "normal" ? "good"
+											: f.status === "action" ? "critical"
+											: "warning";
+										return (
+											<div key={f.id} className={`${styles.findingCard} ${styles[`card-${statusClass}`]}`}>
+												<div className={styles.cardBody}>
+													<div className={styles.cardTop}>
+														<div className={styles.cardNames}>
+															<span className={styles.cardMarker}>{t(f.name) || f.name}</span>
+															<span className={styles.cardSub}>{t(f.marker) || f.marker}</span>
+														</div>
+														<span className={`${styles.cardBadge} ${styles[`badge-${statusClass}`]}`}>
+															{t(f.statusLabel) || f.statusLabel}
+														</span>
+													</div>
+													<div className={styles.cardValue}>
+														<span className={styles.cardNum}>{f.value}</span>
+													</div>
+													<div className={styles.cardDivider} />
+													<p className={styles.cardNote}>{t(f.note) || f.note}</p>
+												</div>
+											</div>
+										);
+									})}
+								</div>
+							</div>
+
+							{/* ── What to do next ────────────────────────────── */}
+							<div className={styles.section}>
+								<div className={styles.sectionHead}>
+									<h2 className={styles.sectionTitle}>{t("What to do next")}</h2>
+									<p className={styles.sectionSub}>{t("Simple steps based on your results.")}</p>
+								</div>
+								<div className={styles.recsList}>
+									{analysisResult.recommendations.map((r) => (
+										<div key={r.title} className={styles.recCard}>
+											<span className={styles.recIcon}>{r.icon}</span>
+											<div>
+												<div className={styles.recTitle}>{t(r.title) || r.title}</div>
+												<div className={styles.recBody}>{t(r.body) || r.body}</div>
+											</div>
+										</div>
+									))}
+								</div>
+							</div>
+
+							{/* ── Disclaimer ─────────────────────────────────── */}
+							<div className={styles.disclaimer}>
+								<ShieldCheck size={14} />
+								<span>
+									{t("This analysis is for information only") ||
+										"This analysis is for information only and does not replace professional medical advice."}{" "}
+									{t("Always speak to a qualified doctor about your health.")}
+									{" "}{t("Visit your nearest CHPS compound") || ""}
+								</span>
+							</div>
+
+							{/* ── CTAs ───────────────────────────────────────── */}
+							<div className={styles.resultsCtas}>
+								<button className={styles.primaryBtn} onClick={() => navigate(paths.dashboard.root)}>
+									<Sparkles size={16} /> {t("Go to my dashboard")}
+								</button>
+								<button className={styles.outlineBtn} onClick={() => navigate(paths.clinicalHistory)}>
+									<FileText size={16} /> {t("View clinical history")}
+								</button>
+								<button
+									className={styles.ghostBtn}
+									onClick={() => {
+										setFiles([]);
+										setSelectedPreset(null);
+										setAnalysisResult(null);
+										setStep("upload");
+										window.scrollTo({ top: 0, behavior: "smooth" });
+									}}
+								>
+									<Upload size={14} /> {t("Upload more results")}
+								</button>
+							</div>
+						</>
+					)}
 
 				</div>
 			)}

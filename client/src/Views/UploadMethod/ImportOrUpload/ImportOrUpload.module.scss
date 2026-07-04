@@ -1255,6 +1255,322 @@ $teal2: #008f87;
 	}
 }
 
+// ── Unavailable State ─────────────────────────────────────────────────────────
+
+.unavailableHero {
+	display: flex;
+	align-items: center;
+	gap: 36px;
+	padding: 48px;
+	background: var(--iou-card);
+	border: 1px solid var(--iou-border);
+	border-radius: 24px;
+	position: relative;
+	overflow: hidden;
+
+	// Subtle gradient overlay
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(135deg, rgba($teal, 0.03) 0%, transparent 50%, rgba(139, 92, 246, 0.02) 100%);
+		pointer-events: none;
+	}
+
+	@media (max-width: 640px) {
+		flex-direction: column;
+		padding: 32px 24px;
+		gap: 24px;
+		text-align: center;
+	}
+}
+
+.unavailableIconWrap {
+	position: relative;
+	flex-shrink: 0;
+}
+
+.unavailableIcon {
+	width: 80px;
+	height: 80px;
+	border-radius: 20px;
+	background: linear-gradient(135deg, rgba($teal, 0.12) 0%, rgba($teal, 0.06) 100%);
+	border: 1px solid rgba($teal, 0.18);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: $teal;
+	position: relative;
+	z-index: 1;
+
+	@media (max-width: 640px) {
+		width: 68px;
+		height: 68px;
+
+		svg { width: 26px; height: 26px; }
+	}
+}
+
+.unavailablePulse {
+	position: absolute;
+	inset: -8px;
+	border-radius: 24px;
+	border: 2px solid rgba($teal, 0.12);
+	animation: unavailablePulseAnim 2.5s ease-in-out infinite;
+}
+
+@keyframes unavailablePulseAnim {
+	0%, 100% { opacity: 0.3; transform: scale(1); }
+	50% { opacity: 0.8; transform: scale(1.06); }
+}
+
+.unavailableContent {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	min-width: 0;
+
+	h1 {
+		font-size: clamp(1.5rem, 3vw, 2rem);
+		font-weight: 800;
+		letter-spacing: -0.03em;
+		color: var(--iou-heading);
+		margin: 0;
+		line-height: 1.2;
+	}
+
+	p {
+		font-size: 0.92rem;
+		color: var(--iou-muted);
+		margin: 0;
+		line-height: 1.65;
+		max-width: 520px;
+
+		strong {
+			color: var(--iou-muted-soft);
+			font-weight: 700;
+		}
+
+		@media (max-width: 640px) {
+			font-size: 0.85rem;
+		}
+	}
+}
+
+.unavailableBadge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 5px 12px;
+	border-radius: 99px;
+	background: rgba(245, 158, 11, 0.1);
+	border: 1px solid rgba(245, 158, 11, 0.2);
+	color: #f59e0b;
+	font-size: 0.72rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	width: fit-content;
+
+	@media (max-width: 640px) {
+		align-self: center;
+	}
+}
+
+// Action cards
+.unavailableActions {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.unavailableActionCard {
+	display: flex;
+	align-items: center;
+	gap: 18px;
+	padding: 22px 24px;
+	background: var(--iou-card);
+	border: 1px solid var(--iou-border);
+	border-radius: 18px;
+	cursor: pointer;
+	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	text-align: left;
+	font-family: inherit;
+	color: inherit;
+	width: 100%;
+	box-sizing: border-box;
+
+	&:hover {
+		border-color: rgba($teal, 0.35);
+		background: var(--iou-card-hover);
+		transform: translateY(-2px);
+		box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12), 0 2px 8px rgba($teal, 0.06);
+
+		.unavailableActionArrow {
+			transform: translateX(4px);
+			color: $teal;
+		}
+
+		.unavailableActionIcon[data-color="teal"] {
+			background: rgba($teal, 0.15);
+			border-color: rgba($teal, 0.3);
+			transform: scale(1.05);
+		}
+
+		.unavailableActionIcon[data-color="purple"] {
+			background: rgba(139, 92, 246, 0.15);
+			border-color: rgba(139, 92, 246, 0.3);
+			transform: scale(1.05);
+		}
+	}
+
+	&[data-disabled] {
+		opacity: 0.6;
+		cursor: default;
+
+		&:hover {
+			transform: none;
+			box-shadow: none;
+			border-color: var(--iou-border);
+			background: var(--iou-card);
+
+			.unavailableActionArrow {
+				transform: none;
+				color: var(--iou-muted);
+			}
+		}
+	}
+
+	@media (max-width: 640px) {
+		padding: 18px;
+		gap: 14px;
+	}
+}
+
+.unavailableActionIcon {
+	width: 50px;
+	height: 50px;
+	border-radius: 14px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	transition: all 0.25s ease;
+
+	&[data-color="teal"] {
+		background: rgba($teal, 0.1);
+		border: 1px solid rgba($teal, 0.18);
+		color: $teal;
+	}
+
+	&[data-color="purple"] {
+		background: rgba(139, 92, 246, 0.1);
+		border: 1px solid rgba(139, 92, 246, 0.18);
+		color: #8b5cf6;
+	}
+
+	@media (max-width: 640px) {
+		width: 44px;
+		height: 44px;
+	}
+}
+
+.unavailableActionText {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-width: 0;
+
+	h3 {
+		font-size: 0.95rem;
+		font-weight: 700;
+		color: var(--iou-heading);
+		margin: 0;
+		line-height: 1.3;
+
+		@media (max-width: 640px) { font-size: 0.88rem; }
+	}
+
+	p {
+		font-size: 0.82rem;
+		color: var(--iou-muted);
+		margin: 0;
+		line-height: 1.55;
+
+		@media (max-width: 640px) { font-size: 0.78rem; }
+	}
+}
+
+.unavailableActionLabel {
+	font-size: 0.65rem;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: $teal;
+	line-height: 1;
+}
+
+.unavailableActionArrow {
+	color: var(--iou-muted);
+	flex-shrink: 0;
+	transition: all 0.25s ease;
+
+	@media (max-width: 640px) { display: none; }
+}
+
+// Capabilities grid
+.unavailableCapabilities {
+	padding: 28px 32px;
+	background: var(--iou-surface);
+	border: 1px solid var(--iou-border);
+	border-radius: 18px;
+
+	h3 {
+		font-size: 0.85rem;
+		font-weight: 700;
+		color: var(--iou-muted-soft);
+		margin: 0 0 16px;
+		letter-spacing: -0.01em;
+	}
+
+	@media (max-width: 640px) {
+		padding: 20px;
+	}
+}
+
+.unavailableCapGrid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 12px;
+
+	@media (max-width: 480px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.unavailableCapItem {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 14px;
+	background: var(--iou-card);
+	border: 1px solid var(--iou-border);
+	border-radius: 10px;
+
+	svg {
+		color: $teal;
+		flex-shrink: 0;
+	}
+
+	span {
+		font-size: 0.82rem;
+		font-weight: 600;
+		color: var(--iou-text);
+	}
+}
+
 // ── Keyframes ─────────────────────────────────────────────────────────────────
 
 @keyframes spin {
