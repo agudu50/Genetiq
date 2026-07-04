@@ -1,4 +1,5 @@
 import styles from "./ChatMessageContent.module.scss";
+import { sanitizeAiText } from "@/App/Utils/sanitizeAiText";
 
 type Block =
 	| { type: "paragraph"; text: string }
@@ -8,8 +9,7 @@ type Block =
 
 /** Normalize bot text so bullets and sections render on separate lines. */
 function normalizeMessageText(text: string): string {
-	return text
-		.replace(/\r\n/g, "\n")
+	return sanitizeAiText(text)
 		.replace(/\s•\s/g, "\n• ")
 		.replace(/([.:!?])\s+(?=[A-Z⚠️])/g, "$1\n\n")
 		.replace(/:\n\n•/g, ":\n•")

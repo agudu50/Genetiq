@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { GemmaLanguage } from "@/App/Services/GemmaService";
+import { sanitizeAiText } from "@/App/Utils/sanitizeAiText";
 
 export type TriageUrgency = "Green" | "Yellow" | "Red" | null;
 
@@ -43,7 +44,9 @@ const initialState: TriageState = {
 		{
 			id: "msg-initial",
 			role: "bot",
-			text: "Hello! I'm your Genetiq Health Assistant. Describe your symptoms or tap a quick suggestion below — I'll guide you right away.",
+			text: sanitizeAiText(
+				"Hello! I'm your Genetiq Health Assistant. Describe your symptoms or tap a quick suggestion below. I'll guide you right away.",
+			),
 		},
 	],
 	isAnalyzing: false,
@@ -81,7 +84,9 @@ const triageSlice = createSlice({
 				{
 					id: "msg-initial",
 					role: "bot",
-					text: "Hello! I'm your Genetiq Health Assistant. Describe your symptoms or tap a quick suggestion below — I'll guide you right away.",
+					text: sanitizeAiText(
+				"Hello! I'm your Genetiq Health Assistant. Describe your symptoms or tap a quick suggestion below. I'll guide you right away.",
+			),
 				},
 			];
 		},

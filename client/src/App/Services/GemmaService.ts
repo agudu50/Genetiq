@@ -10,6 +10,8 @@
  *              Smart Offline Simulator
  */
 
+import { sanitizeAiText } from "@/App/Utils/sanitizeAiText";
+
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 export type GemmaLanguage = "english" | "twi" | "ga" | "ewe" | "fante";
@@ -49,6 +51,10 @@ export interface GemmaChatResult {
 }
 
 export type GemmaMode = "gemma-local" | "demo-offline";
+
+function finalizeChatResult(result: GemmaChatResult): GemmaChatResult {
+	return { ...result, message: sanitizeAiText(result.message) };
+}
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -174,10 +180,12 @@ function hasMedicalIntent(text: string): boolean {
 		return true;
 	}
 	if (
-		/\b(rest|sleep|exhaust|fatigue|insomnia|drained|burned?\s*out)\b/.test(lower) ||
+		/\b(rest|sleep|exhaust|fatigue|insomnia|drained|burned?\s*out|tired)\b/.test(lower) ||
 		/\b(not enough|don't have enough|dont have enough|need more|lack of|haven't had enough)\b.*\b(rest|sleep)\b/.test(
 			lower,
-		)
+		) ||
+		/\b(enough rest|not enough rest|need rest|need sleep|no rest)\b/.test(lower) ||
+		/\bit seems\b.*\b(rest|sleep|tired|fatigue)\b/.test(lower)
 	) {
 		return true;
 	}
@@ -285,10 +293,14 @@ function getSmallTalkResponse(
 		const saidHiBefore = recentUserMessages.some(isGreeting);
 		if (saidHiBefore) {
 			return toResult(
-				"I'm still here! Tap a quick suggestion below (like Malaria symptoms) or tell me what's bothering you — fever, headache, stomach pain, etc.",
+				"I'm still here! Tap a quick suggestion below (like Malaria symptoms) or tell me what's bothering you: fever, headache, stomach pain, etc.",
 			);
 		}
 		return toResult(copy.greeting);
+	}
+
+	if (/^(thanks|thank\s*you|thx|cheers|much appreciated)[\s!?.，]*$/i.test(text.trim())) {
+		return toResult(copy.thanksReply);
 	}
 
 	if (/how\s*(are|r)\s*you|how\s*you\s*doing|how'?s\s*it\s*going/i.test(lower)) {
@@ -296,15 +308,12 @@ function getSmallTalkResponse(
 	}
 
 	if (
-		/(i'?m|i am|im)\s*(good|fine|well|ok|okay|great|doing\s*well)/i.test(lower) ||
-		(/(yourself|and\s*you|what\s*about\s*you)/i.test(lower) && !/^thank/i.test(lower)) ||
+		/\b(i'?m|i am)\s+(good|fine|well|ok|okay|great)\b/i.test(lower) ||
+		/\bdoing\s+well\b/i.test(lower) ||
+		/(yourself|and\s*you|what\s*about\s*you)/i.test(lower) ||
 		/^good\s*(thanks|thank\s*you)?[\s!?.]*$/i.test(lower)
 	) {
 		return toResult(copy.wellbeingReply);
-	}
-
-	if (/^(thanks|thank\s*you|thx|cheers|much appreciated)[\s!?.，]*$/i.test(lower)) {
-		return toResult(copy.thanksReply);
 	}
 
 	if (text.length < 120) {
@@ -327,15 +336,15 @@ export async function chatWithGemma(opts: {
 			opts.language,
 			opts.recentUserMessages,
 		);
-		if (smallTalk) return smallTalk;
+		if (smallTalk) return finalizeChatResult(smallTalk);
 	}
 
 	const health = await checkGemmaHealth();
 	const onGpu = /cuda/i.test(health.device);
 
-	// Without a GPU, Gemma takes minutes — use instant triage for any symptom message
+	// Without a GPU, Gemma takes minutes. Use instant triage for any symptom message.
 	if (!opts.imageBase64 && hasMedicalIntent(opts.message) && !onGpu) {
-		return simulateChat(opts);
+		return finalizeChatResult(simulateChat(opts));
 	}
 
 	if (health.available && health.modelLoaded) {
@@ -348,17 +357,17 @@ export async function chatWithGemma(opts: {
 					language: opts.language,
 					image_base64: opts.imageBase64,
 				}),
-				signal: AbortSignal.timeout(300_000), // 5min — CPU inference runs ~1 tok/s
+				signal: AbortSignal.timeout(300_000), // 5min on CPU
 			});
 			if (res.ok) {
-				return (await res.json()) as GemmaChatResult;
+				return finalizeChatResult((await res.json()) as GemmaChatResult);
 			}
 		} catch (e) {
 			console.warn("Gemma chat error, falling back to simulator:", e);
 		}
 	}
 
-	return simulateChat(opts);
+	return finalizeChatResult(simulateChat(opts));
 }
 
 // ─── Ghanaian Language Translations ──────────────────────────────────────────
