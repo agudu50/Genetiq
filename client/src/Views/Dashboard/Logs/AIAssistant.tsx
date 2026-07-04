@@ -13,6 +13,7 @@ import {
 	EMERGENCY_CONTACTS,
 } from "@/App/Services/GemmaService";
 import type { GemmaLanguage, GemmaAnalysisResult } from "@/App/Services/GemmaService";
+import { ChatMessageContent } from "@/Features/Dashboard/ChatMessageContent/ChatMessageContent";
 import styles from "./AIAssistant.module.scss";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -518,7 +519,11 @@ function ChatSection({ language, gemmaOnline }: { language: GemmaLanguage; gemma
 									{m.urgency === "Red" ? "⚠️ Urgent" : "⚡ Moderate"}
 								</span>
 							)}
-							<p>{m.text}</p>
+							{m.role === "bot" ? (
+								<ChatMessageContent text={m.text} />
+							) : (
+								<p>{m.text}</p>
+							)}
 							{m.bodySystem && m.bodySystem !== "total" && (
 								<span className={styles.systemTag}>
 									<Stethoscope size={10} /> {m.bodySystem}

@@ -174,6 +174,14 @@ function hasMedicalIntent(text: string): boolean {
 		return true;
 	}
 	if (
+		/\b(rest|sleep|exhaust|fatigue|insomnia|drained|burned?\s*out)\b/.test(lower) ||
+		/\b(not enough|don't have enough|dont have enough|need more|lack of|haven't had enough)\b.*\b(rest|sleep)\b/.test(
+			lower,
+		)
+	) {
+		return true;
+	}
+	if (
 		/\b(i have|i've|i am|im experiencing|suffering from|what might|what could|why do i|feel(ing)?)\b/.test(
 			lower,
 		) &&
@@ -188,7 +196,7 @@ function hasMedicalIntent(text: string): boolean {
 
 const SMALL_TALK_RESPONSES: Record<
 	GemmaLanguage,
-	{ greeting: string; wellbeingReply: string; wellbeingQuestion: string; redirect: string }
+	{ greeting: string; wellbeingReply: string; wellbeingQuestion: string; thanksReply: string; redirect: string }
 > = {
 	english: {
 		greeting:
@@ -197,6 +205,8 @@ const SMALL_TALK_RESPONSES: Record<
 			"That's great to hear! I'm doing well too — thanks for asking. Whenever you're ready, tell me how you're feeling or what's bothering you (fever, headache, stomach pain, etc.), or tap a quick suggestion below.",
 		wellbeingQuestion:
 			"I'm here and ready to help! How are you feeling health-wise today? Any symptoms like fever, cough, or body pain I can help with?",
+		thanksReply:
+			"You're welcome! If you have any other health questions, I'm here to help.",
 		redirect:
 			"I'm here for health questions! Tell me what's bothering you — for example fever, headache, stomach pain, or cough — or tap one of the quick suggestions for a faster answer.",
 	},
@@ -207,6 +217,7 @@ const SMALL_TALK_RESPONSES: Record<
 			"Ɛyɛ anigyeɛ sɛ wote yie! Me nso mete yie — meda wo ase. Sɛ wobɛyɛ a, kyerɛ me sɛnea wote anaa deɛ ɛhaw wo, anaa paw nhwɛsoɔ bi wɔ ase ha.",
 		wellbeingQuestion:
 			"Mewɔ ha na mɛboa wo! Ɛte sɛn nnɛ wɔ wo ahoɔden ho? Wo wɔ yare bi a metumi aboa wo?",
+		thanksReply: "Meda wo ase! Sɛ wɔ asɛm foforo bi a ɛfa wo ahoɔden ho a, bisa me.",
 		redirect:
 			"Mewɔ ha ma ahoɔden ho asɛm! Kyerɛ me deɛ ɛhaw wo — te sɛ ayerɛ, ti yare, yafunu mu yare — anaa paw nhwɛsoɔ bi wɔ ase ha.",
 	},
@@ -217,6 +228,7 @@ const SMALL_TALK_RESPONSES: Record<
 			"Ehi kpakpa! Mi nɔ yɛɛ ehi tamɔ — akpe. Kɛji wobɛyɛ a, kɛɛ mi bo ni hewale shishi aloo fĩi nhwɛsoɔ ko.",
 		wellbeingQuestion:
 			"Mi wɔ he ni mɛbaaye abua bo! Ɛte sɛn wɔ wo hewale he nnɛ?",
+		thanksReply: "Akpe! Sɛ wò wɔ hewale asɛm foforo a, bi mi sane.",
 		redirect:
 			"Mi wɔ he ma hewale asɛm! Kɛɛ mi bo ni ɛhaw wo aloo fĩi nhwɛsoɔ ko.",
 	},
@@ -227,6 +239,7 @@ const SMALL_TALK_RESPONSES: Record<
 			"Enyo ŋutɔ! Nye hã le dɔwɔwɔ me. Ne èdi be yee la, kpɔ wò lãmesẽ ŋu alo tia nɔnɔme bubu le ete.",
 		wellbeingQuestion:
 			"Nye le afi be nàte ŋu! Aleke nèlãmesẽ le egbe?",
+		thanksReply: "Akpe na wò! Ne èle lãmesẽ ŋutɔ bubu la, bi nye.",
 		redirect:
 			"Nye le afi ma lãmesẽ ŋutɔ! Kpɔ nusi ɖe wò ŋu alo tia nɔnɔme bubu le ete.",
 	},
@@ -237,6 +250,7 @@ const SMALL_TALK_RESPONSES: Record<
 			"Ɛyɛ anigye sɛ wote yie! Me nso mete yie. Sɛ wobɛyɛ a, kyerɛ me sɛnea wote anaa paw nhwɛsoɔ bi wɔ ase ha.",
 		wellbeingQuestion:
 			"Mewɔ ha na mɛboa wo! Ɛte sɛn nnɛ wɔ wo ahoɔden ho?",
+		thanksReply: "Meda wo ase! Sɛ wɔ asɛm foforo bi a ɛfa wo ahoɔden ho a, bisa me.",
 		redirect:
 			"Mewɔ ha ma ahoɔden ho asɛm! Kyerɛ me deɛ ɛhaw wo, anaa paw nhwɛsoɔ bi wɔ ase ha.",
 	},
@@ -283,14 +297,14 @@ function getSmallTalkResponse(
 
 	if (
 		/(i'?m|i am|im)\s*(good|fine|well|ok|okay|great|doing\s*well)/i.test(lower) ||
-		/(yourself|and\s*you|what\s*about\s*you|u\?|you\?)/i.test(lower) ||
+		(/(yourself|and\s*you|what\s*about\s*you)/i.test(lower) && !/^thank/i.test(lower)) ||
 		/^good\s*(thanks|thank\s*you)?[\s!?.]*$/i.test(lower)
 	) {
 		return toResult(copy.wellbeingReply);
 	}
 
-	if (/^(thanks|thank\s*you|thx|cheers)[\s!?.，]*$/i.test(lower)) {
-		return toResult(copy.wellbeingReply);
+	if (/^(thanks|thank\s*you|thx|cheers|much appreciated)[\s!?.，]*$/i.test(lower)) {
+		return toResult(copy.thanksReply);
 	}
 
 	if (text.length < 120) {
@@ -687,6 +701,23 @@ function simulateChat(opts: {
 			urgency: "Yellow",
 			condition: "Suspected UTI",
 			system: "Renal / Urological",
+		};
+	}
+
+	// Fatigue / lack of rest / sleep
+	if (
+		/\b(rest|sleep|exhaust|fatigue|insomnia|drained|burned?\s*out)\b/.test(lower) ||
+		/\b(not enough|don't have enough|dont have enough|need more|lack of|haven't had enough)\b.*\b(rest|sleep)\b/.test(
+			lower,
+		)
+	) {
+		return {
+			message:
+				"Feeling like you haven't had enough rest is very common — and it can affect your energy, mood, and immune system.\n\nTry these steps:\n• Aim for 7–8 hours of sleep tonight — put your phone away 30 minutes before bed\n• Take short breaks during the day; even 15 minutes of rest helps\n• Stay hydrated and eat regular light meals — skipping food worsens fatigue\n• Avoid heavy caffeine late in the day\n\nSee a doctor if fatigue lasts more than 2 weeks, or if you also have fever, chest pain, shortness of breath, or sudden severe weakness — these could signal anemia, malaria, or other conditions needing tests.\n\n⚠️ Go to hospital if you feel faint, confused, or cannot stay awake.",
+			bodySystem: "total",
+			urgency: "Green",
+			condition: "Fatigue / Insufficient rest",
+			system: "General",
 		};
 	}
 

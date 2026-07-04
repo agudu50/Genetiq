@@ -14,6 +14,7 @@ import { setCategory } from "@/App/Redux/categorySlice";
 import { chatWithGemma, checkGemmaHealth, getTranslation } from "@/App/Services/GemmaService";
 import type { GemmaLanguage } from "@/App/Services/GemmaService";
 import { Send, Bot, AlertTriangle, RefreshCw, Globe, Wifi, WifiOff } from "lucide-react";
+import { ChatMessageContent } from "@/Features/Dashboard/ChatMessageContent/ChatMessageContent";
 import styles from "./TriageWidget.module.scss";
 
 const LANGUAGES: { id: GemmaLanguage; label: string; flag: string }[] = [
@@ -252,7 +253,11 @@ export const TriageWidget: React.FC<TriageWidgetProps> = ({ onClose }) => {
 						{msg.role === "bot" && (
 							<Bot size={16} className={styles.inlineBotIcon} />
 						)}
-						<p>{msg.text}</p>
+						{msg.role === "bot" ? (
+							<ChatMessageContent text={msg.text} />
+						) : (
+							<p>{msg.text}</p>
+						)}
 					</div>
 				))}
 
