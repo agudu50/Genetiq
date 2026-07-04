@@ -7,18 +7,28 @@
   <img src="https://img.shields.io/badge/Three.js-r172-000000?style=for-the-badge&logo=three.js&logoColor=white" alt="Three.js" />
 </p>
 
-## 📋 Overview
+## 🌍 The Problem at Hand
+Ghanaian healthcare, particularly in rural and sub-urban communities, faces three critical challenges:
+1. **Clinical Scarcity & Gaps**: Rural clinics and Community-based Health Planning and Services (CHPS) compounds are often understaffed, meaning patients wait hours for basic consultations or triage.
+2. **Diagnostic & Literacy Barriers**: Medical lab reports, Rapid Diagnostic Tests (RDTs), and prescriptions are filled with complex medical jargon that patients cannot interpret on their own.
+3. **Language Barriers**: Important medical guidelines and emergency directions are predominantly published in English, excluding patients who speak local languages like Twi, Ga, Ewe, or Fante.
+4. **Connectivity Constraints**: Relying on cloud-based Artificial Intelligence (AI) is impractical for remote regions with unstable internet connectivity.
 
-**Genetiq** is a cutting-edge digital health platform that provides users with a
-personalized 3D digital twin visualization of their body, combined with
-comprehensive health insights, risk assessments, and actionable wellness
-recommendations.
+## 💡 Our Solution: Genetiq + Gemma 4 Local Artificial Intelligence (AI)
+Genetiq addresses these challenges by bringing local, edge-native intelligence directly to the patient's device, with no internet required:
+1. **Edge-Native Gemma 4 Artificial Intelligence (AI) Assistant**: By running Google's frontier Gemma 4 models locally on-device, we deliver medical triage and guidance without relying on cloud services.
+2. **Multimodal Lab Scanner**: Patients upload or scan photos of their laboratory sheets or Rapid Diagnostic Test (RDT) cassettes. Gemma 4 reads the image, extracts biomarkers, and translates them into a plain-English layout.
+3. **3D Digital Twin Visualizer**: Triage inputs automatically zoom and highlight affected biological systems on an interactive 3D human body model (e.g. malaria/anemia highlights *Hematology*), visually reinforcing where the issue is.
+4. **Localized Remedies & Languages**: The portal provides health advice, diet recovery tips (like Moringa and Sobolo), and translates all diagnostic text into **Twi, Ga, Ewe, and Fante** dynamically.
 
-The platform leverages advanced 3D visualization technology, modern glassmorphic
-UI/UX, and bleeding-edge **Web3 Authentication via the Sui Blockchain** to help
-users understand their health data securely, intuitively, and interactively.
+## 🛠️ The Tech Stack We Used
+- **Frontend Core**: React 18, TypeScript, and Vite.
+- **3D Visualization**: Three.js & React Three Fiber (R3F) for the interactive digital twin.
+- **Artificial Intelligence (AI) Backend Service**: FastAPI (Fast Application Programming Interface) (Python 3) local server.
+- **Machine Learning Core**: PyTorch and Hugging Face Transformers for executing model inference on the edge.
 
 ## ✨ Features
+
 
 ### 🧬 3D Digital Twin
 
@@ -62,14 +72,7 @@ Support for 17 languages including:
 - Portuguese, Russian, Arabic, Chinese, Japanese
 - Korean, Hindi, Polish, Turkish, and more
 
-### 🔐 Web3 & Blockchain Integration
 
-- **Sui Network Authentication**: Frictionless Web3 login using decentralized,
-  secure zkLogin and dAppKit wallet connectivity
-- **Decentralized Data Ownership**: Laying the foundation for sovereign health
-  records on-chain
-- **Smart Contract Interoperability**: Readily equipped with a `Move` package
-  architecture enabling transparent logic
 
 ### 📋 Onboarding & Data Control
 
@@ -81,6 +84,15 @@ Support for 17 languages including:
   biomarker data results.
 - **Real-time Processing**: Visual feedback during Digital Twin generation with
   estimated notification timers.
+
+### 🇬🇭 Ghanaian Gemma 4 Health Assistant
+
+- **Edge-Native Artificial Intelligence (AI) Assistant**: Powered by a local FastAPI (Fast Application Programming Interface) server running Google Gemma 4 models via PyTorch/Transformers.
+- **Multimodal Lab Scanning**: Optical Character Recognition (OCR) and visual comprehension of uploaded lab sheets, Rapid Diagnostic Test (RDT) strips, and prescriptions.
+- **Ghanaian Language Translation**: Instantly toggle translations of clinical findings and summaries into Twi, Ga, Ewe, and Fante.
+- **3D Digital Twin Integration**: Dynamic symptom triage automatically zooms and highlights relevant biological systems on the 3D twin (e.g. malaria/anemia zooms to *Hematology*).
+- **Local Remedy Encyclopedia**: Curated nutrition advice featuring local food items like Moringa, Sobolo, Kontomire, and Neem tree tea.
+- **Smart Offline Fallback**: Zero-setup offline simulator ensures presets and dashboard remain 100% functional during pitches or offline reviews without requiring active Graphics Processing Unit (GPU) resources.
 
 ### 🎨 Modern UI/UX
 
@@ -104,22 +116,23 @@ Support for 17 languages including:
 | React 18          | UI Framework     |
 | TypeScript        | Type Safety      |
 | Vite              | Build Tool       |
-| Sui dApp Kit      | Web3 Auth/Wallet |
 | React Three Fiber | 3D Rendering     |
 | Three.js          | 3D Graphics      |
 | Redux Toolkit     | State Management |
 | React Router      | Navigation       |
 | SCSS Modules      | Styling          |
 
-### Backend
+### Backend & Artificial Intelligence (AI) Engine
 
 | Technology | Purpose                 |
 | ---------- | ----------------------- |
-| Express.js | API Server              |
+| Express.js | Main Application Programming Interface (API) Server |
 | MongoDB    | Database                |
-| Mongoose   | ODM                     |
-| Socket.io  | Real-time Communication |
-| bcrypt     | Password Hashing        |
+| Mongoose   | Object Document Mapper (ODM) |
+| Python 3   | Artificial Intelligence (AI) Server Environment |
+| FastAPI    | Artificial Intelligence (AI) REST Application Programming Interface (API) Gateway |
+| PyTorch    | Machine Learning Engine |
+| Transformers | Large Language Model (LLM) Weights Loader     |
 
 ## 📁 Project Structure
 
@@ -129,12 +142,16 @@ genetiq-app/
 │   └── assets/models/      # 3D model files
 ├── server/                 # Backend API
 │   ├── controllers/        # Route handlers
+│   ├── gemma/              # Gemma 4 local AI service (Python)
+│   │   ├── prompts.py      # Local Ghanaian remedies & prompts
+│   │   ├── server.py       # FastAPI Gemma server
+│   │   └── requirements.txt# Python dependencies
 │   ├── models/             # Database schemas
 │   └── routes/             # API routes
 ├── src/
 │   ├── App/                # App configuration
-│   │   ├── i18n/           # Internationalization
-│   │   ├── Redux/          # State management
+│   │   ├── Services/       # GemmaService.ts (client API connector)
+│   │   ├── Redux/          # State management (triageSlice.tsx)
 │   │   ├── Routes/         # Routing config
 │   │   ├── Styles/         # Global styles
 │   │   └── theme/          # Theme context
@@ -159,9 +176,10 @@ genetiq-app/
 
 - Node.js 18+
 - npm or yarn
-- MongoDB (for backend)
+- MongoDB (for main backend)
+- Python 3.10+ (for local Gemma Artificial Intelligence (AI) server)
 
-### Installation
+### Client & Express Server Setup
 
 1. **Clone the repository**
 
@@ -176,23 +194,45 @@ genetiq-app/
    npm install
    ```
 
-3. **Set up environment variables**
-
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
-
-4. **Start development server**
+3. **Start client & server development**
 
    ```bash
    npm run dev
    ```
 
-5. **Open in browser**
+### 🧠 Local Gemma Artificial Intelligence (AI) Engine Setup
+
+If the Gemma Artificial Intelligence (AI) server is not running, the application will automatically activate **Smart Offline Fallback Mode** (indicated by an orange badge), where all preset medical cases remain testable using local templates. 
+
+To run the live Gemma model locally:
+
+1. **Accept the Model License**
+   Log in to Hugging Face (HF), visit the [google/gemma-2-2b-it](https://huggingface.co/google/gemma-2-2b-it) page (or the gated `google/gemma-4-12B-it` model page), and click **Acknowledge license / Request access**.
+
+2. **Create an Access Token**
+   Go to your [Hugging Face settings -> Access Tokens](https://huggingface.co/settings/tokens) and copy a new **Read** token.
+
+3. **Install Python dependencies**
+   ```bash
+   cd server/gemma
+   pip install -r requirements.txt
    ```
-   http://localhost:3000
-   ```
+
+4. **Start the Gemma 4 Local Server**
+   Start the FastAPI instance passing your Hugging Face (HF) token in your terminal environment:
+   
+   * **PowerShell**:
+     ```powershell
+     $env:HF_TOKEN="your_token_here"
+     python server.py --model google/gemma-2-2b-it
+     ```
+   * **Command Prompt (CMD)**:
+     ```cmd
+     set HF_TOKEN=your_token_here
+     python server.py --model google/gemma-2-2b-it
+     ```
+
+   *(You can substitute `--model` with `google/paligemma-3b-pt-224` to test real-time multimodal image scanning, or `google/gemma-4-12B-it` on laptops equipped with high-end Graphics Processing Units (GPUs) and Video Random Access Memory (VRAM)).*
 
 ### Available Scripts
 
@@ -226,12 +266,11 @@ The application is configured for deployment on:
 
 - [x] Premium Dashboard UI/UX Refinement
 - [x] High-Fidelity Onboarding Modals
-- [x] Integrate Sui Web3 Wallet Authentication
+- [x] Integrate Google Gemma 4 Local AI Assistant
 - [x] Add dynamic systemic visualizations (Respiratory, Digestive, etc) to 3D
       Digital Twin
 - [ ] Wearable device integration (Apple Watch, Fitbit, Oura)
 - [ ] AI-powered predictive health analytics
-- [ ] On-chain patient data tokenization & encryption
 - [ ] Family health history tracking
 - [ ] Telemedicine integration
 

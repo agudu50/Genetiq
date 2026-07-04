@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/App/Redux/store";
 import {
 	setSymptomsInput,
-	appendSymptom,
 	addAlert,
 	addMessage,
 	clearMessages,
@@ -33,7 +32,9 @@ export const TriageWidget: React.FC<TriageWidgetProps> = ({ onClose }) => {
 	const dispatch = useDispatch();
 	const chatEndRef = useRef<HTMLDivElement>(null);
 	const [gemmaOnline, setGemmaOnline] = useState(false);
+	const [cpuFastMode, setCpuFastMode] = useState(false);
 	const [showLangDropdown, setShowLangDropdown] = useState(false);
+	const [waitSecs, setWaitSecs] = useState(0);
 
 	const { symptomsInput, messages, isAnalyzing, selectedLanguage } = useSelector(
 		(state: RootState) => state.triage,
@@ -41,13 +42,25 @@ export const TriageWidget: React.FC<TriageWidgetProps> = ({ onClose }) => {
 
 	// Check Gemma health on mount
 	useEffect(() => {
-		checkGemmaHealth().then((h) => setGemmaOnline(h.available && h.modelLoaded));
+		checkGemmaHealth().then((h) => {
+			setGemmaOnline(h.available && h.modelLoaded);
+			setCpuFastMode(h.device === "cpu" && h.modelLoaded);
+		});
 	}, []);
 
 	// Auto-scroll to bottom of chat when new messages or typing state changes
 	useEffect(() => {
 		chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
 	}, [messages, isAnalyzing]);
+
+	useEffect(() => {
+		if (!isAnalyzing) {
+			setWaitSecs(0);
+			return;
+		}
+		const id = window.setInterval(() => setWaitSecs((s) => s + 1), 1000);
+		return () => clearInterval(id);
+	}, [isAnalyzing]);
 
 	// Ghana-focused quick symptom suggestions
 	const quickSymptoms = [
@@ -57,10 +70,14 @@ export const TriageWidget: React.FC<TriageWidgetProps> = ({ onClose }) => {
 		{ label: "🩸 Feeling weak", text: "I feel very weak, tired, and dizzy — my skin looks pale" },
 	];
 
-	const handleAnalyze = async () => {
-		if (!symptomsInput.trim()) return;
+	const handleAnalyze = async (overrideText?: string) => {
+		const userInput = (overrideText ?? symptomsInput).trim();
+		if (!userInput) return;
 
-		const userInput = symptomsInput.trim();
+		const recentUserMessages = messages
+			.filter((m) => m.role === "user")
+			.map((m) => m.text)
+			.slice(-5);
 
 		// Add User Message
 		dispatch(
@@ -79,6 +96,7 @@ export const TriageWidget: React.FC<TriageWidgetProps> = ({ onClose }) => {
 			const result = await chatWithGemma({
 				message: userInput,
 				language: selectedLanguage,
+				recentUserMessages,
 			});
 
 			// Add alert
@@ -127,7 +145,7 @@ export const TriageWidget: React.FC<TriageWidgetProps> = ({ onClose }) => {
 	};
 
 	const handleChipClick = (text: string) => {
-		dispatch(appendSymptom(text));
+		void handleAnalyze(text);
 	};
 
 	const handleLanguageChange = (lang: GemmaLanguage) => {
@@ -152,7 +170,11 @@ export const TriageWidget: React.FC<TriageWidgetProps> = ({ onClose }) => {
 						</h3>
 						<span className={styles.statusLabel}>
 							{gemmaOnline ? (
-								<><Wifi size={10} /> Gemma 4 Local</>
+								cpuFastMode ? (
+									<><Wifi size={10} /> Fast triage (CPU)</>
+								) : (
+									<><Wifi size={10} /> Gemma 4 Local</>
+								)
 							) : (
 								<><WifiOff size={10} /> Offline Mode</>
 							)}
@@ -238,10 +260,19 @@ export const TriageWidget: React.FC<TriageWidgetProps> = ({ onClose }) => {
 				{isAnalyzing && (
 					<div className={styles.botMessage}>
 						<Bot size={16} className={styles.inlineBotIcon} />
-						<div className={styles.typingIndicator}>
-							<span />
-							<span />
-							<span />
+						<div>
+							<div className={styles.typingIndicator}>
+								<span />
+								<span />
+								<span />
+							</div>
+							<p className={styles.waitHint}>
+								{cpuFastMode || !gemmaOnline
+									? "Analyzing your symptoms…"
+									: waitSecs < 8
+										? "Gemma is analyzing…"
+										: `Gemma is analyzing… ${waitSecs}s (local CPU — can take 1–3 min)`}
+							</p>
 						</div>
 					</div>
 				)}
@@ -281,7 +312,7 @@ export const TriageWidget: React.FC<TriageWidgetProps> = ({ onClose }) => {
 					disabled={isAnalyzing}
 				/>
 				<button
-					onClick={handleAnalyze}
+					onClick={() => handleAnalyze()}
 					disabled={isAnalyzing || !symptomsInput.trim()}
 					className={styles.sendButton}
 				>

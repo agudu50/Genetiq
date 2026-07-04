@@ -297,6 +297,14 @@
 	}
 }
 
+.waitHint {
+	margin: 6px 0 0;
+	font-size: 11px;
+	line-height: 1.4;
+	color: rgba(15, 23, 42, 0.55);
+	font-weight: 500;
+}
+
 /* ─── Suggestion Chips Grid ─── */
 .suggestionGrid {
 	display: flex;

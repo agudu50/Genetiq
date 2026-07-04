@@ -56,8 +56,13 @@ const GEMMA_BASE_URL = "http://localhost:8000";
 
 // ─── Service State ───────────────────────────────────────────────────────────
 
-let _gemmaAvailable: boolean | null = null;
-let _lastHealthCheck = 0;
+let _healthCache: {
+	available: boolean;
+	modelLoaded: boolean;
+	modelId: string;
+	device: string;
+	checkedAt: number;
+} | null = null;
 const HEALTH_CHECK_INTERVAL = 30_000; // 30s
 
 // ─── Health Check ────────────────────────────────────────────────────────────
@@ -66,37 +71,48 @@ export async function checkGemmaHealth(): Promise<{
 	available: boolean;
 	modelLoaded: boolean;
 	modelId: string;
+	device: string;
 }> {
 	const now = Date.now();
-	if (_gemmaAvailable !== null && now - _lastHealthCheck < HEALTH_CHECK_INTERVAL) {
-		return { available: _gemmaAvailable, modelLoaded: _gemmaAvailable, modelId: "" };
+	if (_healthCache && now - _healthCache.checkedAt < HEALTH_CHECK_INTERVAL) {
+		return _healthCache;
 	}
 
 	try {
 		const res = await fetch(`${GEMMA_BASE_URL}/api/gemma/health`, {
-			signal: AbortSignal.timeout(3000),
+			signal: AbortSignal.timeout(15_000),
 		});
 		if (res.ok) {
 			const data = await res.json();
-			_gemmaAvailable = data.model_loaded;
-			_lastHealthCheck = now;
-			return {
+			_healthCache = {
 				available: true,
-				modelLoaded: data.model_loaded,
-				modelId: data.model_id,
+				modelLoaded: Boolean(data.model_loaded),
+				modelId: data.model_id ?? "",
+				device: data.device ?? "none",
+				checkedAt: now,
 			};
+			return _healthCache;
 		}
 	} catch {
-		// Server not running
+		// Server not running or busy
 	}
 
-	_gemmaAvailable = false;
-	_lastHealthCheck = now;
-	return { available: false, modelLoaded: false, modelId: "" };
+	_healthCache = {
+		available: false,
+		modelLoaded: false,
+		modelId: "",
+		device: "none",
+		checkedAt: now,
+	};
+	return _healthCache;
 }
 
 export function getGemmaMode(): GemmaMode {
-	return _gemmaAvailable ? "gemma-local" : "demo-offline";
+	return _healthCache?.modelLoaded ? "gemma-local" : "demo-offline";
+}
+
+export function isCpuInference(): boolean {
+	return _healthCache?.device === "cpu";
 }
 
 // ─── Analyze Lab Results ─────────────────────────────────────────────────────
@@ -138,12 +154,160 @@ export async function analyzeLabResults(opts: {
 
 // ─── Chat with Gemma ─────────────────────────────────────────────────────────
 
+const MEDICAL_KEYWORDS_RE =
+	/fever|pain|painful|aching|aches?|hurts?|hurt|head|headache|migraine|cough|symptom|vomit|diarr|chill|nausea|dizz|weak|tired|breath|chest|stomach|malaria|typhoid|urin|bleed|swell|rash|sick|ill|unwell|sore|cramp|infection|anemia|diabet|pressure|body\s*pain|throat|ear|eye/i;
+
+/** Detect symptom descriptions even when phrasing is informal ("my head is aching"). */
+function hasMedicalIntent(text: string): boolean {
+	const lower = text.toLowerCase();
+	if (MEDICAL_KEYWORDS_RE.test(lower)) return true;
+	if (
+		/\b(head|stomach|chest|back|throat|ear|eyes?|neck|joint|muscle)\b/.test(lower) &&
+		/\b(ach|pain|hurt|sore|swell|bleed|stiff|numb|tingl)/.test(lower)
+	) {
+		return true;
+	}
+	return false;
+}
+
+const SMALL_TALK_RESPONSES: Record<
+	GemmaLanguage,
+	{ greeting: string; wellbeingReply: string; wellbeingQuestion: string; redirect: string }
+> = {
+	english: {
+		greeting:
+			"Hello! I'm your Genetiq Health Assistant. Describe your symptoms or tap a quick suggestion below — that helps me give you a faster, more useful answer.",
+		wellbeingReply:
+			"That's great to hear! I'm doing well too — thanks for asking. Whenever you're ready, tell me how you're feeling or what's bothering you (fever, headache, stomach pain, etc.), or tap a quick suggestion below.",
+		wellbeingQuestion:
+			"I'm here and ready to help! How are you feeling health-wise today? Any symptoms like fever, cough, or body pain I can help with?",
+		redirect:
+			"I'm here for health questions! Tell me what's bothering you — for example fever, headache, stomach pain, or cough — or tap one of the quick suggestions for a faster answer.",
+	},
+	twi: {
+		greeting:
+			"Maakye/Maaha/Maadi! Me ne wo Gemma Ahoɔden Boafo. Kyerɛ me wo yare anaa kɔfa nhwɛsoɔ a ɛwɔ ase ha — ɛbɛma me ama wo ntɛm.",
+		wellbeingReply:
+			"Ɛyɛ anigyeɛ sɛ wote yie! Me nso mete yie — meda wo ase. Sɛ wobɛyɛ a, kyerɛ me sɛnea wote anaa deɛ ɛhaw wo, anaa paw nhwɛsoɔ bi wɔ ase ha.",
+		wellbeingQuestion:
+			"Mewɔ ha na mɛboa wo! Ɛte sɛn nnɛ wɔ wo ahoɔden ho? Wo wɔ yare bi a metumi aboa wo?",
+		redirect:
+			"Mewɔ ha ma ahoɔden ho asɛm! Kyerɛ me deɛ ɛhaw wo — te sɛ ayerɛ, ti yare, yafunu mu yare — anaa paw nhwɛsoɔ bi wɔ ase ha.",
+	},
+	ga: {
+		greeting:
+			"Ojekoo! Mi ji Gemma Hewale Yelikɛlɔ. Kɛɛ mi bo ni hewale shishi aloo fĩi nhwɛsoɔ ko wɔ shishi nɛɛ.",
+		wellbeingReply:
+			"Ehi kpakpa! Mi nɔ yɛɛ ehi tamɔ — akpe. Kɛji wobɛyɛ a, kɛɛ mi bo ni hewale shishi aloo fĩi nhwɛsoɔ ko.",
+		wellbeingQuestion:
+			"Mi wɔ he ni mɛbaaye abua bo! Ɛte sɛn wɔ wo hewale he nnɛ?",
+		redirect:
+			"Mi wɔ he ma hewale asɛm! Kɛɛ mi bo ni ɛhaw wo aloo fĩi nhwɛsoɔ ko.",
+	},
+	ewe: {
+		greeting:
+			"Woezɔ! Nye nye Gemma Lãmesẽ Boafo. Kpɔ wò lãmesẽ ŋu alo tia nɔnɔme bubu le ete.",
+		wellbeingReply:
+			"Enyo ŋutɔ! Nye hã le dɔwɔwɔ me. Ne èdi be yee la, kpɔ wò lãmesẽ ŋu alo tia nɔnɔme bubu le ete.",
+		wellbeingQuestion:
+			"Nye le afi be nàte ŋu! Aleke nèlãmesẽ le egbe?",
+		redirect:
+			"Nye le afi ma lãmesẽ ŋutɔ! Kpɔ nusi ɖe wò ŋu alo tia nɔnɔme bubu le ete.",
+	},
+	fante: {
+		greeting:
+			"Maakye/Maaha! Me ne wo Gemma Ahoɔden Boafo. Kyerɛ me wo yare anaa paw nhwɛsoɔ bi wɔ ase ha.",
+		wellbeingReply:
+			"Ɛyɛ anigye sɛ wote yie! Me nso mete yie. Sɛ wobɛyɛ a, kyerɛ me sɛnea wote anaa paw nhwɛsoɔ bi wɔ ase ha.",
+		wellbeingQuestion:
+			"Mewɔ ha na mɛboa wo! Ɛte sɛn nnɛ wɔ wo ahoɔden ho?",
+		redirect:
+			"Mewɔ ha ma ahoɔden ho asɛm! Kyerɛ me deɛ ɛhaw wo, anaa paw nhwɛsoɔ bi wɔ ase ha.",
+	},
+};
+
+function getSmallTalkResponse(
+	message: string,
+	language: GemmaLanguage,
+	recentUserMessages: string[] = [],
+): GemmaChatResult | null {
+	const text = message.trim();
+	const lower = text.toLowerCase();
+	const copy = SMALL_TALK_RESPONSES[language] || SMALL_TALK_RESPONSES.english;
+
+	// Symptom messages must go to triage, not small-talk redirect
+	if (hasMedicalIntent(text)) return null;
+
+	const toResult = (msg: string): GemmaChatResult => ({
+		message: msg,
+		bodySystem: "total",
+		urgency: "Green",
+		condition: "Casual conversation",
+		system: "General",
+	});
+
+	const isGreeting = (s: string) =>
+		/^(hi|hello|hey|hola|greetings|good\s*(morning|afternoon|evening)|howdy|sup|yo)[\s!?.，]*$/i.test(
+			s.trim(),
+		);
+
+	if (isGreeting(text)) {
+		const saidHiBefore = recentUserMessages.some(isGreeting);
+		if (saidHiBefore) {
+			return toResult(
+				"I'm still here! Tap a quick suggestion below (like Malaria symptoms) or tell me what's bothering you — fever, headache, stomach pain, etc.",
+			);
+		}
+		return toResult(copy.greeting);
+	}
+
+	if (/how\s*(are|r)\s*you|how\s*you\s*doing|how'?s\s*it\s*going/i.test(lower)) {
+		return toResult(copy.wellbeingQuestion);
+	}
+
+	if (
+		/(i'?m|i am|im)\s*(good|fine|well|ok|okay|great|doing\s*well)/i.test(lower) ||
+		/(yourself|and\s*you|what\s*about\s*you|u\?|you\?)/i.test(lower) ||
+		/^good\s*(thanks|thank\s*you)?[\s!?.]*$/i.test(lower)
+	) {
+		return toResult(copy.wellbeingReply);
+	}
+
+	if (/^(thanks|thank\s*you|thx|cheers)[\s!?.，]*$/i.test(lower)) {
+		return toResult(copy.wellbeingReply);
+	}
+
+	if (text.length < 120) {
+		return toResult(copy.redirect);
+	}
+
+	return null;
+}
+
 export async function chatWithGemma(opts: {
 	message: string;
 	language: GemmaLanguage;
 	imageBase64?: string;
+	recentUserMessages?: string[];
 }): Promise<GemmaChatResult> {
+	// Instant replies for greetings & casual chat (works online and offline)
+	if (!opts.imageBase64) {
+		const smallTalk = getSmallTalkResponse(
+			opts.message,
+			opts.language,
+			opts.recentUserMessages,
+		);
+		if (smallTalk) return smallTalk;
+	}
+
 	const health = await checkGemmaHealth();
+	const onGpu = /cuda/i.test(health.device);
+
+	// Without a GPU, Gemma takes minutes — use instant triage for any symptom message
+	if (!opts.imageBase64 && hasMedicalIntent(opts.message) && !onGpu) {
+		return simulateChat(opts);
+	}
+
 	if (health.available && health.modelLoaded) {
 		try {
 			const res = await fetch(`${GEMMA_BASE_URL}/api/gemma/chat`, {
@@ -387,7 +551,7 @@ function simulateLabAnalysis(opts: {
 		return {
 			healthScore: 0,
 			bodySystem: "total",
-			summary: "⚠️ DEMO NOTICE: You uploaded a custom image. In full GPU mode, Google Gemma 4 Multimodal Vision reads this image to extract health data. Because the local Gemma 4 server is currently not running, we cannot analyze custom images.\n\nTo test the interface, please go back and select one of the pre-loaded 'Ghanaian Medical Case Presets' (such as Malaria RDT Strip, CBC Severe Anemia, or Typhoid Report) which work fully offline.",
+			summary: "⚠️ IMAGE ANALYSIS UNAVAILABLE: The currently loaded AI model (Gemma 2 2B) is text-only and cannot read lab images directly. To analyze custom lab photos, a multimodal vision model (like Gemma 4) with GPU support is required.\n\nTo test the analysis interface now, please go back and select one of the pre-loaded 'Ghanaian Medical Case Presets' (such as Malaria RDT Strip, CBC Severe Anemia, or Typhoid Report) — these use text-based prompts and work with the current model.",
 			findings: [],
 			recommendations: [
 				{
@@ -396,9 +560,9 @@ function simulateLabAnalysis(opts: {
 					body: "Click 'Upload more results' below and select one of the preloaded clinical cases to preview the analysis interface immediately."
 				},
 				{
-					icon: "💻",
-					title: "Start the Genetiq Local AI Service",
-					body: "Make sure the Genetiq Local AI Helper application is started on your computer. Once the helper is running, this page will automatically process and read any lab photo you upload."
+					icon: "🖥️",
+					title: "For Custom Image Analysis",
+					body: "Custom image analysis requires a multimodal vision model (e.g., Gemma 4 with GPU). The current text-only model can analyze preset lab data and provide medical chat assistance."
 				}
 			]
 		};
@@ -420,7 +584,28 @@ function simulateChat(opts: {
 	message: string;
 	language: GemmaLanguage;
 }): GemmaChatResult {
+	const smallTalk = getSmallTalkResponse(opts.message, opts.language);
+	if (smallTalk) return smallTalk;
+
 	const lower = opts.message.toLowerCase();
+
+	// Headache / head pain
+	if (
+		lower.includes("headache") ||
+		lower.includes("migraine") ||
+		/\bhead\b.*(ach|pain|hurt)/i.test(lower) ||
+		/(ach|pain|hurt).*\bhead\b/i.test(lower)
+	) {
+		const withFever = lower.includes("fever") || lower.includes("chill");
+		return {
+			message:
+				"Head pain can have several causes. In Ghana, always consider malaria if headache comes with fever or chills — get a Rapid Diagnostic Test (RDT) at your nearest pharmacy or CHPS compound today.\n\nFor now:\n• Drink plenty of water — dehydration is a common cause\n• Rest in a cool, quiet place away from bright light\n• Take Paracetamol as directed on the packet (not Aspirin unless a doctor advises it)\n• Avoid long hours in direct sun without a hat\n\n⚠️ Go to hospital immediately if: sudden severe 'worst ever' headache, stiff neck, confusion, repeated vomiting, vision changes, weakness on one side, or headache with high fever that won't come down.",
+			bodySystem: withFever ? "Hematology" : "total",
+			urgency: withFever ? "Yellow" : "Green",
+			condition: withFever ? "Headache with fever — rule out malaria" : "Headache",
+			system: withFever ? "Hematology / Blood" : "General",
+		};
+	}
 
 	// Malaria keywords
 	if (lower.includes("malaria") || lower.includes("fever") && (lower.includes("chill") || lower.includes("headache") || lower.includes("shake"))) {
@@ -488,14 +673,26 @@ function simulateChat(opts: {
 		};
 	}
 
-	// Default response
-	return {
-		message: `Thank you for describing your symptoms. Based on what you've told me, I recommend visiting your nearest CHPS compound or health facility for a proper examination.\n\nIn the meantime:\n• Rest and stay hydrated — drink plenty of water\n• Monitor your temperature\n• Take Paracetamol if you have pain or fever\n• Avoid strenuous activity\n\nIf your symptoms worsen or you develop any emergency signs (difficulty breathing, severe pain, high fever above 39°C, confusion, or bleeding), please go to the nearest hospital immediately or call Ghana Ambulance Service at 112 or 193.\n\nRemember: I am an AI assistant, not a doctor. My advice is for guidance only and does not replace professional medical diagnosis.`,
-		bodySystem: "total",
-		urgency: "Green",
-		condition: "General Health Inquiry",
-		system: "General",
-	};
+	// Default — only when message seems health-related but didn't match a pattern
+	if (hasMedicalIntent(lower)) {
+		return {
+			message: `Thank you for describing your symptoms. Based on what you've told me, I recommend visiting your nearest CHPS compound or health facility for a proper examination.\n\nIn the meantime:\n• Rest and stay hydrated — drink plenty of water\n• Monitor your temperature\n• Take Paracetamol if you have pain or fever\n• Avoid strenuous activity\n\nIf your symptoms worsen or you develop any emergency signs (difficulty breathing, severe pain, high fever above 39°C, confusion, or bleeding), please go to the nearest hospital immediately or call Ghana Ambulance Service at 112 or 193.\n\nRemember: I am an AI assistant, not a doctor. My advice is for guidance only and does not replace professional medical diagnosis.`,
+			bodySystem: "total",
+			urgency: "Green",
+			condition: "General Health Inquiry",
+			system: "General",
+		};
+	}
+
+	return (
+		getSmallTalkResponse(opts.message, opts.language) ?? {
+			message: SMALL_TALK_RESPONSES[opts.language]?.redirect ?? SMALL_TALK_RESPONSES.english.redirect,
+			bodySystem: "total",
+			urgency: "Green",
+			condition: "Awaiting symptoms",
+			system: "General",
+		}
+	);
 }
 
 // ─── Ghanaian Remedy Data (for AIAssistant portal) ───────────────────────────

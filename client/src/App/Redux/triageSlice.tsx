@@ -43,7 +43,7 @@ const initialState: TriageState = {
 		{
 			id: "msg-initial",
 			role: "bot",
-			text: "Hello! I am your AI health assistant. Please describe your symptoms. Remember: I am an AI, not a doctor. My assessments are not medical diagnoses.",
+			text: "Hello! I'm your Genetiq Health Assistant. Describe your symptoms or tap a quick suggestion below — I'll guide you right away.",
 		},
 	],
 	isAnalyzing: false,
@@ -81,7 +81,7 @@ const triageSlice = createSlice({
 				{
 					id: "msg-initial",
 					role: "bot",
-					text: "Hello! I am your AI health assistant. Please describe your symptoms. Remember: I am an AI, not a doctor. My assessments are not medical diagnoses.",
+					text: "Hello! I'm your Genetiq Health Assistant. Describe your symptoms or tap a quick suggestion below — I'll guide you right away.",
 				},
 			];
 		},

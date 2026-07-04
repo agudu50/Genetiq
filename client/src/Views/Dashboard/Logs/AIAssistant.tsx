@@ -418,10 +418,11 @@ export default function AIAssistant() {
 
 // ─── Tab 1: Chat ──────────────────────────────────────────────────────────────
 
-function ChatSection({ language }: { language: GemmaLanguage; gemmaOnline: boolean }) {
+function ChatSection({ language, gemmaOnline }: { language: GemmaLanguage; gemmaOnline: boolean }) {
 	const [messages, setMessages] = useState<ChatMsg[]>([]);
 	const [input, setInput] = useState("");
 	const [loading, setLoading] = useState(false);
+	const [waitSecs, setWaitSecs] = useState(0);
 	const chatEnd = useRef<HTMLDivElement>(null);
 
 	// Dynamically translate welcome message on language change or on mount
@@ -445,6 +446,15 @@ function ChatSection({ language }: { language: GemmaLanguage; gemmaOnline: boole
 		chatEnd.current?.scrollIntoView({ behavior: "smooth" });
 	}, [messages, loading]);
 
+	useEffect(() => {
+		if (!loading) {
+			setWaitSecs(0);
+			return;
+		}
+		const id = window.setInterval(() => setWaitSecs((s) => s + 1), 1000);
+		return () => clearInterval(id);
+	}, [loading]);
+
 	const quickChips = [
 		LOCALIZED_TEXTS[language].quick_chips_malaria,
 		LOCALIZED_TEXTS[language].quick_chips_typhoid,
@@ -460,11 +470,15 @@ function ChatSection({ language }: { language: GemmaLanguage; gemmaOnline: boole
 		setInput("");
 
 		const userMsg: ChatMsg = { id: `u-${Date.now()}`, role: "user", text: msg };
+		const recentUserMessages = messages
+			.filter((m) => m.role === "user")
+			.map((m) => m.text)
+			.slice(-5);
 		setMessages((prev) => [...prev, userMsg]);
 		setLoading(true);
 
 		try {
-			const result = await chatWithGemma({ message: msg, language });
+			const result = await chatWithGemma({ message: msg, language, recentUserMessages });
 			setMessages((prev) => [
 				...prev,
 				{
@@ -520,6 +534,13 @@ function ChatSection({ language }: { language: GemmaLanguage; gemmaOnline: boole
 							<div className={styles.typingDots}>
 								<span /><span /><span />
 							</div>
+							<p className={styles.waitHint}>
+								{gemmaOnline
+									? waitSecs < 8
+										? "Gemma is thinking…"
+										: `Gemma is thinking… ${waitSecs}s (local CPU — symptom questions can take 1–3 min)`
+									: "Thinking…"}
+							</p>
 						</div>
 					</div>
 				)}
