@@ -257,7 +257,7 @@ export async function analyzeLabResults(opts: {
 // ─── Chat with Gemma ─────────────────────────────────────────────────────────
 
 const MEDICAL_KEYWORDS_RE =
-	/fever|pain|painful|aching|aches?|hurts?|hurt|head|headache|migraine|cough|symptom|vomit|diarr|chill|nausea|dizz|weak|tired|breath|chest|stomach|malaria|typhoid|urin|bleed|swell|rash|sick|ill|unwell|sore|cramp|infection|anemia|diabet|pressure|body\s*pain|throat|ear|eye|appetite|weight\s*loss|can'?t\s*eat|not\s*eating|constipat|bloat|fatigue|insomnia|sleep|palpit|swollen|jaundice|dehydrat/i;
+	/fever|pain|painful|aching|aches?|hurts?|hurt|head|headache|migraine|cough|symptom|vomit|diarr|chill|nausea|dizz|weak|tired|breath|chest|stomach|malaria|typhoid|urin|bleed|swell|rash|sick|ill|unwell|sore|cramp|infection|anemia|diabet|pressure|body\s*pain|throat|ear|eye|appetite|weight\s*loss|can'?t\s*eat|not\s*eating|constipat|bloat|fatigue|insomnia|sleep|palpit|swollen|jaundice|dehydrat|defecat|bowel|stool|feces|faeces|poop|toilet|lavatory|loose\s*stool/i;
 
 /** Detect symptom descriptions even when phrasing is informal ("my head is aching"). */
 function hasMedicalIntent(text: string): boolean {
@@ -289,7 +289,7 @@ function hasMedicalIntent(text: string): boolean {
 		/\b(i have|i've|i am|im experiencing|suffering from|what might|what could|why do i|feel(ing)?)\b/.test(
 			lower,
 		) &&
-		/\b(pain|fever|ache|symptom|problem|issue|wrong|sick|unwell|tired|weak|dizzy|nausea|vomit|cough|head|stomach|appetite|weight|sleep|breath|swell|rash|infection|eating|eat)\b/.test(
+		/\b(pain|fever|ache|symptom|problem|issues?|wrong|sick|unwell|tired|weak|dizzy|nausea|vomit|cough|head|stomach|appetite|weight|sleep|breath|swell|rash|infection|eating|eat|bowel|stool|diarr)\b/.test(
 			lower,
 		)
 	) {
@@ -933,6 +933,21 @@ function simulateChat(opts: {
 			urgency: "Red",
 			condition: "Suspected Malaria",
 			system: "Hematology / Blood",
+		};
+	}
+
+	// Diarrhea / frequent bowel movements
+	if (
+		/\b(diarr|defecat|bowel|stool|feces|faeces|poop|toilet)\b/.test(lower) ||
+		/\b(too much|frequent|often)\b.*\b(bowel|stool|toilet|defecat)/.test(lower)
+	) {
+		return {
+			message:
+				"Frequent or loose bowel movements (diarrhea) are often caused by infections, food poisoning, dehydration, or stomach bugs. In Ghana, typhoid, cholera risk during outbreaks, and food-borne illness are important to consider.\n\nTry these steps now:\n• Drink ORS (Oral Rehydration Salts) or coconut water — take small sips often\n• Eat light foods: plain Koko, boiled rice, or mashed plantain\n• Wash hands with soap after using the toilet\n• Avoid street food, raw vegetables, and unboiled water for now\n\nPlease visit your nearest CHPS compound or clinic if:\n• Diarrhea lasts more than 2–3 days\n• You have fever, blood in stool, or severe stomach pain\n• You cannot keep fluids down or feel very weak or dizzy\n\n⚠️ Go to hospital urgently if you see bloody stool, signs of severe dehydration (very dry mouth, little urine, confusion), or cannot stand.",
+			bodySystem: "Gastroenterolgy",
+			urgency: "Yellow",
+			condition: "Frequent bowel movements / Diarrhea",
+			system: "Gastrointestinal / Digestive",
 		};
 	}
 

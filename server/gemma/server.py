@@ -159,7 +159,8 @@ MEDICAL_KEYWORDS_RE = re.compile(
     r"vomit|diarr|chill|nausea|dizz|weak|tired|breath|chest|stomach|malaria|typhoid|urin|"
     r"bleed|swell|rash|sick|ill|unwell|sore|cramp|infection|anemia|diabet|pressure|"
     r"body\s*pain|throat|ear|eye|appetite|weight\s*loss|can'?t\s*eat|not\s*eating|"
-    r"constipat|bloat|fatigue|insomnia|sleep|palpit|swollen|jaundice|dehydrat",
+    r"constipat|bloat|fatigue|insomnia|sleep|palpit|swollen|jaundice|dehydrat|"
+    r"defecat|bowel|stool|feces|faeces|poop|toilet|lavatory|loose\s*stool",
     re.IGNORECASE,
 )
 
@@ -174,9 +175,9 @@ HEALTH_QUESTION_RE = re.compile(
     re.IGNORECASE,
 )
 HEALTH_TOPIC_RE = re.compile(
-    r"\b(pain|fever|ache|symptom|problem|issue|wrong|sick|unwell|tired|weak|dizzy|"
+    r"\b(pain|fever|ache|symptom|problem|issues?|wrong|sick|unwell|tired|weak|dizzy|"
     r"nausea|vomit|cough|head|stomach|appetite|weight|sleep|breath|swell|rash|"
-    r"infection|eating|eat)\b",
+    r"infection|eating|eat|bowel|stool|diarr)\b",
     re.IGNORECASE,
 )
 
