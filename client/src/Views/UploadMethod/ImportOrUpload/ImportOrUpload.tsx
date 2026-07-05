@@ -8,7 +8,7 @@ import type { LabFinding, Recommendation } from "@/App/Redux/uploadHistorySlice"
 import { paths } from "@/App/Routes/Paths";
 import {
 	Upload, FileText, ShieldCheck, Zap, ChevronRight,
-	X, CheckCircle, ArrowLeft, Loader2, Sparkles, ChevronDown,
+	X, CheckCircle, ArrowLeft, Loader2, Sparkles,
 	Wifi, WifiOff, Brain, Stethoscope, User, Droplets,
 	Ruler, Scale, Activity, Clock, Check, Lock,
 } from "lucide-react";
@@ -218,7 +218,7 @@ const ImportOrUpload = () => {
 				patientAge: info.age || "35",
 				patientGender: info.gender || "unknown",
 				language: selectedLanguage,
-				onProgress: (phase, message, pct) => {
+				onProgress: (_phase, message, pct) => {
 					setAnalyzeStatus({ message, pct: pct ?? 0 });
 				},
 			});

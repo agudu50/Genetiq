@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
 import { generateActionPlan } from "@/App/Services/GemmaService";
 import { useLanguage } from "@/App/i18n/LanguageContext";
-import type { PlanSection } from "./planMockData";
+import type { PlanSection } from "../helpers/planMockData";
 import {
 	buildActionPlanContextHash,
 	buildActionPlanFromHealth,

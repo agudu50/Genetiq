@@ -5,7 +5,7 @@ import { Tabs } from "./Components/Tabs/Tabs";
 import { PlanTable } from "./Components/PlanTable/PlanTable";
 import { PlanAggregate } from "./Components/PlanAggregate/PlanAggregate";
 import { PlanItemDetailModal } from "./Components/PlanItemDetailModal/PlanItemDetailModal";
-import { PlanSection } from "./helpers/planMockData";
+import { PlanSection, PlanItem } from "./helpers/planMockData";
 import { PlanItemSelection } from "./helpers/planItemHelpers";
 import { useActionPlan } from "./hooks/useActionPlan";
 import { useLanguage } from "@/App/i18n/LanguageContext";
@@ -43,7 +43,7 @@ export const PlanWidget = ({
 		return planData
 			.filter((section) => section.title !== "Action Plan")
 			.flatMap((section) =>
-				section.data.map((item) => ({
+				section.data.map((item: PlanItem) => ({
 					...item,
 					group: section.title,
 				})),

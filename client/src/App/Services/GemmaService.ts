@@ -11,7 +11,7 @@
  */
 
 import { sanitizeAiText } from "@/App/Utils/sanitizeAiText";
-import { extractLabTextFromImage, extractLabTextFromImages, isUsableLabText } from "@/App/Utils/extractLabText";
+import { extractLabTextFromImages, isUsableLabText } from "@/App/Utils/extractLabText";
 import { parseAndBuildFallback } from "@/App/Utils/parseLabOcrText";
 import { inferPlanIconId } from "@/Features/Dashboard/PlanWidget/helpers/planItemIcons";
 import type { PlanSection } from "@/Features/Dashboard/PlanWidget/helpers/planMockData";

@@ -176,7 +176,7 @@ const Config = () => {
 									key={link.title}
 									href={link.href}
 									className={styles.footerLinkCard}
-									{...(link.external
+									{...("external" in link && link.external
 										? { target: "_blank", rel: "noopener noreferrer" }
 										: {})}
 								>
