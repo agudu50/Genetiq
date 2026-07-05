@@ -138,6 +138,7 @@ from prompts import (
     CHAT_SYSTEM_PROMPT_SHORT,
     GREETING_RESPONSES,
     LAB_ANALYSIS_SYSTEM_PROMPT,
+    LAB_TEXT_ANALYSIS_SYSTEM_PROMPT,
     PRESET_CASES,
     REDIRECT_RESPONSES,
     TRANSLATION_PROMPT,
@@ -248,10 +249,20 @@ def estimate_chat_max_tokens(message: str) -> int:
 class AnalyzeRequest(BaseModel):
     image_base64: Optional[str] = None  # base64 encoded image
     image_url: Optional[str] = None  # OR a URL to an image
+    lab_text: Optional[str] = None  # OCR or pasted lab report text
     preset_id: Optional[str] = None  # OR a preset case ID
     patient_age: str = ""
     patient_gender: str = ""
     language: str = "english"  # english, twi, ga, ewe, fante
+
+
+def processor_supports_vision() -> bool:
+    """True when the loaded processor can handle image inputs."""
+    if processor is None:
+        return False
+    from transformers import PreTrainedTokenizerBase
+
+    return not isinstance(processor, PreTrainedTokenizerBase)
 
 
 class ChatRequest(BaseModel):
@@ -309,6 +320,7 @@ async def health_check():
         "model_loaded": model is not None,
         "model_id": MODEL_ID,
         "device": str(next(model.parameters()).device) if model else "none",
+        "supports_vision": processor_supports_vision(),
     }
 
 
@@ -316,20 +328,21 @@ async def health_check():
 async def analyze_lab_results(req: AnalyzeRequest):
     """Analyze lab results using Gemma 4 vision or preset prompts."""
 
-    # ── Guard: text-only model cannot process images ──────────────────────
-    # If the user uploaded a custom image (not a preset), and the loaded model
-    # is a text-only CausalLM (not multimodal), reject immediately so the
-    # frontend falls back to the offline simulator instead of hanging.
-    from transformers import PreTrainedTokenizerBase
-    is_text_only = isinstance(processor, PreTrainedTokenizerBase) if processor else True
-    if is_text_only and (req.image_base64 or req.image_url) and not req.preset_id:
+    is_text_only = not processor_supports_vision()
+    if (
+        is_text_only
+        and (req.image_base64 or req.image_url)
+        and not req.preset_id
+        and not req.lab_text
+    ):
         raise HTTPException(
             status_code=422,
-            detail="Current model is text-only and cannot analyze images. Use a preset case or upgrade to a multimodal model.",
+            detail="Current model is text-only. Send lab_text (OCR or pasted report text) or use a preset case.",
         )
 
     # Build the content array for the user message
     content = []
+    system_prompt = LAB_ANALYSIS_SYSTEM_PROMPT
 
     if req.preset_id and req.preset_id in PRESET_CASES:
         # Use a preset case (text-only prompt simulating lab data)
@@ -339,6 +352,19 @@ async def analyze_lab_results(req: AnalyzeRequest):
             gender=req.patient_gender or "unknown",
         )
         content.append({"type": "text", "text": prompt_text})
+
+    elif req.lab_text and req.lab_text.strip():
+        system_prompt = LAB_TEXT_ANALYSIS_SYSTEM_PROMPT
+        age = req.patient_age or "35"
+        gender = req.patient_gender or "unknown"
+        content.append({
+            "type": "text",
+            "text": (
+                f"Analyze this lab result text for a {age} year old {gender} patient in Ghana.\n"
+                f"The text was extracted from a photo (OCR) and may contain minor errors.\n\n"
+                f"--- LAB REPORT TEXT ---\n{req.lab_text.strip()}\n--- END ---"
+            ),
+        })
 
     elif req.image_base64:
         # Decode base64 image and send as multimodal input
@@ -370,11 +396,11 @@ async def analyze_lab_results(req: AnalyzeRequest):
     else:
         raise HTTPException(
             status_code=400,
-            detail="Provide either preset_id, image_base64, or image_url",
+            detail="Provide preset_id, lab_text, image_base64, or image_url",
         )
 
     messages = [
-        {"role": "system", "content": LAB_ANALYSIS_SYSTEM_PROMPT},
+        {"role": "system", "content": system_prompt},
         {"role": "user", "content": content},
     ]
 

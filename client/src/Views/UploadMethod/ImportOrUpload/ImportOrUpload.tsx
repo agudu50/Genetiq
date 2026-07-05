@@ -71,6 +71,8 @@ const ImportOrUpload = () => {
 	const [selectedLanguage, setSelectedLanguage] = useState<GemmaLanguage>("english");
 	const [gemmaOnline, setGemmaOnline] = useState(false);
 	const [analysisResult, setAnalysisResult] = useState<GemmaAnalysisResult | null>(null);
+	const [labTextPaste, setLabTextPaste] = useState("");
+	const [analyzeStatus, setAnalyzeStatus] = useState({ message: "", pct: 0 });
 
 	const user = useSelector((state: RootState) => state.user);
 
@@ -189,31 +191,36 @@ const ImportOrUpload = () => {
 
 	const handlePresetClick = (presetId: string) => {
 		setSelectedPreset(presetId === selectedPreset ? null : presetId);
-		setFiles([]); // Clear files if preset selected
+		setFiles([]);
+		setLabTextPaste("");
 	};
 
 	// ── Step 2: Analyze with Gemma ────────────────────────────────────────────
 
 	const handleAnalyze = async () => {
 		setStep("analyzing");
+		setAnalyzeStatus({ message: "Preparing your lab data…", pct: 0 });
 		dispatch(updateUserInfo({ ...info, uploadStatus: "processing" }));
 
 		try {
-			// Convert first uploaded file to base64 if present
-			let imageBase64: string | undefined;
-			if (files.length > 0 && !selectedPreset) {
-				const file = files[0].file;
-				if (file.type.startsWith("image/")) {
-					imageBase64 = await fileToBase64(file);
+			const imageFiles = files.filter((f) => f.file.type.startsWith("image/"));
+			const imageBase64List: string[] = [];
+			if (imageFiles.length > 0 && !selectedPreset) {
+				for (const { file } of imageFiles) {
+					imageBase64List.push(await fileToBase64(file));
 				}
 			}
 
 			const result = await analyzeLabResults({
-				imageBase64,
+				imageBase64List: imageBase64List.length ? imageBase64List : undefined,
+				labText: labTextPaste.trim() || undefined,
 				presetId: selectedPreset || undefined,
 				patientAge: info.age || "35",
 				patientGender: info.gender || "unknown",
 				language: selectedLanguage,
+				onProgress: (phase, message, pct) => {
+					setAnalyzeStatus({ message, pct: pct ?? 0 });
+				},
 			});
 
 			setAnalysisResult(result);
@@ -271,7 +278,8 @@ const ImportOrUpload = () => {
 		});
 
 	const allDone   = files.length > 0 && files.every((f) => f.done);
-	const canAnalyze = allDone || !!selectedPreset;
+	const hasLabText = labTextPaste.trim().length >= 12;
+	const canAnalyze = allDone || !!selectedPreset || hasLabText;
 
 	// Helper to translate status labels
 	const t = (text: string) => getTranslation(text, selectedLanguage);
@@ -286,20 +294,28 @@ const ImportOrUpload = () => {
 				<div className={styles.overlay}>
 					<div className={styles.overlayCard}>
 						<div className={styles.spinnerRing} />
-						<h2>
-							{gemmaOnline ? "Gemma 4 is analysing your results…" : "Analysing your results…"}
-						</h2>
+						<h2>{analyzeStatus.message || "Analysing your results…"}</h2>
 						<p>
-							{gemmaOnline
-								? "Gemma 4 AI is processing your lab data with multimodal vision."
-								: "Our AI is reading every value and building your personalised plan."
+							{analyzeStatus.message.includes("Reading text")
+								? "Extracting values from your photo, then AI will interpret them."
+								: gemmaOnline
+									? "Gemma AI is interpreting your lab values and building your plan."
+									: "Building your personalised health insights."
 							}
 						</p>
+						{analyzeStatus.message.includes("Reading text") && analyzeStatus.pct > 0 && (
+							<div className={styles.analyzeProgressTrack}>
+								<div
+									className={styles.analyzeProgressFill}
+									style={{ width: `${analyzeStatus.pct}%` }}
+								/>
+							</div>
+						)}
 						<div className={styles.gemmaStatusBadge}>
 							{gemmaOnline ? (
-								<><Wifi size={12} /> Powered by Gemma 4 Local</>
+								<><Wifi size={12} /> Gemma AI connected</>
 							) : (
-								<><Brain size={12} /> Smart Offline Mode</>
+								<><Brain size={12} /> Smart offline mode</>
 							)}
 						</div>
 					</div>
@@ -324,80 +340,66 @@ const ImportOrUpload = () => {
 
 								<div className={styles.unavailableContent}>
 									<div className={styles.unavailableBadge}>
-										<WifiOff size={12} /> Vision Model Required
+										<WifiOff size={12} /> Couldn't complete analysis
 									</div>
-									<h1>Image Analysis Not Available</h1>
-									<p>
-										The current AI model <strong>(Gemma 2 2B)</strong> is text-only and cannot read lab images directly.
-										Custom image analysis requires a multimodal vision model with GPU support.
-									</p>
+									<h1>We couldn't read your lab report</h1>
+									<p>{analysisResult.summary}</p>
 								</div>
 							</div>
 
 							{/* What You Can Do */}
 							<div className={styles.section}>
 								<div className={styles.sectionHead}>
-									<h2 className={styles.sectionTitle}>What you can do instead</h2>
-									<p className={styles.sectionSub}>Two ways to use the analysis interface right now</p>
+									<h2 className={styles.sectionTitle}>Here's what to try</h2>
+									<p className={styles.sectionSub}>Pick any option below — each takes about a minute</p>
 								</div>
 
 								<div className={styles.unavailableActions}>
-									{/* Preset Option */}
-									<button
-										className={styles.unavailableActionCard}
-										onClick={() => {
-											setFiles([]);
-											setSelectedPreset(null);
-											setAnalysisResult(null);
-											setStep("upload");
-											window.scrollTo({ top: 0, behavior: "smooth" });
-										}}
-									>
-										<div className={styles.unavailableActionIcon} data-color="teal">
-											<Stethoscope size={22} />
-										</div>
-										<div className={styles.unavailableActionText}>
-											<span className={styles.unavailableActionLabel}>Recommended</span>
-											<h3>Try a Medical Case Preset</h3>
-											<p>Select a preloaded Ghanaian clinical case (Malaria, Anemia, Typhoid, or Urinalysis) to see the full analysis experience.</p>
-										</div>
-										<ChevronRight size={18} className={styles.unavailableActionArrow} />
-									</button>
-
-									{/* GPU Upgrade Option */}
-									<div className={styles.unavailableActionCard} data-disabled>
-										<div className={styles.unavailableActionIcon} data-color="purple">
-											<Sparkles size={22} />
-										</div>
-										<div className={styles.unavailableActionText}>
-											<span className={styles.unavailableActionLabel}>Coming Soon</span>
-											<h3>Upgrade to Gemma 4 Vision</h3>
-											<p>With a GPU-enabled setup, Gemma 4 can read and analyze any lab photo you upload using multimodal AI vision.</p>
-										</div>
-										<ChevronRight size={18} className={styles.unavailableActionArrow} />
-									</div>
+									{analysisResult.recommendations.map((rec) => (
+										<button
+											key={rec.title}
+											className={styles.unavailableActionCard}
+											onClick={() => {
+												setFiles([]);
+												setSelectedPreset(null);
+												setLabTextPaste("");
+												setAnalysisResult(null);
+												setStep("upload");
+												window.scrollTo({ top: 0, behavior: "smooth" });
+											}}
+										>
+											<div className={styles.unavailableActionIcon} data-color="teal">
+												<span>{rec.icon}</span>
+											</div>
+											<div className={styles.unavailableActionText}>
+												<h3>{rec.title}</h3>
+												<p>{rec.body}</p>
+											</div>
+											<ChevronRight size={18} className={styles.unavailableActionArrow} />
+										</button>
+									))}
 								</div>
 							</div>
 
-							{/* Capabilities Overview */}
+							{/* Capabilities Overview — trimmed; remove duplicate preset/gpu cards below */}
 							<div className={styles.unavailableCapabilities}>
-								<h3>Current model can still help with:</h3>
+								<h3>You can still use Genetiq for:</h3>
 								<div className={styles.unavailableCapGrid}>
 									<div className={styles.unavailableCapItem}>
 										<CheckCircle size={16} />
-										<span>Preset lab data analysis</span>
+										<span>Example lab reports</span>
 									</div>
 									<div className={styles.unavailableCapItem}>
 										<CheckCircle size={16} />
-										<span>Medical symptom chat</span>
+										<span>Health questions</span>
 									</div>
 									<div className={styles.unavailableCapItem}>
 										<CheckCircle size={16} />
-										<span>Health triage assessment</span>
+										<span>Symptom check</span>
 									</div>
 									<div className={styles.unavailableCapItem}>
 										<CheckCircle size={16} />
-										<span>Multi-language support</span>
+										<span>English, Twi, Ga &amp; more</span>
 									</div>
 								</div>
 							</div>
@@ -417,11 +419,12 @@ const ImportOrUpload = () => {
 								<button className={styles.primaryBtn} onClick={() => {
 									setFiles([]);
 									setSelectedPreset(null);
+									setLabTextPaste("");
 									setAnalysisResult(null);
 									setStep("upload");
 									window.scrollTo({ top: 0, behavior: "smooth" });
 								}}>
-									<Upload size={16} /> Try preset cases
+									<Upload size={16} /> Go back and try again
 								</button>
 								<button className={styles.outlineBtn} onClick={() => navigate(paths.dashboard.root)}>
 									<Sparkles size={16} /> {t("Go to my dashboard")}
@@ -1099,6 +1102,25 @@ const ImportOrUpload = () => {
 							</div>
 						)}
 
+						{/* Paste lab text (works with text-only AI) */}
+						<div className={styles.uploadLabTextSection}>
+							<label htmlFor="iou-lab-text" className={styles.uploadLabTextLabel}>
+								<FileText size={14} />
+								Paste lab results <span className={styles.optional}>(optional — use if photo is unclear)</span>
+							</label>
+							<textarea
+								id="iou-lab-text"
+								className={styles.uploadLabTextArea}
+								placeholder="Paste or type values from your report, e.g.&#10;Hemoglobin: 7.2 g/dL&#10;WBC: 6.2 x10⁹/L&#10;Malaria RDT: Positive"
+								value={labTextPaste}
+								onChange={(e) => {
+									setLabTextPaste(e.target.value);
+									if (e.target.value.trim()) setSelectedPreset(null);
+								}}
+								rows={4}
+							/>
+						</div>
+
 						{/* CTA */}
 						<div className={styles.uploadCtaRow}>
 							<button
@@ -1108,12 +1130,14 @@ const ImportOrUpload = () => {
 							>
 								<Sparkles size={16} />
 								{canAnalyze
-									? `Analyse with ${gemmaOnline ? "Gemma AI" : "AI"}`
+									? hasLabText && !allDone && !selectedPreset
+										? "Analyse pasted results"
+										: `Analyse with ${gemmaOnline ? "Gemma AI" : "AI"}`
 									: allDone
 										? "Analyse my results"
 										: files.length > 0
 											? "Uploading…"
-											: "Select a preset or upload files"
+											: "Select a preset, upload, or paste results"
 								}
 							</button>
 							<button className={styles.uploadSkipBtn} onClick={() => navigate(paths.dashboard.root)}>

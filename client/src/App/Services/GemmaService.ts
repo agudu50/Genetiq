@@ -11,6 +11,8 @@
  */
 
 import { sanitizeAiText } from "@/App/Utils/sanitizeAiText";
+import { extractLabTextFromImage, extractLabTextFromImages, isUsableLabText } from "@/App/Utils/extractLabText";
+import { parseAndBuildFallback } from "@/App/Utils/parseLabOcrText";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -67,6 +69,7 @@ let _healthCache: {
 	modelLoaded: boolean;
 	modelId: string;
 	device: string;
+	supportsVision: boolean;
 	checkedAt: number;
 } | null = null;
 const HEALTH_CHECK_INTERVAL = 30_000; // 30s
@@ -78,6 +81,7 @@ export async function checkGemmaHealth(): Promise<{
 	modelLoaded: boolean;
 	modelId: string;
 	device: string;
+	supportsVision: boolean;
 }> {
 	const now = Date.now();
 	if (_healthCache && now - _healthCache.checkedAt < HEALTH_CHECK_INTERVAL) {
@@ -95,6 +99,7 @@ export async function checkGemmaHealth(): Promise<{
 				modelLoaded: Boolean(data.model_loaded),
 				modelId: data.model_id ?? "",
 				device: data.device ?? "none",
+				supportsVision: Boolean(data.supports_vision),
 				checkedAt: now,
 			};
 			return _healthCache;
@@ -108,6 +113,7 @@ export async function checkGemmaHealth(): Promise<{
 		modelLoaded: false,
 		modelId: "",
 		device: "none",
+		supportsVision: false,
 		checkedAt: now,
 	};
 	return _healthCache;
@@ -123,39 +129,95 @@ export function isCpuInference(): boolean {
 
 // ─── Analyze Lab Results ─────────────────────────────────────────────────────
 
+export type AnalyzeProgressPhase = "ocr" | "ai";
+
+function isValidAnalysisResult(r: unknown): r is GemmaAnalysisResult {
+	if (!r || typeof r !== "object") return false;
+	const x = r as GemmaAnalysisResult;
+	return (
+		typeof x.healthScore === "number" &&
+		x.healthScore > 0 &&
+		Array.isArray(x.findings) &&
+		x.findings.length > 0 &&
+		typeof x.summary === "string"
+	);
+}
+
 export async function analyzeLabResults(opts: {
 	imageBase64?: string;
+	imageBase64List?: string[];
+	labText?: string;
 	presetId?: string;
 	patientAge: string;
 	patientGender: string;
 	language: GemmaLanguage;
+	onProgress?: (phase: AnalyzeProgressPhase, message: string, pct?: number) => void;
 }): Promise<GemmaAnalysisResult> {
-	// Try real Gemma server first
 	const health = await checkGemmaHealth();
+	let labText = opts.labText?.trim() || "";
+
+	const images =
+		opts.imageBase64List?.length
+			? opts.imageBase64List
+			: opts.imageBase64
+				? [opts.imageBase64]
+				: [];
+
+	// Text-only models: OCR uploaded photos before sending to the API
+	if (!labText && images.length > 0 && !opts.presetId && !health.supportsVision) {
+		opts.onProgress?.("ocr", images.length > 1 ? "Reading your lab photos…" : "Reading text from your lab photo…", 0);
+		try {
+			const extracted = await extractLabTextFromImages(images, (pct) =>
+				opts.onProgress?.("ocr", "Reading text from your lab photo…", pct),
+			);
+			if (isUsableLabText(extracted)) {
+				labText = extracted;
+			}
+		} catch (e) {
+			console.warn("OCR failed:", e);
+		}
+	}
+
+	const useVision = health.supportsVision && images.length > 0 && !opts.presetId && !labText;
+
 	if (health.available && health.modelLoaded) {
 		try {
+			opts.onProgress?.("ai", "Analysing your results…");
 			const res = await fetch(`${GEMMA_BASE_URL}/api/gemma/analyze`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
-					image_base64: opts.imageBase64,
+					image_base64: useVision ? images[0] : undefined,
+					lab_text: labText || undefined,
 					preset_id: opts.presetId,
 					patient_age: opts.patientAge,
 					patient_gender: opts.patientGender,
 					language: opts.language,
 				}),
-				signal: AbortSignal.timeout(300_000), // 5min — CPU inference runs ~1 tok/s
+				signal: AbortSignal.timeout(300_000),
 			});
 			if (res.ok) {
-				return (await res.json()) as GemmaAnalysisResult;
+				const data = await res.json();
+				if (isValidAnalysisResult(data)) {
+					return data as GemmaAnalysisResult;
+				}
+				console.warn("Gemma returned incomplete analysis, using local parser");
+			} else {
+				const errBody = await res.json().catch(() => null);
+				console.warn("Gemma analyze failed:", res.status, errBody);
 			}
 		} catch (e) {
-			console.warn("Gemma server error, falling back to simulator:", e);
+			console.warn("Gemma server error, falling back:", e);
 		}
 	}
 
-	// Fallback: offline simulator
-	return simulateLabAnalysis(opts);
+	// Local parser fallback — works even when AI server is offline
+	if (labText && !opts.presetId) {
+		const parsed = parseAndBuildFallback(labText, opts.patientAge, opts.patientGender);
+		if (parsed) return parsed;
+	}
+
+	return simulateLabAnalysis({ ...opts, labText });
 }
 
 // ─── Chat with Gemma ─────────────────────────────────────────────────────────
@@ -582,28 +644,64 @@ const PRESET_RESULTS: Record<string, GemmaAnalysisResult> = {
 
 function simulateLabAnalysis(opts: {
 	imageBase64?: string;
+	labText?: string;
 	presetId?: string;
 	language: GemmaLanguage;
 }): GemmaAnalysisResult {
-	// If the user uploaded their own image in offline fallback mode
-	if (opts.imageBase64 && !opts.presetId) {
+	// Custom upload without preset — OCR failed or server unavailable
+	if ((opts.imageBase64 || opts.labText) && !opts.presetId) {
+		if (opts.labText && isUsableLabText(opts.labText)) {
+			return {
+				healthScore: 0,
+				bodySystem: "total",
+				summary:
+					"We started reading your photo, but couldn't finish the analysis. " +
+					"This usually means the photo was unclear, or the AI helper isn't connected yet.",
+				findings: [],
+				recommendations: [
+					{
+						icon: "📸",
+						title: "Take a clearer photo",
+						body: "Use good lighting, hold your phone steady, and make sure all the text on your lab report is visible. Then upload again.",
+					},
+					{
+						icon: "📋",
+						title: "Type your results instead",
+						body: "On the upload page, paste or type the values from your report — for example: Hemoglobin 7.2 g/dL, WBC 6.2.",
+					},
+					{
+						icon: "🩺",
+						title: "Try a sample report",
+						body: "Pick one of our example cases (Malaria, Anemia, Typhoid, or Urinalysis) to see how the analysis works.",
+					},
+				],
+			};
+		}
+
 		return {
 			healthScore: 0,
 			bodySystem: "total",
-			summary: "⚠️ IMAGE ANALYSIS UNAVAILABLE: The currently loaded AI model (Gemma 2 2B) is text-only and cannot read lab images directly. To analyze custom lab photos, a multimodal vision model (like Gemma 4) with GPU support is required.\n\nTo test the analysis interface now, please go back and select one of the pre-loaded 'Ghanaian Medical Case Presets' (such as Malaria RDT Strip, CBC Severe Anemia, or Typhoid Report) — these use text-based prompts and work with the current model.",
+			summary:
+				"We couldn't read enough from your photo. " +
+				"Try a brighter, straighter photo — or type your lab values instead.",
 			findings: [],
 			recommendations: [
 				{
-					icon: "↩️",
-					title: "Go back and select a Preset Case",
-					body: "Click 'Upload more results' below and select one of the preloaded clinical cases to preview the analysis interface immediately."
+					icon: "📸",
+					title: "Upload a clearer photo",
+					body: "Lay the report flat, avoid shadows, and zoom in so the numbers are easy to read.",
 				},
 				{
-					icon: "🖥️",
-					title: "For Custom Image Analysis",
-					body: "Custom image analysis requires a multimodal vision model (e.g., Gemma 4 with GPU). The current text-only model can analyze preset lab data and provide medical chat assistance."
-				}
-			]
+					icon: "📋",
+					title: "Type your results instead",
+					body: "Use the box on the upload page to paste or type values from your lab report.",
+				},
+				{
+					icon: "🩺",
+					title: "Try a sample report",
+					body: "Choose an example case to preview what your results will look like.",
+				},
+			],
 		};
 	}
 
