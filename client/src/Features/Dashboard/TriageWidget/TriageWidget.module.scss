@@ -1,18 +1,14 @@
 @use "@/App/Styles/_mixins" as mixins;
 
 .widgetContainer {
-	background: rgba(15, 23, 42, 0.75);
-	backdrop-filter: blur(20px) saturate(180%);
-	-webkit-backdrop-filter: blur(20px) saturate(180%);
-	border-radius: 24px;
+	background: rgba(15, 23, 42, 0.96);
+	border-radius: 20px;
 	border: 1px solid rgba(255, 255, 255, 0.08);
-	padding: 20px;
+	padding: 18px;
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
-	box-shadow: 
-		0 12px 40px rgba(0, 0, 0, 0.3),
-		inset 0 1px 0 rgba(255, 255, 255, 0.03);
+	gap: 14px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.1);
 	color: #fff;
 	width: 100%;
 	height: 100%;
@@ -20,17 +16,10 @@
 	box-sizing: border-box;
 
 	html[data-theme="light"] & {
-		background: linear-gradient(
-			135deg,
-			rgba(240, 253, 252, 0.75) 0%,
-			rgba(255, 255, 255, 0.8) 100%
-		);
-		border-color: rgba(0, 166, 157, 0.15);
-		box-shadow: 
-			0 12px 36px rgba(0, 166, 157, 0.06),
-			0 4px 12px rgba(15, 23, 42, 0.03),
-			inset 0 1px 0 rgba(255, 255, 255, 0.95);
-		color: #000;
+		background: #ffffff;
+		border-color: #e2e8f0;
+		box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.05);
+		color: #0f172a;
 	}
 }
 
@@ -51,12 +40,9 @@
 	position: relative;
 	width: 38px;
 	height: 38px;
-	border-radius: 12px;
-	background: linear-gradient(
-		135deg,
-		rgba(0, 166, 157, 0.15) 0%,
-		rgba(0, 196, 184, 0.15) 100%
-	);
+	border-radius: 10px;
+	background: rgba(0, 166, 157, 0.12);
+	border: 1px solid rgba(0, 166, 157, 0.2);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -235,7 +221,7 @@
 	}
 
 	html[data-theme="light"] & {
-		background: linear-gradient(135deg, #00A69D 0%, #008f87 100%);
+		background: #00a69d;
 		border: none;
 		box-shadow: 0 4px 12px rgba(0, 166, 157, 0.2);
 
@@ -403,14 +389,14 @@
 	width: 32px;
 	height: 32px;
 	border-radius: 12px;
-	background: linear-gradient(135deg, #00A69D 0%, #00b0a6 100%);
+	background: #00a69d;
 	border: none;
 	color: #ffffff;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
-	transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+	transition: all 0.2s ease;
 	box-shadow: 0 3px 8px rgba(0, 166, 157, 0.25);
 	padding: 0 !important;
 	flex-shrink: 0;
@@ -421,9 +407,9 @@
 	}
 
 	&:hover:not(:disabled) {
-		background: linear-gradient(135deg, #00b0a6 0%, #00c4b8 100%);
+		background: #008f87;
 		transform: scale(1.05) translateY(-0.5px);
-		box-shadow: 0 5px 12px rgba(0, 166, 157, 0.45);
+		box-shadow: 0 5px 12px rgba(0, 166, 157, 0.35);
 	}
 
 	&:disabled {

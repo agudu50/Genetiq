@@ -13,61 +13,12 @@ $blue: #3b82f6;
 	min-width: 0;
 	box-sizing: border-box;
 	overflow: hidden;
-	border-radius: 24px;
+	border-radius: 20px;
 	@include mixins.dashboard-card;
 
 	@media (max-width: 480px) {
-		border-radius: 20px;
+		border-radius: 16px;
 	}
-}
-
-.heroBg {
-	position: absolute;
-	inset: 0;
-	pointer-events: none;
-	background: linear-gradient(
-		145deg,
-		rgba($blue, 0.08) 0%,
-		rgba($teal, 0.06) 42%,
-		transparent 72%
-	);
-
-	html[data-theme="light"] & {
-		background: linear-gradient(
-			145deg,
-			rgba($blue, 0.06) 0%,
-			rgba($teal, 0.05) 40%,
-			#ffffff 78%
-		);
-	}
-}
-
-.heroMesh {
-	position: absolute;
-	inset: 0;
-	pointer-events: none;
-	opacity: 0.32;
-	background-image: radial-gradient(rgba($teal, 0.12) 1px, transparent 1.4px);
-	background-size: 22px 22px;
-	mask-image: linear-gradient(180deg, #000 0%, transparent 90%);
-	-webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 90%);
-
-	html[data-theme="dark"] & {
-		opacity: 0.2;
-		background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1.4px);
-	}
-}
-
-.heroGlow {
-	position: absolute;
-	bottom: -80px;
-	left: -40px;
-	width: 220px;
-	height: 220px;
-	border-radius: 50%;
-	background: radial-gradient(circle, rgba($blue, 0.18) 0%, transparent 68%);
-	filter: blur(12px);
-	pointer-events: none;
 }
 
 .inner {

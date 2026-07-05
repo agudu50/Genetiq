@@ -51,10 +51,6 @@ export const AgeWidget = () => {
 
 	return (
 		<div className={styles.container}>
-			<div className={styles.heroBg} aria-hidden />
-			<div className={styles.heroMesh} aria-hidden />
-			<div className={styles.heroGlow} aria-hidden />
-
 			<div className={styles.inner}>
 				<div className={styles.header}>
 					<div className={styles.headerRow}>

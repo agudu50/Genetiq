@@ -213,9 +213,6 @@ export const HealthHistoryWidget = () => {
 
 	return (
 		<div className={styles.container}>
-			<div className={styles.cardMeshBg} aria-hidden />
-			<div className={styles.cardGlowBlob} aria-hidden />
-			<div className={styles.cardAccentLine} aria-hidden />
 
 			<header className={styles.header}>
 				<div className={styles.titleBlock}>

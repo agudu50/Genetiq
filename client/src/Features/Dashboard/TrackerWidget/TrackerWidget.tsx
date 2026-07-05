@@ -42,9 +42,6 @@ export const TrackerWidget = () => {
 
 	return (
 		<div className={styles["TrackerWidget-container"]}>
-			{/* Decorative high-fidelity background layers */}
-			<div className={styles["cardMeshBg"]} />
-			<div className={styles["cardGlowBlob"]} />
 
 			{/* Top Header Row: Info on left, Status badge capsule on right */}
 			<div className={styles["TrackerWidget-Head"]}>

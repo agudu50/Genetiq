@@ -63,19 +63,16 @@
 // ── Dashboard cards (light + dark) ───────────────────────────────────────────
 
 @mixin dashboard-card {
-	background: rgba(30, 41, 59, 0.92);
-	border: 1px solid rgba(255, 255, 255, 0.06);
-	box-shadow:
-		0 10px 40px rgba(0, 0, 0, 0.12),
-		inset 0 1px 0 rgba(255, 255, 255, 0.05);
-	transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+	background: rgba(30, 41, 59, 0.96);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 20px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.1);
+	transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 
 	html[data-theme="light"] & {
 		background: var(--dash-card-bg, #ffffff);
-		backdrop-filter: none;
-		-webkit-backdrop-filter: none;
-		border: 1.5px solid var(--dash-card-border, #cbd5e1);
-		box-shadow: var(--dash-card-shadow);
+		border: 1px solid var(--dash-card-border, #e2e8f0);
+		box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.05);
 	}
 }
 
@@ -89,12 +86,12 @@
 }
 
 @mixin dashboard-nested-surface {
-	background: rgba(255, 255, 255, 0.02);
-	border: 1px solid rgba(255, 255, 255, 0.04);
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.06);
 
 	html[data-theme="light"] & {
 		background: #f8fafc;
-		border: 1.5px solid #e2e8f0;
+		border: 1px solid #e2e8f0;
 	}
 }
 

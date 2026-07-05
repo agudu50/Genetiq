@@ -101,10 +101,6 @@ export const ActivityChart = () => {
 			className={styles.container}
 			style={{ "--metric-color": activeColor } as React.CSSProperties}
 		>
-			<div className={styles.heroBg} aria-hidden />
-			<div className={styles.heroMesh} aria-hidden />
-			<div className={styles.heroGlow} aria-hidden />
-
 			<div className={styles.inner}>
 				<header className={styles.header}>
 					<div className={styles.headerTop}>

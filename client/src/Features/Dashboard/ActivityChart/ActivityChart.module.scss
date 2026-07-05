@@ -10,67 +10,13 @@ $blue: #3b82f6;
 	min-width: 0;
 	box-sizing: border-box;
 	overflow: hidden;
-	border-radius: 24px;
+	border-radius: 20px;
 	height: 100%;
 	@include mixins.dashboard-card;
 
 	@media (max-width: 480px) {
-		border-radius: 20px;
+		border-radius: 16px;
 	}
-}
-
-.heroBg {
-	position: absolute;
-	inset: 0;
-	pointer-events: none;
-	background: linear-gradient(
-		145deg,
-		rgba($blue, 0.09) 0%,
-		rgba($teal, 0.05) 42%,
-		transparent 72%
-	);
-
-	html[data-theme="light"] & {
-		background: linear-gradient(
-			145deg,
-			rgba($blue, 0.06) 0%,
-			rgba($teal, 0.04) 40%,
-			#ffffff 78%
-		);
-	}
-}
-
-.heroMesh {
-	position: absolute;
-	inset: 0;
-	pointer-events: none;
-	opacity: 0.28;
-	background-image: radial-gradient(rgba($blue, 0.12) 1px, transparent 1.4px);
-	background-size: 18px 18px;
-	mask-image: linear-gradient(180deg, #000 0%, transparent 90%);
-	-webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 90%);
-
-	html[data-theme="dark"] & {
-		opacity: 0.16;
-		background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1.4px);
-	}
-}
-
-.heroGlow {
-	position: absolute;
-	top: -50px;
-	right: -30px;
-	width: 180px;
-	height: 180px;
-	border-radius: 50%;
-	background: radial-gradient(
-		circle,
-		color-mix(in srgb, var(--metric-color, $blue) 22%, transparent) 0%,
-		transparent 68%
-	);
-	filter: blur(10px);
-	pointer-events: none;
-	transition: background 0.3s ease;
 }
 
 .inner {
@@ -399,28 +345,13 @@ $blue: #3b82f6;
 	max-width: 28px;
 	min-height: 4px;
 	border-radius: 6px 6px 3px 3px;
-	background: linear-gradient(
-		180deg,
-		var(--metric-color, $blue) 0%,
-		color-mix(in srgb, var(--metric-color, $blue) 35%, transparent) 100%
-	);
-	box-shadow: 0 4px 12px color-mix(in srgb, var(--metric-color, $blue) 22%, transparent);
-	transition: transform 0.2s ease, filter 0.2s ease;
-
-	&::before {
-		content: "";
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		height: 2px;
-		border-radius: 6px 6px 0 0;
-		background: rgba(255, 255, 255, 0.55);
-	}
+	background: var(--metric-color, $blue);
+	opacity: 0.85;
+	transition: transform 0.2s ease, opacity 0.2s ease;
 
 	&:hover {
 		transform: translateY(-2px);
-		filter: brightness(1.08);
+		opacity: 1;
 
 		.barValue {
 			opacity: 1;

@@ -132,11 +132,11 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 	flex-wrap: wrap;
 	padding: 11px 16px;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-	background: rgba(239, 68, 68, 0.04);
+	background: rgba(239, 68, 68, 0.06);
 
 	html[data-theme="light"] & {
 		border-bottom-color: #f1f5f9;
-		background: linear-gradient(90deg, rgba(239, 68, 68, 0.05) 0%, rgba(245, 158, 11, 0.04) 100%);
+		background: rgba(239, 68, 68, 0.04);
 	}
 
 	svg {

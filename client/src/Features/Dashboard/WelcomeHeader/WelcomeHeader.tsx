@@ -156,10 +156,6 @@ export const WelcomeHeader = () => {
 
 	return (
 		<div className={styles.welcomeHeader}>
-			<div className={styles.heroBg} aria-hidden />
-			<div className={styles.heroMesh} aria-hidden />
-			<div className={styles.heroGlow} aria-hidden />
-
 			<div className={styles.heroInner}>
 				<div className={styles.heroTop}>
 					<div className={styles.heroCopy}>
