@@ -42,6 +42,12 @@ export interface GemmaAnalysisResult {
 	recommendations: GemmaRecommendation[];
 	summary: string;
 	bodySystem: string;
+	summarySections?: Array<{
+		id: string;
+		title: string;
+		body: string;
+		tone?: "info" | "caution" | "neutral";
+	}>;
 	translations?: Record<string, string>;
 }
 
@@ -62,7 +68,19 @@ function finalizeChatResult(result: GemmaChatResult): GemmaChatResult {
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-const GEMMA_BASE_URL = "http://localhost:8000";
+/** In dev, use Vite proxy (same origin). Override with VITE_GEMMA_URL if needed. */
+const GEMMA_BASE_URL =
+	import.meta.env.VITE_GEMMA_URL ??
+	(import.meta.env.DEV ? "" : "http://localhost:8000");
+
+function fetchWithTimeout(url: string, ms = 15_000): Promise<Response> {
+	if (typeof AbortSignal !== "undefined" && "timeout" in AbortSignal) {
+		return fetch(url, { signal: AbortSignal.timeout(ms) });
+	}
+	const controller = new AbortController();
+	const timer = window.setTimeout(() => controller.abort(), ms);
+	return fetch(url, { signal: controller.signal }).finally(() => clearTimeout(timer));
+}
 
 // ─── Service State ───────────────────────────────────────────────────────────
 
@@ -74,7 +92,8 @@ let _healthCache: {
 	supportsVision: boolean;
 	checkedAt: number;
 } | null = null;
-const HEALTH_CHECK_INTERVAL = 30_000; // 30s
+const HEALTH_CHECK_INTERVAL = 15_000;
+const HEALTH_STALE_OK_MS = 90_000;
 
 export function invalidateGemmaHealthCache(): void {
 	_healthCache = null;
@@ -96,10 +115,10 @@ export async function checkGemmaHealth(force = false): Promise<GemmaHealthStatus
 		return _healthCache;
 	}
 
+	const previous = _healthCache;
+
 	try {
-		const res = await fetch(`${GEMMA_BASE_URL}/api/gemma/health`, {
-			signal: AbortSignal.timeout(15_000),
-		});
+		const res = await fetchWithTimeout(`${GEMMA_BASE_URL}/api/gemma/health`, 12_000);
 		if (res.ok) {
 			const data = await res.json();
 			_healthCache = {
@@ -113,7 +132,14 @@ export async function checkGemmaHealth(force = false): Promise<GemmaHealthStatus
 			return _healthCache;
 		}
 	} catch {
-		// Server not running or busy
+		// Server busy or unreachable — keep last good status briefly
+		if (previous?.available && now - previous.checkedAt < HEALTH_STALE_OK_MS) {
+			return previous;
+		}
+	}
+
+	if (previous?.available && now - previous.checkedAt < HEALTH_STALE_OK_MS) {
+		return previous;
 	}
 
 	_healthCache = {

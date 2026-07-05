@@ -15,7 +15,34 @@ interface FallbackAnalysisResult {
 	findings: FallbackFinding[];
 	recommendations: { icon: string; title: string; body: string }[];
 	summary: string;
+	summarySections: Array<{
+		id: string;
+		title: string;
+		body: string;
+		tone: "info" | "caution" | "neutral";
+	}>;
 	bodySystem: string;
+}
+
+function formatPatientContext(age: string, gender: string): string {
+	const ageTrim = age?.trim();
+	const g = gender?.trim().toLowerCase() ?? "";
+	const hasGender =
+		g &&
+		g !== "unknown" &&
+		!g.includes("prefer not");
+
+	let genderWord = "";
+	if (hasGender) {
+		if (g === "male") genderWord = "male";
+		else if (g === "female") genderWord = "female";
+		else genderWord = gender.trim();
+	}
+
+	if (ageTrim && genderWord) return `for a ${ageTrim}-year-old ${genderWord} patient`;
+	if (ageTrim) return `for a ${ageTrim}-year-old patient`;
+	if (genderWord) return `for a ${genderWord} patient`;
+	return "";
 }
 
 export interface ParsedLabRow {
@@ -249,25 +276,69 @@ export function buildFallbackLabAnalysis(
 				: `${r.name} is outside the expected range${r.refRange ? ` (reference: ${r.refRange})` : ""}. Please discuss this result with your doctor.`,
 	}));
 
-	const summaryParts = [
-		`We read ${rows.length} value${rows.length !== 1 ? "s" : ""} from your lab report${patientAge ? ` for a ${patientAge}-year-old ${patientGender} patient` : ""}.`,
-		"This is a quick summary — your doctor should confirm the final interpretation.",
+	const patientCtx = formatPatientContext(patientAge, patientGender);
+
+	const summarySections: FallbackAnalysisResult["summarySections"] = [
+		{
+			id: "analyzed",
+			title: "What we analyzed",
+			body: patientCtx
+				? `We read ${rows.length} lab value${rows.length !== 1 ? "s" : ""} from your report ${patientCtx}.`
+				: `We read ${rows.length} lab value${rows.length !== 1 ? "s" : ""} from your lab report.`,
+			tone: "info",
+		},
+		{
+			id: "disclaimer",
+			title: "Please remember",
+			body:
+				"This is a computer-generated summary, not a diagnosis. Your doctor should review the original report and confirm every result before you take any action.",
+			tone: "neutral",
+		},
 	];
+
 	if (abnormal.length === 0) {
-		summaryParts.push("All detected values appear within normal limits.");
+		summarySections.push({
+			id: "results",
+			title: "Your results at a glance",
+			body: "All values we detected appear within normal limits based on the reference ranges on your report.",
+			tone: "info",
+		});
 	} else {
-		summaryParts.push(
-			`${abnormal.length} result${abnormal.length !== 1 ? "s" : ""} look outside the normal range and should be reviewed by a doctor.`,
-		);
+		summarySections.push({
+			id: "results",
+			title:
+				abnormal.length === 1
+					? "1 result needs a closer look"
+					: `${abnormal.length} results need a closer look`,
+			body:
+				abnormal.length === 1
+					? "One value is outside the expected range. This does not always mean something is wrong — only your doctor can interpret it in context."
+					: `${abnormal.length} values are outside the expected range. This does not always mean something is wrong — only your doctor can interpret them in context.`,
+			tone: "caution",
+		});
 	}
+
 	if (hasSpep) {
-		summaryParts.push(
-			"Your protein test shows changes that may need follow-up tests (such as immunofixation).",
-		);
+		summarySections.push({
+			id: "protein",
+			title: "About your protein result",
+			body:
+				"An abnormal protein band or M-spike can have several causes. Your doctor may order follow-up tests such as immunofixation or refer you to a specialist to find out more.",
+			tone: "caution",
+		});
 	}
+
 	if (hasLiver) {
-		summaryParts.push("Some liver-related markers appear elevated — a clinician should review these.");
+		summarySections.push({
+			id: "liver",
+			title: "About your liver markers",
+			body:
+				"Some liver-related values look elevated. A clinician should review these alongside your symptoms, medications, and full medical history.",
+			tone: "caution",
+		});
 	}
+
+	const summary = summarySections.map((s) => s.body).join(" ");
 
 	const recommendations = [
 		{
@@ -299,7 +370,8 @@ export function buildFallbackLabAnalysis(
 	return {
 		healthScore,
 		bodySystem,
-		summary: summaryParts.join(" "),
+		summary,
+		summarySections,
 		findings,
 		recommendations,
 	};

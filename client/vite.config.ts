@@ -63,6 +63,12 @@ export default defineConfig({
 		port: 5173,
 		strictPort: false,
 		host: true,
+		proxy: {
+			"/api/gemma": {
+				target: "http://localhost:8000",
+				changeOrigin: true,
+			},
+		},
 	},
 	preview: {
 		port: 4173,

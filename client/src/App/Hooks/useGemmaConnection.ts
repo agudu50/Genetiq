@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
 	checkGemmaHealth,
 	invalidateGemmaHealthCache,
@@ -18,7 +18,29 @@ export type GemmaConnectionState = {
 	refresh: () => Promise<void>;
 };
 
-const POLL_MS = 20_000;
+const POLL_MS = 15_000;
+
+type SharedSnapshot = {
+	isNetworkOnline: boolean;
+	health: GemmaHealthStatus | null;
+	checking: boolean;
+};
+
+type Listener = () => void;
+
+let shared: SharedSnapshot = {
+	isNetworkOnline: typeof navigator !== "undefined" && navigator.onLine,
+	health: null,
+	checking: true,
+};
+
+const listeners = new Set<Listener>();
+let bootstrapped = false;
+let checkInFlight: Promise<void> | null = null;
+
+function emit() {
+	listeners.forEach((l) => l());
+}
 
 function deriveMode(
 	networkOnline: boolean,
@@ -36,18 +58,7 @@ function deriveMode(
 		};
 	}
 
-	if (!networkOnline && !health?.available) {
-		return {
-			mode: "offline",
-			statusLabel: "No connection",
-			gemmaOnline: false,
-			gemmaAvailable: false,
-			cpuFastMode: false,
-			supportsVision: false,
-		};
-	}
-
-	if (health?.modelLoaded) {
+	if (health?.available && health.modelLoaded) {
 		const cpu = health.device === "cpu";
 		return {
 			mode: "live",
@@ -70,6 +81,17 @@ function deriveMode(
 		};
 	}
 
+	if (!networkOnline && !health?.available) {
+		return {
+			mode: "offline",
+			statusLabel: "No connection",
+			gemmaOnline: false,
+			gemmaAvailable: false,
+			cpuFastMode: false,
+			supportsVision: false,
+		};
+	}
+
 	return {
 		mode: "offline",
 		statusLabel: "Offline mode",
@@ -80,71 +102,83 @@ function deriveMode(
 	};
 }
 
-export function useGemmaConnection(): GemmaConnectionState {
-	const [isNetworkOnline, setIsNetworkOnline] = useState(
-		() => typeof navigator !== "undefined" && navigator.onLine,
-	);
-	const [health, setHealth] = useState<GemmaHealthStatus | null>(null);
-	const [checking, setChecking] = useState(true);
-	const mountedRef = useRef(true);
+async function runHealthCheck(force = false): Promise<void> {
+	if (checkInFlight) return checkInFlight;
 
-	const refresh = useCallback(async (force = true) => {
-		if (force) invalidateGemmaHealthCache();
-		setChecking(true);
+	checkInFlight = (async () => {
+		shared = { ...shared, checking: true };
+		emit();
 		try {
 			const result = await checkGemmaHealth(force);
-			if (mountedRef.current) setHealth(result);
+			shared = { ...shared, health: result, checking: false };
 		} catch {
-			if (mountedRef.current) {
-				setHealth({
-					available: false,
-					modelLoaded: false,
-					modelId: "",
-					device: "none",
-					supportsVision: false,
-				});
-			}
+			shared = { ...shared, checking: false };
 		} finally {
-			if (mountedRef.current) setChecking(false);
+			emit();
+			checkInFlight = null;
 		}
-	}, []);
+	})();
+
+	return checkInFlight;
+}
+
+function bootstrapListeners() {
+	if (bootstrapped) return;
+	bootstrapped = true;
+
+	void runHealthCheck(true);
+
+	const onOnline = () => {
+		shared = { ...shared, isNetworkOnline: true };
+		emit();
+		invalidateGemmaHealthCache();
+		void runHealthCheck(true);
+	};
+	const onOffline = () => {
+		shared = { ...shared, isNetworkOnline: false };
+		emit();
+	};
+	const onFocus = () => {
+		invalidateGemmaHealthCache();
+		void runHealthCheck(true);
+	};
+	const onVisibility = () => {
+		if (document.visibilityState === "visible") {
+			invalidateGemmaHealthCache();
+			void runHealthCheck(true);
+		}
+	};
+
+	window.addEventListener("online", onOnline);
+	window.addEventListener("offline", onOffline);
+	window.addEventListener("focus", onFocus);
+	document.addEventListener("visibilitychange", onVisibility);
+
+	setInterval(() => void runHealthCheck(false), POLL_MS);
+}
+
+export function useGemmaConnection(): GemmaConnectionState {
+	const [, tick] = useState(0);
 
 	useEffect(() => {
-		mountedRef.current = true;
-		void refresh(true);
-
-		const onOnline = () => {
-			setIsNetworkOnline(true);
-			void refresh(true);
-		};
-		const onOffline = () => setIsNetworkOnline(false);
-		const onFocus = () => void refresh(true);
-		const onVisibility = () => {
-			if (document.visibilityState === "visible") void refresh(true);
-		};
-
-		window.addEventListener("online", onOnline);
-		window.addEventListener("offline", onOffline);
-		window.addEventListener("focus", onFocus);
-		document.addEventListener("visibilitychange", onVisibility);
-
-		const pollId = window.setInterval(() => void refresh(true), POLL_MS);
-
+		bootstrapListeners();
+		const listener = () => tick((n) => n + 1);
+		listeners.add(listener);
 		return () => {
-			mountedRef.current = false;
-			window.removeEventListener("online", onOnline);
-			window.removeEventListener("offline", onOffline);
-			window.removeEventListener("focus", onFocus);
-			document.removeEventListener("visibilitychange", onVisibility);
-			clearInterval(pollId);
+			listeners.delete(listener);
 		};
-	}, [refresh]);
+	}, []);
 
-	const derived = deriveMode(isNetworkOnline, health, checking);
+	const refresh = useCallback(async () => {
+		invalidateGemmaHealthCache();
+		await runHealthCheck(true);
+	}, []);
+
+	const derived = deriveMode(shared.isNetworkOnline, shared.health, shared.checking);
 
 	return {
-		isNetworkOnline,
+		isNetworkOnline: shared.isNetworkOnline,
 		...derived,
-		refresh: () => refresh(true),
+		refresh,
 	};
 }

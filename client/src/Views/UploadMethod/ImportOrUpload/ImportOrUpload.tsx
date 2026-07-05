@@ -11,14 +11,15 @@ import {
 	X, CheckCircle, ArrowLeft, Loader2, Sparkles,
 	Wifi, WifiOff, Brain, Stethoscope, User, Droplets,
 	Ruler, Scale, Activity, Clock, Check, Lock,
-	AlertTriangle, Languages, ClipboardList,
+	AlertTriangle, Languages,
 } from "lucide-react";
 import {
 	analyzeLabResults,
 	getTranslation,
 } from "@/App/Services/GemmaService";
-import type { GemmaLanguage, GemmaAnalysisResult } from "@/App/Services/GemmaService";
+import type { GemmaLanguage, GemmaAnalysisResult, AnalyzeProgressPhase } from "@/App/Services/GemmaService";
 import { useGemmaConnection } from "@/App/Hooks/useGemmaConnection";
+import { buildResultsSummarySections } from "@/App/Utils/buildResultsSummary";
 import styles from "./ImportOrUpload.module.scss";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -70,10 +71,11 @@ const ImportOrUpload = () => {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
 	const [selectedLanguage, setSelectedLanguage] = useState<GemmaLanguage>("english");
-	const { gemmaOnline, mode, statusLabel } = useGemmaConnection();
+	const { gemmaOnline, gemmaAvailable, mode, statusLabel, refresh } = useGemmaConnection();
 	const [analysisResult, setAnalysisResult] = useState<GemmaAnalysisResult | null>(null);
 	const [labTextPaste, setLabTextPaste] = useState("");
 	const [analyzeStatus, setAnalyzeStatus] = useState({ message: "", pct: 0 });
+	const [analyzePhase, setAnalyzePhase] = useState<AnalyzeProgressPhase | null>(null);
 
 	const user = useSelector((state: RootState) => state.user);
 
@@ -195,7 +197,9 @@ const ImportOrUpload = () => {
 
 	const handleAnalyze = async () => {
 		setStep("analyzing");
+		setAnalyzePhase(null);
 		setAnalyzeStatus({ message: "Preparing your lab data…", pct: 0 });
+		void refresh();
 		dispatch(updateUserInfo({ ...info, uploadStatus: "processing" }));
 
 		try {
@@ -214,7 +218,8 @@ const ImportOrUpload = () => {
 				patientAge: info.age || "35",
 				patientGender: info.gender || "unknown",
 				language: selectedLanguage,
-				onProgress: (_phase, message, pct) => {
+				onProgress: (phase, message, pct) => {
+					setAnalyzePhase(phase);
 					setAnalyzeStatus({ message, pct: pct ?? 0 });
 				},
 			});
@@ -294,6 +299,27 @@ const ImportOrUpload = () => {
 		return { total: analysisResult.findings.length, abnormal };
 	}, [analysisResult]);
 
+	const summarySections = useMemo(() => {
+		if (!analysisResult) return [];
+		return buildResultsSummarySections(analysisResult, info.age, info.gender);
+	}, [analysisResult, info.age, info.gender]);
+
+	const analyzeConnBadge = useMemo(() => {
+		if (analyzePhase === "ocr") {
+			return { icon: "scan" as const, label: "Reading on your device", tone: "local" as const };
+		}
+		if (gemmaOnline) {
+			return { icon: "live" as const, label: statusLabel, tone: "live" as const };
+		}
+		if (gemmaAvailable || mode === "starting") {
+			return { icon: "spin" as const, label: "AI starting up…", tone: "starting" as const };
+		}
+		if (mode === "checking") {
+			return { icon: "spin" as const, label: "Checking AI…", tone: "checking" as const };
+		}
+		return { icon: "offline" as const, label: "Offline — smart fallback", tone: "offline" as const };
+	}, [analyzePhase, gemmaOnline, gemmaAvailable, mode, statusLabel]);
+
 	// ─────────────────────────────────────────────────────────────────────────
 
 	return (
@@ -306,14 +332,16 @@ const ImportOrUpload = () => {
 						<div className={styles.spinnerRing} />
 						<h2>{analyzeStatus.message || "Analysing your results…"}</h2>
 						<p>
-							{analyzeStatus.message.includes("Reading text")
-								? "Extracting values from your photo, then AI will interpret them."
+							{analyzePhase === "ocr"
+								? "Extracting values from your photo on this device, then AI will interpret them."
 								: gemmaOnline
 									? "Gemma AI is interpreting your lab values and building your plan."
-									: "Building your personalised health insights."
+									: gemmaAvailable || mode === "starting"
+										? "Waiting for the AI model to finish loading, then your results will be ready."
+										: "Building your personalised health insights with smart offline analysis."
 							}
 						</p>
-						{analyzeStatus.message.includes("Reading text") && analyzeStatus.pct > 0 && (
+						{(analyzePhase === "ocr" || analyzeStatus.message.includes("Reading text")) && analyzeStatus.pct > 0 && (
 							<div className={styles.analyzeProgressTrack}>
 								<div
 									className={styles.analyzeProgressFill}
@@ -321,14 +349,16 @@ const ImportOrUpload = () => {
 								/>
 							</div>
 						)}
-						<div className={styles.gemmaStatusBadge}>
-							{gemmaOnline ? (
-								<><Wifi size={12} /> {statusLabel}</>
-							) : mode === "starting" || mode === "checking" ? (
-								<><Loader2 size={12} className={styles.gemmaStatusSpinner} /> {statusLabel}</>
-							) : (
-								<><Brain size={12} /> {statusLabel}</>
+						<div
+							className={`${styles.gemmaStatusBadge} ${styles[`gemmaStatusBadge-${analyzeConnBadge.tone}`]}`}
+						>
+							{analyzeConnBadge.icon === "live" && <Wifi size={12} />}
+							{analyzeConnBadge.icon === "spin" && (
+								<Loader2 size={12} className={styles.gemmaStatusSpinner} />
 							)}
+							{analyzeConnBadge.icon === "offline" && <Brain size={12} />}
+							{analyzeConnBadge.icon === "scan" && <FileText size={12} />}
+							{analyzeConnBadge.label}
 						</div>
 					</div>
 				</div>
@@ -463,39 +493,35 @@ const ImportOrUpload = () => {
 												<span className={styles.scoreLabel}>{t("Health Score")}</span>
 											</div>
 										</div>
-										<span className={`${styles.scoreTierPill} ${styles[`scoreTierPill-${scoreTier.key}`]}`}>
+										<span className={`${styles.scoreTierPill} ${styles[`scoreTierPill-${scoreTier.key}`]}`} aria-hidden>
 											{t(scoreTier.label)}
 										</span>
 									</div>
 
 									<div className={styles.heroText}>
-										<div className={styles.resultsBadge}>
-											<CheckCircle size={13}/> {t("Your results are ready")}
-										</div>
-										<h1>{t(scoreTier.label)}</h1>
-
-										<div className={styles.resultsStats}>
-											<span className={styles.statChip}>
-												<ClipboardList size={14} />
+										<p className={styles.heroEyebrow}>{t("Your results are ready")}</p>
+										<h1 className={`${styles.heroTitle} ${styles[`heroTitle-${scoreTier.key}`]}`}>
+											{t(scoreTier.label)}
+										</h1>
+										<p className={styles.heroMeta}>
+											<span>
 												{resultsStats.total} {resultsStats.total === 1 ? "value" : "values"} analyzed
 											</span>
 											{resultsStats.abnormal > 0 && (
-												<span className={styles.statChipWarn}>
-													<AlertTriangle size={14} />
-													{resultsStats.abnormal} {resultsStats.abnormal === 1 ? "needs" : "need"} review
-												</span>
+												<>
+													<span className={styles.heroMetaDot} aria-hidden>·</span>
+													<span className={styles.heroMetaWarn}>
+														{resultsStats.abnormal} {resultsStats.abnormal === 1 ? "needs" : "need"} review
+													</span>
+												</>
 											)}
 											{analysisResult.bodySystem && (
-												<span className={styles.statChipMuted}>
-													<Activity size={14} />
-													{analysisResult.bodySystem}
-												</span>
+												<>
+													<span className={styles.heroMetaDot} aria-hidden>·</span>
+													<span>{analysisResult.bodySystem}</span>
+												</>
 											)}
-										</div>
-
-										<div className={styles.summaryCallout}>
-											<p>{analysisResult.summary}</p>
-										</div>
+										</p>
 
 										<div className={styles.langSection}>
 											<span className={styles.langSectionLabel}>
@@ -519,6 +545,26 @@ const ImportOrUpload = () => {
 								</div>
 							</div>
 
+							{/* ── Plain-English summary ──────────────────────── */}
+							<div className={styles.resultsBrief}>
+								<h2 className={styles.resultsBriefHeading}>What this means for you</h2>
+								<dl className={styles.resultsBriefList}>
+									{summarySections.map((section) => (
+										<div
+											key={section.id}
+											className={`${styles.resultsBriefItem} ${styles[`resultsBriefItem-${section.tone}`]}`}
+										>
+											<dt className={styles.resultsBriefTerm}>
+												{t(section.title) || section.title}
+											</dt>
+											<dd className={styles.resultsBriefDesc}>
+												{t(section.body) || section.body}
+											</dd>
+										</div>
+									))}
+								</dl>
+							</div>
+
 							{/* ── Score spectrum + breakdown ─────────────────── */}
 							<div className={styles.scoreSpectrumWrap}>
 								<div className={styles.scoreSpectrumHead}>
@@ -532,6 +578,9 @@ const ImportOrUpload = () => {
 										style={{ left: `${Math.min(100, Math.max(0, analysisResult.healthScore))}%` }}
 									/>
 								</div>
+								<p className={`${styles.scoreSpectrumActiveMobile} ${styles[`scoreSpectrumActiveMobile-${scoreTier.key}`]}`}>
+									{t(scoreTier.label)}
+								</p>
 								<div className={styles.scoreBreakdown}>
 									<div className={`${styles.scoreBar} ${analysisResult.healthScore <= 50 ? styles.active : ""} ${styles.good}`}>
 										<span>0 – 50</span><span>{t("Needs attention")}</span>
@@ -601,7 +650,7 @@ const ImportOrUpload = () => {
 									{analysisResult.recommendations.map((r, idx) => (
 										<div key={r.title} className={styles.recCard}>
 											<span className={styles.recStep}>{idx + 1}</span>
-											<span className={styles.recIcon}>{r.icon}</span>
+											<span className={styles.recIcon} data-step={idx + 1}>{r.icon}</span>
 											<div className={styles.recContent}>
 												<div className={styles.recTitle}>{t(r.title) || r.title}</div>
 												<div className={styles.recBody}>{t(r.body) || r.body}</div>
@@ -626,25 +675,27 @@ const ImportOrUpload = () => {
 							</div>
 
 							{/* ── CTAs ───────────────────────────────────────── */}
-							<div className={styles.resultsCtas}>
-								<button className={styles.primaryBtn} onClick={() => navigate(paths.dashboard.root)}>
-									<Sparkles size={16} /> {t("Go to my dashboard")}
-								</button>
-								<button className={styles.outlineBtn} onClick={() => navigate(paths.clinicalHistory)}>
-									<FileText size={16} /> {t("View clinical history")}
-								</button>
-								<button
-									className={styles.ghostBtn}
-									onClick={() => {
-										setFiles([]);
-										setSelectedPreset(null);
-										setAnalysisResult(null);
-										setStep("upload");
-										window.scrollTo({ top: 0, behavior: "smooth" });
-									}}
-								>
-									<Upload size={14} /> {t("Upload more results")}
-								</button>
+							<div className={styles.resultsCtasWrap}>
+								<div className={styles.resultsCtas}>
+									<button className={styles.primaryBtn} onClick={() => navigate(paths.dashboard.root)}>
+										<Sparkles size={16} /> {t("Go to my dashboard")}
+									</button>
+									<button className={styles.outlineBtn} onClick={() => navigate(paths.clinicalHistory)}>
+										<FileText size={16} /> {t("View clinical history")}
+									</button>
+									<button
+										className={styles.ghostBtn}
+										onClick={() => {
+											setFiles([]);
+											setSelectedPreset(null);
+											setAnalysisResult(null);
+											setStep("upload");
+											window.scrollTo({ top: 0, behavior: "smooth" });
+										}}
+									>
+										<Upload size={14} /> {t("Upload more results")}
+									</button>
+								</div>
 							</div>
 						</>
 					)}
@@ -1199,23 +1250,30 @@ const ImportOrUpload = () => {
 
 						{/* CTA */}
 						<div className={styles.uploadCtaRow}>
-							<button
-								className={styles.uploadAnalyzeBtn}
-								disabled={!canAnalyze}
-								onClick={handleAnalyze}
-							>
-								<Sparkles size={16} />
-								{canAnalyze
-									? hasLabText && !allDone && !selectedPreset
-										? "Analyse pasted results"
-										: `Analyse with ${gemmaOnline ? "Gemma AI" : "AI"}`
-									: allDone
-										? "Analyse my results"
-										: files.length > 0
-											? "Uploading…"
-											: "Select a preset, upload, or paste results"
-								}
-							</button>
+							<div className={styles.uploadCtaMain}>
+								<button
+									className={styles.uploadAnalyzeBtn}
+									disabled={!canAnalyze}
+									onClick={handleAnalyze}
+								>
+									<Sparkles size={16} />
+									{canAnalyze
+										? hasLabText && !allDone && !selectedPreset
+											? "Analyse pasted results"
+											: `Analyse with ${gemmaOnline ? "Gemma AI" : "AI"}`
+										: allDone
+											? "Analyse my results"
+											: files.length > 0
+												? "Uploading…"
+												: "Add results to analyse"
+									}
+								</button>
+								{!canAnalyze && files.length === 0 && (
+									<p className={styles.uploadCtaHint}>
+										Choose a sample case, upload a file, or paste values below.
+									</p>
+								)}
+							</div>
 							<button className={styles.uploadSkipBtn} onClick={() => navigate(paths.dashboard.root)}>
 								Skip for now
 							</button>
