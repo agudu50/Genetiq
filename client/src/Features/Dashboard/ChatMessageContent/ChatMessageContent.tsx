@@ -11,8 +11,10 @@ type Block =
 function normalizeMessageText(text: string): string {
 	return sanitizeAiText(text)
 		.replace(/\s•\s/g, "\n• ")
+		.replace(/(\d+[.)])\s+/g, "\n$1 ")
 		.replace(/([.:!?])\s+(?=[A-Z⚠️])/g, "$1\n\n")
 		.replace(/:\n\n•/g, ":\n•")
+		.replace(/\n{3,}/g, "\n\n")
 		.trim();
 }
 
@@ -40,6 +42,11 @@ function parseBlocks(text: string): Block[] {
 
 			if (/^[•\-*]\s/.test(line)) {
 				bulletBuffer.push(line.replace(/^[•\-*]\s*/, ""));
+				continue;
+			}
+
+			if (/^\d+[.)]\s/.test(line)) {
+				bulletBuffer.push(line.replace(/^\d+[.)]\s*/, ""));
 				continue;
 			}
 

@@ -7,6 +7,7 @@ import {
 	lazy,
 	Suspense,
 } from "react";
+import { createPortal } from "react-dom";
 import styles from "./Dashboard.module.scss";
 import { TrackerWidget } from "@/Features/Dashboard/TrackerWidget/TrackerWidget";
 import { AgeWidget } from "@/Features/Dashboard/AgeWidget/AgeWidget";
@@ -116,13 +117,24 @@ const Dashboard = () => {
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
 			if (e.key === "Escape") {
+				if (isChatbotOpen) setIsChatbotOpen(false);
 				if (isDrawerOpen) setIsDrawerOpen(false);
 				if (isSidebarOpen) setIsSidebarOpen(false);
 			}
 		};
 		window.addEventListener("keydown", handleKeyDown);
 		return () => window.removeEventListener("keydown", handleKeyDown);
-	}, [isDrawerOpen, isSidebarOpen]);
+	}, [isChatbotOpen, isDrawerOpen, isSidebarOpen]);
+
+	useEffect(() => {
+		const root = document.documentElement;
+		if (isChatbotOpen) {
+			root.classList.add("dashboard-chat-open");
+		} else {
+			root.classList.remove("dashboard-chat-open");
+		}
+		return () => root.classList.remove("dashboard-chat-open");
+	}, [isChatbotOpen]);
 
 	useEffect(() => {
 		if (!isMobile) return;
@@ -396,19 +408,21 @@ const Dashboard = () => {
 				</Suspense>
 			</DeferredMount>
 
-			{isChatbotOpen && (
-				<div
-					className={styles["chatbot-modal-overlay"]}
-					onClick={() => setIsChatbotOpen(false)}
-				>
+			{isChatbotOpen &&
+				createPortal(
 					<div
-						className={styles["chatbot-modal-content"]}
-						onClick={(e) => e.stopPropagation()}
+						className={styles["chatbot-modal-overlay"]}
+						onClick={() => setIsChatbotOpen(false)}
 					>
-						<TriageWidget onClose={() => setIsChatbotOpen(false)} />
-					</div>
-				</div>
-			)}
+						<div
+							className={styles["chatbot-modal-content"]}
+							onClick={(e) => e.stopPropagation()}
+						>
+							<TriageWidget onClose={() => setIsChatbotOpen(false)} />
+						</div>
+					</div>,
+					document.body,
+				)}
 		</div>
 	);
 };

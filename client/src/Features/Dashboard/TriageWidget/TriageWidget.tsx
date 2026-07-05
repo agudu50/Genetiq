@@ -243,41 +243,60 @@ export const TriageWidget: React.FC<TriageWidgetProps> = ({ onClose }) => {
 
 			{/* ── Chat Feed ── */}
 			<div className={styles.chatArea}>
+				{messages.length === 0 && !isAnalyzing && (
+					<div className={styles.emptyState}>
+						<p className={styles.emptyTitle}>How can I help today?</p>
+						<p className={styles.emptyHint}>
+							Describe your symptoms or tap a suggestion below.
+						</p>
+					</div>
+				)}
+
 				{messages.map((msg) => (
 					<div
 						key={msg.id}
-						className={
-							msg.role === "bot" ? styles.botMessage : styles.userMessage
-						}
+						className={`${styles.messageRow} ${
+							msg.role === "bot" ? styles.messageRowBot : styles.messageRowUser
+						}`}
 					>
-						{msg.role === "bot" && (
-							<Bot size={16} className={styles.inlineBotIcon} />
-						)}
-						{msg.role === "bot" ? (
-							<ChatMessageContent text={msg.text} />
-						) : (
-							<p>{msg.text}</p>
-						)}
+						<div
+							className={
+								msg.role === "bot" ? styles.botMessage : styles.userMessage
+							}
+						>
+							{msg.role === "bot" && (
+								<Bot size={16} className={styles.inlineBotIcon} />
+							)}
+							<div className={styles.messageBody}>
+								{msg.role === "bot" ? (
+									<ChatMessageContent text={msg.text} />
+								) : (
+									<p className={styles.userText}>{msg.text}</p>
+								)}
+							</div>
+						</div>
 					</div>
 				))}
 
 				{/* ── Bouncing Typing Dots when Analyzing ── */}
 				{isAnalyzing && (
-					<div className={styles.botMessage}>
-						<Bot size={16} className={styles.inlineBotIcon} />
-						<div>
-							<div className={styles.typingIndicator}>
-								<span />
-								<span />
-								<span />
-							</div>
-							<p className={styles.waitHint}>
+					<div className={`${styles.messageRow} ${styles.messageRowBot}`}>
+						<div className={styles.botMessage}>
+							<Bot size={16} className={styles.inlineBotIcon} />
+							<div className={styles.messageBody}>
+								<div className={styles.typingIndicator}>
+									<span />
+									<span />
+									<span />
+								</div>
+								<p className={styles.waitHint}>
 								{cpuFastMode || !gemmaOnline
 									? "Analyzing your symptoms…"
 									: waitSecs < 8
 										? "Gemma is analyzing…"
 										: `Gemma is analyzing… ${waitSecs}s (local CPU — can take 1–3 min)`}
 							</p>
+							</div>
 						</div>
 					</div>
 				)}

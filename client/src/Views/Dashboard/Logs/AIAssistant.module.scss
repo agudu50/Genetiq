@@ -310,10 +310,16 @@ $teal2: #008f87;
 	font-size: 13px;
 	line-height: 1.55;
 	max-width: 100%;
+	min-width: 0;
+	overflow-wrap: anywhere;
+	word-break: break-word;
 
 	p {
 		margin: 0;
-		line-height: 1.55;
+		line-height: 1.65;
+		overflow-wrap: anywhere;
+		word-break: break-word;
+		white-space: pre-wrap;
 	}
 
 	html[data-theme="light"] & {
@@ -383,9 +389,13 @@ $teal2: #008f87;
 .waitHint {
 	margin: 6px 0 0;
 	font-size: 11px;
-	line-height: 1.4;
-	color: rgba(15, 23, 42, 0.55);
+	line-height: 1.45;
+	color: rgba(255, 255, 255, 0.5);
 	font-weight: 500;
+
+	html[data-theme="light"] & {
+		color: #64748b;
+	}
 }
 
 .chatChips {
@@ -507,6 +517,80 @@ $teal2: #008f87;
 
 @keyframes spin {
 	to { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+	.chatSection {
+		height: calc(100dvh - 220px);
+		min-height: 320px;
+		border-radius: 14px;
+	}
+
+	.chatMessages {
+		padding: 14px 12px;
+		gap: 12px;
+	}
+
+	.chatMsg {
+		max-width: 92%;
+		gap: 8px;
+	}
+
+	.chatBotIcon {
+		width: 26px;
+		height: 26px;
+		padding: 4px;
+	}
+
+	.chatBubble {
+		padding: 12px 14px;
+		font-size: 0.9375rem;
+	}
+
+	.chatChips {
+		padding: 8px 12px;
+		flex-wrap: wrap;
+		overflow-x: visible;
+		gap: 8px;
+	}
+
+	.chip {
+		white-space: normal;
+		text-align: left;
+		line-height: 1.35;
+		padding: 10px 12px;
+		font-size: 0.6875rem;
+		min-height: 40px;
+		flex: 1 1 calc(50% - 8px);
+	}
+
+	.chatInputBar {
+		padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+		position: sticky;
+		bottom: 0;
+		z-index: 2;
+
+		input {
+			font-size: 1rem;
+			padding: 12px 14px;
+			min-height: 44px;
+		}
+
+		button {
+			width: 44px;
+			height: 44px;
+		}
+	}
+}
+
+@media (max-width: 480px) {
+	.chatMsg {
+		max-width: 96%;
+	}
+
+	.chip {
+		flex: 1 1 100%;
+	}
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
