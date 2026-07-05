@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
 import { generateActionPlan } from "@/App/Services/GemmaService";
+import { useGemmaConnection } from "@/App/Hooks/useGemmaConnection";
 import { useLanguage } from "@/App/i18n/LanguageContext";
 import type { PlanSection } from "../helpers/planMockData";
 import {
@@ -16,6 +17,7 @@ export type ActionPlanStatus = "idle" | "loading" | "ready" | "error";
 export function useActionPlan(options?: { enabled?: boolean }) {
 	const enabled = options?.enabled !== false;
 	const { lang } = useLanguage();
+	const { gemmaOnline, mode } = useGemmaConnection();
 	const user = useSelector((state: RootState) => state.user);
 	const uploadRecords = useSelector(
 		(state: RootState) => state.uploadHistory.records,
@@ -53,9 +55,11 @@ export function useActionPlan(options?: { enabled?: boolean }) {
 							sections: PlanSection[];
 							source: string;
 						};
-						if (parsed.sections?.length) {
+						const cacheIsGemma = parsed.source === "gemma";
+						const preferFreshGemma = mode === "live" && !cacheIsGemma;
+						if (parsed.sections?.length && !preferFreshGemma) {
 							setPlanData(parsed.sections);
-							setIsGemmaPowered(parsed.source === "gemma");
+							setIsGemmaPowered(cacheIsGemma);
 							setStatus("ready");
 							return;
 						}
@@ -131,7 +135,7 @@ export function useActionPlan(options?: { enabled?: boolean }) {
 		return () => {
 			cancelled = true;
 		};
-	}, [enabled, cacheKey, fallbackPlan, latestRecord, user, lang]);
+	}, [enabled, cacheKey, fallbackPlan, latestRecord, user, lang, gemmaOnline, mode]);
 
 	if (!enabled) {
 		return {

@@ -25,51 +25,118 @@
 
 .header {
 	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	flex-shrink: 0;
+	padding-bottom: 10px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+	html[data-theme="light"] & {
+		border-bottom-color: #e2e8f0;
+	}
+}
+
+.headerTop {
+	display: flex;
+	align-items: flex-start;
 	justify-content: space-between;
+	gap: 10px;
+}
+
+.headerCopy {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	min-width: 0;
+}
+
+.headerClose {
+	@include mixins.modal-close-btn(34px, 16px);
+	flex-shrink: 0;
+	border-radius: 10px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(255, 255, 255, 0.04);
+	color: var(--text-secondary, #94a3b8);
+	transition: all 0.2s ease;
+
+	&:hover {
+		background: rgba(239, 68, 68, 0.12);
+		border-color: rgba(239, 68, 68, 0.25);
+		color: #ef4444;
+	}
+
+	html[data-theme="light"] & {
+		background: #f8fafc;
+		border-color: #e2e8f0;
+		color: #64748b;
+	}
+}
+
+.headerToolbar {
+	display: flex;
 	align-items: center;
-	padding-bottom: 8px;
+	gap: 8px;
 }
 
 .titleArea {
 	display: flex;
 	align-items: center;
-	gap: 12px;
+	gap: 11px;
+	min-width: 0;
+	flex: 1;
 }
 
 .botIconWrapper {
 	position: relative;
-	width: 38px;
-	height: 38px;
-	border-radius: 10px;
-	background: rgba(0, 166, 157, 0.12);
-	border: 1px solid rgba(0, 166, 157, 0.2);
+	width: 40px;
+	height: 40px;
+	border-radius: 12px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: #00A69D;
-	border: 1px solid rgba(0, 166, 157, 0.25);
-	box-shadow: 0 4px 10px rgba(0, 166, 157, 0.08);
+	flex-shrink: 0;
+	color: #00a69d;
+	background: rgba(0, 166, 157, 0.1);
+	border: 1px solid rgba(0, 166, 157, 0.2);
+	transition: border-color 0.2s ease, background 0.2s ease;
 
 	html[data-theme="light"] & {
 		background: rgba(0, 166, 157, 0.08);
-		border-color: rgba(0, 166, 157, 0.2);
 	}
+}
+
+.botIconOnline {
+	border-color: rgba(0, 166, 157, 0.28);
+}
+
+.botIconOffline {
+	color: #94a3b8;
+	background: rgba(148, 163, 184, 0.1);
+	border-color: rgba(148, 163, 184, 0.2);
 }
 
 .onlineDot {
 	position: absolute;
-	bottom: -2px;
-	right: -2px;
-	width: 9px;
-	height: 9px;
-	background: #10b981;
-	border: 2px solid rgba(15, 23, 42, 0.95);
+	bottom: -1px;
+	right: -1px;
+	width: 10px;
+	height: 10px;
 	border-radius: 50%;
-	animation: pulse 2s infinite;
+	border: 2px solid rgba(15, 23, 42, 0.95);
 
 	html[data-theme="light"] & {
 		border-color: #ffffff;
 	}
+}
+
+.onlineDotLive {
+	background: #10b981;
+	animation: pulse 2s infinite;
+}
+
+.onlineDotOff {
+	background: #94a3b8;
+	animation: none;
 }
 
 @keyframes pulse {
@@ -85,65 +152,92 @@
 }
 
 .title {
-	font-size: 15px;
+	font-size: 0.9375rem;
 	font-weight: 800;
 	margin: 0;
-	letter-spacing: -0.015em;
+	letter-spacing: -0.02em;
+	line-height: 1.2;
 	color: #fff;
 
 	html[data-theme="light"] & {
-		color: #000;
+		color: #0f172a;
 	}
 }
 
-.statusLabel {
-	font-size: 11px;
+.statusPill {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	align-self: flex-start;
+	padding: 3px 8px;
+	border-radius: 99px;
+	font-size: 0.625rem;
 	font-weight: 700;
-	color: var(--text-secondary, #94a3b8);
-	display: block;
-	margin-top: 1px;
+	letter-spacing: 0.02em;
+	text-transform: capitalize;
+}
+
+.statusPillOnline {
+	color: #10b981;
+	background: rgba(16, 185, 129, 0.1);
+	border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.statusPillOffline {
+	color: #94a3b8;
+	background: rgba(148, 163, 184, 0.12);
+	border: 1px solid rgba(148, 163, 184, 0.2);
 
 	html[data-theme="light"] & {
-		color: #007a74;
+		color: #64748b;
 	}
+}
+
+.statusPillStarting {
+	color: #f59e0b;
+	background: rgba(245, 158, 11, 0.1);
+	border: 1px solid rgba(245, 158, 11, 0.22);
+}
+
+.statusSpinner {
+	animation: spin 0.9s linear infinite;
+	flex-shrink: 0;
 }
 
 .resetButton {
 	display: inline-flex;
 	align-items: center;
-	gap: 6px;
+	justify-content: center;
+	gap: 5px;
 	background: rgba(255, 255, 255, 0.04);
-	border: 1px solid rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.08);
 	color: var(--text-secondary, #94a3b8);
-	padding: 6px 12px;
+	padding: 7px 12px;
 	border-radius: 10px;
-	font-size: 11.5px;
+	font-size: 0.6875rem;
 	font-weight: 700;
 	cursor: pointer;
-	transition: all 0.25s ease;
+	transition: all 0.2s ease;
+	flex-shrink: 0;
+	min-height: 36px;
 
 	svg {
 		transition: transform 0.25s ease;
 	}
 
 	html[data-theme="light"] & {
-		background: rgba(0, 166, 157, 0.05);
-		border-color: rgba(0, 166, 157, 0.15);
-		color: #007a74;
+		background: #f8fafc;
+		border-color: #e2e8f0;
+		color: #475569;
 	}
 
 	&:hover {
-		background: rgba(0, 166, 157, 0.12);
-		border-color: rgba(0, 166, 157, 0.35);
-		color: #00A69D;
+		background: rgba(0, 166, 157, 0.1);
+		border-color: rgba(0, 166, 157, 0.25);
+		color: #00a69d;
 
 		svg {
-			transform: rotate(180deg);
-		}
-
-		html[data-theme="light"] & {
-			background: rgba(0, 166, 157, 0.1);
-			color: #008f87;
+			transform: rotate(-180deg);
 		}
 	}
 }
@@ -151,11 +245,11 @@
 .chatArea {
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: 8px;
 	flex: 1;
 	overflow-y: auto;
 	overflow-x: hidden;
-	padding-right: 4px;
+	padding: 8px 2px 4px 0;
 	min-height: 0;
 	-webkit-overflow-scrolling: touch;
 	overscroll-behavior: contain;
@@ -224,33 +318,31 @@
 .botMessage {
 	background: rgba(255, 255, 255, 0.03);
 	border: 1px solid rgba(255, 255, 255, 0.05);
-	border-radius: 18px;
+	border-radius: 16px;
 	border-bottom-left-radius: 4px;
-	padding: 12px 14px;
-	max-width: 88%;
+	padding: 10px 12px;
+	max-width: 92%;
 	display: flex;
-	gap: 10px;
+	gap: 8px;
 	align-items: flex-start;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-	animation: messageSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	animation: messageSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 
 	html[data-theme="light"] & {
 		background: #ffffff;
-		border-color: rgba(0, 166, 157, 0.12);
-		box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+		border-color: rgba(0, 166, 157, 0.1);
+		box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
 	}
 }
 
 .userMessage {
 	background: rgba(0, 166, 157, 0.12);
-	border: 1px solid rgba(0, 166, 157, 0.25);
-	border-radius: 18px;
+	border: 1px solid rgba(0, 166, 157, 0.22);
+	border-radius: 16px;
 	border-bottom-right-radius: 4px;
-	padding: 11px 14px;
+	padding: 10px 12px;
 	max-width: 88%;
 	display: flex;
-	box-shadow: 0 4px 12px rgba(0, 166, 157, 0.05);
-	animation: messageSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	animation: messageSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 
 	html[data-theme="light"] & {
 		background: #00a69d;
@@ -520,47 +612,58 @@
 
 // ─── Header Actions & Language Selector ──────────────────────────────────────
 
-.headerActions {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-}
-
 .langSelector {
 	position: relative;
+	flex: 1;
+	min-width: 0;
 }
 
 .langButton {
 	display: flex;
 	align-items: center;
-	gap: 5px;
-	padding: 5px 10px;
-	border-radius: 8px;
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	background: rgba(255, 255, 255, 0.05);
-	color: rgba(255, 255, 255, 0.7);
-	font-size: 11px;
-	font-weight: 600;
+	gap: 6px;
+	width: 100%;
+	padding: 7px 10px;
+	border-radius: 10px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(255, 255, 255, 0.04);
+	color: var(--text-secondary, #cbd5e1);
+	font-size: 0.6875rem;
+	font-weight: 700;
 	cursor: pointer;
 	transition: all 0.2s ease;
-	white-space: nowrap;
+	min-height: 36px;
 
 	&:hover {
-		background: rgba(0, 166, 157, 0.12);
-		border-color: rgba(0, 166, 157, 0.3);
-		color: #00A69D;
+		background: rgba(0, 166, 157, 0.08);
+		border-color: rgba(0, 166, 157, 0.22);
+		color: #00a69d;
 	}
 
 	html[data-theme="light"] & {
-		border-color: rgba(0, 0, 0, 0.1);
-		background: rgba(0, 0, 0, 0.03);
+		background: #f8fafc;
+		border-color: #e2e8f0;
 		color: #475569;
 
 		&:hover {
-			background: rgba(0, 166, 157, 0.08);
-			color: #00A69D;
+			background: rgba(0, 166, 157, 0.06);
+			color: #00a69d;
 		}
 	}
+}
+
+.langButtonLabel {
+	flex: 1;
+	min-width: 0;
+	text-align: left;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.langChevronOpen {
+	transform: rotate(180deg);
+	transition: transform 0.2s ease;
 }
 
 .langDropdown {
@@ -627,41 +730,12 @@
 
 .langOptionActive {
 	background: rgba(0, 166, 157, 0.15);
-	color: #00A69D;
+	color: #00a69d;
 	font-weight: 700;
 
 	html[data-theme="light"] & {
 		background: rgba(0, 166, 157, 0.1);
-		color: #00A69D;
-	}
-}
-
-.closeButton {
-	@include mixins.modal-close-btn(28px, 14px);
-	border-radius: 8px;
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	background: rgba(255, 255, 255, 0.05);
-	color: rgba(255, 255, 255, 0.7);
-	transition: all 0.2s ease;
-	flex-shrink: 0;
-
-	&:hover {
-		background: #ef4444;
-		border-color: #ef4444;
-		color: #ffffff;
-		transform: scale(1.05);
-	}
-
-	html[data-theme="light"] & {
-		border-color: rgba(0, 0, 0, 0.1);
-		background: rgba(0, 0, 0, 0.03);
-		color: #475569;
-
-		&:hover {
-			background: #ef4444;
-			border-color: #ef4444;
-			color: #ffffff;
-		}
+		color: #00a69d;
 	}
 }
 
@@ -686,29 +760,16 @@
 	}
 
 	.header {
-		flex-wrap: nowrap;
+		padding-bottom: 8px;
 		gap: 8px;
-		padding-bottom: 6px;
-		flex-shrink: 0;
-	}
-
-	.titleArea {
-		flex: 1;
-		min-width: 0;
-		gap: 10px;
 	}
 
 	.title {
-		font-size: 0.9375rem;
+		font-size: 0.875rem;
 	}
 
-	.statusLabel {
-		font-size: 0.625rem;
-	}
-
-	.headerActions {
+	.headerToolbar {
 		gap: 6px;
-		flex-shrink: 0;
 	}
 
 	.resetButton span {
@@ -716,26 +777,13 @@
 	}
 
 	.resetButton {
-		padding: 8px;
+		padding: 0;
+		width: 36px;
 		min-width: 36px;
-		min-height: 36px;
-		justify-content: center;
-	}
-
-	.langButton span {
-		display: none;
 	}
 
 	.langButton {
-		padding: 8px;
-		min-width: 36px;
-		min-height: 36px;
-		justify-content: center;
-	}
-
-	.closeButton {
-		min-width: 36px;
-		min-height: 36px;
+		padding: 7px 9px;
 	}
 
 	.chatArea {

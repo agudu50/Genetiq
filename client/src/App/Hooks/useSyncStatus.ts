@@ -1,37 +1,15 @@
-import { useState, useEffect } from "react";
+import { useGemmaConnection } from "./useGemmaConnection";
 
+/** @deprecated Prefer useGemmaConnection for AI + network status */
 export const useSyncStatus = () => {
-	const [isOnline, setIsOnline] = useState(navigator.onLine);
-	const [syncStatus, setSyncStatus] = useState<
-		"Synced" | "Offline Vault" | "Syncing"
-	>("Synced");
+	const { isNetworkOnline, mode, statusLabel } = useGemmaConnection();
 
-	useEffect(() => {
-		const handleOnline = () => {
-			setIsOnline(true);
-			setSyncStatus("Syncing");
-			// Simulate sync delay
-			setTimeout(() => setSyncStatus("Synced"), 1500);
-		};
+	const syncStatus =
+		mode === "checking"
+			? ("Syncing" as const)
+			: mode === "live"
+				? ("Synced" as const)
+				: ("Offline Vault" as const);
 
-		const handleOffline = () => {
-			setIsOnline(false);
-			setSyncStatus("Offline Vault");
-		};
-
-		window.addEventListener("online", handleOnline);
-		window.addEventListener("offline", handleOffline);
-
-		// Initial check
-		if (!navigator.onLine) {
-			setSyncStatus("Offline Vault");
-		}
-
-		return () => {
-			window.removeEventListener("online", handleOnline);
-			window.removeEventListener("offline", handleOffline);
-		};
-	}, []);
-
-	return { isOnline, syncStatus };
+	return { isOnline: isNetworkOnline && mode === "live", syncStatus, statusLabel };
 };

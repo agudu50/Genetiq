@@ -8,11 +8,11 @@ import {
 import {
 	chatWithGemma,
 	analyzeLabResults,
-	checkGemmaHealth,
 	GHANAIAN_REMEDIES,
 	EMERGENCY_CONTACTS,
 } from "@/App/Services/GemmaService";
 import type { GemmaLanguage, GemmaAnalysisResult } from "@/App/Services/GemmaService";
+import { useGemmaConnection } from "@/App/Hooks/useGemmaConnection";
 import { ChatMessageContent } from "@/Features/Dashboard/ChatMessageContent/ChatMessageContent";
 import styles from "./AIAssistant.module.scss";
 
@@ -344,11 +344,7 @@ interface ChatMsg {
 export default function AIAssistant() {
 	const [activeTab, setActiveTab] = useState<Tab>("chat");
 	const [language, setLanguage] = useState<GemmaLanguage>("english");
-	const [gemmaOnline, setGemmaOnline] = useState(false);
-
-	useEffect(() => {
-		checkGemmaHealth().then((h) => setGemmaOnline(h.available && h.modelLoaded));
-	}, []);
+	const { gemmaOnline, mode, statusLabel } = useGemmaConnection();
 
 	return (
 		<div className={styles.page}>
@@ -362,11 +358,19 @@ export default function AIAssistant() {
 					<div>
 						<h1 className={styles.pageTitle}>{LOCALIZED_TEXTS[language].welcome_title}</h1>
 						<p className={styles.pageSub}>
-							<span className={styles.gemmaChip}>
+							<span
+								className={`${styles.gemmaChip} ${
+									mode === "live"
+										? styles.gemmaChipLive
+										: mode === "starting" || mode === "checking"
+											? styles.gemmaChipStarting
+											: styles.gemmaChipOffline
+								}`}
+							>
 								{gemmaOnline ? (
-									<><Wifi size={10} /> Gemma 4 Local</>
+									<><Wifi size={10} /> {statusLabel}</>
 								) : (
-									<><WifiOff size={10} /> Offline Mode</>
+									<><WifiOff size={10} /> {statusLabel}</>
 								)}
 							</span>
 							{LOCALIZED_TEXTS[language].welcome_sub}
@@ -520,7 +524,7 @@ function ChatSection({ language, gemmaOnline }: { language: GemmaLanguage; gemma
 								</span>
 							)}
 							{m.role === "bot" ? (
-								<ChatMessageContent text={m.text} />
+								<ChatMessageContent text={m.text} compact />
 							) : (
 								<p>{m.text}</p>
 							)}

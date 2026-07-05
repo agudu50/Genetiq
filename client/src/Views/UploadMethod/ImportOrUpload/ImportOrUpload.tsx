@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect, useMemo } from "react";
+import { useState, useCallback, useRef, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
@@ -11,13 +11,14 @@ import {
 	X, CheckCircle, ArrowLeft, Loader2, Sparkles,
 	Wifi, WifiOff, Brain, Stethoscope, User, Droplets,
 	Ruler, Scale, Activity, Clock, Check, Lock,
+	AlertTriangle, Languages, ClipboardList,
 } from "lucide-react";
 import {
 	analyzeLabResults,
-	checkGemmaHealth,
 	getTranslation,
 } from "@/App/Services/GemmaService";
 import type { GemmaLanguage, GemmaAnalysisResult } from "@/App/Services/GemmaService";
+import { useGemmaConnection } from "@/App/Hooks/useGemmaConnection";
 import styles from "./ImportOrUpload.module.scss";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -69,7 +70,7 @@ const ImportOrUpload = () => {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
 	const [selectedLanguage, setSelectedLanguage] = useState<GemmaLanguage>("english");
-	const [gemmaOnline, setGemmaOnline] = useState(false);
+	const { gemmaOnline, mode, statusLabel } = useGemmaConnection();
 	const [analysisResult, setAnalysisResult] = useState<GemmaAnalysisResult | null>(null);
 	const [labTextPaste, setLabTextPaste] = useState("");
 	const [analyzeStatus, setAnalyzeStatus] = useState({ message: "", pct: 0 });
@@ -120,11 +121,6 @@ const ImportOrUpload = () => {
 		if (bmi < 30) return { value: bmi, label: "Overweight", cls: "overweight" as const };
 		return { value: bmi, label: "Obese", cls: "obese" as const };
 	}, [info.height, info.weight]);
-
-	// Check Gemma server on mount
-	useEffect(() => {
-		checkGemmaHealth().then((h) => setGemmaOnline(h.available && h.modelLoaded));
-	}, []);
 
 	// ── Step 1: Personal info submit ──────────────────────────────────────────
 
@@ -284,6 +280,20 @@ const ImportOrUpload = () => {
 	// Helper to translate status labels
 	const t = (text: string) => getTranslation(text, selectedLanguage);
 
+	const scoreTier = useMemo(() => {
+		const score = analysisResult?.healthScore ?? 0;
+		if (score <= 50) return { key: "attention", label: "Needs attention", barClass: styles.good };
+		if (score <= 74) return { key: "improve", label: "Room to improve", barClass: styles.warning };
+		if (score <= 89) return { key: "good", label: "Good", barClass: styles.great };
+		return { key: "excellent", label: "Excellent", barClass: "" };
+	}, [analysisResult?.healthScore]);
+
+	const resultsStats = useMemo(() => {
+		if (!analysisResult) return { total: 0, abnormal: 0 };
+		const abnormal = analysisResult.findings.filter((f) => f.status !== "normal").length;
+		return { total: analysisResult.findings.length, abnormal };
+	}, [analysisResult]);
+
 	// ─────────────────────────────────────────────────────────────────────────
 
 	return (
@@ -313,9 +323,11 @@ const ImportOrUpload = () => {
 						)}
 						<div className={styles.gemmaStatusBadge}>
 							{gemmaOnline ? (
-								<><Wifi size={12} /> Gemma AI connected</>
+								<><Wifi size={12} /> {statusLabel}</>
+							) : mode === "starting" || mode === "checking" ? (
+								<><Loader2 size={12} className={styles.gemmaStatusSpinner} /> {statusLabel}</>
 							) : (
-								<><Brain size={12} /> Smart offline mode</>
+								<><Brain size={12} /> {statusLabel}</>
 							)}
 						</div>
 					</div>
@@ -435,59 +447,104 @@ const ImportOrUpload = () => {
 						/* ── Normal Results Layout (presets / real analysis) ── */
 						<>
 							{/* ── Score hero ─────────────────────────────────── */}
-							<div className={styles.resultsHero}>
-								<div className={styles.scoreMobileWrapper}>
-									<div className={styles.scoreRing}>
-										<svg viewBox="0 0 120 120" className={styles.ringsvg}>
-											<circle cx="60" cy="60" r="52" fill="none" className={styles.ringTrack} strokeWidth="8"/>
-											<circle cx="60" cy="60" r="52" fill="none" className={styles.ringProgress} strokeWidth="8"
-												strokeDasharray="326.7"
-												strokeDashoffset={326.7 - (326.7 * analysisResult.healthScore / 100)}
-												strokeLinecap="round" transform="rotate(-90 60 60)"/>
-										</svg>
-										<div className={styles.scoreInner}>
-											<span className={styles.scoreNum}>{analysisResult.healthScore}</span>
-											<span className={styles.scoreLabel}>{t("Health Score")}</span>
+							<div className={`${styles.resultsHero} ${styles[`resultsHero-${scoreTier.key}`]}`}>
+								<div className={styles.resultsHeroInner}>
+									<div className={styles.scoreMobileWrapper}>
+										<div className={`${styles.scoreRing} ${styles[`scoreRing-${scoreTier.key}`]}`}>
+											<svg viewBox="0 0 120 120" className={styles.ringsvg} aria-hidden>
+												<circle cx="60" cy="60" r="52" fill="none" className={styles.ringTrack} strokeWidth="8"/>
+												<circle cx="60" cy="60" r="52" fill="none" className={styles.ringProgress} strokeWidth="8"
+													strokeDasharray="326.7"
+													strokeDashoffset={326.7 - (326.7 * analysisResult.healthScore / 100)}
+													strokeLinecap="round" transform="rotate(-90 60 60)"/>
+											</svg>
+											<div className={styles.scoreInner}>
+												<span className={styles.scoreNum}>{analysisResult.healthScore}</span>
+												<span className={styles.scoreLabel}>{t("Health Score")}</span>
+											</div>
 										</div>
+										<span className={`${styles.scoreTierPill} ${styles[`scoreTierPill-${scoreTier.key}`]}`}>
+											{t(scoreTier.label)}
+										</span>
 									</div>
-									<span className={styles.scoreLabelMobile}>{t("Health Score")}</span>
-								</div>
 
-								<div className={styles.heroText}>
-									<div className={styles.resultsBadge}>
-										<CheckCircle size={13}/> {t("Your results are ready")}
-									</div>
-									<h1>{t("Your results are ready")}</h1>
-									<p>{analysisResult.summary}</p>
+									<div className={styles.heroText}>
+										<div className={styles.resultsBadge}>
+											<CheckCircle size={13}/> {t("Your results are ready")}
+										</div>
+										<h1>{t(scoreTier.label)}</h1>
 
-									{/* Language selector */}
-									<div className={styles.langRow}>
-										{LANGUAGES.map((lang) => (
-											<button
-												key={lang.id}
-												className={`${styles.langPill} ${lang.id === selectedLanguage ? styles.langPillActive : ""}`}
-												onClick={() => setSelectedLanguage(lang.id)}
-											>
-												{lang.flag} {lang.label}
-											</button>
-										))}
+										<div className={styles.resultsStats}>
+											<span className={styles.statChip}>
+												<ClipboardList size={14} />
+												{resultsStats.total} {resultsStats.total === 1 ? "value" : "values"} analyzed
+											</span>
+											{resultsStats.abnormal > 0 && (
+												<span className={styles.statChipWarn}>
+													<AlertTriangle size={14} />
+													{resultsStats.abnormal} {resultsStats.abnormal === 1 ? "needs" : "need"} review
+												</span>
+											)}
+											{analysisResult.bodySystem && (
+												<span className={styles.statChipMuted}>
+													<Activity size={14} />
+													{analysisResult.bodySystem}
+												</span>
+											)}
+										</div>
+
+										<div className={styles.summaryCallout}>
+											<p>{analysisResult.summary}</p>
+										</div>
+
+										<div className={styles.langSection}>
+											<span className={styles.langSectionLabel}>
+												<Languages size={14} />
+												{t("Read in your language") || "Read in your language"}
+											</span>
+											<div className={styles.langRow}>
+												{LANGUAGES.map((lang) => (
+													<button
+														key={lang.id}
+														type="button"
+														className={`${styles.langPill} ${lang.id === selectedLanguage ? styles.langPillActive : ""}`}
+														onClick={() => setSelectedLanguage(lang.id)}
+													>
+														{lang.flag} {lang.code}
+													</button>
+												))}
+											</div>
+										</div>
 									</div>
 								</div>
 							</div>
 
-							{/* ── Score breakdown ────────────────────────────── */}
-							<div className={styles.scoreBreakdown}>
-								<div className={`${styles.scoreBar} ${analysisResult.healthScore <= 50 ? styles.active : ""} ${styles.good}`}>
-									<span>0 – 50</span><span>{t("Needs attention")}</span>
+							{/* ── Score spectrum + breakdown ─────────────────── */}
+							<div className={styles.scoreSpectrumWrap}>
+								<div className={styles.scoreSpectrumHead}>
+									<span className={styles.scoreSpectrumLabel}>{t("Health Score")}</span>
+									<span className={styles.scoreSpectrumValue}>{analysisResult.healthScore}/100</span>
 								</div>
-								<div className={`${styles.scoreBar} ${analysisResult.healthScore > 50 && analysisResult.healthScore <= 74 ? styles.active : ""} ${styles.warning}`}>
-									<span>51 – 74</span><span>{t("Room to improve")}</span>
+								<div className={styles.scoreSpectrumTrack} aria-hidden>
+									<div className={styles.scoreSpectrumGradient} />
+									<div
+										className={`${styles.scoreSpectrumMarker} ${styles[`scoreSpectrumMarker-${scoreTier.key}`]}`}
+										style={{ left: `${Math.min(100, Math.max(0, analysisResult.healthScore))}%` }}
+									/>
 								</div>
-								<div className={`${styles.scoreBar} ${analysisResult.healthScore > 74 && analysisResult.healthScore <= 89 ? styles.active : ""} ${styles.great}`}>
-									<span>75 – 89</span><span>{t("Good")}</span>
-								</div>
-								<div className={`${styles.scoreBar} ${analysisResult.healthScore > 89 ? styles.active : ""}`}>
-									<span>90 – 100</span><span>{t("Excellent")}</span>
+								<div className={styles.scoreBreakdown}>
+									<div className={`${styles.scoreBar} ${analysisResult.healthScore <= 50 ? styles.active : ""} ${styles.good}`}>
+										<span>0 – 50</span><span>{t("Needs attention")}</span>
+									</div>
+									<div className={`${styles.scoreBar} ${analysisResult.healthScore > 50 && analysisResult.healthScore <= 74 ? styles.active : ""} ${styles.warning}`}>
+										<span>51 – 74</span><span>{t("Room to improve")}</span>
+									</div>
+									<div className={`${styles.scoreBar} ${analysisResult.healthScore > 74 && analysisResult.healthScore <= 89 ? styles.active : ""} ${styles.great}`}>
+										<span>75 – 89</span><span>{t("Good")}</span>
+									</div>
+									<div className={`${styles.scoreBar} ${analysisResult.healthScore > 89 ? styles.active : ""}`}>
+										<span>90 – 100</span><span>{t("Excellent")}</span>
+									</div>
 								</div>
 							</div>
 
@@ -503,15 +560,22 @@ const ImportOrUpload = () => {
 										const statusClass = f.status === "normal" ? "good"
 											: f.status === "action" ? "critical"
 											: "warning";
+										const displayName = t(f.name) || f.name;
+										const displayMarker = t(f.marker) || f.marker;
+										const showMarker = displayMarker.toLowerCase() !== displayName.toLowerCase();
 										return (
 											<div key={f.id} className={`${styles.findingCard} ${styles[`card-${statusClass}`]}`}>
+												<div className={`${styles.cardStatusStrip} ${styles[`strip-${statusClass}`]}`} />
 												<div className={styles.cardBody}>
 													<div className={styles.cardTop}>
 														<div className={styles.cardNames}>
-															<span className={styles.cardMarker}>{t(f.name) || f.name}</span>
-															<span className={styles.cardSub}>{t(f.marker) || f.marker}</span>
+															<span className={styles.cardMarker}>{displayName}</span>
+															{showMarker && (
+																<span className={styles.cardSub}>{displayMarker}</span>
+															)}
 														</div>
 														<span className={`${styles.cardBadge} ${styles[`badge-${statusClass}`]}`}>
+															{statusClass !== "good" && <AlertTriangle size={10} />}
 															{t(f.statusLabel) || f.statusLabel}
 														</span>
 													</div>
@@ -534,10 +598,11 @@ const ImportOrUpload = () => {
 									<p className={styles.sectionSub}>{t("Simple steps based on your results.")}</p>
 								</div>
 								<div className={styles.recsList}>
-									{analysisResult.recommendations.map((r) => (
+									{analysisResult.recommendations.map((r, idx) => (
 										<div key={r.title} className={styles.recCard}>
+											<span className={styles.recStep}>{idx + 1}</span>
 											<span className={styles.recIcon}>{r.icon}</span>
-											<div>
+											<div className={styles.recContent}>
 												<div className={styles.recTitle}>{t(r.title) || r.title}</div>
 												<div className={styles.recBody}>{t(r.body) || r.body}</div>
 											</div>
@@ -548,13 +613,16 @@ const ImportOrUpload = () => {
 
 							{/* ── Disclaimer ─────────────────────────────────── */}
 							<div className={styles.disclaimer}>
-								<ShieldCheck size={14} />
-								<span>
-									{t("This analysis is for information only") ||
-										"This analysis is for information only and does not replace professional medical advice."}{" "}
-									{t("Always speak to a qualified doctor about your health.")}
-									{" "}{t("Visit your nearest CHPS compound") || ""}
-								</span>
+								<div className={styles.disclaimerIcon}>
+									<ShieldCheck size={18} />
+								</div>
+								<div className={styles.disclaimerText}>
+									<strong>{t("This analysis is for information only") || "This analysis is for information only"}</strong>
+									<span>
+										{t("Always speak to a qualified doctor about your health.")}{" "}
+										{t("Visit your nearest CHPS compound") || ""}
+									</span>
+								</div>
 							</div>
 
 							{/* ── CTAs ───────────────────────────────────────── */}
@@ -949,8 +1017,16 @@ const ImportOrUpload = () => {
 						<div className={styles.uploadHeroInner}>
 							{/* AI Status indicator */}
 							<div className={styles.uploadAiStatus}>
-								<div className={`${styles.uploadAiDot} ${gemmaOnline ? styles.uploadAiDotOnline : styles.uploadAiDotOffline}`} />
-								<span>{gemmaOnline ? "Gemma AI — Live" : "Offline Mode"}</span>
+								<div
+									className={`${styles.uploadAiDot} ${
+										gemmaOnline
+											? styles.uploadAiDotOnline
+											: mode === "starting" || mode === "checking"
+												? styles.uploadAiDotStarting
+												: styles.uploadAiDotOffline
+									}`}
+								/>
+								<span>{statusLabel}</span>
 							</div>
 
 							<h1>

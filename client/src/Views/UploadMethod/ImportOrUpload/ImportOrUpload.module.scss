@@ -1548,46 +1548,118 @@ $teal2: #008f87;
 // Hero ─────────────────────────────────────────────────────────────────────────
 
 .resultsHero {
-	display: flex;
-	align-items: center;
-	gap: 48px;
-	padding: 48px;
+	padding: 0;
 	background: var(--iou-card);
 	border: 1px solid var(--iou-border);
-	border-radius: 24px;
+	border-radius: 20px;
+	overflow: hidden;
 
-	// On mobile: score ring + text sit side by side in a compact row
 	@media (max-width: 640px) {
-		flex-direction: row;
-		align-items: flex-start;
-		padding: 20px;
-		gap: 16px;
 		border-radius: 16px;
 	}
 }
 
-.scoreRing {
-	position: relative;
-	width: 120px;
-	height: 120px;
-	flex-shrink: 0;
+.resultsHeroInner {
+	display: flex;
+	align-items: stretch;
+	gap: 40px;
+	padding: 36px 40px;
+
+	@media (max-width: 900px) {
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		padding: 28px 24px;
+		gap: 24px;
+	}
 
 	@media (max-width: 640px) {
-		width: 90px;
-		height: 90px;
+		flex-direction: row;
+		align-items: flex-start;
+		text-align: left;
+		padding: 20px;
+		gap: 16px;
 	}
 }
 
-.scoreMobileWrapper {
-	display: block;
+// Tier-tinted top accent
+.resultsHero-attention { border-top: 3px solid #ef4444; }
+.resultsHero-improve   { border-top: 3px solid #f59e0b; }
+.resultsHero-good      { border-top: 3px solid #22c55e; }
+.resultsHero-excellent { border-top: 3px solid $teal; }
+
+.scoreRing {
+	position: relative;
+	width: 132px;
+	height: 132px;
+	flex-shrink: 0;
 
 	@media (max-width: 640px) {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 4px;
-		flex-shrink: 0;
+		width: 96px;
+		height: 96px;
 	}
+}
+
+.scoreRing-attention .ringProgress { stroke: #ef4444; }
+.scoreRing-improve   .ringProgress { stroke: #f59e0b; }
+.scoreRing-good      .ringProgress { stroke: #22c55e; }
+.scoreRing-excellent .ringProgress { stroke: $teal; }
+
+.scoreRing-attention .scoreNum { color: #ef4444; }
+.scoreRing-improve   .scoreNum { color: #f59e0b; }
+.scoreRing-good      .scoreNum { color: #22c55e; }
+.scoreRing-excellent .scoreNum { color: $teal; }
+
+.scoreMobileWrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	flex-shrink: 0;
+
+	@media (max-width: 900px) and (min-width: 641px) {
+		align-items: center;
+	}
+
+	@media (max-width: 640px) {
+		gap: 6px;
+	}
+}
+
+.scoreTierPill {
+	display: inline-flex;
+	align-items: center;
+	padding: 4px 10px;
+	border-radius: 99px;
+	font-size: 0.68rem;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	white-space: nowrap;
+}
+
+.scoreTierPill-attention {
+	background: rgba(239, 68, 68, 0.1);
+	border: 1px solid rgba(239, 68, 68, 0.2);
+	color: #f87171;
+}
+
+.scoreTierPill-improve {
+	background: rgba(245, 158, 11, 0.1);
+	border: 1px solid rgba(245, 158, 11, 0.2);
+	color: #fbbf24;
+}
+
+.scoreTierPill-good {
+	background: rgba(34, 197, 94, 0.1);
+	border: 1px solid rgba(34, 197, 94, 0.2);
+	color: #4ade80;
+}
+
+.scoreTierPill-excellent {
+	background: rgba($teal, 0.1);
+	border: 1px solid rgba($teal, 0.2);
+	color: $teal;
 }
 
 .ringsvg {
@@ -1614,75 +1686,127 @@ $teal2: #008f87;
 }
 
 .scoreNum {
-	font-size: 2rem;
+	font-size: 2.25rem;
 	font-weight: 900;
-	color: $teal;
 	line-height: 1;
 
-	@media (max-width: 640px) { font-size: 1.5rem; }
+	@media (max-width: 640px) { font-size: 1.65rem; }
 }
 
 .scoreLabel {
-	font-size: 0.65rem;
-	font-weight: 600;
+	font-size: 0.62rem;
+	font-weight: 700;
 	color: var(--iou-muted);
 	text-transform: uppercase;
 	letter-spacing: 0.06em;
-
-	// Hide label inside the ring on mobile — shown separately below
-	@media (max-width: 640px) { display: none; }
-}
-
-// Shown only on mobile, below the ring
-.scoreLabelMobile {
-	display: none;
-
-	@media (max-width: 640px) {
-		display: block;
-		font-size: 0.62rem;
-		font-weight: 600;
-		color: var(--iou-muted);
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		text-align: center;
-		white-space: nowrap;
-	}
 }
 
 .heroText {
 	flex: 1;
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: 14px;
 	min-width: 0;
 
+	@media (max-width: 900px) and (min-width: 641px) {
+		align-items: center;
+	}
+
 	h1 {
-		font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+		font-size: clamp(1.5rem, 2.8vw, 2.1rem);
 		font-weight: 900;
-		letter-spacing: -0.04em;
+		letter-spacing: -0.03em;
 		margin: 0;
 		color: var(--iou-heading);
-		line-height: 1.1;
+		line-height: 1.15;
 
 		@media (max-width: 640px) {
-			font-size: 1.15rem;
-			letter-spacing: -0.02em;
+			font-size: 1.2rem;
 		}
 	}
+}
+
+.resultsStats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+
+	@media (max-width: 900px) and (min-width: 641px) {
+		justify-content: center;
+	}
+}
+
+.statChip,
+.statChipWarn,
+.statChipMuted {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 12px;
+	border-radius: 99px;
+	font-size: 0.78rem;
+	font-weight: 600;
+	line-height: 1;
+}
+
+.statChip {
+	background: rgba($teal, 0.08);
+	border: 1px solid rgba($teal, 0.15);
+	color: $teal;
+}
+
+.statChipWarn {
+	background: rgba(239, 68, 68, 0.08);
+	border: 1px solid rgba(239, 68, 68, 0.15);
+	color: #f87171;
+}
+
+.statChipMuted {
+	background: var(--iou-surface);
+	border: 1px solid var(--iou-border);
+	color: var(--iou-muted);
+}
+
+.summaryCallout {
+	padding: 14px 16px;
+	border-radius: 12px;
+	background: var(--iou-surface);
+	border: 1px solid var(--iou-border);
+	border-left: 3px solid $teal;
 
 	p {
-		font-size: 1rem;
-		color: var(--iou-muted);
+		font-size: 0.92rem;
+		color: var(--iou-text);
 		margin: 0;
-		line-height: 1.7;
-		max-width: 600px;
+		line-height: 1.65;
 
 		@media (max-width: 640px) {
-			font-size: 0.82rem;
+			font-size: 0.84rem;
 			line-height: 1.55;
-			display: none; // hide long paragraph on mobile — score breakdown explains it
 		}
 	}
+}
+
+.langSection {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-top: 4px;
+
+	@media (max-width: 900px) and (min-width: 641px) {
+		align-items: center;
+	}
+}
+
+.langSectionLabel {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.72rem;
+	font-weight: 700;
+	color: var(--iou-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
 }
 
 .resultsBadge {
@@ -1691,17 +1815,104 @@ $teal2: #008f87;
 	gap: 6px;
 	padding: 5px 12px;
 	border-radius: 99px;
-	background: rgba($teal, 0.1);
-	border: 1px solid rgba($teal, 0.2);
+	background: rgba($teal, 0.08);
+	border: 1px solid rgba($teal, 0.18);
 	color: $teal;
-	font-size: 0.78rem;
+	font-size: 0.72rem;
 	font-weight: 700;
 	width: fit-content;
+	letter-spacing: 0.02em;
 
-	@media (max-width: 640px) { font-size: 0.7rem; padding: 4px 10px; }
+	@media (max-width: 640px) { font-size: 0.68rem; padding: 4px 10px; }
 }
 
-// Section ──────────────────────────────────────────────────────────────────────
+// Score spectrum ───────────────────────────────────────────────────────────────
+
+.scoreSpectrumWrap {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	padding: 20px 22px;
+	background: var(--iou-card);
+	border: 1px solid var(--iou-border);
+	border-radius: 16px;
+
+	@media (max-width: 640px) {
+		padding: 16px;
+		border-radius: 14px;
+	}
+}
+
+.scoreSpectrumHead {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.scoreSpectrumLabel {
+	font-size: 0.78rem;
+	font-weight: 700;
+	color: var(--iou-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.scoreSpectrumValue {
+	font-size: 0.88rem;
+	font-weight: 800;
+	color: var(--iou-heading);
+}
+
+.scoreSpectrumTrack {
+	position: relative;
+	height: 10px;
+	border-radius: 99px;
+	overflow: visible;
+}
+
+.scoreSpectrumGradient {
+	position: absolute;
+	inset: 0;
+	border-radius: 99px;
+	background: linear-gradient(
+		90deg,
+		#ef4444 0%,
+		#ef4444 25%,
+		#f59e0b 25%,
+		#f59e0b 50%,
+		#22c55e 50%,
+		#22c55e 75%,
+		$teal 75%,
+		$teal 100%
+	);
+	opacity: 0.35;
+}
+
+.scoreSpectrumMarker {
+	position: absolute;
+	top: 50%;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	transform: translate(-50%, -50%);
+	border: 3px solid var(--iou-card);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+	z-index: 1;
+}
+
+.scoreSpectrumMarker-attention { background: #ef4444; }
+.scoreSpectrumMarker-improve   { background: #f59e0b; }
+.scoreSpectrumMarker-good      { background: #22c55e; }
+.scoreSpectrumMarker-excellent { background: $teal; }
+
+// Score breakdown bar ──────────────────────────────────────────────────────────
+
+.scoreBreakdown {
+	display: flex;
+	gap: 10px;
+	width: 100%;
+	margin-top: 0;
 
 .section {
 	display: flex;
@@ -1750,32 +1961,17 @@ $teal2: #008f87;
 	@media (max-width: 640px) { font-size: 0.82rem; }
 }
 
-// Score breakdown bar ──────────────────────────────────────────────────────────
-
-.scoreBreakdown {
-	display: flex;
-	gap: 12px;
-	width: 100%;
-	margin-top: 10px;
-
-	@media (max-width: 640px) {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 8px;
-	}
-}
-
 .scoreBar {
 	flex: 1;
-	padding: 16px;
+	padding: 12px 14px;
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
-	border-radius: 14px;
+	gap: 3px;
+	border-radius: 12px;
 	background: var(--iou-score-bar-bg);
 	border: 1px solid var(--iou-score-bar-border);
-	opacity: 0.55;
-	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	opacity: 0.5;
+	transition: all 0.25s ease;
 	position: relative;
 
 	// Assign subtle colors based on class
@@ -1812,18 +2008,11 @@ $teal2: #008f87;
 		@media (max-width: 640px) { font-size: 0.8rem; }
 	}
 
-	// Hover state
-	&:hover {
-		opacity: 0.8;
-		background: var(--iou-score-bar-hover);
-		transform: translateY(-1px);
-	}
-
 	// Glowing active state
 	&.active {
 		opacity: 1;
-		transform: translateY(-2px);
-		box-shadow: 0 10px 30px -10px var(--iou-score-shadow);
+		transform: translateY(-1px);
+		box-shadow: 0 6px 20px -8px var(--iou-score-shadow);
 		background: var(--iou-score-bar-active-bg);
 
 		&.good {
@@ -1852,9 +2041,21 @@ $teal2: #008f87;
 	}
 }
 
-// Findings list (row layout) ───────────────────────────────────────────────────
+@media (max-width: 640px) {
+	.scoreBreakdown {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 8px;
+	}
+}
 
-// ── Findings card grid ────────────────────────────────────────────────────────
+// Section ──────────────────────────────────────────────────────────────────────
+
+.section {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
 
 .findingsGrid {
 	display: grid;
@@ -2556,6 +2757,12 @@ $teal2: #008f87;
 	background: #f59e0b;
 	box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
 	animation: pulseDot 2s ease-in-out infinite;
+}
+
+.uploadAiDotStarting {
+	background: #3b82f6;
+	box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
+	animation: pulseDot 1.2s ease-in-out infinite;
 }
 
 @keyframes pulseDot {
@@ -3273,6 +3480,10 @@ $teal2: #008f87;
 	font-size: 11px;
 	font-weight: 700;
 	letter-spacing: 0.03em;
+}
+
+.gemmaStatusSpinner {
+	animation: spin 0.8s linear infinite;
 }
 
 .langRowCompact {

@@ -45,7 +45,7 @@ const initialState: TriageState = {
 			id: "msg-initial",
 			role: "bot",
 			text: sanitizeAiText(
-				"Hello! I'm your Genetiq Health Assistant. Describe your symptoms or tap a quick suggestion below. I'll guide you right away.",
+				"Hello! I'm your Genetiq Health Assistant. Describe your symptoms or tap a suggestion below for a faster answer.",
 			),
 		},
 	],
@@ -85,7 +85,7 @@ const triageSlice = createSlice({
 					id: "msg-initial",
 					role: "bot",
 					text: sanitizeAiText(
-				"Hello! I'm your Genetiq Health Assistant. Describe your symptoms or tap a quick suggestion below. I'll guide you right away.",
+				"Hello! I'm your Genetiq Health Assistant. Describe your symptoms or tap a suggestion below for a faster answer.",
 			),
 				},
 			];

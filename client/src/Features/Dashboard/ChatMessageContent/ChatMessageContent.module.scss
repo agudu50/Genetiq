@@ -8,6 +8,14 @@
 	word-break: break-word;
 }
 
+.contentCompact {
+	gap: 4px;
+
+	.paragraph + .paragraph {
+		margin-top: 0;
+	}
+}
+
 .paragraph {
 	margin: 0;
 	font-size: 0.875rem;

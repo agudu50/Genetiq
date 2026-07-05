@@ -11,9 +11,10 @@ import {
 	setLanguage,
 } from "@/App/Redux/triageSlice";
 import { setCategory } from "@/App/Redux/categorySlice";
-import { chatWithGemma, checkGemmaHealth, getTranslation } from "@/App/Services/GemmaService";
+import { chatWithGemma, getTranslation } from "@/App/Services/GemmaService";
 import type { GemmaLanguage } from "@/App/Services/GemmaService";
-import { Send, Bot, AlertTriangle, RefreshCw, Globe, Wifi, WifiOff } from "lucide-react";
+import { useGemmaConnection } from "@/App/Hooks/useGemmaConnection";
+import { Send, Bot, AlertTriangle, RefreshCw, Globe, Wifi, WifiOff, ChevronDown, X, Loader2 } from "lucide-react";
 import { ChatMessageContent } from "@/Features/Dashboard/ChatMessageContent/ChatMessageContent";
 import styles from "./TriageWidget.module.scss";
 
@@ -32,22 +33,19 @@ export interface TriageWidgetProps {
 export const TriageWidget: React.FC<TriageWidgetProps> = ({ onClose }) => {
 	const dispatch = useDispatch();
 	const chatEndRef = useRef<HTMLDivElement>(null);
-	const [gemmaOnline, setGemmaOnline] = useState(false);
-	const [cpuFastMode, setCpuFastMode] = useState(false);
 	const [showLangDropdown, setShowLangDropdown] = useState(false);
 	const [waitSecs, setWaitSecs] = useState(0);
+
+	const {
+		gemmaOnline,
+		cpuFastMode,
+		mode: aiMode,
+		statusLabel,
+	} = useGemmaConnection();
 
 	const { symptomsInput, messages, isAnalyzing, selectedLanguage } = useSelector(
 		(state: RootState) => state.triage,
 	);
-
-	// Check Gemma health on mount
-	useEffect(() => {
-		checkGemmaHealth().then((h) => {
-			setGemmaOnline(h.available && h.modelLoaded);
-			setCpuFastMode(h.device === "cpu" && h.modelLoaded);
-		});
-	}, []);
 
 	// Auto-scroll to bottom of chat when new messages or typing state changes
 	useEffect(() => {
@@ -159,45 +157,84 @@ export const TriageWidget: React.FC<TriageWidgetProps> = ({ onClose }) => {
 	return (
 		<div className={styles.widgetContainer}>
 			{/* ── Header ── */}
-			<div className={styles.header}>
-				<div className={styles.titleArea}>
-					<div className={styles.botIconWrapper}>
-						<Bot size={20} />
-						<div className={styles.onlineDot} />
-					</div>
-					<div>
-						<h3 className={styles.title}>
-							Gemma 4 Health Assistant
-						</h3>
-						<span className={styles.statusLabel}>
-							{gemmaOnline ? (
-								cpuFastMode ? (
-									<><Wifi size={10} /> Fast triage (CPU)</>
+			<header className={styles.header}>
+				<div className={styles.headerTop}>
+					<div className={styles.titleArea}>
+						<div
+							className={`${styles.botIconWrapper} ${gemmaOnline ? styles.botIconOnline : styles.botIconOffline}`}
+						>
+							<Bot size={18} strokeWidth={2.25} />
+							<div
+								className={`${styles.onlineDot} ${gemmaOnline ? styles.onlineDotLive : styles.onlineDotOff}`}
+							/>
+						</div>
+						<div className={styles.headerCopy}>
+							<h3 className={styles.title}>Gemma 4 Health Assistant</h3>
+							<span
+								className={`${styles.statusPill} ${
+									aiMode === "live"
+										? styles.statusPillOnline
+										: aiMode === "starting" || aiMode === "checking"
+											? styles.statusPillStarting
+											: styles.statusPillOffline
+								}`}
+							>
+								{aiMode === "checking" ? (
+									<><Loader2 size={11} strokeWidth={2.5} className={styles.statusSpinner} /> {statusLabel}</>
+								) : gemmaOnline ? (
+									cpuFastMode ? (
+										<><Wifi size={11} strokeWidth={2.5} /> {statusLabel}</>
+									) : (
+										<><Wifi size={11} strokeWidth={2.5} /> {statusLabel}</>
+									)
+								) : aiMode === "starting" ? (
+									<><Loader2 size={11} strokeWidth={2.5} className={styles.statusSpinner} /> {statusLabel}</>
 								) : (
-									<><Wifi size={10} /> Gemma 4 Local</>
-								)
-							) : (
-								<><WifiOff size={10} /> Offline Mode</>
-							)}
-						</span>
+									<><WifiOff size={11} strokeWidth={2.5} /> {statusLabel}</>
+								)}
+							</span>
+						</div>
 					</div>
+
+					{onClose && (
+						<button
+							type="button"
+							className={styles.headerClose}
+							onClick={onClose}
+							aria-label="Close AI Assistant"
+						>
+							<X size={18} strokeWidth={2.25} />
+						</button>
+					)}
 				</div>
-				<div className={styles.headerActions}>
-					{/* Language selector */}
+
+				<div className={styles.headerToolbar}>
 					<div className={styles.langSelector}>
 						<button
+							type="button"
 							className={styles.langButton}
 							onClick={() => setShowLangDropdown(!showLangDropdown)}
-							title="Select language"
+							aria-expanded={showLangDropdown}
+							aria-haspopup="listbox"
 						>
-							<Globe size={13} />
-							<span>{currentLang.flag} {currentLang.label}</span>
+							<Globe size={14} strokeWidth={2.25} />
+							<span className={styles.langButtonLabel}>
+								{currentLang.flag} {currentLang.label}
+							</span>
+							<ChevronDown
+								size={14}
+								strokeWidth={2.5}
+								className={showLangDropdown ? styles.langChevronOpen : undefined}
+							/>
 						</button>
 						{showLangDropdown && (
-							<div className={styles.langDropdown}>
+							<div className={styles.langDropdown} role="listbox">
 								{LANGUAGES.map((lang) => (
 									<button
 										key={lang.id}
+										type="button"
+										role="option"
+										aria-selected={lang.id === selectedLanguage}
 										className={`${styles.langOption} ${lang.id === selectedLanguage ? styles.langOptionActive : ""}`}
 										onClick={() => handleLanguageChange(lang.id)}
 									>
@@ -208,50 +245,21 @@ export const TriageWidget: React.FC<TriageWidgetProps> = ({ onClose }) => {
 							</div>
 						)}
 					</div>
-					<button 
-						onClick={handleReset} 
+
+					<button
+						type="button"
+						onClick={handleReset}
 						className={styles.resetButton}
-						title="Clear Chat History"
+						title="Clear chat"
 					>
-						<RefreshCw size={14} />
+						<RefreshCw size={14} strokeWidth={2.25} />
 						<span>Reset</span>
 					</button>
-					{onClose && (
-						<button
-							type="button"
-							className={styles.closeButton}
-							onClick={onClose}
-							aria-label="Close AI Assistant"
-							title="Close"
-						>
-							<svg
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								strokeWidth="2.5"
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								style={{ width: 14, height: 14 }}
-							>
-								<line x1="18" y1="6" x2="6" y2="18" />
-								<line x1="6" y1="6" x2="18" y2="18" />
-							</svg>
-						</button>
-					)}
 				</div>
-			</div>
+			</header>
 
 			{/* ── Chat Feed ── */}
 			<div className={styles.chatArea}>
-				{messages.length === 0 && !isAnalyzing && (
-					<div className={styles.emptyState}>
-						<p className={styles.emptyTitle}>How can I help today?</p>
-						<p className={styles.emptyHint}>
-							Describe your symptoms or tap a suggestion below.
-						</p>
-					</div>
-				)}
-
 				{messages.map((msg) => (
 					<div
 						key={msg.id}
@@ -269,7 +277,7 @@ export const TriageWidget: React.FC<TriageWidgetProps> = ({ onClose }) => {
 							)}
 							<div className={styles.messageBody}>
 								{msg.role === "bot" ? (
-									<ChatMessageContent text={msg.text} />
+									<ChatMessageContent text={msg.text} compact />
 								) : (
 									<p className={styles.userText}>{msg.text}</p>
 								)}

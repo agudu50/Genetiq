@@ -12,7 +12,8 @@ function normalizeMessageText(text: string): string {
 	return sanitizeAiText(text)
 		.replace(/\s•\s/g, "\n• ")
 		.replace(/(\d+[.)])\s+/g, "\n$1 ")
-		.replace(/([.:!?])\s+(?=[A-Z⚠️])/g, "$1\n\n")
+		// Only break on periods — not ! or ? — so greetings stay together
+		.replace(/\.\s+(?=[A-Z⚠️])/g, ".\n\n")
 		.replace(/:\n\n•/g, ":\n•")
 		.replace(/\n{3,}/g, "\n\n")
 		.trim();
@@ -69,13 +70,16 @@ function parseBlocks(text: string): Block[] {
 interface ChatMessageContentProps {
 	text: string;
 	className?: string;
+	compact?: boolean;
 }
 
-export function ChatMessageContent({ text, className }: ChatMessageContentProps) {
+export function ChatMessageContent({ text, className, compact }: ChatMessageContentProps) {
 	const blocks = parseBlocks(text);
 
 	return (
-		<div className={`${styles.content} ${className ?? ""}`}>
+		<div
+			className={`${styles.content} ${compact ? styles.contentCompact : ""} ${className ?? ""}`}
+		>
 			{blocks.map((block, index) => {
 				switch (block.type) {
 					case "heading":

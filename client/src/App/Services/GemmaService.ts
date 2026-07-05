@@ -76,17 +76,23 @@ let _healthCache: {
 } | null = null;
 const HEALTH_CHECK_INTERVAL = 30_000; // 30s
 
-// ─── Health Check ────────────────────────────────────────────────────────────
+export function invalidateGemmaHealthCache(): void {
+	_healthCache = null;
+}
 
-export async function checkGemmaHealth(): Promise<{
+export type GemmaHealthStatus = {
 	available: boolean;
 	modelLoaded: boolean;
 	modelId: string;
 	device: string;
 	supportsVision: boolean;
-}> {
+};
+
+// ─── Health Check ────────────────────────────────────────────────────────────
+
+export async function checkGemmaHealth(force = false): Promise<GemmaHealthStatus> {
 	const now = Date.now();
-	if (_healthCache && now - _healthCache.checkedAt < HEALTH_CHECK_INTERVAL) {
+	if (!force && _healthCache && now - _healthCache.checkedAt < HEALTH_CHECK_INTERVAL) {
 		return _healthCache;
 	}
 

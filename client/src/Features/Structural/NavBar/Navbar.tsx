@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { Settings, Lock, LogOut } from "lucide-react";
+import { Settings, Lock, LogOut, Wifi, WifiOff } from "lucide-react";
 import { RootState } from "@/App/Redux/store";
 import { resetUser } from "@/App/Redux/userSlice";
 import { AuthCredentials } from "@/App/Services/AuthCredentials";
@@ -13,6 +13,7 @@ import NotificationHub from "./Components/NotificationsHub/NotificationsHub";
 import LanguageSwitcher from "@/Features/Structural/LanguageSwitcher/LanguageSwitcher";
 import ThemeSwitcher from "@/Features/Structural/ThemeSwitcher/ThemeSwitcher";
 import { useLanguage } from "@/App/i18n/LanguageContext";
+import { useGemmaConnection } from "@/App/Hooks/useGemmaConnection";
 import DashboardIcon from "@assets/Navbar/Icons/Dashboard.svg?react";
 import HistoryIcon from "@assets/Navbar/Icons/History.svg?react";
 import GoalsIcon from "@assets/Navbar/Icons/Goals.svg?react";
@@ -32,6 +33,7 @@ const Navbar = () => {
 	const [isPasswordSecurityOpen, setIsPasswordSecurityOpen] = useState(false);
 	const profileRef = useRef<HTMLDivElement>(null);
 	const user = useSelector((state: RootState) => state.user);
+	const { gemmaOnline, mode, statusLabel } = useGemmaConnection();
 	const handleLogout = () => {
 		setIsProfileOpen(false);
 		AuthCredentials.logout();
@@ -152,6 +154,27 @@ const Navbar = () => {
 				{/* Secondary actions (only visible on main dashboard/goals/history views or if mobile) */}
 				{(!isConfigFlow || isMobile) && (
 					<div className={styles["actions-container"]}>
+						{!isMobile && (
+							<div
+								className={`${styles["sync-badge"]} ${
+									gemmaOnline
+										? styles.online
+										: mode === "starting" || mode === "checking"
+											? styles.pending
+											: styles.offline
+								}`}
+								title={statusLabel}
+							>
+								{mode === "starting" || mode === "checking" ? (
+									<span className={styles["sync-spinner"]} />
+								) : gemmaOnline ? (
+									<Wifi size={12} />
+								) : (
+									<WifiOff size={12} />
+								)}
+								<span>{statusLabel}</span>
+							</div>
+						)}
 						{!isMobile && <LanguageSwitcher variant="compact" />}
 						<ThemeSwitcher />
 
