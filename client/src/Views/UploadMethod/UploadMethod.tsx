@@ -8,6 +8,7 @@ import {
 	ArrowRight,
 	CheckCircle2,
 	ShieldCheck,
+	LifeBuoy,
 } from "lucide-react";
 import { useLanguage } from "@/App/i18n/LanguageContext";
 import styles from "./UploadMethod.module.scss";
@@ -48,6 +49,28 @@ const OPTION_META = [
 		descKey: "config_dashboard_desc",
 		ctaKey: "config_dashboard_cta",
 		highlightKeys: ["config_highlight_score", "config_highlight_diet", "config_highlight_insights"],
+	},
+] as const;
+
+const FOOTER_LINKS = [
+	{
+		icon: ShieldCheck,
+		title: "Privacy",
+		desc: "How we protect your health data",
+		href: paths.privacy,
+	},
+	{
+		icon: FileText,
+		title: "Terms",
+		desc: "Usage agreement and your rights",
+		href: paths.terms,
+	},
+	{
+		icon: LifeBuoy,
+		title: "Support",
+		desc: "Get help from our team",
+		href: "mailto:support@genetiq.ai",
+		external: true,
 	},
 ] as const;
 
@@ -146,9 +169,28 @@ const Config = () => {
 					</div>
 
 					<div className={styles.footerLinks}>
-						<a href="/privacy">Privacy</a>
-						<a href="/terms">Terms</a>
-						<a href="mailto:support@genetiq.ai">Support</a>
+						{FOOTER_LINKS.map((link) => {
+							const Icon = link.icon;
+							return (
+								<a
+									key={link.title}
+									href={link.href}
+									className={styles.footerLinkCard}
+									{...(link.external
+										? { target: "_blank", rel: "noopener noreferrer" }
+										: {})}
+								>
+									<span className={styles.footerLinkIcon}>
+										<Icon size={18} strokeWidth={2.25} />
+									</span>
+									<span className={styles.footerLinkCopy}>
+										<span className={styles.footerLinkTitle}>{link.title}</span>
+										<span className={styles.footerLinkDesc}>{link.desc}</span>
+									</span>
+									<ArrowRight size={15} className={styles.footerLinkArrow} />
+								</a>
+							);
+						})}
 					</div>
 				</div>
 
