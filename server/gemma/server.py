@@ -606,6 +606,7 @@ async def translate_text(req: TranslateRequest):
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
+    import socket
     import uvicorn
 
     parser = argparse.ArgumentParser(description="Genetiq Gemma 4 Health API")
@@ -619,5 +620,16 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     MODEL_ID = args.model
+
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as probe:
+        if probe.connect_ex(("127.0.0.1", args.port)) == 0:
+            logger.error(
+                "Port %s is already in use — another Gemma server is probably still running.",
+                args.port,
+            )
+            logger.error("Windows: netstat -ano | findstr :%s", args.port)
+            logger.error("Then stop it: taskkill /PID <pid> /F")
+            logger.error("Or start on another port: python server.py --port 8001")
+            raise SystemExit(1)
 
     uvicorn.run(app, host="0.0.0.0", port=args.port, log_level="info")
