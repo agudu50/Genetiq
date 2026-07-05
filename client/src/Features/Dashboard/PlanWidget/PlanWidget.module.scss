@@ -1,7 +1,6 @@
 @use "@/App/Styles/_mixins" as mixins;
 
 $teal-primary: #00a69d;
-$purple-vibrant: #8b5cf6;
 $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 
 .PlanWidget-wrapper {
@@ -9,7 +8,7 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 	flex-direction: column;
 	width: 100%;
 	box-sizing: border-box;
-	gap: 12px;
+	gap: 10px;
 
 	&-blue {
 		.PlanWidget-content {
@@ -21,135 +20,28 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 .PlanWidget-content {
 	display: flex;
 	flex-direction: column;
-	gap: 20px;
+	gap: 18px;
 	position: relative;
 	overflow: hidden;
-	border-radius: 24px;
-	padding: 26px;
+	border-radius: 20px;
+	padding: 22px;
 	box-sizing: border-box;
 	color: var(--text, #ffffff);
 	@include mixins.dashboard-card;
-	transition:
-		transform 0.45s $ease-spring,
-		box-shadow 0.45s $ease-spring,
-		border-color 0.45s $ease-spring;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
 	html[data-theme="light"] & {
 		color: #0f172a;
 	}
 
-	&:hover {
-		transform: translateY(-3px);
-		border-color: rgba(0, 166, 157, 0.22);
-		box-shadow:
-			0 20px 48px rgba(0, 166, 157, 0.1),
-			inset 0 1px 0 rgba(255, 255, 255, 0.08);
-
-		html[data-theme="light"] & {
-			box-shadow: var(--dash-card-shadow-hover);
-		}
-
-		.cardGlowBlob {
-			transform: translate(-8%, -8%) scale(1.12);
-			opacity: 0.9;
-		}
-	}
-
 	@media (max-width: 768px) {
-		padding: 20px;
-		gap: 16px;
-		border-radius: 20px;
+		padding: 18px;
+		gap: 14px;
+		border-radius: 18px;
 	}
 
 	@media (max-width: 480px) {
 		padding: 16px;
-		border-radius: 18px;
-
-		&:hover {
-			transform: none;
-		}
-	}
-}
-
-@media (hover: none) and (pointer: coarse) {
-	.PlanWidget-content:hover {
-		transform: none;
-		box-shadow: inherit;
-	}
-}
-
-.cardMeshBg {
-	position: absolute;
-	inset: 0;
-	@include mixins.dashboard-mesh-bg;
-	opacity: 0.45;
-	mask-image: radial-gradient(ellipse 90% 80% at 100% 0%, #000 20%, transparent 72%);
-	pointer-events: none;
-	z-index: 0;
-
-	html[data-theme="light"] & {
-		opacity: 0.55;
-	}
-}
-
-.cardGlowBlob {
-	position: absolute;
-	top: -70px;
-	left: -50px;
-	width: 220px;
-	height: 220px;
-	background: radial-gradient(
-		circle,
-		rgba(0, 166, 157, 0.2) 0%,
-		rgba(139, 92, 246, 0.08) 45%,
-		transparent 72%
-	);
-	filter: blur(40px);
-	border-radius: 50%;
-	pointer-events: none;
-	z-index: 0;
-	transition: all 0.65s $ease-spring;
-	animation: none;
-
-	html[data-theme="light"] & {
-		background: radial-gradient(
-			circle,
-			rgba(0, 166, 157, 0.12) 0%,
-			rgba(139, 92, 246, 0.06) 45%,
-			transparent 72%
-		);
-	}
-}
-
-.cardAccentLine {
-	position: absolute;
-	top: 0;
-	left: 26px;
-	right: 26px;
-	height: 1px;
-	background: linear-gradient(
-		90deg,
-		transparent,
-		rgba(0, 166, 157, 0.35) 20%,
-		rgba(139, 92, 246, 0.35) 80%,
-		transparent
-	);
-	opacity: 0.7;
-	pointer-events: none;
-	z-index: 1;
-
-	html[data-theme="light"] & {
-		opacity: 0.5;
-	}
-}
-
-@keyframes planGlowPulse {
-	0% {
-		transform: scale(1);
-		opacity: 0.7;
-	}
-	100% {
-		transform: scale(1.12);
-		opacity: 1;
+		border-radius: 16px;
 	}
 }

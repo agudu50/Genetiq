@@ -67,9 +67,6 @@ export const PlanWidget = ({
 				backgroundColor={backgroundColor}
 			/>
 			<div className={styles["PlanWidget-content"]}>
-				<div className={styles.cardMeshBg} aria-hidden />
-				<div className={styles.cardGlowBlob} aria-hidden />
-				<div className={styles.cardAccentLine} aria-hidden />
 				{activeTab === "Action Plan" && activeSection ? (
 					<PlanAggregate
 						section={activeSection}

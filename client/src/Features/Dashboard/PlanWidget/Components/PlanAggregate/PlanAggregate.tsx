@@ -16,6 +16,8 @@ import doctor from "@assets/PlanWidget/doctor.png";
 import { useLanguage } from "@/App/i18n/LanguageContext";
 import { PlanItemIcon } from "../../helpers/planItemIcons";
 
+const PREVIEW_LIMIT = 3;
+
 type PlanAggregateProps = {
 	section: PlanSection;
 	setActiveTab: (title: string) => void;
@@ -35,11 +37,11 @@ const groupConfig: Record<
 const renderGroupIcon = (type: "clipboard" | "pill" | "activity") => {
 	switch (type) {
 		case "pill":
-			return <Pill size={16} strokeWidth={2.25} />;
+			return <Pill size={15} strokeWidth={2.25} />;
 		case "activity":
-			return <Activity size={16} strokeWidth={2.25} />;
+			return <Activity size={15} strokeWidth={2.25} />;
 		default:
-			return <ClipboardList size={16} strokeWidth={2.25} />;
+			return <ClipboardList size={15} strokeWidth={2.25} />;
 	}
 };
 
@@ -73,12 +75,38 @@ export const PlanAggregate = ({
 					<div className={styles.titleText}>
 						<h3 className={styles.title}>{t("plan_recommended_steps")}</h3>
 						<p className={styles.subtitle}>{t("plan_based_on_data")}</p>
-						<span className={styles.actionsPill}>
-							{totalActions} {t("plan_actions") || "actions"}
-						</span>
 					</div>
 				</div>
+				<span className={styles.actionsPill}>
+					{totalActions} {t("plan_actions") || "actions"}
+				</span>
 			</header>
+
+			<div className={styles.categoryRow}>
+				{groupKeys.map((groupKey) => {
+					const config = groupConfig[groupKey] || {
+						color: "#8b5cf6",
+						icon: "clipboard" as const,
+					};
+					const count = groupedData[groupKey].length;
+
+					return (
+						<button
+							key={groupKey}
+							type="button"
+							className={styles.categoryChip}
+							style={{ "--chip-color": config.color } as React.CSSProperties}
+							onClick={() => setActiveTab(groupKey)}
+						>
+							<span className={styles.categoryChipIcon}>
+								{renderGroupIcon(config.icon)}
+							</span>
+							<span className={styles.categoryChipLabel}>{t(groupKey)}</span>
+							<span className={styles.categoryChipCount}>{count}</span>
+						</button>
+					);
+				})}
+			</div>
 
 			<div className={styles.sections}>
 				{groupKeys.map((groupKey) => {
@@ -87,6 +115,8 @@ export const PlanAggregate = ({
 						icon: "clipboard" as const,
 					};
 					const items = groupedData[groupKey];
+					const previewItems = items.slice(0, PREVIEW_LIMIT);
+					const remaining = items.length - previewItems.length;
 
 					return (
 						<section
@@ -116,11 +146,8 @@ export const PlanAggregate = ({
 								</button>
 							</div>
 
-							<div className={styles.timeline}>
-								<div className={styles.timelineSpine} aria-hidden />
-
-								{items.map((item, i) => {
-									const isLast = i === items.length - 1;
+							<div className={styles.itemList}>
+								{previewItems.map((item, i) => {
 									const { text: benefitPreview } = parseImpact(
 										t(item.description),
 									);
@@ -128,7 +155,7 @@ export const PlanAggregate = ({
 										<button
 											type="button"
 											key={`${groupKey}-${i}`}
-											className={`${styles.timelineItem} ${isLast ? styles.timelineItemLast : ""}`}
+											className={styles.itemRow}
 											style={
 												{ "--accent-color": config.color } as React.CSSProperties
 											}
@@ -140,41 +167,36 @@ export const PlanAggregate = ({
 												})
 											}
 										>
-											<div className={styles.timelineNode}>
-												<div className={styles.itemIcon}>
-													<PlanItemIcon
-														icon={item.icon}
-														itemName={item.name}
-														size={16}
-													/>
-												</div>
+											<div className={styles.itemIcon}>
+												<PlanItemIcon
+													icon={item.icon}
+													itemName={item.name}
+													size={16}
+												/>
 											</div>
-
-											<div className={styles.itemCard}>
-												<div className={styles.itemAccent} aria-hidden />
-												<div className={styles.itemIconMobile} aria-hidden>
-													<PlanItemIcon
-														icon={item.icon}
-														itemName={item.name}
-														size={16}
-													/>
-												</div>
-												<div className={styles.itemBody}>
-													<p className={styles.itemName}>{t(item.name)}</p>
-													<p className={styles.itemPreview}>
-														{benefitPreview}
-													</p>
-													<span className={styles.itemType}>
-														{t("plan_item_activity")}
-													</span>
-												</div>
-												<div className={styles.itemArrow}>
-													<ChevronRight size={15} strokeWidth={2.5} />
-												</div>
+											<div className={styles.itemBody}>
+												<p className={styles.itemName}>{t(item.name)}</p>
+												<p className={styles.itemPreview}>{benefitPreview}</p>
+											</div>
+											<div className={styles.itemArrow}>
+												<ChevronRight size={15} strokeWidth={2.5} />
 											</div>
 										</button>
 									);
 								})}
+
+								{remaining > 0 && (
+									<button
+										type="button"
+										className={styles.moreRow}
+										onClick={() => setActiveTab(groupKey)}
+									>
+										<span>
+											+{remaining} {t("plan_more_items") || "more items"}
+										</span>
+										<ChevronRight size={14} strokeWidth={2.5} />
+									</button>
+								)}
 							</div>
 						</section>
 					);

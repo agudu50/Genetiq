@@ -1,3 +1,5 @@
+@use "@/App/Styles/_mixins" as mixins;
+
 $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 
 .section {
@@ -116,11 +118,7 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 		bottom: 18px;
 		width: 2px;
 		border-radius: 2px;
-		background: linear-gradient(
-			180deg,
-			color-mix(in srgb, var(--section-color) 45%, transparent) 0%,
-			rgba(148, 163, 184, 0.12) 100%
-		);
+		background: color-mix(in srgb, var(--section-color) 30%, rgba(148, 163, 184, 0.15));
 		pointer-events: none;
 	}
 
