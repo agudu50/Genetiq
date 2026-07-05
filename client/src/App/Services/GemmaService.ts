@@ -13,6 +13,8 @@
 import { sanitizeAiText } from "@/App/Utils/sanitizeAiText";
 import { extractLabTextFromImage, extractLabTextFromImages, isUsableLabText } from "@/App/Utils/extractLabText";
 import { parseAndBuildFallback } from "@/App/Utils/parseLabOcrText";
+import { inferPlanIconId } from "@/Features/Dashboard/PlanWidget/helpers/planItemIcons";
+import type { PlanSection } from "@/Features/Dashboard/PlanWidget/helpers/planMockData";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -430,6 +432,130 @@ export async function chatWithGemma(opts: {
 	}
 
 	return finalizeChatResult(simulateChat(opts));
+}
+
+// ─── Action Plan ───────────────────────────────────────────────────────────────
+
+export interface GemmaActionPlanItem {
+	name: string;
+	description: string;
+	icon?: string;
+	dosage?: string;
+	frequency?: string;
+}
+
+export interface GemmaActionPlanSection {
+	title: string;
+	items: GemmaActionPlanItem[];
+}
+
+export interface GemmaActionPlanResult {
+	sections: PlanSection[];
+	source: "gemma" | "health-data";
+}
+
+const ACTION_PLAN_SECTIONS = [
+	"Follow-up Care",
+	"Supplements",
+	"Lifestyle",
+] as const;
+
+function isValidActionPlanResponse(r: unknown): r is { sections: GemmaActionPlanSection[] } {
+	if (!r || typeof r !== "object") return false;
+	const x = r as { sections?: unknown };
+	if (!Array.isArray(x.sections)) return false;
+	return x.sections.some(
+		(s) =>
+			s &&
+			typeof s === "object" &&
+			Array.isArray((s as GemmaActionPlanSection).items) &&
+			(s as GemmaActionPlanSection).items.length > 0,
+	);
+}
+
+function convertGemmaActionPlan(raw: { sections: GemmaActionPlanSection[] }): GemmaActionPlanResult {
+	const sectionMap = new Map<string, GemmaActionPlanSection>();
+	for (const sec of raw.sections) {
+		if (sec?.title) sectionMap.set(sec.title, sec);
+	}
+
+	const dataSections = ACTION_PLAN_SECTIONS.map((title) => {
+		const sec = sectionMap.get(title);
+		const items = (sec?.items ?? []).map((item) => ({
+			name: sanitizeAiText(item.name),
+			description: sanitizeAiText(item.description),
+			icon: inferPlanIconId(item.icon, item.name),
+			dosage: item.dosage ? sanitizeAiText(item.dosage) : undefined,
+			frequency: item.frequency ? sanitizeAiText(item.frequency) : undefined,
+			group: title,
+		}));
+		return { title, data: items };
+	});
+
+	return {
+		sections: [
+			{ title: "Action Plan", type: "aggregated", data: [] },
+			...dataSections,
+		],
+		source: "gemma",
+	};
+}
+
+export async function generateActionPlan(opts: {
+	patientAge: string;
+	patientGender: string;
+	healthScore: number;
+	summary: string;
+	findings: GemmaFinding[];
+	recommendations: GemmaRecommendation[];
+	symptoms: string[];
+	medicalConditions: string[];
+	medications: { name: string; dosage: string; frequency: string }[];
+	lifestyle: Record<string, string>;
+	bmi?: number;
+	language: string;
+}): Promise<GemmaActionPlanResult | null> {
+	const health = await checkGemmaHealth();
+
+	if (!health.available || !health.modelLoaded) {
+		return null;
+	}
+
+	try {
+		const res = await fetch(`${GEMMA_BASE_URL}/api/gemma/action-plan`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				patient_age: opts.patientAge,
+				patient_gender: opts.patientGender,
+				health_score: opts.healthScore,
+				summary: opts.summary,
+				findings: opts.findings,
+				recommendations: opts.recommendations,
+				symptoms: opts.symptoms,
+				medical_conditions: opts.medicalConditions,
+				medications: opts.medications,
+				lifestyle: opts.lifestyle,
+				bmi: opts.bmi,
+				language: opts.language,
+			}),
+			signal: AbortSignal.timeout(300_000),
+		});
+
+		if (res.ok) {
+			const data = await res.json();
+			if (isValidActionPlanResponse(data)) {
+				return convertGemmaActionPlan(data);
+			}
+			console.warn("Gemma action plan incomplete");
+		} else {
+			console.warn("Gemma action-plan failed:", res.status);
+		}
+	} catch (e) {
+		console.warn("Gemma action plan error:", e);
+	}
+
+	return null;
 }
 
 // ─── Ghanaian Language Translations ──────────────────────────────────────────

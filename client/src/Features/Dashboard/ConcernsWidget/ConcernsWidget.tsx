@@ -182,9 +182,6 @@ export const ConcernsWidget: React.FC<ConcernsWidgetProps> = ({ category }) => {
 	const selectedSystem = detailedSystemConcerns[0];
 	const reasons = selectedSystem.details[detailIndex - 1]?.reasons ?? [];
 	const symptoms = selectedSystem?.details[detailIndex - 1]?.symptoms;
-	const planData = isCardioDetailView
-		? (selectedSystem.details[detailIndex - 1]?.plan ?? selectedSystem.defaultPlan)
-		: selectedSystem.defaultPlan;
 
 	const handleShowMore = () => {
 		setIsShowMore((prev) => !prev);
@@ -299,7 +296,7 @@ export const ConcernsWidget: React.FC<ConcernsWidgetProps> = ({ category }) => {
 					<SymptomsList symptoms={symptoms} />
 				</div>
 
-				<PlanWidget key={lang} planData={planData} />
+				<PlanWidget key={lang} />
 			</div>
 
 			<SuggestionsModal

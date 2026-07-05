@@ -45,3 +45,44 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 		border-radius: 16px;
 	}
 }
+
+.loadingBanner {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	align-self: flex-start;
+	padding: 6px 12px;
+	border-radius: 99px;
+	font-size: 0.68rem;
+	font-weight: 700;
+	color: #00a69d;
+	background: rgba(0, 166, 157, 0.1);
+	border: 1px solid rgba(0, 166, 157, 0.18);
+	animation: planPulse 1.4s ease-in-out infinite;
+}
+
+.gemmaBadge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	align-self: flex-start;
+	padding: 5px 10px;
+	border-radius: 99px;
+	font-size: 0.62rem;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: #00a69d;
+	background: rgba(0, 166, 157, 0.08);
+	border: 1px solid rgba(0, 166, 157, 0.16);
+}
+
+@keyframes planPulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.65;
+	}
+}

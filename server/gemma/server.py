@@ -134,6 +134,7 @@ app.add_middleware(
 
 from inference import Message, run_gemma_inference
 from prompts import (
+    ACTION_PLAN_SYSTEM_PROMPT,
     CHAT_SYSTEM_PROMPT,
     CHAT_SYSTEM_PROMPT_SHORT,
     GREETING_RESPONSES,
@@ -274,6 +275,21 @@ class ChatRequest(BaseModel):
 class TranslateRequest(BaseModel):
     text: str
     language: str  # twi, ga, ewe, fante
+
+
+class ActionPlanRequest(BaseModel):
+    patient_age: str = ""
+    patient_gender: str = ""
+    health_score: int = 0
+    summary: str = ""
+    findings: list[dict] = []
+    recommendations: list[dict] = []
+    symptoms: list[str] = []
+    medical_conditions: list[str] = []
+    medications: list[dict] = []
+    lifestyle: dict = {}
+    bmi: Optional[float] = None
+    language: str = "english"
 
 
 # ─── Helper: Generate with Gemma ─────────────────────────────────────────────
@@ -418,6 +434,90 @@ async def analyze_lab_results(req: AnalyzeRequest):
         raise
     except Exception as e:
         logger.error(f"Analysis error: {e}")
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/gemma/action-plan")
+async def generate_action_plan(req: ActionPlanRequest):
+    """Generate a personalized action plan from patient health context."""
+
+    findings_text = ""
+    if req.findings:
+        lines = []
+        for f in req.findings[:12]:
+            marker = f.get("marker") or f.get("name") or "Unknown"
+            value = f.get("value") or ""
+            status = f.get("status") or ""
+            note = f.get("note") or ""
+            lines.append(f"- {marker}: {value} ({status}) — {note}")
+        findings_text = "\n".join(lines)
+
+    recs_text = ""
+    if req.recommendations:
+        lines = []
+        for r in req.recommendations[:8]:
+            title = r.get("title") or ""
+            body = r.get("body") or ""
+            lines.append(f"- {title}: {body}")
+        recs_text = "\n".join(lines)
+
+    lifestyle = req.lifestyle or {}
+    prompt_parts = [
+        f"Create a personalized action plan for this patient in Ghana.",
+        f"Age: {req.patient_age or 'unknown'} | Gender: {req.patient_gender or 'unknown'}",
+    ]
+    if req.health_score:
+        prompt_parts.append(f"Health score: {req.health_score}/100")
+    if req.bmi:
+        prompt_parts.append(f"BMI: {req.bmi:.1f}")
+    if req.summary:
+        prompt_parts.append(f"\nLab summary:\n{req.summary}")
+    if findings_text:
+        prompt_parts.append(f"\nLab findings:\n{findings_text}")
+    if recs_text:
+        prompt_parts.append(f"\nExisting recommendations:\n{recs_text}")
+    if req.symptoms:
+        prompt_parts.append(f"\nReported symptoms: {', '.join(req.symptoms)}")
+    if req.medical_conditions:
+        prompt_parts.append(
+            f"\nMedical conditions: {', '.join(req.medical_conditions)}"
+        )
+    if req.medications:
+        med_lines = [
+            f"- {m.get('name', '')} ({m.get('dosage', '')}, {m.get('frequency', '')})"
+            for m in req.medications
+            if m.get("name")
+        ]
+        if med_lines:
+            prompt_parts.append(f"\nCurrent medications:\n" + "\n".join(med_lines))
+    if lifestyle:
+        prompt_parts.append(
+            f"\nLifestyle: smoking={lifestyle.get('smoking', 'unknown')}, "
+            f"alcohol={lifestyle.get('alcohol', 'unknown')}, "
+            f"exercise={lifestyle.get('exercise', 'unknown')}, "
+            f"diet={lifestyle.get('diet', 'unknown')}"
+        )
+
+    messages = [
+        {"role": "system", "content": ACTION_PLAN_SYSTEM_PROMPT},
+        {"role": "user", "content": "\n".join(prompt_parts)},
+    ]
+
+    try:
+        raw_response = await generate_response_async(messages, max_tokens=2048)
+        result = parse_json_response(raw_response)
+
+        if req.language != "english" and req.language in TRANSLATIONS:
+            result["translations"] = TRANSLATIONS[req.language]
+
+        result["source"] = "gemma"
+        return result
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Action plan error: {e}")
         logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
 

@@ -110,6 +110,45 @@ export function resolvePlanIconId(
 	if (itemName && PLAN_ITEM_ICON_BY_NAME[itemName]) {
 		return PLAN_ITEM_ICON_BY_NAME[itemName];
 	}
+	return inferPlanIconId(icon, itemName);
+}
+
+export function inferPlanIconId(
+	icon?: string,
+	itemName?: string,
+): PlanIconId {
+	if (icon && icon in PLAN_ICONS) return icon as PlanIconId;
+	if (itemName && PLAN_ITEM_ICON_BY_NAME[itemName]) {
+		return PLAN_ITEM_ICON_BY_NAME[itemName];
+	}
+
+	const text = `${itemName ?? ""} ${icon ?? ""}`.toLowerCase();
+
+	if (/genetic|dna/.test(text)) return "dna";
+	if (/blood pressure|hypertension|heart rate|cardio|ekg|ecg/.test(text))
+		return "heart-pulse";
+	if (/glucose|sugar|diabet|a1c|hba1c/.test(text)) return "glucose";
+	if (/cholesterol|lipid|ldl|hdl|triglyceride/.test(text)) return "lab-test";
+	if (/bmi|weight|scale|obes/.test(text)) return "scale";
+	if (/beetroot|nitric/.test(text)) return "beetroot";
+	if (/turmeric|curcumin|inflamm/.test(text)) return "turmeric";
+	if (/omega|fish oil|fatty acid/.test(text)) return "omega";
+	if (/coq10|coenzyme/.test(text)) return "coq10";
+	if (/ashwagandha|adaptogen/.test(text)) return "ashwagandha";
+	if (/smok|alcohol|tobacco/.test(text)) return "smoke-free";
+	if (/exercise|vo2|train|cardio|walk|run|zone 2/.test(text))
+		return "cardio-training";
+	if (/diet|glycemic|meal|eat|nutrition|food/.test(text)) return "healthy-diet";
+	if (/stress|mental|anxiety|sleep/.test(text)) return "stress";
+	if (/fruit|vegetable|produce|plant/.test(text)) return "produce";
+	if (/salt|sugar|sodium/.test(text)) return "low-sodium";
+	if (/flex|balance|yoga|stretch/.test(text)) return "flexibility";
+	if (/iron|vitamin|supplement|moringa|magnesium|zinc|calcium|pill|capsule|herb/.test(text))
+		return "pill";
+	if (/doctor|monitor|test|lab|screen|follow/.test(text)) return "stethoscope";
+	if (/brain|stroke|neuro/.test(text)) return "brain";
+	if (/digest|gut|stomach|typhoid/.test(text)) return "digestive";
+
 	return "pill";
 }
 

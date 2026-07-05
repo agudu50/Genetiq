@@ -302,6 +302,8 @@
 	"plan_actions": "actions",
 	"plan_items": "items",
 	"plan_more_items": "more items",
+	"plan_generating": "Gemma is building your personalized plan…",
+	"plan_gemma_powered": "Personalized by Gemma AI",
 	"plan_detail_benefit": "Expected benefit",
 	"plan_detail_impact": "Health impact",
 	"plan_detail_dosage": "Dosage",
