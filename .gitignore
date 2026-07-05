@@ -24,6 +24,8 @@ dist-ssr
 *.sw?
 
 # Variables
+.env
+server/.env
 .env.stage 
 .env.prod
 .vercel

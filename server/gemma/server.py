@@ -29,6 +29,33 @@ _GEMMA_DIR = os.path.dirname(os.path.abspath(__file__))
 if _GEMMA_DIR not in sys.path:
     sys.path.insert(0, _GEMMA_DIR)
 
+
+def _load_server_env() -> None:
+    """Load server/.env so HF_TOKEN is available before model download."""
+    env_path = os.path.join(_GEMMA_DIR, "..", ".env")
+    if not os.path.isfile(env_path):
+        return
+    with open(env_path, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, _, val = line.partition("=")
+            key, val = key.strip(), val.strip().strip('"').strip("'")
+            if key and key not in os.environ:
+                os.environ[key] = val
+    token = os.environ.get("HF_TOKEN") or os.environ.get("HUGGING_FACE_HUB_TOKEN")
+    if token:
+        os.environ["HF_TOKEN"] = token
+        os.environ["HUGGING_FACE_HUB_TOKEN"] = token
+    # S3-compatible keys in .env break huggingface_hub routing (400 from s3.hf.co).
+    # Keep them in .env for manual S3 clients; hub downloads use HF_TOKEN + huggingface.co only.
+    for key in ("HF_ENDPOINT", "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "HF_HUB_DOWNLOAD_ENDPOINT"):
+        os.environ.pop(key, None)
+
+
+_load_server_env()
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -61,6 +88,13 @@ def load_model(model_id: str):
 
     logger.info(f"🚀 Initializing Gemma Model Load: {model_id}")
     logger.info("⏳ Downloading weights from Hugging Face Repository...")
+    if os.environ.get("HF_TOKEN") or os.environ.get("HUGGING_FACE_HUB_TOKEN"):
+        logger.info("🔑 Hugging Face token found — authenticated download enabled")
+    else:
+        logger.warning(
+            "⚠️ No HF_TOKEN in server/.env — gated models may fail to download. "
+            "Add HF_TOKEN=hf_... to server/.env and restart."
+        )
 
     try:
         import torch
@@ -76,6 +110,8 @@ def load_model(model_id: str):
         # (text, vision, audio) but requires AutoProcessor to process multimodal inputs.
         from transformers import AutoProcessor, AutoModelForCausalLM
         logger.info("🤖 Loading model weights under AutoModelForCausalLM with AutoProcessor...")
+        for key in ("HF_ENDPOINT", "HF_HUB_DOWNLOAD_ENDPOINT", "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"):
+            os.environ.pop(key, None)
         
         # Load the processor (handles images, audio, and text)
         processor = AutoProcessor.from_pretrained(model_id)
