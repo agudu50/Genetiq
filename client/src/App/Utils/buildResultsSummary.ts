@@ -1,4 +1,11 @@
 import type { GemmaAnalysisResult } from "@/App/Services/GemmaService";
+import {
+	buildFindingNote,
+	buildSummarySectionsCopy,
+	isPlausibleLabValue,
+	parseNumericValue,
+} from "./labResultCopy";
+import type { ParsedLabRow } from "./parseLabOcrText";
 
 export type SummaryTone = "info" | "caution" | "neutral";
 
@@ -42,86 +49,53 @@ function hasLiverFinding(result: GemmaAnalysisResult): boolean {
 	);
 }
 
+function findingToRow(f: GemmaAnalysisResult["findings"][0]): ParsedLabRow {
+	return {
+		name: f.name,
+		marker: f.marker,
+		value: f.value,
+		unit: "",
+		status: f.status,
+		statusLabel: f.statusLabel,
+	};
+}
+
+/** Rebuild plain-language notes on findings when showing stored/Gemma results. */
+export function enrichFindingsWithPlainNotes(result: GemmaAnalysisResult): GemmaAnalysisResult {
+	return {
+		...result,
+		findings: result.findings.map((f) => ({
+			...f,
+			note: buildFindingNote(findingToRow(f)),
+		})),
+	};
+}
+
 export function buildResultsSummarySections(
 	result: GemmaAnalysisResult,
 	patientAge?: string,
 	patientGender?: string,
 ): SummarySection[] {
-	if (result.summarySections?.length) {
-		return result.summarySections.map((s) => ({
-			...s,
-			tone: s.tone ?? "neutral",
-		}));
-	}
-
 	const total = result.findings.length;
 	const abnormal = result.findings.filter((f) => f.status !== "normal");
 	const patientCtx = formatPatientContext(patientAge, patientGender);
 	const spep = hasSpepFinding(result);
 	const liver = hasLiverFinding(result);
 
+	const hasUnreliableOcr = result.findings.some((f) => {
+		const num = parseNumericValue(f.value);
+		return num !== null && !isPlausibleLabValue(f.name, num);
+	});
+
 	if (total > 0) {
-		const sections: SummarySection[] = [
-			{
-				id: "analyzed",
-				title: "What we analyzed",
-				body: patientCtx
-					? `We read ${total} lab value${total !== 1 ? "s" : ""} from your report ${patientCtx}.`
-					: `We read ${total} lab value${total !== 1 ? "s" : ""} from your lab report.`,
-				tone: "info",
-			},
-			{
-				id: "disclaimer",
-				title: "Please remember",
-				body:
-					"This is a computer-generated summary, not a diagnosis. Your doctor should review the original report and confirm every result before you take any action.",
-				tone: "neutral",
-			},
-		];
-
-		if (abnormal.length === 0) {
-			sections.push({
-				id: "results",
-				title: "Your results at a glance",
-				body: "All values we detected appear within normal limits based on the reference ranges on your report.",
-				tone: "info",
-			});
-		} else {
-			sections.push({
-				id: "results",
-				title:
-					abnormal.length === 1
-						? "1 result needs a closer look"
-						: `${abnormal.length} results need a closer look`,
-				body:
-					abnormal.length === 1
-						? "One value is outside the expected range. This does not always mean something is wrong — only your doctor can interpret it in context."
-						: `${abnormal.length} values are outside the expected range. This does not always mean something is wrong — only your doctor can interpret them in context.`,
-				tone: "caution",
-			});
-		}
-
-		if (spep) {
-			sections.push({
-				id: "protein",
-				title: "About your protein result",
-				body:
-					"An abnormal protein band or M-spike can have several causes. Your doctor may order follow-up tests such as immunofixation or refer you to a specialist to find out more.",
-				tone: "caution",
-			});
-		}
-
-		if (liver) {
-			sections.push({
-				id: "liver",
-				title: "About your liver markers",
-				body:
-					"Some liver-related values look elevated. A clinician should review these alongside your symptoms, medications, and full medical history.",
-				tone: "caution",
-			});
-		}
-
-		return sections;
+		return buildSummarySectionsCopy({
+			total,
+			abnormalCount: abnormal.length,
+			patientCtx,
+			hasSpep: spep,
+			hasLiver: liver,
+			hasUnreliableOcr,
+		});
 	}
 
 	// No structured findings — break legacy paragraph summary into readable chunks
@@ -143,7 +117,7 @@ export function buildResultsSummarySections(
 
 	return sentences.map((body, i) => ({
 		id: `part-${i}`,
-		title: i === 0 ? "Summary" : i === sentences.length - 1 ? "Please remember" : "What this means",
+		title: i === 0 ? "Summary" : i === sentences.length - 1 ? "Important" : "What this means",
 		body,
 		tone: (i === 0 ? "info" : body.toLowerCase().includes("doctor") ? "neutral" : "caution") as SummaryTone,
 	}));

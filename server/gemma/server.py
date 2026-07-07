@@ -72,7 +72,7 @@ logger = logging.getLogger("genetiq-gemma")
 
 model: Any = None
 processor: Any = None
-MODEL_ID = "google/gemma-4-12B-it"
+MODEL_ID = os.environ.get("GEMMA_MODEL", "google/gemma-2-2b-it")
 
 
 # ==============================================================================
@@ -108,26 +108,35 @@ def load_model(model_id: str):
         # ─── UNIFIED MULTIMODAL MODEL LOADING (Gemma 4) ───
         # Gemma 4 is encoder-free, meaning it uses AutoModelForCausalLM for everything
         # (text, vision, audio) but requires AutoProcessor to process multimodal inputs.
-        from transformers import AutoProcessor, AutoModelForCausalLM
+        from transformers import AutoModelForCausalLM, AutoProcessor, AutoTokenizer
         logger.info("🤖 Loading model weights under AutoModelForCausalLM with AutoProcessor...")
         for key in ("HF_ENDPOINT", "HF_HUB_DOWNLOAD_ENDPOINT", "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"):
             os.environ.pop(key, None)
-        
-        # Load the processor (handles images, audio, and text)
-        processor = AutoProcessor.from_pretrained(model_id)
-        
+
+        hf_token = os.environ.get("HF_TOKEN") or os.environ.get("HUGGING_FACE_HUB_TOKEN")
+        load_kwargs: dict[str, Any] = {"token": hf_token} if hf_token else {}
+
+        try:
+            processor = AutoProcessor.from_pretrained(model_id, **load_kwargs)
+        except Exception:
+            processor = AutoTokenizer.from_pretrained(model_id, **load_kwargs)
+
+        dtype = torch.bfloat16 if device == "cuda" else torch.float32
         if device == "cuda":
             model = AutoModelForCausalLM.from_pretrained(
                 model_id,
-                torch_dtype=torch.bfloat16,
+                torch_dtype=dtype,
                 device_map="auto",
+                **load_kwargs,
             )
         else:
-            # bfloat16 halves memory vs float32 — critical to avoid swapping on low-RAM machines
             model = AutoModelForCausalLM.from_pretrained(
                 model_id,
-                torch_dtype=torch.bfloat16,
+                torch_dtype=dtype,
+                low_cpu_mem_usage=True,
+                **load_kwargs,
             )
+        model.eval()
         logger.info(f"✅ Unified Multimodal Model loaded successfully: {model_id}")
         logger.info(f"   Device: {next(model.parameters()).device}")
     except Exception as e:
@@ -270,16 +279,41 @@ def get_small_talk_response(message: str, language: str) -> dict | None:
     return None
 
 
+def estimate_analyze_max_tokens(lab_text: str = "", is_preset: bool = False) -> int:
+    """Keep lab analysis generation bounded — CPU can take minutes at 2048 tokens."""
+    import torch
+
+    if is_preset:
+        tokens = 384
+    else:
+        length = len(lab_text.strip())
+        if length < 500:
+            tokens = 256
+        elif length < 1500:
+            tokens = 384
+        else:
+            tokens = 512
+    if not torch.cuda.is_available():
+        return min(tokens, 256)
+    return min(tokens, 1536)
+
+
 def estimate_chat_max_tokens(message: str) -> int:
-    """Scale generation budget to message size — keeps CPU replies under ~2 min."""
+    """Scale generation budget to message size — keeps CPU replies responsive."""
+    import torch
+
     length = len(message.strip())
     if length < 40:
-        return 96
-    if length < 120:
-        return 160
-    if length < 300:
-        return 240
-    return 320
+        tokens = 48
+    elif length < 120:
+        tokens = 64
+    elif length < 300:
+        tokens = 96
+    else:
+        tokens = 128
+    if not torch.cuda.is_available():
+        return min(tokens, 64)
+    return tokens
 
 
 # ─── Request/Response Models ─────────────────────────────────────────────────
@@ -348,6 +382,14 @@ async def generate_response_async(messages: list[Message], max_tokens: int = 204
     return await asyncio.to_thread(generate_response, messages, max_tokens)
 
 
+def sanitize_chat_text(text: str) -> str:
+    """Strip markdown/code fences from model output for plain chat display."""
+    cleaned = text.strip()
+    cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned)
+    cleaned = re.sub(r"\s*```$", "", cleaned)
+    return cleaned.strip()
+
+
 def parse_json_response(text: str) -> dict:
     """Extract JSON from model response text."""
     # Try to find JSON block in the response
@@ -380,6 +422,12 @@ async def health_check():
 @app.post("/api/gemma/analyze")
 async def analyze_lab_results(req: AnalyzeRequest):
     """Analyze lab results using Gemma 4 vision or preset prompts."""
+    logger.info(
+        "🔬 Analyze request preset=%s lab_chars=%s image=%s",
+        req.preset_id,
+        len(req.lab_text or ""),
+        bool(req.image_base64 or req.image_url),
+    )
 
     is_text_only = not processor_supports_vision()
     if (
@@ -410,12 +458,13 @@ async def analyze_lab_results(req: AnalyzeRequest):
         system_prompt = LAB_TEXT_ANALYSIS_SYSTEM_PROMPT
         age = req.patient_age or "35"
         gender = req.patient_gender or "unknown"
+        lab_body = req.lab_text.strip()[:4000]
         content.append({
             "type": "text",
             "text": (
                 f"Analyze this lab result text for a {age} year old {gender} patient in Ghana.\n"
                 f"The text was extracted from a photo (OCR) and may contain minor errors.\n\n"
-                f"--- LAB REPORT TEXT ---\n{req.lab_text.strip()}\n--- END ---"
+                f"--- LAB REPORT TEXT ---\n{lab_body}\n--- END ---"
             ),
         })
 
@@ -458,8 +507,15 @@ async def analyze_lab_results(req: AnalyzeRequest):
     ]
 
     try:
-        raw_response = await generate_response_async(messages, max_tokens=2048)
+        max_tokens = estimate_analyze_max_tokens(
+            req.lab_text or "",
+            is_preset=bool(req.preset_id),
+        )
+        raw_response = await generate_response_async(messages, max_tokens=max_tokens)
         result = parse_json_response(raw_response)
+
+        if result.get("error") and result.get("raw"):
+            raise HTTPException(status_code=502, detail="Model returned unparseable analysis")
 
         # Add language translations if requested
         if req.language != "english" and req.language in TRANSLATIONS:
@@ -542,7 +598,9 @@ async def generate_action_plan(req: ActionPlanRequest):
     ]
 
     try:
-        raw_response = await generate_response_async(messages, max_tokens=2048)
+        import torch
+        plan_tokens = 384 if torch.cuda.is_available() else 192
+        raw_response = await generate_response_async(messages, max_tokens=plan_tokens)
         result = parse_json_response(raw_response)
 
         if req.language != "english" and req.language in TRANSLATIONS:
@@ -562,6 +620,7 @@ async def generate_action_plan(req: ActionPlanRequest):
 @app.post("/api/gemma/chat")
 async def chat_with_gemma(req: ChatRequest):
     """Health chat with Gemma 4, with optional image input."""
+    logger.info("💬 Chat request: %r", req.message[:80])
 
     # Small talk returns instantly — no need to run slow CPU inference
     if not req.image_base64:
@@ -602,6 +661,15 @@ async def chat_with_gemma(req: ChatRequest):
     try:
         raw_response = await generate_response_async(messages, max_tokens=max_tokens)
         result = parse_json_response(raw_response)
+
+        if result.get("error") and result.get("raw"):
+            result = {
+                "message": sanitize_chat_text(raw_response),
+                "bodySystem": "total",
+                "urgency": "Yellow",
+                "condition": "Symptom discussion",
+                "system": "General",
+            }
 
         # Add translation if needed
         if req.language != "english" and req.language in TRANSLATIONS:
@@ -651,8 +719,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model",
         type=str,
-        default="google/gemma-4-12B-it",
-        help="Model ID (e.g. google/gemma-4-4B-it for smaller GPUs)",
+        default=os.environ.get("GEMMA_MODEL", "google/gemma-2-2b-it"),
+        help="Model ID (default: gemma-2-2b-it on CPU, set GEMMA_MODEL in server/.env)",
     )
     args = parser.parse_args()
 

@@ -1,3 +1,11 @@
+import {
+	buildFindingNote,
+	buildSummarySectionsCopy,
+	friendlyStatusLabel,
+	isPlausibleLabValue,
+	parseNumericValue,
+} from "./labResultCopy";
+
 type FindingStatus = "normal" | "elevated" | "low" | "action";
 
 interface FallbackFinding {
@@ -95,15 +103,46 @@ function classifyValue(
 }
 
 function statusLabel(status: FindingStatus): string {
-	switch (status) {
-		case "action": return "Needs doctor review";
-		case "elevated": return "Above normal";
-		case "low": return "Below normal";
-		default: return "Normal";
+	return friendlyStatusLabel(status);
+}
+
+function dedupeAndValidateRows(rows: ParsedLabRow[]): ParsedLabRow[] {
+	const byMarker = new Map<string, ParsedLabRow>();
+
+	for (const row of rows) {
+		const key = row.marker.toLowerCase();
+		const num = parseNumericValue(row.value);
+		const plausible = num === null || isPlausibleLabValue(row.name, num);
+
+		if (!plausible && num !== null) {
+			// Keep row but mark as unreliable — note builder will explain
+			row.status = "action";
+			row.statusLabel = "Check original report";
+		}
+
+		const existing = byMarker.get(key);
+		if (!existing) {
+			byMarker.set(key, row);
+			continue;
+		}
+
+		const existingNum = parseNumericValue(existing.value);
+		const existingPlausible = existingNum === null || isPlausibleLabValue(existing.name, existingNum);
+		if (plausible && !existingPlausible) {
+			byMarker.set(key, row);
+		} else if (plausible && existingPlausible && row.refRange && !existing.refRange) {
+			byMarker.set(key, row);
+		}
 	}
+
+	return Array.from(byMarker.values());
 }
 
 function pushRow(rows: ParsedLabRow[], row: ParsedLabRow) {
+	const num = parseNumericValue(row.value);
+	if (num !== null && row.unit && !isPlausibleLabValue(row.name, num)) {
+		return;
+	}
 	if (rows.some((r) => r.marker.toLowerCase() === row.marker.toLowerCase())) return;
 	rows.push(row);
 }
@@ -182,10 +221,10 @@ export function parseLabOcrText(text: string): ParsedLabRow[] {
 		pushRow(rows, {
 			name: "M-spike (protein band)",
 			marker: "SPEP M-spike",
-			value: "Detected",
+			value: "Seen on report",
 			unit: "",
 			status: "action",
-			statusLabel: "Needs specialist review",
+			statusLabel: "Ask about a specialist follow-up",
 		});
 	}
 
@@ -238,7 +277,7 @@ export function parseLabOcrText(text: string): ParsedLabRow[] {
 		});
 	}
 
-	return rows;
+	return dedupeAndValidateRows(rows);
 }
 
 export function buildFallbackLabAnalysis(
@@ -270,73 +309,24 @@ export function buildFallbackLabAnalysis(
 		value: r.value,
 		status: r.status,
 		statusLabel: r.statusLabel,
-		note:
-			r.status === "normal"
-				? `${r.name} is within the expected range${r.refRange ? ` (${r.refRange})` : ""}.`
-				: `${r.name} is outside the expected range${r.refRange ? ` (reference: ${r.refRange})` : ""}. Please discuss this result with your doctor.`,
+		note: buildFindingNote(r),
 	}));
+
+	const hasUnreliableOcr = rows.some((r) => {
+		const num = parseNumericValue(r.value);
+		return num !== null && r.unit && !isPlausibleLabValue(r.name, num);
+	});
 
 	const patientCtx = formatPatientContext(patientAge, patientGender);
 
-	const summarySections: FallbackAnalysisResult["summarySections"] = [
-		{
-			id: "analyzed",
-			title: "What we analyzed",
-			body: patientCtx
-				? `We read ${rows.length} lab value${rows.length !== 1 ? "s" : ""} from your report ${patientCtx}.`
-				: `We read ${rows.length} lab value${rows.length !== 1 ? "s" : ""} from your lab report.`,
-			tone: "info",
-		},
-		{
-			id: "disclaimer",
-			title: "Please remember",
-			body:
-				"This is a computer-generated summary, not a diagnosis. Your doctor should review the original report and confirm every result before you take any action.",
-			tone: "neutral",
-		},
-	];
-
-	if (abnormal.length === 0) {
-		summarySections.push({
-			id: "results",
-			title: "Your results at a glance",
-			body: "All values we detected appear within normal limits based on the reference ranges on your report.",
-			tone: "info",
-		});
-	} else {
-		summarySections.push({
-			id: "results",
-			title:
-				abnormal.length === 1
-					? "1 result needs a closer look"
-					: `${abnormal.length} results need a closer look`,
-			body:
-				abnormal.length === 1
-					? "One value is outside the expected range. This does not always mean something is wrong — only your doctor can interpret it in context."
-					: `${abnormal.length} values are outside the expected range. This does not always mean something is wrong — only your doctor can interpret them in context.`,
-			tone: "caution",
-		});
-	}
-
-	if (hasSpep) {
-		summarySections.push({
-			id: "protein",
-			title: "About your protein result",
-			body:
-				"An abnormal protein band or M-spike can have several causes. Your doctor may order follow-up tests such as immunofixation or refer you to a specialist to find out more.",
-			tone: "caution",
-		});
-	}
-
-	if (hasLiver) {
-		summarySections.push({
-			id: "liver",
-			title: "About your liver markers",
-			body:
-				"Some liver-related values look elevated. A clinician should review these alongside your symptoms, medications, and full medical history.",
-			tone: "caution",
-		});
-	}
+	const summarySections = buildSummarySectionsCopy({
+		total: rows.length,
+		abnormalCount: abnormal.length,
+		patientCtx,
+		hasSpep,
+		hasLiver,
+		hasUnreliableOcr,
+	});
 
 	const summary = summarySections.map((s) => s.body).join(" ");
 
@@ -351,7 +341,7 @@ export function buildFallbackLabAnalysis(
 		recommendations.push({
 			icon: "🔬",
 			title: "Ask about follow-up tests",
-			body: "If your report mentions an M-spike or abnormal protein band, ask your doctor about immunofixation or specialist referral.",
+			body: "If your report mentions an M-spike or unusual protein band, ask your doctor whether you need immunofixation or a referral to a blood specialist.",
 		});
 	}
 	if (hasLiver) {

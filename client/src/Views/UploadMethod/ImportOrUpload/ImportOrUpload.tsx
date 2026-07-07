@@ -19,7 +19,7 @@ import {
 } from "@/App/Services/GemmaService";
 import type { GemmaLanguage, GemmaAnalysisResult, AnalyzeProgressPhase } from "@/App/Services/GemmaService";
 import { useGemmaConnection } from "@/App/Hooks/useGemmaConnection";
-import { buildResultsSummarySections } from "@/App/Utils/buildResultsSummary";
+import { buildResultsSummarySections, enrichFindingsWithPlainNotes } from "@/App/Utils/buildResultsSummary";
 import styles from "./ImportOrUpload.module.scss";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -71,7 +71,7 @@ const ImportOrUpload = () => {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
 	const [selectedLanguage, setSelectedLanguage] = useState<GemmaLanguage>("english");
-	const { gemmaOnline, gemmaAvailable, mode, statusLabel, refresh } = useGemmaConnection();
+	const { gemmaOnline, gemmaAvailable, mode, statusLabel, refresh, cpuFastMode } = useGemmaConnection();
 	const [analysisResult, setAnalysisResult] = useState<GemmaAnalysisResult | null>(null);
 	const [labTextPaste, setLabTextPaste] = useState("");
 	const [analyzeStatus, setAnalyzeStatus] = useState({ message: "", pct: 0 });
@@ -224,10 +224,11 @@ const ImportOrUpload = () => {
 				},
 			});
 
-			setAnalysisResult(result);
+			const enriched = enrichFindingsWithPlainNotes(result);
+			setAnalysisResult(enriched);
 
 			// Convert Gemma findings to Redux format
-			const findings: LabFinding[] = result.findings.map((f) => ({
+			const findings: LabFinding[] = enriched.findings.map((f) => ({
 				id: f.id,
 				name: f.name,
 				marker: f.marker,
@@ -250,7 +251,7 @@ const ImportOrUpload = () => {
 				fileName: selectedPreset
 					? PRESETS.find((p) => p.id === selectedPreset)?.title || "Preset Analysis"
 					: files.map((f) => f.file.name).join(", "),
-				healthScore: result.healthScore,
+				healthScore: enriched.healthScore,
 				findings,
 				recommendations,
 				firstName: info.firstName,
@@ -334,11 +335,13 @@ const ImportOrUpload = () => {
 						<p>
 							{analyzePhase === "ocr"
 								? "Extracting values from your photo on this device, then AI will interpret them."
-								: gemmaOnline
-									? "Gemma AI is interpreting your lab values and building your plan."
-									: gemmaAvailable || mode === "starting"
-										? "Waiting for the AI model to finish loading, then your results will be ready."
-										: "Building your personalised health insights with smart offline analysis."
+								: gemmaOnline && cpuFastMode
+									? "Reading your lab text and building your personalised report — this is fast on CPU."
+									: gemmaOnline
+										? "Gemma AI is interpreting your lab values and building your plan."
+										: gemmaAvailable || mode === "starting"
+											? "Waiting for the AI model to finish loading, then your results will be ready."
+											: "Building your personalised health insights with smart offline analysis."
 							}
 						</p>
 						{(analyzePhase === "ocr" || analyzeStatus.message.includes("Reading text")) && analyzeStatus.pct > 0 && (

@@ -6,6 +6,8 @@
 	"scripts": {
 		"start": "concurrently \"node --watch=../server ../server/index.js\" \"vite\" --kill-others --kill-others-on-fail",
 		"dev": "npm run start",
+		"dev:ai": "concurrently -n api,web,gemma -c blue,green,magenta \"node --watch=../server ../server/index.js\" \"vite\" \"cd ../server/gemma && python server.py\" --kill-others --kill-others-on-fail",
+		"gemma": "cd ../server/gemma && python server.py",
 		"build": "tsc -b && vite build",
 		"lint": "eslint .",
 		"lint:staged": "lint-staged",

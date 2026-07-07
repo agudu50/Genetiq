@@ -213,10 +213,24 @@ export async function analyzeLabResults(opts: {
 	}
 
 	const useVision = health.supportsVision && images.length > 0 && !opts.presetId && !labText;
+	const onCpu = /cpu/i.test(health.device);
+
+	// CPU Gemma analysis can take 5–15+ min — use OCR + local parser for instant results
+	if (onCpu && health.modelLoaded) {
+		if (opts.presetId) {
+			opts.onProgress?.("ai", "Building your analysis…");
+			return simulateLabAnalysis({ ...opts, labText });
+		}
+		if (labText) {
+			opts.onProgress?.("ai", "Interpreting your lab values…");
+			const parsed = parseAndBuildFallback(labText, opts.patientAge, opts.patientGender);
+			if (parsed) return parsed;
+		}
+	}
 
 	if (health.available && health.modelLoaded) {
 		try {
-			opts.onProgress?.("ai", "Analysing your results…");
+			opts.onProgress?.("ai", "Analysing your results with Gemma AI…");
 			const res = await fetch(`${GEMMA_BASE_URL}/api/gemma/analyze`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -228,7 +242,7 @@ export async function analyzeLabResults(opts: {
 					patient_gender: opts.patientGender,
 					language: opts.language,
 				}),
-				signal: AbortSignal.timeout(300_000),
+				signal: AbortSignal.timeout(onCpu ? 90_000 : 300_000),
 			});
 			if (res.ok) {
 				const data = await res.json();
@@ -257,14 +271,23 @@ export async function analyzeLabResults(opts: {
 // ─── Chat with Gemma ─────────────────────────────────────────────────────────
 
 const MEDICAL_KEYWORDS_RE =
-	/fever|pain|painful|aching|aches?|hurts?|hurt|head|headache|migraine|cough|symptom|vomit|diarr|chill|nausea|dizz|weak|tired|breath|chest|stomach|malaria|typhoid|urin|bleed|swell|rash|sick|ill|unwell|sore|cramp|infection|anemia|diabet|pressure|body\s*pain|throat|ear|eye|appetite|weight\s*loss|can'?t\s*eat|not\s*eating|constipat|bloat|fatigue|insomnia|sleep|palpit|swollen|jaundice|dehydrat|defecat|bowel|stool|feces|faeces|poop|toilet|lavatory|loose\s*stool/i;
+	/fever|pain|painful|aching|aches?|hurts?|hurt|injur|wound|fracture|bruise|cut|burn|sprain|accident|fell|fall|broken|lacerat|bleed|head|headache|migraine|cough|symptom|vomit|diarr|chill|nausea|dizz|weak|tired|breath|chest|stomach|malaria|typhoid|urin|swell|rash|sick|ill|unwell|sore|cramp|infection|anemia|diabet|pressure|body\s*pain|throat|ear|eye|appetite|weight\s*loss|can'?t\s*eat|not\s*eating|constipat|bloat|fatigue|insomnia|sleep|palpit|swollen|jaundice|dehydrat|defecat|bowel|stool|feces|faeces|poop|toilet|lavatory|loose\s*stool|ankle|knee|leg|arm|hand|foot|finger|toe|back|neck|shoulder|wrist|hip|bite|sting|allerg/i;
+
+/** Broader check — avoids sending real symptom messages to the generic redirect. */
+function isLikelyHealthMessage(text: string): boolean {
+	if (hasMedicalIntent(text)) return true;
+	const lower = text.toLowerCase();
+	return /\b(health|injur|wound|hurt|accident|fell|fall|broken|bleed|doctor|hospital|clinic|bother|wrong|feel|sick|symptom|problem|help|advice|unwell)\b/.test(
+		lower,
+	);
+}
 
 /** Detect symptom descriptions even when phrasing is informal ("my head is aching"). */
 function hasMedicalIntent(text: string): boolean {
 	const lower = text.toLowerCase();
 	if (MEDICAL_KEYWORDS_RE.test(lower)) return true;
 	if (
-		/\b(head|stomach|chest|back|throat|ear|eyes?|neck|joint|muscle)\b/.test(lower) &&
+		/\b(head|stomach|chest|back|throat|ear|eyes?|neck|joint|muscle|leg|arm|knee|ankle|hand|foot|finger|toe|shoulder|wrist|hip)\b/.test(lower) &&
 		/\b(ach|pain|hurt|sore|swell|bleed|stiff|numb|tingl)/.test(lower)
 	) {
 		return true;
@@ -436,12 +459,6 @@ export async function chatWithGemma(opts: {
 	}
 
 	const health = await checkGemmaHealth();
-	const onGpu = /cuda/i.test(health.device);
-
-	// Without a GPU, Gemma takes minutes. Use instant triage for any symptom message.
-	if (!opts.imageBase64 && hasMedicalIntent(opts.message) && !onGpu) {
-		return finalizeChatResult(simulateChat(opts));
-	}
 
 	if (health.available && health.modelLoaded) {
 		try {
@@ -453,7 +470,7 @@ export async function chatWithGemma(opts: {
 					language: opts.language,
 					image_base64: opts.imageBase64,
 				}),
-				signal: AbortSignal.timeout(300_000), // 5min on CPU
+				signal: AbortSignal.timeout(health.device === "cpu" ? 120_000 : 300_000),
 			});
 			if (res.ok) {
 				return finalizeChatResult((await res.json()) as GemmaChatResult);

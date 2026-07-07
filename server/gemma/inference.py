@@ -106,18 +106,19 @@ def build_processor_inputs(
 
 def move_inputs_to_device(model: Any, inputs: Any) -> tuple[Any, int]:
     """Move token tensors to the model device and return input length."""
+    device = getattr(model, "device", None) or next(model.parameters()).device
     if hasattr(inputs, "items"):
         inputs = dict(inputs)
 
     if isinstance(inputs, dict):
         device_inputs = {
-            k: v.to(model.device) if hasattr(v, "to") else v
+            k: v.to(device) if hasattr(v, "to") else v
             for k, v in inputs.items()
         }
         input_len = device_inputs["input_ids"].shape[-1]
         return device_inputs, input_len
 
-    device_inputs = inputs.to(model.device)
+    device_inputs = inputs.to(device)
     return device_inputs, device_inputs.shape[-1]
 
 
@@ -135,7 +136,7 @@ def run_gemma_inference(
     start_time = time.time()
     on_cpu = not torch.cuda.is_available()
     if on_cpu:
-        max_tokens = min(max_tokens, 320)
+        max_tokens = min(max_tokens, 40)
 
     is_tokenizer = isinstance(processor, PreTrainedTokenizerBase)
     messages_to_use = merge_system_messages(messages)
