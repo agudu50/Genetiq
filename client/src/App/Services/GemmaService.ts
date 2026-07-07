@@ -1135,6 +1135,7 @@ export const EMERGENCY_CONTACTS = {
 	fire: "192",
 	police: "191 or 18555",
 	poisonCenter: "0302 665401",
-	chpsInfo: "Visit your nearest CHPS (Community-based Health Planning and Services) compound for non-emergency care",
+	chpsInfo:
+		"Visit your nearest CHPS (Community-based Health Planning and Services) compound for non-emergency care",
 	mentalHealth: "0800 678 678 (Mental Health Authority Helpline)",
-};
+} as const;
