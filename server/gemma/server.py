@@ -200,12 +200,14 @@ GREETING_RE = re.compile(
 )
 
 MEDICAL_KEYWORDS_RE = re.compile(
-    r"fever|pain|painful|aching|aches?|hurts?|hurt|head|headache|migraine|cough|symptom|"
+    r"fever|pain|painful|aching|aches?|hurts?|hurt|injur|wound|fracture|bruise|cut|burn|"
+    r"sprain|accident|fell|fall|broken|lacerat|bleed|head|headache|migraine|cough|symptom|"
     r"vomit|diarr|chill|nausea|dizz|weak|tired|breath|chest|stomach|malaria|typhoid|urin|"
-    r"bleed|swell|rash|sick|ill|unwell|sore|cramp|infection|anemia|diabet|pressure|"
+    r"swell|rash|sick|ill|unwell|sore|cramp|infection|anemia|diabet|pressure|"
     r"body\s*pain|throat|ear|eye|appetite|weight\s*loss|can'?t\s*eat|not\s*eating|"
     r"constipat|bloat|fatigue|insomnia|sleep|palpit|swollen|jaundice|dehydrat|"
-    r"defecat|bowel|stool|feces|faeces|poop|toilet|lavatory|loose\s*stool",
+    r"defecat|bowel|stool|feces|faeces|poop|toilet|lavatory|loose\s*stool|"
+    r"ankle|knee|leg|arm|hand|foot|finger|toe|back|neck|shoulder|wrist|hip|bite|sting|allerg",
     re.IGNORECASE,
 )
 
@@ -216,18 +218,21 @@ SYMPTOM_NOUN_RE = re.compile(
     r"\b(appetite|weight|energy|sleep|hair|hearing|vision)\b", re.IGNORECASE
 )
 HEALTH_QUESTION_RE = re.compile(
-    r"\b(i have|i've|i am|im experiencing|suffering from|what might|what could|why do i|feel(ing)?)\b",
+    r"\b(i have|i've|i am|i'?m|im experiencing|suffering from|what might|what could|"
+    r"why do i|feel(ing)?)\b",
     re.IGNORECASE,
 )
 HEALTH_TOPIC_RE = re.compile(
-    r"\b(pain|fever|ache|symptom|problem|issues?|wrong|sick|unwell|tired|weak|dizzy|"
+    r"\b(pain|fever|ache|symptom|problem|issues?|wrong|sick|unwell|well|tired|weak|dizzy|"
     r"nausea|vomit|cough|head|stomach|appetite|weight|sleep|breath|swell|rash|"
-    r"infection|eating|eat|bowel|stool|diarr)\b",
+    r"infection|eating|eat|bowel|stool|diarr|injur|hurt|wound|bleed|off|bad|terrible|awful)\b",
     re.IGNORECASE,
 )
 
 BODY_PART_RE = re.compile(
-    r"\b(head|stomach|chest|back|throat|ear|eyes?|neck|joint|muscle)\b", re.IGNORECASE
+    r"\b(head|stomach|chest|back|throat|ear|eyes?|neck|joint|muscle|leg|arm|knee|"
+    r"ankle|hand|foot|finger|toe|shoulder|wrist|hip)\b",
+    re.IGNORECASE,
 )
 DISCOMFORT_RE = re.compile(
     r"\b(ach|pain|hurt|sore|swell|bleed|stiff|numb|tingl)", re.IGNORECASE
@@ -247,13 +252,39 @@ def has_medical_keywords(text: str) -> bool:
     return False
 
 
+def is_likely_health_message(text: str) -> bool:
+    if has_medical_keywords(text):
+        return True
+    lower = text.lower()
+    if re.search(
+        r"\b(health|injur|wound|hurt|accident|fell|fall|broken|bleed|doctor|hospital|"
+        r"clinic|bother|wrong|sick|symptom|problem|help|advice|unwell|ache|aching|"
+        r"discomfort|concern|worried|worry)\b",
+        lower,
+    ):
+        return True
+    if re.search(
+        r"\b(feel(ing)?|not\s+well|under\s+the\s+weather|something\s+wrong|going\s+on)\b",
+        lower,
+    ):
+        return True
+    trimmed = text.strip()
+    if (
+        len(trimmed) >= 8
+        and re.search(r"[a-z]{3,}", trimmed, re.IGNORECASE)
+        and not re.match(r"^(hi|hello|hey|thanks|thank\s*you|ok|okay|yes|no|maybe)\b", trimmed, re.IGNORECASE)
+    ):
+        return True
+    return False
+
+
 def get_small_talk_response(message: str, language: str) -> dict | None:
     """Instant replies for greetings and casual chat — skip slow CPU inference."""
     text = message.strip()
     lower = text.lower()
     lang = language if language in GREETING_RESPONSES else "english"
 
-    if has_medical_keywords(text):
+    if is_likely_health_message(text):
         return None
 
     if GREETING_RE.match(text):
@@ -263,17 +294,26 @@ def get_small_talk_response(message: str, language: str) -> dict | None:
         return dict(WELLBEING_QUESTION_RESPONSES[lang])
 
     if (
-        re.search(r"(i'?m|i am|im)\s*(good|fine|well|ok|okay|great|doing\s*well)", lower)
-        or re.search(r"(yourself|and\s*you|what\s*about\s*you|u\?|you\?)", lower)
-        or re.match(r"^good\s*(thanks|thank\s*you)?[\s!?.]*$", lower)
+        re.search(r"(i'?m|i am|im)\s*(good|fine|well|ok|okay|great)", lower)
+        and not re.search(r"\b(not|don'?t|dont|never)\b", lower)
     ):
+        return dict(WELLBEING_REPLY_RESPONSES[lang])
+    if re.search(r"\bdoing\s+well\b", lower) and not re.search(r"\bnot\b", lower):
+        return dict(WELLBEING_REPLY_RESPONSES[lang])
+    if re.search(r"(yourself|and\s*you|what\s*about\s*you|u\?|you\?)", lower):
+        return dict(WELLBEING_REPLY_RESPONSES[lang])
+    if re.match(r"^good\s*(thanks|thank\s*you)?[\s!?.]*$", lower):
         return dict(WELLBEING_REPLY_RESPONSES[lang])
 
     if re.match(r"^(thanks|thank\s*you|thx|cheers)[\s!?.，]*$", lower):
         return dict(WELLBEING_REPLY_RESPONSES[lang])
 
-    # Short non-medical message — guide user instead of running triage
-    if len(text) < 120 and not has_medical_keywords(lower):
+    # Only redirect very short, clearly non-medical replies (e.g. "ok", "yes")
+    if (
+        len(text) <= 12
+        and not is_likely_health_message(text)
+        and re.match(r"^(ok|okay|k|yes|no|maybe|sure|cool|nice|hm+|m+)\s*[!?.]*$", lower)
+    ):
         return dict(REDIRECT_RESPONSES[lang])
 
     return None

@@ -277,9 +277,22 @@ const MEDICAL_KEYWORDS_RE =
 function isLikelyHealthMessage(text: string): boolean {
 	if (hasMedicalIntent(text)) return true;
 	const lower = text.toLowerCase();
-	return /\b(health|injur|wound|hurt|accident|fell|fall|broken|bleed|doctor|hospital|clinic|bother|wrong|feel|sick|symptom|problem|help|advice|unwell)\b/.test(
-		lower,
-	);
+	if (
+		/\b(health|injur|wound|hurt|accident|fell|fall|broken|bleed|doctor|hospital|clinic|bother|wrong|sick|symptom|problem|help|advice|unwell|ache|aching|discomfort|concern|worried|worry)\b/.test(
+			lower,
+		)
+	) {
+		return true;
+	}
+	if (/\b(feel(ing)?|not\s+well|under\s+the\s+weather|something\s+wrong|going\s+on)\b/.test(lower)) {
+		return true;
+	}
+	// In a health chat, substantive messages are almost always symptom-related
+	const trimmed = text.trim();
+	if (trimmed.length >= 8 && /[a-z]{3,}/i.test(trimmed) && !/^(hi|hello|hey|thanks|thank\s*you|ok|okay|yes|no|maybe)\b/i.test(trimmed)) {
+		return true;
+	}
+	return false;
 }
 
 /** Detect symptom descriptions even when phrasing is informal ("my head is aching"). */
@@ -309,10 +322,10 @@ function hasMedicalIntent(text: string): boolean {
 		return true;
 	}
 	if (
-		/\b(i have|i've|i am|im experiencing|suffering from|what might|what could|why do i|feel(ing)?)\b/.test(
+		/\b(i have|i've|i am|i'?m|im experiencing|suffering from|what might|what could|why do i|feel(ing)?)\b/.test(
 			lower,
 		) &&
-		/\b(pain|fever|ache|symptom|problem|issues?|wrong|sick|unwell|tired|weak|dizzy|nausea|vomit|cough|head|stomach|appetite|weight|sleep|breath|swell|rash|infection|eating|eat|bowel|stool|diarr)\b/.test(
+		/\b(pain|fever|ache|symptom|problem|issues?|wrong|sick|unwell|well|tired|weak|dizzy|nausea|vomit|cough|head|stomach|appetite|weight|sleep|breath|swell|rash|infection|eating|eat|bowel|stool|diarr|injur|hurt|wound|bleed|off|bad|terrible|awful)\b/.test(
 			lower,
 		)
 	) {
@@ -393,7 +406,7 @@ function getSmallTalkResponse(
 	const copy = SMALL_TALK_RESPONSES[language] || SMALL_TALK_RESPONSES.english;
 
 	// Symptom messages must go to triage, not small-talk redirect
-	if (hasMedicalIntent(text)) return null;
+	if (isLikelyHealthMessage(text)) return null;
 
 	const toResult = (msg: string): GemmaChatResult => ({
 		message: msg,
@@ -427,15 +440,23 @@ function getSmallTalkResponse(
 	}
 
 	if (
-		/\b(i'?m|i am)\s+(good|fine|well|ok|okay|great)\b/i.test(lower) ||
-		/\bdoing\s+well\b/i.test(lower) ||
-		/(yourself|and\s*you|what\s*about\s*you)/i.test(lower) ||
-		/^good\s*(thanks|thank\s*you)?[\s!?.]*$/i.test(lower)
+		/\b(i'?m|i am)\s+(good|fine|well|ok|okay|great)\b/i.test(lower) &&
+		!/\b(not|don'?t|dont|never)\b/i.test(lower)
 	) {
 		return toResult(copy.wellbeingReply);
 	}
+	if (/\bdoing\s+well\b/i.test(lower) && !/\bnot\b/i.test(lower)) {
+		return toResult(copy.wellbeingReply);
+	}
+	if (/(yourself|and\s*you|what\s*about\s*you)/i.test(lower)) {
+		return toResult(copy.wellbeingReply);
+	}
+	if (/^good\s*(thanks|thank\s*you)?[\s!?.]*$/i.test(lower)) {
+		return toResult(copy.wellbeingReply);
+	}
 
-	if (text.length < 120) {
+	// Only redirect very short, clearly non-medical messages (e.g. "ok", "yes")
+	if (text.length <= 12 && !isLikelyHealthMessage(text) && /^(ok|okay|k|yes|no|maybe|sure|cool|nice|hm+|m+)\s*[!?.]*$/i.test(text)) {
 		return toResult(copy.redirect);
 	}
 
@@ -459,8 +480,10 @@ export async function chatWithGemma(opts: {
 	}
 
 	const health = await checkGemmaHealth();
+	const onGpu = /cuda/i.test(health.device);
 
-	if (health.available && health.modelLoaded) {
+	// GPU: real Gemma inference. CPU: instant triage (Gemma takes minutes per reply).
+	if (health.available && health.modelLoaded && onGpu) {
 		try {
 			const res = await fetch(`${GEMMA_BASE_URL}/api/gemma/chat`, {
 				method: "POST",
@@ -470,7 +493,7 @@ export async function chatWithGemma(opts: {
 					language: opts.language,
 					image_base64: opts.imageBase64,
 				}),
-				signal: AbortSignal.timeout(health.device === "cpu" ? 120_000 : 300_000),
+				signal: AbortSignal.timeout(300_000),
 			});
 			if (res.ok) {
 				return finalizeChatResult((await res.json()) as GemmaChatResult);
@@ -924,6 +947,29 @@ function simulateChat(opts: {
 		};
 	}
 
+	// Injury / wound / trauma
+	if (
+		/\b(injur|wound|fracture|bruise|sprain|accident|fell|fall|broken|lacerat|cut|burn|trauma)\b/.test(lower) ||
+		/\b(hurt|injured|pain|swollen|bleed)\b.*\b(leg|arm|knee|ankle|hand|foot|finger|toe|back|head|neck|shoulder|wrist|hip|chest)\b/.test(
+			lower,
+		) ||
+		/\b(leg|arm|knee|ankle|hand|foot|finger|toe|back|head|neck|shoulder|wrist|hip|chest)\b.*\b(hurt|injured|pain|swollen|bleed)\b/.test(
+			lower,
+		)
+	) {
+		const severe =
+			/\b(severe|bad|heavy|lot of|won'?t stop|deform|numb|can'?t move|open wound)\b/.test(lower) ||
+			/\b(head|neck|chest)\b/.test(lower);
+		return {
+			message:
+				"For an injury, the first steps are to stop any bleeding, protect the area, and avoid putting weight on it if walking is painful.\n\nRight now:\n• Press a clean cloth on cuts for 5–10 minutes to slow bleeding\n• Elevate the injured limb if possible\n• Apply a cold compress (wrapped ice) for 15–20 minutes to reduce swelling\n• Take Paracetamol for pain — avoid Aspirin unless a doctor advises it\n• Do not massage or force movement if it causes sharp pain\n\nVisit your nearest clinic or CHPS compound if:\n• The pain is severe or getting worse\n• You cannot move the joint or bear weight\n• The wound is deep, dirty, or from a rusty object (you may need a tetanus shot)\n• Swelling or bruising is spreading quickly\n\n⚠️ Go to hospital urgently if: heavy bleeding that won't stop, bone looks bent or out of place, head injury with vomiting or confusion, chest injury, or numbness/tingling in the limb.",
+			bodySystem: "total",
+			urgency: severe ? "Red" : "Yellow",
+			condition: severe ? "Possible serious injury" : "Injury / wound",
+			system: "General / Trauma",
+		};
+	}
+
 	// Headache / head pain
 	if (
 		lower.includes("headache") ||
@@ -1041,7 +1087,7 @@ function simulateChat(opts: {
 	}
 
 	// Default — only when message seems health-related but didn't match a pattern
-	if (hasMedicalIntent(lower)) {
+	if (hasMedicalIntent(lower) || isLikelyHealthMessage(lower)) {
 		return {
 			message: `Thank you for describing your symptoms. Based on what you've told me, I recommend visiting your nearest CHPS compound or health facility for a proper examination.\n\nIn the meantime:\n• Rest and stay hydrated — drink plenty of water\n• Monitor your temperature\n• Take Paracetamol if you have pain or fever\n• Avoid strenuous activity\n\nIf your symptoms worsen or you develop any emergency signs (difficulty breathing, severe pain, high fever above 39°C, confusion, or bleeding), please go to the nearest hospital immediately or call Ghana Ambulance Service at 112 or 193.\n\nRemember: I am an AI assistant, not a doctor. My advice is for guidance only and does not replace professional medical diagnosis.`,
 			bodySystem: "total",
@@ -1051,15 +1097,15 @@ function simulateChat(opts: {
 		};
 	}
 
-	return (
-		getSmallTalkResponse(opts.message, opts.language) ?? {
-			message: SMALL_TALK_RESPONSES[opts.language]?.redirect ?? SMALL_TALK_RESPONSES.english.redirect,
-			bodySystem: "total",
-			urgency: "Green",
-			condition: "Awaiting symptoms",
-			system: "General",
-		}
-	);
+	// Last resort — ask for more detail instead of looping the same redirect
+	return {
+		message:
+			"Thank you for reaching out. To give you useful guidance, please describe what you're experiencing — for example where it hurts, when it started, and any other symptoms (fever, nausea, swelling, etc.). You can also tap one of the quick suggestions below.",
+		bodySystem: "total",
+		urgency: "Green",
+		condition: "Awaiting symptoms",
+		system: "General",
+	};
 }
 
 // ─── Ghanaian Remedy Data (for AIAssistant portal) ───────────────────────────
