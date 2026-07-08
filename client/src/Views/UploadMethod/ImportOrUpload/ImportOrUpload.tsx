@@ -16,6 +16,8 @@ import {
 import {
 	analyzeLabResults,
 	getTranslation,
+	getAnalyzedCountText,
+	getReviewCountText,
 } from "@/App/Services/GemmaService";
 import type { GemmaLanguage, GemmaAnalysisResult, AnalyzeProgressPhase } from "@/App/Services/GemmaService";
 import { useGemmaConnection } from "@/App/Hooks/useGemmaConnection";

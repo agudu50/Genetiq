@@ -4592,7 +4592,8 @@ html[data-theme="dark"] .resultStatusText-good { color: #30D158; }
 }
 
 .uploadHubTab:hover:not(.uploadHubTabActive) {
-  color: var(--iou-heading);
+  color: rgb(0, 166, 157);
+  background: var(--iou-card);
 }
 
 .uploadHubContent {

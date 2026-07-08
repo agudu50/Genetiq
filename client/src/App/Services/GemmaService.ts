@@ -1013,6 +1013,38 @@ const TEMPLATE_TRANSLATIONS: Record<string, Array<[RegExp, string]>> = {
 	],
 };
 
+/** Localized "N value(s) analyzed" phrase — generated directly instead of translating rendered English. */
+export function getAnalyzedCountText(total: number, language: GemmaLanguage): string {
+	switch (language) {
+		case "twi":
+			return `Wɔahwɛ akontaahyɛdeɛ ${total} mu`;
+		case "ga":
+			return `Aha kwɛ akontaabuu ${total}`;
+		case "ewe":
+			return `Wodzro xexlẽme ${total} me`;
+		case "fante":
+			return `Wɔahwɛ akontaahyɛdze ${total} mu`;
+		default:
+			return `${total} ${total === 1 ? "value" : "values"} analyzed`;
+	}
+}
+
+/** Localized "N need(s) review" phrase — generated directly instead of translating rendered English. */
+export function getReviewCountText(count: number, language: GemmaLanguage): string {
+	switch (language) {
+		case "twi":
+			return `${count} hia nhwehwɛmu foforo`;
+		case "ga":
+			return `${count} hia kwɛmɔ bio`;
+		case "ewe":
+			return `${count} hiã ŋkuɖodzi bubu`;
+		case "fante":
+			return `${count} hia nhwehwɛmu fofor`;
+		default:
+			return `${count} ${count === 1 ? "needs" : "need"} review`;
+	}
+}
+
 export function getTranslation(text: string, language: GemmaLanguage): string {
 	if (language === "english") return text;
 	const exact = OFFLINE_TRANSLATIONS[language]?.[text];
