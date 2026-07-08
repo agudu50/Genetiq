@@ -60,14 +60,23 @@ function findingToRow(f: GemmaAnalysisResult["findings"][0]): ParsedLabRow {
 	};
 }
 
-/** Rebuild plain-language notes on findings when showing stored/Gemma results. */
+/** Rebuild plain-language notes when the existing note is missing or too generic. */
 export function enrichFindingsWithPlainNotes(result: GemmaAnalysisResult): GemmaAnalysisResult {
 	return {
 		...result,
-		findings: result.findings.map((f) => ({
-			...f,
-			note: buildFindingNote(findingToRow(f)),
-		})),
+		findings: result.findings.map((f) => {
+			const existing = (f.note || "").trim();
+			const looksGeneric =
+				!existing ||
+				/higher than the usual range|lower than the usual range|looks within the usual range/i.test(existing);
+
+			if (!looksGeneric) return f;
+
+			return {
+				...f,
+				note: buildFindingNote(findingToRow(f)),
+			};
+		}),
 	};
 }
 

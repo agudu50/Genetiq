@@ -51,7 +51,39 @@ export function buildFindingNote(row: ParsedLabRow): string {
 		return `We had trouble reading this number clearly from the photo — "${row.value}" may be incorrect. Please look at your paper report or ask the lab to confirm your ${row.name.toLowerCase()} result.`;
 	}
 
+	const qualitative = isQualitativeValue(row.value);
+
+	if (/malaria|falciparum|vivax|ovale|malariae|antigen/i.test(`${row.name} ${row.marker}`)) {
+		if (/positive|detected|present/i.test(row.value) || row.status === "action" || row.status === "elevated") {
+			return (
+				`${plainName(row.name)} came back positive on this malaria rapid test. ` +
+				"That means malaria parasites were detected in your blood. Start antimalarial treatment (ACT) as soon as possible — do not wait for symptoms to get worse. Visit a pharmacy, CHPS compound, or clinic today."
+			);
+		}
+		return (
+			`${plainName(row.name)} was not detected on this test. ` +
+			"That is good for this malaria type — but if you still have fever, chills, or feel very unwell, get checked again. One negative strip does not always rule out early malaria."
+		);
+	}
+
+	if (/control|validity|valid/i.test(`${row.name} ${row.marker} ${row.value}`)) {
+		if (/valid|ok|pass|present|detected/i.test(row.value) || row.status === "normal") {
+			return "The control line shows this rapid test ran correctly, so the other lines on the strip can be trusted.";
+		}
+		return "The control line did not look valid. Do not rely on this cassette — repeat the test with a new kit.";
+	}
+
+	if (/severity|clinical assessment|parasite density|infection load/i.test(`${row.name} ${row.marker}`)) {
+		return (
+			`This clinical assessment suggests ${row.value.toLowerCase()} malaria based on the test and typical presentation. ` +
+			"Severity is estimated — how you feel matters more. Seek treatment promptly, rest, drink fluids, and go to hospital urgently if you become confused, vomit repeatedly, or struggle to breathe."
+		);
+	}
+
 	if (row.status === "normal") {
+		if (qualitative) {
+			return `${plainName(row.name)} came back ${row.value.toLowerCase()}. No action needed based on this result alone.`;
+		}
 		return `${plainName(row.name)} looks within the usual range for adults${row.refRange ? ` (${row.refRange})` : ""}. No action needed based on this result alone.`;
 	}
 
@@ -92,7 +124,20 @@ export function buildFindingNote(row: ParsedLabRow): string {
 		return `${plainName(row.name)} (${row.value}) is outside the usual range for liver-related tests. That can happen with fatty liver, hepatitis, alcohol use, or some medicines. Avoid alcohol until a doctor reviews this, and share any symptoms like yellow eyes or dark urine.`;
 	}
 
-	// Generic fallback — still plain language
+	if (qualitative) {
+		if (row.status === "action") {
+			return (
+				`${plainName(row.name)} is marked ${row.value}. This needs prompt medical attention. ` +
+				"Take this result to a doctor, pharmacist, or your nearest CHPS compound and ask what treatment to start."
+			);
+		}
+		return (
+			`${plainName(row.name)} is marked ${row.value}. ` +
+			"Lab results always need context — how you feel, your medicines, and past tests. Share this with your doctor or visit your nearest CHPS compound."
+		);
+	}
+
+	// Generic numeric fallback — still plain language
 	const direction =
 		row.status === "low"
 			? "lower"
@@ -102,6 +147,12 @@ export function buildFindingNote(row: ParsedLabRow): string {
 	return (
 		`${plainName(row.name)} (${row.value}) is ${direction} than the usual range${row.refRange ? ` (${row.refRange})` : ""}. ` +
 		"Lab results always need context — how you feel, your medicines, and past tests. Share this with your doctor or visit your nearest CHPS compound."
+	);
+}
+
+function isQualitativeValue(value: string): boolean {
+	return /^(positive|negative|detected|not detected|reactive|non-?reactive|present|absent|valid|invalid|moderate|mild|severe|trace|scanty)\b/i.test(
+		value.trim(),
 	);
 }
 

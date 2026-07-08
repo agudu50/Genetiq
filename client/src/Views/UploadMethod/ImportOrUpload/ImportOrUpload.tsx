@@ -11,7 +11,7 @@ import {
 	X, CheckCircle, ArrowLeft, Loader2, Sparkles,
 	Wifi, WifiOff, Brain, Stethoscope, User, Droplets,
 	Ruler, Scale, Activity, Clock, Check, Lock,
-	AlertTriangle, Languages,
+	AlertTriangle, Languages, ChevronDown,
 } from "lucide-react";
 import {
 	analyzeLabResults,
@@ -76,6 +76,7 @@ const ImportOrUpload = () => {
 	const [labTextPaste, setLabTextPaste] = useState("");
 	const [analyzeStatus, setAnalyzeStatus] = useState({ message: "", pct: 0 });
 	const [analyzePhase, setAnalyzePhase] = useState<AnalyzeProgressPhase | null>(null);
+	const [expandedFindingId, setExpandedFindingId] = useState<string | null>(null);
 
 	const user = useSelector((state: RootState) => state.user);
 
@@ -607,7 +608,7 @@ const ImportOrUpload = () => {
 									<p className={styles.sectionSub}>{t("Each result explained in plain English — no medical jargon.")}</p>
 								</div>
 
-								<div className={styles.findingsGrid}>
+								<div className={styles.findingsList}>
 									{analysisResult.findings.map((f) => {
 										const statusClass = f.status === "normal" ? "good"
 											: f.status === "action" ? "critical"
@@ -615,29 +616,45 @@ const ImportOrUpload = () => {
 										const displayName = t(f.name) || f.name;
 										const displayMarker = t(f.marker) || f.marker;
 										const showMarker = displayMarker.toLowerCase() !== displayName.toLowerCase();
+										const isOpen = expandedFindingId === f.id;
+										const hasNote = Boolean((f.note || "").trim());
+
 										return (
-											<div key={f.id} className={`${styles.findingCard} ${styles[`card-${statusClass}`]}`}>
-												<div className={`${styles.cardStatusStrip} ${styles[`strip-${statusClass}`]}`} />
-												<div className={styles.cardBody}>
-													<div className={styles.cardTop}>
-														<div className={styles.cardNames}>
-															<span className={styles.cardMarker}>{displayName}</span>
+											<button
+												key={f.id}
+												type="button"
+												className={`${styles.findingRow} ${styles[`row-${statusClass}`]} ${isOpen ? styles.findingRowOpen : ""}`}
+												onClick={() => setExpandedFindingId(isOpen ? null : f.id)}
+												aria-expanded={isOpen}
+											>
+												<span className={`${styles.findingDot} ${styles[`dot-${statusClass}`]}`} aria-hidden />
+												<div className={styles.findingMain}>
+													<div className={styles.findingHead}>
+														<div className={styles.findingTitles}>
+															<span className={styles.findingName}>{displayName}</span>
 															{showMarker && (
-																<span className={styles.cardSub}>{displayMarker}</span>
+																<span className={styles.findingMarker}>{displayMarker}</span>
 															)}
 														</div>
-														<span className={`${styles.cardBadge} ${styles[`badge-${statusClass}`]}`}>
-															{statusClass !== "good" && <AlertTriangle size={10} />}
+														<span className={`${styles.findingStatus} ${styles[`status-${statusClass}`]}`}>
+															{statusClass === "good" ? <Check size={12} strokeWidth={2.5} /> : <AlertTriangle size={12} strokeWidth={2.5} />}
 															{t(f.statusLabel) || f.statusLabel}
 														</span>
 													</div>
-													<div className={styles.cardValue}>
-														<span className={styles.cardNum}>{f.value}</span>
+													<div className={styles.findingValueRow}>
+														<span className={`${styles.findingValue} ${styles[`value-${statusClass}`]}`}>{f.value}</span>
+														{hasNote && (
+															<span className={styles.findingToggle}>
+																{isOpen ? t("Hide details") : t("Why this matters")}
+																<ChevronDown size={14} className={`${styles.findingChevron} ${isOpen ? styles.findingChevronOpen : ""}`} />
+															</span>
+														)}
 													</div>
-													<div className={styles.cardDivider} />
-													<p className={styles.cardNote}>{t(f.note) || f.note}</p>
+													{isOpen && hasNote && (
+														<p className={styles.findingNote}>{t(f.note) || f.note}</p>
+													)}
 												</div>
-											</div>
+											</button>
 										);
 									})}
 								</div>
