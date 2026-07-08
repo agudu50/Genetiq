@@ -11,7 +11,7 @@ import {
 	X, CheckCircle, ArrowLeft, Loader2, Sparkles,
 	Wifi, WifiOff, Brain, Stethoscope, User, Droplets,
 	Ruler, Scale, Activity, Clock, Check, Lock,
-	AlertTriangle, Languages, ChevronDown,
+	Languages, ChevronDown,
 } from "lucide-react";
 import {
 	analyzeLabResults,
@@ -20,6 +20,7 @@ import {
 import type { GemmaLanguage, GemmaAnalysisResult, AnalyzeProgressPhase } from "@/App/Services/GemmaService";
 import { useGemmaConnection } from "@/App/Hooks/useGemmaConnection";
 import { buildResultsSummarySections, enrichFindingsWithPlainNotes } from "@/App/Utils/buildResultsSummary";
+import { extractPdfContent, readTextFile } from "@/App/Utils/extractFileText";
 import styles from "./ImportOrUpload.module.scss";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -204,17 +205,50 @@ const ImportOrUpload = () => {
 		dispatch(updateUserInfo({ ...info, uploadStatus: "processing" }));
 
 		try {
-			const imageFiles = files.filter((f) => f.file.type.startsWith("image/"));
 			const imageBase64List: string[] = [];
-			if (imageFiles.length > 0 && !selectedPreset) {
-				for (const { file } of imageFiles) {
-					imageBase64List.push(await fileToBase64(file));
+			const extractedTextParts: string[] = [];
+
+			if (!selectedPreset) {
+				for (const { file } of files) {
+					const type = file.type;
+					const name = file.name.toLowerCase();
+					if (type.startsWith("image/")) {
+						imageBase64List.push(await fileToBase64(file));
+					} else if (type === "application/pdf" || name.endsWith(".pdf")) {
+						setAnalyzeStatus({ message: `Reading ${file.name}…`, pct: 0 });
+						try {
+							const pdf = await extractPdfContent(file);
+							if (pdf.text) {
+								extractedTextParts.push(pdf.text);
+							} else {
+								// Scanned PDF — pass rendered pages through the OCR pipeline
+								imageBase64List.push(...pdf.pageImagesBase64);
+							}
+						} catch (e) {
+							console.warn(`Could not read PDF ${file.name}:`, e);
+						}
+					} else if (
+						type === "text/csv" ||
+						type.startsWith("text/") ||
+						name.endsWith(".csv") ||
+						name.endsWith(".txt")
+					) {
+						try {
+							extractedTextParts.push(await readTextFile(file));
+						} catch (e) {
+							console.warn(`Could not read ${file.name}:`, e);
+						}
+					}
 				}
 			}
 
+			const combinedLabText = [labTextPaste.trim(), ...extractedTextParts]
+				.filter(Boolean)
+				.join("\n\n");
+
 			const result = await analyzeLabResults({
 				imageBase64List: imageBase64List.length ? imageBase64List : undefined,
-				labText: labTextPaste.trim() || undefined,
+				labText: combinedLabText || undefined,
 				presetId: selectedPreset || undefined,
 				patientAge: info.age || "35",
 				patientGender: info.gender || "unknown",

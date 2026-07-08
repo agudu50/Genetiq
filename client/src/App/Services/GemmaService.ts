@@ -903,12 +903,14 @@ const PRESET_RESULTS: Record<string, GemmaAnalysisResult> = {
 
 function simulateLabAnalysis(opts: {
 	imageBase64?: string;
+	imageBase64List?: string[];
 	labText?: string;
 	presetId?: string;
 	language: GemmaLanguage;
 }): GemmaAnalysisResult {
-	// Custom upload without preset — OCR failed or server unavailable
-	if ((opts.imageBase64 || opts.labText) && !opts.presetId) {
+	// Custom upload without preset — OCR failed or server unavailable.
+	// NEVER fall through to a preset case for a real user upload.
+	if (!opts.presetId) {
 		if (opts.labText && isUsableLabText(opts.labText)) {
 			return {
 				healthScore: 0,
@@ -964,8 +966,7 @@ function simulateLabAnalysis(opts: {
 		};
 	}
 
-	const presetId = opts.presetId || "malaria_rdt";
-	const result = { ...PRESET_RESULTS[presetId] || PRESET_RESULTS.malaria_rdt };
+	const result = { ...(PRESET_RESULTS[opts.presetId] || PRESET_RESULTS.malaria_rdt) };
 
 	if (opts.language !== "english") {
 		result.translations = OFFLINE_TRANSLATIONS[opts.language] || {};
