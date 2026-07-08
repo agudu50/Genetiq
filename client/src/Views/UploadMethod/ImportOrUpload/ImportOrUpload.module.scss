@@ -4394,16 +4394,11 @@ $teal2: #008f87;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   border: 1px solid var(--iou-border);
-  border-left-width: 4px;
   
   html[data-theme="dark"] & {
     box-shadow: none;
   }
 }
-
-.resultCard-critical { border-left-color: #FF3B30; }
-.resultCard-warning { border-left-color: #FF9500; }
-.resultCard-good { border-left-color: #34C759; }
 
 .resultHeaderNative {
   margin-bottom: 8px;
@@ -4597,8 +4592,7 @@ html[data-theme="dark"] .resultStatusText-good { color: #30D158; }
 }
 
 .uploadHubTab:hover:not(.uploadHubTabActive) {
-  background: var(--iou-surface-hover);
-  color: var(--iou-text);
+  color: var(--iou-heading);
 }
 
 .uploadHubContent {
