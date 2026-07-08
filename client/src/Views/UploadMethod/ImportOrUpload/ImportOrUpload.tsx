@@ -651,7 +651,30 @@ const ImportOrUpload = () => {
 														)}
 													</div>
 													{isOpen && hasNote && (
-														<p className={styles.findingNote}>{t(f.note) || f.note}</p>
+														<div className={styles.findingNote}>
+															{(t(f.note) || f.note)
+																.split(/\n\n+/)
+																.map((block) => block.trim())
+																.filter(Boolean)
+																.map((block, i) => {
+																	const lines = block.split("\n").map((l) => l.trim()).filter(Boolean);
+																	const heading = lines[0];
+																	const isHeading = /^(what this means|in simple words|what you should|what to|what helps|get emergency|urgent|still important|if this)/i.test(heading);
+																	const bodyLines = isHeading ? lines.slice(1) : lines;
+																	return (
+																		<div key={`${f.id}-note-${i}`} className={styles.findingNoteBlock}>
+																			{isHeading ? (
+																				<span className={styles.findingNoteHeading}>{heading}</span>
+																			) : null}
+																			{(isHeading ? bodyLines : lines).map((line, li) => (
+																				<p key={`${f.id}-line-${i}-${li}`} className={styles.findingNoteLine}>
+																					{line}
+																				</p>
+																			))}
+																		</div>
+																	);
+																})}
+														</div>
 													)}
 												</div>
 											</button>

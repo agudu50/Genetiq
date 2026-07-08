@@ -53,30 +53,74 @@ export function buildFindingNote(row: ParsedLabRow): string {
 
 	const qualitative = isQualitativeValue(row.value);
 
-	if (/malaria|falciparum|vivax|ovale|malariae|antigen/i.test(`${row.name} ${row.marker}`)) {
-		if (/positive|detected|present/i.test(row.value) || row.status === "action" || row.status === "elevated") {
+	if (/malaria|falciparum|vivax|ovale|malariae|antigen|dangerous malaria|second malaria/i.test(`${row.name} ${row.marker}`)) {
+		const isVivax = /vivax|second malaria/i.test(`${row.name} ${row.marker}`);
+		const positive =
+			/positive|detected|present|found/i.test(row.value) ||
+			row.status === "action" ||
+			row.status === "elevated";
+
+		if (isVivax && !positive) {
 			return (
-				`${plainName(row.name)} came back positive on this malaria rapid test. ` +
-				"That means malaria parasites were detected in your blood. Start antimalarial treatment (ACT) as soon as possible — do not wait for symptoms to get worse. Visit a pharmacy, CHPS compound, or clinic today."
+				"What this means\n" +
+				"This checks for a second malaria germ (doctors may write P. vivax). It was not found on this strip.\n\n" +
+				"In simple words: today’s test does not show this second malaria type. If another malaria line was positive, treat that one right away.\n\n" +
+				"What to watch\n" +
+				"If fever, chills, headache, or body pain continue, go back for another check — early malaria can sometimes miss a first strip."
 			);
 		}
+
+		if (positive) {
+			return (
+				"What this means\n" +
+				"The malaria strip found malaria bugs in your blood. On many Ghana tests this is the dangerous common type (doctors call it P. falciparum).\n\n" +
+				"In simple words: a mosquito passed tiny malaria germs into your blood, and they are making you sick.\n\n" +
+				"What you should do now\n" +
+				"• Get ACT malaria tablets today from a pharmacy, CHPS compound, clinic, or hospital\n" +
+				"• Rest, drink water or ORS often, sleep under a mosquito net\n" +
+				"• Do not rely on herbs alone — they can comfort, but they do not replace malaria medicine\n\n" +
+				"Get emergency help if\n" +
+				"Confusion, repeated vomiting, fits, trouble breathing, or you cannot stay awake — call 112 / 193 or go to hospital now."
+			);
+		}
+
 		return (
-			`${plainName(row.name)} was not detected on this test. ` +
-			"That is good for this malaria type — but if you still have fever, chills, or feel very unwell, get checked again. One negative strip does not always rule out early malaria."
+			"What this means\n" +
+			"This malaria line was not found / negative on the strip.\n\n" +
+			"In simple words: this particular malaria germ did not show up today.\n\n" +
+			"Still important\n" +
+			"If you feel very sick with fever or chills, get checked again. One negative result does not always rule out early malaria."
 		);
 	}
 
-	if (/control|validity|valid/i.test(`${row.name} ${row.marker} ${row.value}`)) {
-		if (/valid|ok|pass|present|detected/i.test(row.value) || row.status === "normal") {
-			return "The control line shows this rapid test ran correctly, so the other lines on the strip can be trusted.";
+	if (/control|validity|valid|did the test work/i.test(`${row.name} ${row.marker}`)) {
+		if (/valid|ok|pass|present|detected|worked|yes/i.test(row.value) || row.status === "normal") {
+			return (
+				"What this means\n" +
+				"The “control” line is the kit’s self-check. It is not your malaria result.\n\n" +
+				"In simple words: the strip worked properly, so the other Positive / Not found answers can be trusted.\n\n" +
+				"If this fails next time\n" +
+				"Repeat with a new kit. Never treat yourself from a strip whose control line failed."
+			);
 		}
-		return "The control line did not look valid. Do not rely on this cassette — repeat the test with a new kit.";
+		return (
+			"What this means\n" +
+			"The control check failed, so this kit may be faulty or spoiled.\n\n" +
+			"In simple words: ignore the other lines and repeat the test with a fresh kit at a pharmacy or clinic."
+		);
 	}
 
-	if (/severity|clinical assessment|parasite density|infection load/i.test(`${row.name} ${row.marker}`)) {
+	if (/severity|clinical assessment|parasite density|infection load|how serious/i.test(`${row.name} ${row.marker}`)) {
 		return (
-			`This clinical assessment suggests ${row.value.toLowerCase()} malaria based on the test and typical presentation. ` +
-			"Severity is estimated — how you feel matters more. Seek treatment promptly, rest, drink fluids, and go to hospital urgently if you become confused, vomit repeatedly, or struggle to breathe."
+			"What this means\n" +
+			`This is a simple estimate that the infection looks “${row.value.toLowerCase()}” from the rapid test — not a full doctor exam.\n\n` +
+			"In simple words: you still need proper malaria treatment now. Many people recover in about 3–7 days once they finish the right tablets.\n\n" +
+			"What helps\n" +
+			"• Take every ACT dose on time\n" +
+			"• Drink water / ORS / coconut water\n" +
+			"• Rest under a mosquito net\n\n" +
+			"Urgent warning signs\n" +
+			"Confusion, endless vomiting, yellow eyes, chest struggle, or fainting — go to hospital immediately."
 		);
 	}
 

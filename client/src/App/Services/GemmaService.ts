@@ -761,19 +761,80 @@ const PRESET_RESULTS: Record<string, GemmaAnalysisResult> = {
 		healthScore: 42,
 		bodySystem: "Hematology",
 		summary:
-			"Your Malaria Rapid Diagnostic Test came back POSITIVE for Plasmodium falciparum — the most common and serious type of malaria in Ghana. This requires immediate medical treatment with ACT (Artemisinin-based Combination Therapy). Do not delay — visit your nearest health facility today.",
+			"Your malaria finger-prick / strip test came back POSITIVE for the dangerous malaria germ that is most common in Ghana. That means malaria bugs are in your blood right now. You need proper malaria tablets (ACT) today — do not wait. Go to a pharmacy, CHPS compound, clinic, or hospital.",
 		findings: [
-			{ id: "m1", name: "Malaria Parasite (P. falciparum)", marker: "P. falciparum Antigen", value: "Positive", status: "action", statusLabel: "Positive — seek treatment now", note: "The test detected Plasmodium falciparum, the most dangerous malaria parasite. This means the parasite is actively in your blood. You need antimalarial medication (ACT) as soon as possible — do not wait." },
-			{ id: "m2", name: "P. vivax", marker: "P. vivax Antigen", value: "Negative", status: "normal", statusLabel: "Not detected ✓", note: "The other common malaria type was not found. Your infection is specifically P. falciparum." },
-			{ id: "m3", name: "Test Validity", marker: "Control Line", value: "Valid", status: "normal", statusLabel: "Test valid ✓", note: "The control line appeared correctly, confirming this test result is reliable." },
-			{ id: "m4", name: "Estimated Severity", marker: "Clinical Assessment", value: "Moderate", status: "elevated", statusLabel: "Moderate infection", note: "Based on symptoms and positive RDT, this appears to be a moderate malaria infection. With prompt treatment, most people recover fully within 3-7 days." },
+			{
+				id: "m1",
+				name: "Dangerous malaria type",
+				marker: "Also called P. falciparum — the malaria germ most common in Ghana",
+				value: "Found in your blood",
+				status: "action",
+				statusLabel: "Positive — get treatment today",
+				note:
+					"What this means\n" +
+					"The test found the dangerous malaria germ in your blood (doctors call it Plasmodium falciparum, or just falciparum). It is the malaria type that makes people in Ghana sick most often, and it can become serious quickly.\n\n" +
+					"In simple words: malaria mosquitoes passed tiny bugs into your blood, and those bugs are multiplying.\n\n" +
+					"What you should do now\n" +
+					"• Go today to a CHPS compound, clinic, hospital, or trusted pharmacy\n" +
+					"• Ask for ACT malaria tablets (the standard full course in Ghana) — herbal drinks alone are not enough\n" +
+					"• Rest, drink lots of water or ORS, and sleep under a mosquito net\n\n" +
+					"Get emergency help if\n" +
+					"You become confused, vomit again and again, have fits/seizures, struggle to breathe, or cannot wake up properly — call 112 / 193 or go straight to hospital.",
+			},
+			{
+				id: "m2",
+				name: "Second malaria type",
+				marker: "Also called P. vivax — another malaria germ (less common here)",
+				value: "Not found",
+				status: "normal",
+				statusLabel: "Not found ✓",
+				note:
+					"What this means\n" +
+					"The strip also checks for a second malaria germ (doctors call it Plasmodium vivax). That one was not found on this test.\n\n" +
+					"In simple words: you do not appear to have this second malaria type on today’s strip. Your positive result is for the dangerous Ghana-common type (falciparum).\n\n" +
+					"What you should still watch\n" +
+					"If fever continues after treatment, go back for another check. One test is a snapshot — how you feel over the next days still matters.",
+			},
+			{
+				id: "m3",
+				name: "Did the test work properly?",
+				marker: "Control line — the check mark that proves the strip ran correctly",
+				value: "Yes — test worked",
+				status: "normal",
+				statusLabel: "Test worked ✓",
+				note:
+					"What this means\n" +
+					"Every malaria strip has a “control” line. It is not your malaria result — it only shows the kit worked like it should.\n\n" +
+					"In simple words: the machine / strip did its job, so the Positive / Not found lines above can be trusted.\n\n" +
+					"If this had failed\n" +
+					"You would need to repeat the test with a new kit. A failed control means you should ignore the other lines.",
+			},
+			{
+				id: "m4",
+				name: "How serious it looks",
+				marker: "Simple estimate from the test — not a full hospital exam",
+				value: "Moderate (medium)",
+				status: "elevated",
+				statusLabel: "Needs care soon",
+				note:
+					"What this means\n" +
+					"“Moderate” means the infection looks medium-level from this rapid test — not mild enough to ignore, and not automatically the most extreme form. Only a health worker who examines you can grade severity for sure.\n\n" +
+					"In simple words: you are sick enough that you need treatment now, but many people with this level recover well in about 3–7 days once they take the right malaria medicine.\n\n" +
+					"What helps recovery\n" +
+					"• Finish every ACT tablet on the schedule given to you\n" +
+					"• Drink water, ORS, or coconut water often\n" +
+					"• Eat light food (Koko, rice, soft fruit) when you can\n" +
+					"• Rest and use a treated mosquito net so you are not bitten again\n\n" +
+					"Urgent warning signs\n" +
+					"Confusion, very stiff neck, endless vomiting, yellow eyes, chest struggle, or fainting — go to hospital immediately.",
+			},
 		],
 		recommendations: [
-			{ icon: "🏥", title: "Get ACT medication immediately", body: "Go to your nearest CHPS compound, clinic, or hospital TODAY. You need Artemisinin-based Combination Therapy (ACT) — this is the standard malaria treatment in Ghana. Do not rely on herbal remedies alone." },
-			{ icon: "💧", title: "Stay hydrated — drink ORS and fluids", body: "Malaria causes dehydration through fever and sweating. Drink plenty of water, ORS (Oral Rehydration Salts available at any pharmacy), coconut water, and light Koko (porridge). Avoid very cold drinks." },
-			{ icon: "🌿", title: "Support recovery with local foods", body: "While taking your medication, boost your body with Moringa powder in soup (rich in iron), citrus fruits like oranges and limes (Vitamin C helps fight infection), and light meals like rice water or Tom Brown." },
-			{ icon: "🛏️", title: "Rest under a treated mosquito net", body: "Rest is essential for recovery. Sleep under an insecticide-treated net (ITN) to prevent re-infection and protect your family. Keep windows closed at dusk when mosquitoes are most active." },
-			{ icon: "🦟", title: "Prevent future malaria", body: "After recovery: use mosquito nets every night, apply mosquito repellent, clear standing water around your home, and consider indoor residual spraying (IRS) if available in your area." },
+			{ icon: "🏥", title: "Get malaria tablets today (ACT)", body: "Go to your nearest CHPS compound, clinic, or hospital TODAY. Ask for ACT — the recommended malaria tablet combination used in Ghana. Do not rely on herbs alone." },
+			{ icon: "💧", title: "Drink lots of fluids (ORS + water)", body: "Fever makes you lose water. Sip water, ORS sachets from any pharmacy, coconut water, and light Koko. Small sips often are better than big gulps if you feel nauseous." },
+			{ icon: "🌿", title: "Eat simple recovery foods", body: "While on tablets, try light meals: Moringa in soup, oranges or lime (Vitamin C), soft rice, or Tom Brown. Food supports strength; tablets do the curing." },
+			{ icon: "🛏️", title: "Rest under a mosquito net", body: "Sleep and rest help your body fight. Use a treated mosquito net every night so mosquitoes cannot bite you again — and so your family stays safer too." },
+			{ icon: "🦟", title: "Stop the next malaria attack", body: "After you recover: nets every night, clear standing water around home, close windows at dusk, and use repellent when outdoors." },
 		],
 	},
 	cbc_anemia: {
