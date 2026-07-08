@@ -11,7 +11,7 @@ import {
 	X, CheckCircle, ArrowLeft, Loader2, Sparkles,
 	Wifi, WifiOff, Brain, Stethoscope, User, Droplets,
 	Ruler, Scale, Activity, Clock, Check, Lock,
-	Languages, ChevronDown,
+	ChevronDown, Info,
 } from "lucide-react";
 import {
 	analyzeLabResults,
@@ -389,12 +389,6 @@ const ImportOrUpload = () => {
 		[analysisResult?.healthScore],
 	);
 
-	const resultsStats = useMemo(() => {
-		if (!analysisResult) return { total: 0, abnormal: 0 };
-		const abnormal = analysisResult.findings.filter((f) => f.status !== "normal").length;
-		return { total: analysisResult.findings.length, abnormal };
-	}, [analysisResult]);
-
 	const summarySections = useMemo(() => {
 		if (!analysisResult) return [];
 		return buildResultsSummarySections(analysisResult, info.age, info.gender);
@@ -574,78 +568,69 @@ const ImportOrUpload = () => {
 					) : (
 						/* ── Normal Results Layout (presets / real analysis) ── */
 						<>
-							{/* ── Score hero ─────────────────────────────────── */}
-							<div className={`${styles.resultsHero} ${styles[`resultsHero-${scoreTier.key}`]}`}>
-								<div className={styles.resultsHeroInner}>
-									<div className={styles.scoreMobileWrapper}>
-										<div className={`${styles.scoreRing} ${styles[`scoreRing-${scoreTier.key}`]}`}>
-											<svg viewBox="0 0 120 120" className={styles.ringsvg} aria-hidden>
-												<circle cx="60" cy="60" r="52" fill="none" className={styles.ringTrack} strokeWidth="8"/>
-												<circle cx="60" cy="60" r="52" fill="none" className={styles.ringProgress} strokeWidth="8"
-													strokeDasharray="326.7"
-													strokeDashoffset={326.7 - (326.7 * analysisResult.healthScore / 100)}
-													strokeLinecap="round" transform="rotate(-90 60 60)"/>
-											</svg>
-											<div className={styles.scoreInner}>
-												<span className={styles.scoreNum}>{analysisResult.healthScore}</span>
-												<span className={styles.scoreLabel}>{t("Health Score")}</span>
-											</div>
-										</div>
-										<span className={`${styles.scoreTierPill} ${styles[`scoreTierPill-${scoreTier.key}`]}`} aria-hidden>
-											{t(scoreTier.label)}
-										</span>
+							{/* ── Native App Style Score Hero ─────────────────────────────────── */}
+							<div className={`${styles.card} ${styles.mainScoreCard}`}>
+								<div className={styles.scoreTop}>
+									<div className={`${styles.scoreCircleNative} ${styles[`scoreCircle-${scoreTier.key}`]}`}>
+										<div className={styles.scoreCircleValue}>{analysisResult.healthScore}</div>
+										<div className={styles.scoreCircleTotal}>/100</div>
 									</div>
-
-									<div className={styles.heroText}>
-										<p className={styles.heroEyebrow}>{t("Your results are ready")}</p>
-										<h1 className={`${styles.heroTitle} ${styles[`heroTitle-${scoreTier.key}`]}`}>
-											{t(scoreTier.label)}
-										</h1>
-										<p className={styles.heroMeta}>
-											<span>
-												{resultsStats.total} {resultsStats.total === 1 ? "value" : "values"} analyzed
-											</span>
-											{resultsStats.abnormal > 0 && (
-												<>
-													<span className={styles.heroMetaDot} aria-hidden>·</span>
-													<span className={styles.heroMetaWarn}>
-														{resultsStats.abnormal} {resultsStats.abnormal === 1 ? "needs" : "need"} review
-													</span>
-												</>
-											)}
-											{analysisResult.bodySystem && (
-												<>
-													<span className={styles.heroMetaDot} aria-hidden>·</span>
-													<span>{analysisResult.bodySystem}</span>
-												</>
-											)}
-										</p>
-
-										<div className={styles.langSection}>
-											<span className={styles.langSectionLabel}>
-												<Languages size={14} />
-												{t("Read in your language") || "Read in your language"}
-											</span>
-											<div className={styles.langRow}>
-												{LANGUAGES.map((lang) => (
-													<button
-														key={lang.id}
-														type="button"
-														className={`${styles.langPill} ${lang.id === selectedLanguage ? styles.langPillActive : ""}`}
-														onClick={() => setSelectedLanguage(lang.id)}
-													>
-														{lang.flag} {lang.code}
-													</button>
-												))}
-											</div>
-										</div>
+									<div className={styles.scoreInfoNative}>
+										<div className={styles.scoreTitleNative}>{t("Health Score")}</div>
+										<div className={`${styles.scoreStatusNative} ${styles[`scoreStatus-${scoreTier.key}`]}`}>{t(scoreTier.label)}</div>
 									</div>
+								</div>
+								
+								<p className={styles.scoreDescNative}>{t(scoreTier.plain)}</p>
+								
+								<div className={styles.miniScale}>
+									<div className={`${styles.miniScaleSeg} ${styles.seg1}`}></div>
+									<div className={`${styles.miniScaleSeg} ${styles.seg2}`}></div>
+									<div className={`${styles.miniScaleSeg} ${styles.seg3}`}></div>
+									<div className={`${styles.miniScaleSeg} ${styles.seg4}`}></div>
+									<div className={styles.miniScaleMarker} style={{ left: `${Math.min(100, Math.max(0, analysisResult.healthScore))}%` }}></div>
+								</div>
+
+								{/* Lang selection inside the card for compactness */}
+								<div className={styles.langSectionNative}>
+									{LANGUAGES.map((lang) => (
+										<button
+											key={lang.id}
+											type="button"
+											className={`${styles.langPillNative} ${lang.id === selectedLanguage ? styles.langPillActiveNative : ""}`}
+											onClick={() => setSelectedLanguage(lang.id)}
+										>
+											{lang.flag} {lang.code}
+										</button>
+									))}
 								</div>
 							</div>
 
-							{/* ── Plain-English summary ──────────────────────── */}
-							<div className={styles.resultsBrief}>
-								<h2 className={styles.resultsBriefHeading}>What this means for you</h2>
+							{/* ── Legend Card ──────────────────────────────── */}
+							<div className={styles.card}>
+								<div className={styles.legendListNative}>
+									{scoreBands.map((band) => (
+										<div
+											key={band.key}
+											className={`${styles.legendItemNative} ${band.active ? styles.legendItemActiveNative : ""}`}
+										>
+											<div className={`${styles.legendDotNative} ${styles[`legendDot-${band.key}`]}`}></div>
+											<div className={styles.legendRangeNative}>{band.range}</div>
+											<div className={styles.legendLabelNative}>{t(band.label)}</div>
+											{band.active && <div className={styles.legendHereNative}>{t("You are here")}</div>}
+										</div>
+									))}
+								</div>
+							</div>
+
+							{/* ── Plain-English summary (re-styled) ──────────────────────── */}
+							{summarySections.length > 0 && (
+								<div className={styles.sectionHeaderNative}>
+									<h2>What this means for you</h2>
+									<p>Brief insights from your data.</p>
+								</div>
+							)}
+							<div className={styles.resultsBriefNative}>
 								<dl className={styles.resultsBriefList}>
 									{summarySections.map((section) => (
 										<div
@@ -663,48 +648,14 @@ const ImportOrUpload = () => {
 								</dl>
 							</div>
 
-							{/* ── Health score ──────────────────────────────── */}
-							<div className={`${styles.scoreCard} ${styles[`scoreCard-${scoreTier.key}`]}`}>
-								<div className={styles.scoreCardMain}>
-									<div className={styles.scoreCardScore}>
-										<span className={styles.scoreCardScoreNum}>{analysisResult.healthScore}</span>
-										<span className={styles.scoreCardScoreOf}>/100</span>
-									</div>
-									<div className={styles.scoreCardCopy}>
-										<span className={styles.scoreCardTitle}>{t("Health Score")}</span>
-										<span className={styles.scoreCardStatus}>{t(scoreTier.label)}</span>
-										<p className={styles.scoreCardPlain}>{t(scoreTier.plain)}</p>
-									</div>
-								</div>
-
-								<div className={styles.scoreProgressTrack} aria-hidden>
-									<div
-										className={styles.scoreProgressFill}
-										style={{ width: `${Math.min(100, Math.max(0, analysisResult.healthScore))}%` }}
-									/>
-								</div>
-
-								<div className={styles.scoreLegend}>
-									{scoreBands.map((band) => (
-										<span
-											key={band.key}
-											className={`${styles.scoreLegendItem} ${styles[`scoreLegend-${band.key}`]} ${band.active ? styles.scoreLegendActive : ""}`}
-										>
-											<span className={styles.scoreLegendDot} aria-hidden />
-											{band.range} · {t(band.label)}
-										</span>
-									))}
-								</div>
-							</div>
-
 							{/* ── Key findings ───────────────────────────────── */}
 							<div className={styles.section}>
-								<div className={styles.sectionHead}>
-									<h2 className={styles.sectionTitle}>{t("What we found")}</h2>
-									<p className={styles.sectionSub}>{t("Each result explained in plain English — no medical jargon.")}</p>
+								<div className={styles.sectionHeaderNative}>
+									<h2>{t("What we found")}</h2>
+									<p>{t("Each result explained in plain English — no medical jargon.")}</p>
 								</div>
 
-								<div className={styles.findingsList}>
+								<div className={styles.findingsListNative}>
 									{analysisResult.findings.map((f) => {
 										const statusClass = f.status === "normal" ? "good"
 											: f.status === "action" ? "critical"
@@ -716,57 +667,47 @@ const ImportOrUpload = () => {
 										const hasNote = Boolean((f.note || "").trim());
 
 										return (
-											<button
-												key={f.id}
-												type="button"
-												className={`${styles.findingRow} ${styles[`findingRow-${statusClass}`]} ${isOpen ? styles.findingRowOpen : ""}`}
-												onClick={() => setExpandedFindingId(isOpen ? null : f.id)}
-												aria-expanded={isOpen}
-											>
-												<span className={`${styles.findingDot} ${styles[`dot-${statusClass}`]}`} aria-hidden />
-												<div className={styles.findingBody}>
-													<div className={styles.findingTop}>
-														<div className={styles.findingTitles}>
-															<span className={styles.findingName}>{displayName}</span>
-															{showMarker && <span className={styles.findingMarker}>{displayMarker}</span>}
-														</div>
-														<span className={`${styles.findingValue} ${styles[`value-${statusClass}`]}`}>{f.value}</span>
-													</div>
-													<div className={styles.findingMeta}>
-														<span className={`${styles.findingChip} ${styles[`chip-${statusClass}`]}`}>
-															{t(f.statusLabel) || f.statusLabel}
-														</span>
-														{hasNote && (
-															<span className={styles.findingToggle}>
-																{isOpen ? t("Hide") : t("Why this matters")}
-																<ChevronDown size={13} className={`${styles.findingChevron} ${isOpen ? styles.findingChevronOpen : ""}`} />
-															</span>
-														)}
-													</div>
-													{isOpen && hasNote && (
-														<div className={styles.findingNote}>
-															{(t(f.note) || f.note)
-																.split(/\n\n+/)
-																.map((block) => block.trim())
-																.filter(Boolean)
-																.map((block, i) => {
-																	const lines = block.split("\n").map((l) => l.trim()).filter(Boolean);
-																	const heading = lines[0];
-																	const isHeading = /^(what this means|in simple words|what you should|what to|what helps|get emergency|urgent|still important|if this)/i.test(heading);
-																	const bodyLines = isHeading ? lines.slice(1) : lines;
-																	return (
-																		<div key={`${f.id}-note-${i}`} className={styles.findingNoteBlock}>
-																			{isHeading ? <span className={styles.findingNoteHeading}>{heading}</span> : null}
-																			{(isHeading ? bodyLines : lines).map((line, li) => (
-																				<p key={`${f.id}-line-${i}-${li}`} className={styles.findingNoteLine}>{line}</p>
-																			))}
-																		</div>
-																	);
-																})}
-														</div>
-													)}
+											<div key={f.id} className={`${styles.resultCardNative} ${styles[`resultCard-${statusClass}`]}`}>
+												<div className={styles.resultHeaderNative}>
+													<div className={styles.resultTitleNative}>{displayName}</div>
+													{showMarker && <div className={styles.resultSubtitleNative}>{displayMarker}</div>}
 												</div>
-											</button>
+												<div className={`${styles.resultStatusNative} ${styles[`resultStatusText-${statusClass}`]}`}>{t(f.statusLabel) || f.statusLabel}</div>
+												
+												<div className={styles.findingTopNative}>
+													<span className={`${styles.findingValueNative} ${styles[`value-${statusClass}`]}`}>{f.value}</span>
+												</div>
+
+												{hasNote && (
+													<button className={styles.resultActionNative} onClick={() => setExpandedFindingId(isOpen ? null : f.id)}>
+														{isOpen ? t("Hide Details") : t("Why this matters")}
+														<ChevronDown size={16} style={{ transform: isOpen ? 'rotate(180deg)' : 'none', transition: '0.2s' }} />
+													</button>
+												)}
+												
+												{isOpen && hasNote && (
+													<div className={styles.findingNoteNative}>
+														{(t(f.note) || f.note)
+															.split(/\n\n+/)
+															.map((block) => block.trim())
+															.filter(Boolean)
+															.map((block, i) => {
+																const lines = block.split("\n").map((l) => l.trim()).filter(Boolean);
+																const heading = lines[0];
+																const isHeading = /^(what this means|in simple words|what you should|what to|what helps|get emergency|urgent|still important|if this)/i.test(heading);
+																const bodyLines = isHeading ? lines.slice(1) : lines;
+																return (
+																	<div key={`${f.id}-note-${i}`} className={styles.findingNoteBlock}>
+																		{isHeading ? <span className={styles.findingNoteHeading}>{heading}</span> : null}
+																		{(isHeading ? bodyLines : lines).map((line, li) => (
+																			<p key={`${f.id}-line-${i}-${li}`} className={styles.findingNoteLine}>{line}</p>
+																		))}
+																	</div>
+																);
+															})}
+													</div>
+												)}
+											</div>
 										);
 									})}
 								</div>
@@ -1362,22 +1303,40 @@ const ImportOrUpload = () => {
 						)}
 
 						{/* Paste lab text (works with text-only AI) */}
-						<div className={styles.uploadLabTextSection}>
-							<label htmlFor="iou-lab-text" className={styles.uploadLabTextLabel}>
-								<FileText size={14} />
-								Paste lab results <span className={styles.optional}>(optional — use if photo is unclear)</span>
-							</label>
-							<textarea
-								id="iou-lab-text"
-								className={styles.uploadLabTextArea}
-								placeholder="Paste or type values from your report, e.g.&#10;Hemoglobin: 7.2 g/dL&#10;WBC: 6.2 x10⁹/L&#10;Malaria RDT: Positive"
-								value={labTextPaste}
-								onChange={(e) => {
-									setLabTextPaste(e.target.value);
-									if (e.target.value.trim()) setSelectedPreset(null);
-								}}
-								rows={4}
-							/>
+						<div className={styles.uploadLabTextCard}>
+							<div className={styles.uploadLabTextHeaderGroup}>
+								<div className={styles.uploadLabTextIconWrapper}>
+									<FileText size={20} strokeWidth={2} />
+								</div>
+								<div className={styles.uploadLabTextTitleGroup}>
+									<label htmlFor="iou-lab-text" className={styles.uploadLabTextTitle}>
+										Paste lab results 
+										<span className={styles.uploadLabTextBadge}>Optional</span>
+									</label>
+									<p className={styles.uploadLabTextSubtitle}>
+										Use this if your photo is unclear or if you only have text.
+									</p>
+								</div>
+							</div>
+
+							<div className={styles.uploadLabTextTextareaWrapper}>
+								<textarea
+									id="iou-lab-text"
+									className={styles.uploadLabTextArea}
+									placeholder="Example:&#10;Hemoglobin: 7.2 g/dL&#10;WBC: 6.2 x10⁹/L&#10;Malaria RDT: Positive"
+									value={labTextPaste}
+									onChange={(e) => {
+										setLabTextPaste(e.target.value);
+										if (e.target.value.trim()) setSelectedPreset(null);
+									}}
+									rows={5}
+								/>
+							</div>
+
+							<div className={styles.uploadLabTextHelper}>
+								<Info size={14} />
+								<span>Copy exactly as it appears on your report</span>
+							</div>
 						</div>
 
 						{/* CTA */}
