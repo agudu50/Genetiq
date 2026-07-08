@@ -289,11 +289,71 @@ const ImportOrUpload = () => {
 
 	const scoreTier = useMemo(() => {
 		const score = analysisResult?.healthScore ?? 0;
-		if (score <= 50) return { key: "attention", label: "Needs attention", barClass: styles.good };
-		if (score <= 74) return { key: "improve", label: "Room to improve", barClass: styles.warning };
-		if (score <= 89) return { key: "good", label: "Good", barClass: styles.great };
-		return { key: "excellent", label: "Excellent", barClass: "" };
+		if (score <= 50) {
+			return {
+				key: "attention" as const,
+				label: "Needs attention",
+				plain: "Some results look off. Take this to a clinic soon.",
+				range: "0 – 50",
+			};
+		}
+		if (score <= 74) {
+			return {
+				key: "improve" as const,
+				label: "Room to improve",
+				plain: "A few values need follow-up. Ask your doctor what to watch.",
+				range: "51 – 74",
+			};
+		}
+		if (score <= 89) {
+			return {
+				key: "good" as const,
+				label: "Looking good",
+				plain: "Most results look fine. Keep healthy habits and check-ups.",
+				range: "75 – 89",
+			};
+		}
+		return {
+			key: "excellent" as const,
+			label: "Excellent",
+			plain: "Your results look strong overall. Stay consistent.",
+			range: "90 – 100",
+		};
 	}, [analysisResult?.healthScore]);
+
+	const scoreBands = useMemo(
+		() => [
+			{
+				key: "attention" as const,
+				range: "0 – 50",
+				label: "Needs attention",
+				hint: "See a clinic soon",
+				active: (analysisResult?.healthScore ?? 0) <= 50,
+			},
+			{
+				key: "improve" as const,
+				range: "51 – 74",
+				label: "Room to improve",
+				hint: "Follow up on a few values",
+				active: (analysisResult?.healthScore ?? 0) > 50 && (analysisResult?.healthScore ?? 0) <= 74,
+			},
+			{
+				key: "good" as const,
+				range: "75 – 89",
+				label: "Looking good",
+				hint: "Mostly in a healthy range",
+				active: (analysisResult?.healthScore ?? 0) > 74 && (analysisResult?.healthScore ?? 0) <= 89,
+			},
+			{
+				key: "excellent" as const,
+				range: "90 – 100",
+				label: "Excellent",
+				hint: "Strong overall results",
+				active: (analysisResult?.healthScore ?? 0) > 89,
+			},
+		],
+		[analysisResult?.healthScore],
+	);
 
 	const resultsStats = useMemo(() => {
 		if (!analysisResult) return { total: 0, abnormal: 0 };
@@ -569,35 +629,37 @@ const ImportOrUpload = () => {
 								</dl>
 							</div>
 
-							{/* ── Score spectrum + breakdown ─────────────────── */}
-							<div className={styles.scoreSpectrumWrap}>
-								<div className={styles.scoreSpectrumHead}>
-									<span className={styles.scoreSpectrumLabel}>{t("Health Score")}</span>
-									<span className={styles.scoreSpectrumValue}>{analysisResult.healthScore}/100</span>
+							{/* ── Health score ──────────────────────────────── */}
+							<div className={`${styles.scoreCard} ${styles[`scoreCard-${scoreTier.key}`]}`}>
+								<div className={styles.scoreCardMain}>
+									<div className={styles.scoreCardScore}>
+										<span className={styles.scoreCardScoreNum}>{analysisResult.healthScore}</span>
+										<span className={styles.scoreCardScoreOf}>/100</span>
+									</div>
+									<div className={styles.scoreCardCopy}>
+										<span className={styles.scoreCardTitle}>{t("Health Score")}</span>
+										<span className={styles.scoreCardStatus}>{t(scoreTier.label)}</span>
+										<p className={styles.scoreCardPlain}>{t(scoreTier.plain)}</p>
+									</div>
 								</div>
-								<div className={styles.scoreSpectrumTrack} aria-hidden>
-									<div className={styles.scoreSpectrumGradient} />
+
+								<div className={styles.scoreProgressTrack} aria-hidden>
 									<div
-										className={`${styles.scoreSpectrumMarker} ${styles[`scoreSpectrumMarker-${scoreTier.key}`]}`}
-										style={{ left: `${Math.min(100, Math.max(0, analysisResult.healthScore))}%` }}
+										className={styles.scoreProgressFill}
+										style={{ width: `${Math.min(100, Math.max(0, analysisResult.healthScore))}%` }}
 									/>
 								</div>
-								<p className={`${styles.scoreSpectrumActiveMobile} ${styles[`scoreSpectrumActiveMobile-${scoreTier.key}`]}`}>
-									{t(scoreTier.label)}
-								</p>
-								<div className={styles.scoreBreakdown}>
-									<div className={`${styles.scoreBar} ${analysisResult.healthScore <= 50 ? styles.active : ""} ${styles.good}`}>
-										<span>0 – 50</span><span>{t("Needs attention")}</span>
-									</div>
-									<div className={`${styles.scoreBar} ${analysisResult.healthScore > 50 && analysisResult.healthScore <= 74 ? styles.active : ""} ${styles.warning}`}>
-										<span>51 – 74</span><span>{t("Room to improve")}</span>
-									</div>
-									<div className={`${styles.scoreBar} ${analysisResult.healthScore > 74 && analysisResult.healthScore <= 89 ? styles.active : ""} ${styles.great}`}>
-										<span>75 – 89</span><span>{t("Good")}</span>
-									</div>
-									<div className={`${styles.scoreBar} ${analysisResult.healthScore > 89 ? styles.active : ""}`}>
-										<span>90 – 100</span><span>{t("Excellent")}</span>
-									</div>
+
+								<div className={styles.scoreLegend}>
+									{scoreBands.map((band) => (
+										<span
+											key={band.key}
+											className={`${styles.scoreLegendItem} ${styles[`scoreLegend-${band.key}`]} ${band.active ? styles.scoreLegendActive : ""}`}
+										>
+											<span className={styles.scoreLegendDot} aria-hidden />
+											{band.range} · {t(band.label)}
+										</span>
+									))}
 								</div>
 							</div>
 
@@ -623,30 +685,27 @@ const ImportOrUpload = () => {
 											<button
 												key={f.id}
 												type="button"
-												className={`${styles.findingRow} ${styles[`row-${statusClass}`]} ${isOpen ? styles.findingRowOpen : ""}`}
+												className={`${styles.findingRow} ${styles[`findingRow-${statusClass}`]} ${isOpen ? styles.findingRowOpen : ""}`}
 												onClick={() => setExpandedFindingId(isOpen ? null : f.id)}
 												aria-expanded={isOpen}
 											>
 												<span className={`${styles.findingDot} ${styles[`dot-${statusClass}`]}`} aria-hidden />
-												<div className={styles.findingMain}>
-													<div className={styles.findingHead}>
+												<div className={styles.findingBody}>
+													<div className={styles.findingTop}>
 														<div className={styles.findingTitles}>
 															<span className={styles.findingName}>{displayName}</span>
-															{showMarker && (
-																<span className={styles.findingMarker}>{displayMarker}</span>
-															)}
+															{showMarker && <span className={styles.findingMarker}>{displayMarker}</span>}
 														</div>
-														<span className={`${styles.findingStatus} ${styles[`status-${statusClass}`]}`}>
-															{statusClass === "good" ? <Check size={12} strokeWidth={2.5} /> : <AlertTriangle size={12} strokeWidth={2.5} />}
+														<span className={`${styles.findingValue} ${styles[`value-${statusClass}`]}`}>{f.value}</span>
+													</div>
+													<div className={styles.findingMeta}>
+														<span className={`${styles.findingChip} ${styles[`chip-${statusClass}`]}`}>
 															{t(f.statusLabel) || f.statusLabel}
 														</span>
-													</div>
-													<div className={styles.findingValueRow}>
-														<span className={`${styles.findingValue} ${styles[`value-${statusClass}`]}`}>{f.value}</span>
 														{hasNote && (
 															<span className={styles.findingToggle}>
-																{isOpen ? t("Hide details") : t("Why this matters")}
-																<ChevronDown size={14} className={`${styles.findingChevron} ${isOpen ? styles.findingChevronOpen : ""}`} />
+																{isOpen ? t("Hide") : t("Why this matters")}
+																<ChevronDown size={13} className={`${styles.findingChevron} ${isOpen ? styles.findingChevronOpen : ""}`} />
 															</span>
 														)}
 													</div>
@@ -663,13 +722,9 @@ const ImportOrUpload = () => {
 																	const bodyLines = isHeading ? lines.slice(1) : lines;
 																	return (
 																		<div key={`${f.id}-note-${i}`} className={styles.findingNoteBlock}>
-																			{isHeading ? (
-																				<span className={styles.findingNoteHeading}>{heading}</span>
-																			) : null}
+																			{isHeading ? <span className={styles.findingNoteHeading}>{heading}</span> : null}
 																			{(isHeading ? bodyLines : lines).map((line, li) => (
-																				<p key={`${f.id}-line-${i}-${li}`} className={styles.findingNoteLine}>
-																					{line}
-																				</p>
+																				<p key={`${f.id}-line-${i}-${li}`} className={styles.findingNoteLine}>{line}</p>
 																			))}
 																		</div>
 																	);
