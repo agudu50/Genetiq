@@ -62,7 +62,7 @@ function deriveMode(
 		const cpu = health.device === "cpu";
 		return {
 			mode: "live",
-			statusLabel: cpu ? "Gemma AI live (CPU)" : "Gemma AI live",
+			statusLabel: "Genetiq AI live",
 			gemmaOnline: true,
 			gemmaAvailable: true,
 			cpuFastMode: cpu,

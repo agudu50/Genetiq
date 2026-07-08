@@ -16,8 +16,6 @@ import {
 import {
 	analyzeLabResults,
 	getTranslation,
-	getAnalyzedCountText,
-	getReviewCountText,
 } from "@/App/Services/GemmaService";
 import type { GemmaLanguage, GemmaAnalysisResult, AnalyzeProgressPhase } from "@/App/Services/GemmaService";
 import { useGemmaConnection } from "@/App/Hooks/useGemmaConnection";
@@ -630,8 +628,8 @@ const ImportOrUpload = () => {
 							{/* ── Plain-English summary (re-styled) ──────────────────────── */}
 							{summarySections.length > 0 && (
 								<div className={styles.sectionHeaderNative}>
-									<h2>What this means for you</h2>
-									<p>Brief insights from your data.</p>
+									<h2>{t("What this means for you")}</h2>
+									<p>{t("Brief insights from your data.")}</p>
 								</div>
 							)}
 							<div className={styles.resultsBriefNative}>
