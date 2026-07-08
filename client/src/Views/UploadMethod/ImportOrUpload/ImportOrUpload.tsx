@@ -74,6 +74,7 @@ const ImportOrUpload = () => {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
 	const [uploadTab, setUploadTab] = useState<"file" | "text" | "preset">("file");
+	const [langDropdownOpen, setLangDropdownOpen] = useState(false);
 	const [selectedLanguage, setSelectedLanguage] = useState<GemmaLanguage>("english");
 	const { gemmaOnline, gemmaAvailable, mode, statusLabel, refresh, cpuFastMode } = useGemmaConnection();
 	const [analysisResult, setAnalysisResult] = useState<GemmaAnalysisResult | null>(null);
@@ -1150,11 +1151,33 @@ const ImportOrUpload = () => {
 							{statusLabel}
 						</div>
 						
-						<button className={styles.uploadHubLangSelect}>
-							{LANGUAGES.find((l) => l.id === selectedLanguage)?.flag || "🇬🇧"}{" "}
-							{LANGUAGES.find((l) => l.id === selectedLanguage)?.code || "EN"}{" "}
-							<ChevronDown size={14} />
-						</button>
+						<div className={styles.uploadHubLangSelectWrapper}>
+							<button 
+								className={styles.uploadHubLangSelect}
+								onClick={() => setLangDropdownOpen(!langDropdownOpen)}
+							>
+								{LANGUAGES.find((l) => l.id === selectedLanguage)?.flag || "🇬🇧"}{" "}
+								{LANGUAGES.find((l) => l.id === selectedLanguage)?.code || "EN"}{" "}
+								<ChevronDown size={14} />
+							</button>
+							{langDropdownOpen && (
+								<div className={styles.uploadHubLangDropdown}>
+									{LANGUAGES.map((lang) => (
+										<button
+											key={lang.id}
+											className={styles.uploadHubLangOption}
+											onClick={() => {
+												setSelectedLanguage(lang.id);
+												setLangDropdownOpen(false);
+											}}
+										>
+											<span className={styles.uploadHubLangOptionFlag}>{lang.flag}</span>
+											<span className={styles.uploadHubLangOptionLabel}>{lang.label}</span>
+										</button>
+									))}
+								</div>
+							)}
+						</div>
 					</div>
 
 					{/* Hero text */}

@@ -4520,6 +4520,10 @@ html[data-theme="dark"] .resultStatusText-good { color: #30D158; }
   background: #F59E0B;
 }
 
+.uploadHubLangSelectWrapper {
+  position: relative;
+}
+
 .uploadHubLangSelect {
   display: flex;
   align-items: center;
@@ -4532,6 +4536,60 @@ html[data-theme="dark"] .resultStatusText-good { color: #30D158; }
   border: none;
   padding: 0;
 }
+
+.uploadHubLangDropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: var(--iou-card);
+  border: 1px solid var(--iou-border);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  z-index: 100;
+  min-width: 120px;
+  
+  html[data-theme="dark"] & {
+    background: #1e1e1e;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+}
+
+.uploadHubLangOption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.uploadHubLangOption:hover {
+  background: var(--iou-surface-hover);
+  
+  html[data-theme="dark"] & {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+.uploadHubLangOptionFlag {
+  font-size: 14px;
+}
+
+.uploadHubLangOptionLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--iou-text);
+}
+
 
 .uploadHubHero {
   text-align: center;
