@@ -430,7 +430,7 @@ def sanitize_chat_text(text: str) -> str:
     return cleaned.strip()
 
 
-def parse_json_response(text: str) -> dict:
+def parse_json_response(text: str) -> dict[str, Any]:
     """Extract JSON from model response text."""
     # Try to find JSON block in the response
     json_match = re.search(r"\{[\s\S]*\}", text)
