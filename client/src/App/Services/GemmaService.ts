@@ -749,9 +749,66 @@ const OFFLINE_TRANSLATIONS: Record<string, Record<string, string>> = {
 	},
 };
 
+/**
+ * Pattern-based translations for dynamic strings that contain numbers or
+ * interpolated context (e.g. "We picked out 3 results…"). `$1` is replaced
+ * with the first captured group from the English source string.
+ */
+const TEMPLATE_TRANSLATIONS: Record<string, Array<[RegExp, string]>> = {
+	twi: [
+		[
+			/^We picked out (\d+) results? from your lab report.*language\.$/i,
+			"Yɛyii nsɛmmuae $1 firii wo lab krataa no mu, na yɛakyerɛkyerɛ emu biara mu wɔ kasa a ɛnyɛ den mu.",
+		],
+		[/^(\d+) results stood out$/i, "Nsɛmmuae $1 da nsow"],
+		[
+			/^(\d+) tests are outside the usual ranges.*context\.$/i,
+			"Nsɔhwɛ $1 nni deɛ ɛtaa yɛ mu wɔ wo krataa no so. Ɛyɛ nsɛnkyerɛnneɛ a wobɛdi akyi — ɛnnyɛ yadeɛ a wɔahunu. Nneɛma ahodoɔ betumi sesa lab akontaahyɛdeɛ. Kɔ dɔkota nkyɛn na fa wo krataa ankasa no kɔ sɛdeɛ ɔbɛhwɛ mu yie.",
+		],
+	],
+	ga: [
+		[
+			/^We picked out (\d+) results? from your lab report.*language\.$/i,
+			"Mijie results $1 kɛjɛ o lab report lɛ mli, ni mitsɔɔ emli fɛɛ shishi yɛ wiemɔ ni yɔɔ mlɛo mli.",
+		],
+		[/^(\d+) results stood out$/i, "Results $1 je kpo"],
+		[
+			/^(\d+) tests are outside the usual ranges.*context\.$/i,
+			"Tests $1 yɛɛɛ bɔ ni efɔɔ mli yɛ o report lɛ nɔ. Eji okadi ni obaadi sɛɛ — ejeee hela ni ana. Nibii srɔtoi baanyɛ atsake lab numbers. Yaa dɔkita he ni okɛ o krataa diɛŋtsɛ lɛ yaa koni ekwɛ mli jogbaŋŋ.",
+		],
+	],
+	ewe: [
+		[
+			/^We picked out (\d+) results? from your lab report.*language\.$/i,
+			"Míetia ŋkuɖoɖo $1 tso wò lab agbalẽ la me, eye míeɖe ɖe sia ɖe me le nya bɔbɔewo me.",
+		],
+		[/^(\d+) results stood out$/i, "Ŋkuɖoɖo $1 ɖe dzesi"],
+		[
+			/^(\d+) tests are outside the usual ranges.*context\.$/i,
+			"Dodokpɔ $1 mele afisi wonɔna le wò agbalẽ la dzi o. Enye dzesi be nàdze eyome — menye dɔléle si wokpɔ o. Nu vovovowo ate ŋu atrɔ lab ƒe xexlẽmewo. Yi dɔkta gbɔ eye nàtsɔ wò agbalẽ ŋutɔŋutɔ la ayi be wòakpɔ eme nyuie.",
+		],
+	],
+	fante: [
+		[
+			/^We picked out (\d+) results? from your lab report.*language\.$/i,
+			"Yɛyii nsɛmmuae $1 fii wo lab krataa no mu, na yɛakyerɛkyerɛ emu biara mu wɔ kasa a ɔnnyɛ dzen mu.",
+		],
+		[/^(\d+) results stood out$/i, "Nsɛmmuae $1 da nsow"],
+		[
+			/^(\d+) tests are outside the usual ranges.*context\.$/i,
+			"Nsɔhwɛ $1 nnyi deɛ ɔtaa yɛ mu wɔ wo krataa no do. Ɔyɛ nsɛnkyerɛdze a wobɛdzi ekyir — ɔnnyɛ yarba a wɔahu. Ndzɛmba ahorow botum sesa lab akontaahyɛdze. Kɔ dɔkota nkyɛn na fa wo krataa ankasa no kɔ amba ɔbɔhwɛ mu yie.",
+		],
+	],
+};
+
 export function getTranslation(text: string, language: GemmaLanguage): string {
 	if (language === "english") return text;
-	return OFFLINE_TRANSLATIONS[language]?.[text] || text;
+	const exact = OFFLINE_TRANSLATIONS[language]?.[text];
+	if (exact) return exact;
+	for (const [pattern, replacement] of TEMPLATE_TRANSLATIONS[language] ?? []) {
+		if (pattern.test(text)) return text.replace(pattern, replacement);
+	}
+	return text;
 }
 
 // ─── Offline Simulator: Lab Analysis ─────────────────────────────────────────

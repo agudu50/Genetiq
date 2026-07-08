@@ -11,7 +11,7 @@ import {
 	X, CheckCircle, ArrowLeft, Loader2, Sparkles,
 	Wifi, WifiOff, Brain, Stethoscope, User, Droplets,
 	Ruler, Scale, Activity, Clock, Check, Lock,
-	ChevronDown, Info,
+	ChevronDown,
 } from "lucide-react";
 import {
 	analyzeLabResults,
@@ -71,6 +71,7 @@ const ImportOrUpload = () => {
 	const [dragging, setDragging] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
+	const [uploadTab, setUploadTab] = useState<"file" | "text" | "preset">("file");
 	const [selectedLanguage, setSelectedLanguage] = useState<GemmaLanguage>("english");
 	const { gemmaOnline, gemmaAvailable, mode, statusLabel, refresh, cpuFastMode } = useGemmaConnection();
 	const [analysisResult, setAnalysisResult] = useState<GemmaAnalysisResult | null>(null);
@@ -1134,240 +1135,202 @@ const ImportOrUpload = () => {
 
 				{/* Step 2 — Upload */}
 			{step === "upload" && (
-				<div className={styles.uploadPage}>
+				<div className={styles.uploadHubContainer}>
+					
+					{/* Header Actions */}
+					<div className={styles.uploadHubHeaderActions}>
+						<div className={styles.uploadHubStatusBadge}>
+							<div className={`${styles.uploadHubStatusDot} ${
+								gemmaOnline ? styles.dotOnline
+								: mode === "starting" || mode === "checking" ? styles.dotStarting
+								: styles.dotOffline
+							}`} />
+							{statusLabel}
+						</div>
+						
+						<button className={styles.uploadHubLangSelect}>
+							{LANGUAGES.find((l) => l.id === selectedLanguage)?.flag || "🇬🇧"}{" "}
+							{LANGUAGES.find((l) => l.id === selectedLanguage)?.code || "EN"}{" "}
+							<ChevronDown size={14} />
+						</button>
+					</div>
 
-					{/* ── Left Column: Hero + Status ──────────────────── */}
-					<div className={styles.uploadHero}>
-						<div className={styles.uploadHeroInner}>
-							{/* AI Status indicator */}
-							<div className={styles.uploadAiStatus}>
-								<div
-									className={`${styles.uploadAiDot} ${
-										gemmaOnline
-											? styles.uploadAiDotOnline
-											: mode === "starting" || mode === "checking"
-												? styles.uploadAiDotStarting
-												: styles.uploadAiDotOffline
-									}`}
-								/>
-								<span>{statusLabel}</span>
-							</div>
+					{/* Hero text */}
+					<div className={styles.uploadHubHero}>
+						<h1>Analyze your lab results</h1>
+						<p>Get plain-English insights from any medical report in seconds.</p>
+					</div>
 
-							<h1>
-								Upload your{" "}
-								<span className={styles.uploadHeroAccent}>lab results</span>
-							</h1>
-							<p className={styles.uploadHeroSub}>
-								Our AI reads your lab report — PDF, image, or CSV — and translates every
-								value into clear, actionable health insights.
-							</p>
+					{/* Main Card */}
+					<div className={styles.uploadHubCard}>
+						
+						{/* Tabs */}
+						<div className={styles.uploadHubTabs}>
+							<button 
+								className={`${styles.uploadHubTab} ${uploadTab === "file" ? styles.uploadHubTabActive : ""}`}
+								onClick={() => setUploadTab("file")}
+							>
+								Upload File
+							</button>
+							<button 
+								className={`${styles.uploadHubTab} ${uploadTab === "text" ? styles.uploadHubTabActive : ""}`}
+								onClick={() => setUploadTab("text")}
+							>
+								Paste Text
+							</button>
+							<button 
+								className={`${styles.uploadHubTab} ${uploadTab === "preset" ? styles.uploadHubTabActive : ""}`}
+								onClick={() => setUploadTab("preset")}
+							>
+								Try a Sample
+							</button>
+						</div>
 
-							{/* Language pills */}
-							<div className={styles.uploadLangRow}>
-								{LANGUAGES.map((lang) => (
-									<button
-										key={lang.id}
-										className={`${styles.uploadLangPill} ${lang.id === selectedLanguage ? styles.uploadLangPillActive : ""}`}
-										onClick={() => setSelectedLanguage(lang.id)}
-										title={`Results in ${lang.label}`}
+						{/* Content */}
+						<div className={styles.uploadHubContent}>
+							{uploadTab === "file" && (
+								<>
+									<div
+										className={`${styles.uploadHubDropzone} ${dragging ? styles.uploadHubDropzoneActive : ""}`}
+										onDragOver={onDragOver}
+										onDragLeave={onDragLeave}
+										onDrop={onDrop}
+										onClick={() => fileInputRef.current?.click()}
 									>
-										<span>{lang.flag}</span>
-										<span className={styles.uploadLangCode}>{lang.label}</span>
-									</button>
-								))}
-							</div>
+										<input
+											ref={fileInputRef}
+											type="file"
+											multiple
+											accept=".pdf,.jpg,.jpeg,.png,.csv"
+											style={{ display: "none" }}
+											onChange={(e) => addFiles(e.target.files)}
+										/>
+										<div className={styles.uploadHubDropIcon}><Upload size={24} /></div>
+										<h3>Drop files here or browse</h3>
+										<p>PDF, JPG, PNG, or CSV up to 25MB</p>
+									</div>
 
-							{/* Trust features */}
-							<div className={styles.uploadFeatures}>
-								<div className={styles.uploadFeature}>
-									<div className={styles.uploadFeatureIcon}><ShieldCheck size={16} /></div>
-									<div>
-										<span className={styles.uploadFeatureTitle}>End-to-end encrypted</span>
-										<span className={styles.uploadFeatureDesc}>256-bit AES, processed locally</span>
+									{files.length > 0 && (
+										<div className={styles.uploadFileList}>
+											{files.map(({ file, progress, done }) => (
+												<div key={file.name} className={`${styles.uploadFileRow} ${done ? styles.uploadFileRowDone : ""}`}>
+													<div className={styles.uploadFileIcon}>
+														{done ? <CheckCircle size={16} /> : <FileText size={16} />}
+													</div>
+													<div className={styles.uploadFileMeta}>
+														<span className={styles.uploadFileName}>{file.name}</span>
+														<span className={styles.uploadFileSize}>
+															{(file.size / 1024).toFixed(0)} KB
+															{done && " · Ready"}
+														</span>
+														{!done && (
+															<div className={styles.uploadProgressBar}>
+																<div className={styles.uploadProgressFill} style={{ width: `${progress}%` }} />
+															</div>
+														)}
+													</div>
+													{done && (
+														<button className={styles.uploadRemoveBtn} onClick={(e) => { e.stopPropagation(); removeFile(file); }}>
+															<X size={14} />
+														</button>
+													)}
+													{!done && <Loader2 size={15} className={styles.uploadSpinner} />}
+												</div>
+											))}
+										</div>
+									)}
+								</>
+							)}
+
+							{uploadTab === "text" && (
+								<div className={styles.uploadLabTextCard}>
+									<div className={styles.uploadLabTextHeaderGroup}>
+										<div className={styles.uploadLabTextIconWrapper}>
+											<FileText size={20} strokeWidth={2} />
+										</div>
+										<div className={styles.uploadLabTextTitleGroup}>
+											<label htmlFor="iou-lab-text" className={styles.uploadLabTextTitle}>
+												Paste lab results 
+											</label>
+											<p className={styles.uploadLabTextSubtitle}>
+												Use this if your photo is unclear or if you only have text.
+											</p>
+										</div>
+									</div>
+
+									<div className={styles.uploadLabTextTextareaWrapper}>
+										<textarea
+											id="iou-lab-text"
+											className={styles.uploadLabTextArea}
+											placeholder="Example:\nHemoglobin: 7.2 g/dL\nWBC: 6.2 x10⁹/L\nMalaria RDT: Positive"
+											value={labTextPaste}
+											onChange={(e) => {
+												setLabTextPaste(e.target.value);
+												if (e.target.value.trim()) setSelectedPreset(null);
+											}}
+											rows={5}
+										/>
 									</div>
 								</div>
-								<div className={styles.uploadFeature}>
-									<div className={styles.uploadFeatureIcon}><Zap size={16} /></div>
-									<div>
-										<span className={styles.uploadFeatureTitle}>Instant analysis</span>
-										<span className={styles.uploadFeatureDesc}>Results in under 60 seconds</span>
-									</div>
+							)}
+
+							{uploadTab === "preset" && (
+								<div className={styles.uploadPresetsGrid}>
+									{PRESETS.map((preset) => (
+										<button
+											key={preset.id}
+											className={`${styles.uploadPresetCard} ${selectedPreset === preset.id ? styles.uploadPresetCardActive : ""}`}
+											onClick={() => handlePresetClick(preset.id)}
+										>
+											<span className={styles.uploadPresetEmoji}>{preset.emoji}</span>
+											<div className={styles.uploadPresetText}>
+												<span className={styles.uploadPresetTitle}>{preset.title}</span>
+												<span className={styles.uploadPresetDesc}>{preset.desc}</span>
+											</div>
+											{selectedPreset === preset.id && (
+												<CheckCircle size={16} className={styles.uploadPresetCheck} />
+											)}
+										</button>
+									))}
 								</div>
-								<div className={styles.uploadFeature}>
-									<div className={styles.uploadFeatureIcon}><Brain size={16} /></div>
-									<div>
-										<span className={styles.uploadFeatureTitle}>Powered by Gemma AI</span>
-										<span className={styles.uploadFeatureDesc}>Medical-grade language model</span>
-									</div>
-								</div>
-							</div>
+							)}
+						</div>
+
+						{/* Actions */}
+						<div className={styles.uploadHubActions}>
+							<button
+								className={styles.uploadHubBtnPrimary}
+								disabled={!canAnalyze}
+								onClick={handleAnalyze}
+							>
+								<Sparkles size={16} />
+								{canAnalyze
+									? hasLabText && !allDone && !selectedPreset
+										? "Analyse pasted results"
+										: `Analyse with ${gemmaOnline ? "Gemma AI" : "AI"}`
+									: allDone
+										? "Analyse my results"
+										: files.length > 0
+											? "Uploading…"
+											: "Add results to analyse"
+								}
+							</button>
+							<button className={styles.uploadHubBtnGhost} onClick={() => navigate(paths.dashboard.root)}>
+								Skip for now
+							</button>
 						</div>
 					</div>
 
-					{/* ── Right Column: Upload Area ───────────────────── */}
-					<div className={styles.uploadMain}>
-
-						{/* Preset section */}
-						<div className={styles.uploadSection}>
-							<div className={styles.uploadSectionHead}>
-								<Stethoscope size={15} />
-								<h2>Medical Case Presets</h2>
-								<span className={styles.uploadSectionTag}>🇬🇭 Ghana</span>
-							</div>
-							<p className={styles.uploadSectionSub}>
-								Don't have a file? Select a preloaded case to preview the analysis.
-							</p>
-							<div className={styles.uploadPresetsGrid}>
-								{PRESETS.map((preset) => (
-									<button
-										key={preset.id}
-										className={`${styles.uploadPresetCard} ${selectedPreset === preset.id ? styles.uploadPresetCardActive : ""}`}
-										onClick={() => handlePresetClick(preset.id)}
-									>
-										<span className={styles.uploadPresetEmoji}>{preset.emoji}</span>
-										<div className={styles.uploadPresetText}>
-											<span className={styles.uploadPresetTitle}>{preset.title}</span>
-											<span className={styles.uploadPresetDesc}>{preset.desc}</span>
-										</div>
-										{selectedPreset === preset.id && (
-											<CheckCircle size={16} className={styles.uploadPresetCheck} />
-										)}
-									</button>
-								))}
-							</div>
+					{/* Trust Footer */}
+					<div className={styles.uploadHubTrustFooter}>
+						<div className={styles.uploadHubTrustItem}>
+							<ShieldCheck size={14} /> Encrypted
 						</div>
-
-						{/* Divider */}
-						<div className={styles.uploadDivider}>
-							<span>or upload your own file</span>
+						<div className={styles.uploadHubTrustItem}>
+							<Zap size={14} /> Instant
 						</div>
-
-						{/* Drop zone */}
-						<div
-							className={`${styles.uploadDropZone} ${dragging ? styles.uploadDropZoneActive : ""} ${files.length > 0 ? styles.uploadDropZoneCompact : ""}`}
-							onDragOver={onDragOver}
-							onDragLeave={onDragLeave}
-							onDrop={onDrop}
-							onClick={() => fileInputRef.current?.click()}
-						>
-							<input
-								ref={fileInputRef}
-								type="file"
-								multiple
-								accept=".pdf,.jpg,.jpeg,.png,.csv"
-								style={{ display: "none" }}
-								onChange={(e) => addFiles(e.target.files)}
-							/>
-							<div className={styles.uploadDropIcon}>
-								<Upload size={24} />
-							</div>
-							<div className={styles.uploadDropText}>
-								<p className={styles.uploadDropTitle}>
-									Drop files here or <span>browse</span>
-								</p>
-								<p className={styles.uploadDropFormats}>
-									PDF · JPG · PNG · CSV — Max 25 MB
-								</p>
-							</div>
-						</div>
-
-						{/* File list */}
-						{files.length > 0 && (
-							<div className={styles.uploadFileList}>
-								{files.map(({ file, progress, done }) => (
-									<div key={file.name} className={`${styles.uploadFileRow} ${done ? styles.uploadFileRowDone : ""}`}>
-										<div className={styles.uploadFileIcon}>
-											{done ? <CheckCircle size={16} /> : <FileText size={16} />}
-										</div>
-										<div className={styles.uploadFileMeta}>
-											<span className={styles.uploadFileName}>{file.name}</span>
-											<span className={styles.uploadFileSize}>
-												{(file.size / 1024).toFixed(0)} KB
-												{done && " · Ready"}
-											</span>
-											{!done && (
-												<div className={styles.uploadProgressBar}>
-													<div className={styles.uploadProgressFill} style={{ width: `${progress}%` }} />
-												</div>
-											)}
-										</div>
-										{done && (
-											<button className={styles.uploadRemoveBtn} onClick={(e) => { e.stopPropagation(); removeFile(file); }}>
-												<X size={14} />
-											</button>
-										)}
-										{!done && <Loader2 size={15} className={styles.uploadSpinner} />}
-									</div>
-								))}
-							</div>
-						)}
-
-						{/* Paste lab text (works with text-only AI) */}
-						<div className={styles.uploadLabTextCard}>
-							<div className={styles.uploadLabTextHeaderGroup}>
-								<div className={styles.uploadLabTextIconWrapper}>
-									<FileText size={20} strokeWidth={2} />
-								</div>
-								<div className={styles.uploadLabTextTitleGroup}>
-									<label htmlFor="iou-lab-text" className={styles.uploadLabTextTitle}>
-										Paste lab results 
-										<span className={styles.uploadLabTextBadge}>Optional</span>
-									</label>
-									<p className={styles.uploadLabTextSubtitle}>
-										Use this if your photo is unclear or if you only have text.
-									</p>
-								</div>
-							</div>
-
-							<div className={styles.uploadLabTextTextareaWrapper}>
-								<textarea
-									id="iou-lab-text"
-									className={styles.uploadLabTextArea}
-									placeholder="Example:&#10;Hemoglobin: 7.2 g/dL&#10;WBC: 6.2 x10⁹/L&#10;Malaria RDT: Positive"
-									value={labTextPaste}
-									onChange={(e) => {
-										setLabTextPaste(e.target.value);
-										if (e.target.value.trim()) setSelectedPreset(null);
-									}}
-									rows={5}
-								/>
-							</div>
-
-							<div className={styles.uploadLabTextHelper}>
-								<Info size={14} />
-								<span>Copy exactly as it appears on your report</span>
-							</div>
-						</div>
-
-						{/* CTA */}
-						<div className={styles.uploadCtaRow}>
-							<div className={styles.uploadCtaMain}>
-								<button
-									className={styles.uploadAnalyzeBtn}
-									disabled={!canAnalyze}
-									onClick={handleAnalyze}
-								>
-									<Sparkles size={16} />
-									{canAnalyze
-										? hasLabText && !allDone && !selectedPreset
-											? "Analyse pasted results"
-											: `Analyse with ${gemmaOnline ? "Gemma AI" : "AI"}`
-										: allDone
-											? "Analyse my results"
-											: files.length > 0
-												? "Uploading…"
-												: "Add results to analyse"
-									}
-								</button>
-								{!canAnalyze && files.length === 0 && (
-									<p className={styles.uploadCtaHint}>
-										Choose a sample case, upload a file, or paste values below.
-									</p>
-								)}
-							</div>
-							<button className={styles.uploadSkipBtn} onClick={() => navigate(paths.dashboard.root)}>
-								Skip for now
-							</button>
+						<div className={styles.uploadHubTrustItem}>
+							<Brain size={14} /> Medical AI
 						</div>
 					</div>
 				</div>

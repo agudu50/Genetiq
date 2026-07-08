@@ -4476,3 +4476,248 @@ html[data-theme="dark"] .resultStatusText-good { color: #30D158; }
   color: var(--iou-text);
 }
 
+
+
+// =========================================================================
+// NEW UPLOAD HUB STYLES
+// =========================================================================
+
+.uploadHubContainer {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+  display: flex;
+  flex-direction: column;
+}
+
+.uploadHubHeaderActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.uploadHubStatusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--iou-muted);
+  background: var(--iou-card);
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--iou-border);
+}
+
+.uploadHubStatusDot {
+  width: 8px; height: 8px; border-radius: 50%;
+}
+.dotOnline {
+  background: #10B981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+.dotOffline {
+  background: #EF4444;
+}
+.dotStarting {
+  background: #F59E0B;
+}
+
+.uploadHubLangSelect {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--iou-text);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.uploadHubHero {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.uploadHubHero h1 {
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0 0 10px 0;
+  letter-spacing: -0.5px;
+  color: var(--iou-heading);
+}
+
+.uploadHubHero p {
+  font-size: 15px;
+  color: var(--iou-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.uploadHubCard {
+  background: var(--iou-card);
+  border-radius: 24px;
+  border: 1px solid var(--iou-border);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  
+  html[data-theme="dark"] & {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+}
+
+.uploadHubTabs {
+  display: flex;
+  border-bottom: 1px solid var(--iou-border);
+  background: var(--iou-surface);
+}
+
+.uploadHubTab {
+  flex: 1;
+  text-align: center;
+  padding: 16px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--iou-muted);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.uploadHubTabActive {
+  color: #00a69d;
+  border-bottom-color: #00a69d;
+  background: var(--iou-card);
+}
+
+.uploadHubTab:hover:not(.uploadHubTabActive) {
+  background: var(--iou-surface-hover);
+  color: var(--iou-text);
+}
+
+.uploadHubContent {
+  padding: 32px;
+  
+  @media (max-width: 640px) {
+    padding: 24px 20px;
+  }
+}
+
+.uploadHubDropzone {
+  border: 2px dashed var(--iou-border);
+  border-radius: 16px;
+  padding: 40px 24px;
+  text-align: center;
+  background: var(--iou-surface);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.uploadHubDropzoneActive {
+  border-color: #00a69d;
+  background: rgba(0, 166, 157, 0.05);
+}
+
+.uploadHubDropIcon {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  background: var(--iou-card);
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  color: #00a69d;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  margin-bottom: 16px;
+  border: 1px solid var(--iou-border);
+}
+
+.uploadHubDropzone h3 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  color: var(--iou-heading);
+}
+
+.uploadHubDropzone p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--iou-muted);
+}
+
+.uploadHubActions {
+  padding: 24px 32px;
+  border-top: 1px solid var(--iou-border);
+  background: var(--iou-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.uploadHubBtnPrimary {
+  width: 100%;
+  padding: 16px;
+  border-radius: 12px;
+  background: #00a69d;
+  color: #FFF;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(0, 166, 157, 0.25);
+  transition: background 0.2s;
+}
+
+.uploadHubBtnPrimary:hover:not(:disabled) {
+  background: #008f87;
+}
+
+.uploadHubBtnPrimary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.uploadHubBtnGhost {
+  width: 100%;
+  padding: 16px;
+  background: transparent;
+  color: var(--iou-muted);
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.uploadHubBtnGhost:hover {
+  color: var(--iou-text);
+}
+
+.uploadHubTrustFooter {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.uploadHubTrustItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--iou-muted);
+  font-weight: 500;
+}
+
+.uploadHubTrustItem svg {
+  color: #00a69d;
+}
+
