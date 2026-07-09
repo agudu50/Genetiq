@@ -80,11 +80,14 @@ router.post("/analyze", async (req, res) => {
 			{ role: "user", content: systemPrompt + "\n\n" + userContent, image_base64 },
 		];
 
-		const rawResponse = await chatCompletion(messages, 1024);
+		const rawResponse = await chatCompletion(messages, 8192);
 		const result = parseJsonResponse(rawResponse);
 
 		if (result.error && result.raw) {
-			return res.status(502).json({ detail: "Model returned unparseable analysis" });
+			console.error("\n\n=== PARSE ERROR ===");
+			console.error("RAW RESPONSE:", result.raw);
+			console.error("=== END PARSE ERROR ===\n\n");
+			return res.status(502).json({ detail: "Model returned unparseable analysis", raw: result.raw });
 		}
 
 		// Add language translations if requested
