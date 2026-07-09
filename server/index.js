@@ -8,7 +8,9 @@ const messageRoutes = require("./routes/messages");
 const app = express();
 const socket = require("socket.io");
 
-app.use(cors());
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
+
+app.use(cors({ origin: CLIENT_URL, credentials: true }));
 app.use(express.json());
 
 
@@ -29,10 +31,10 @@ app.all(/^\/(?!api)/, (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-const server = app.listen(PORT, () => console.log(`Server is ready and running on port ${PORT}`));
+const server = app.listen(PORT, "0.0.0.0", () => console.log(`Server is ready and running on port ${PORT}`));
 const io = socket(server, {
 	cors: {
-		origin: "http://localhost:3000",
+		origin: CLIENT_URL,
 		credentials: true,
 	},
 });

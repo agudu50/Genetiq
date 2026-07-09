@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: genetiq-server
+    runtime: node
+    region: oregon
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: CLIENT_URL
+        sync: false
+      - key: GEMMA_MODEL
+        sync: false
+      - key: HF_TOKEN
+        sync: false
