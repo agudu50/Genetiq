@@ -16,7 +16,8 @@
     "socket.io": "^4.8.1",
     "dotenv": "^16.4.7",
     "bcrypt": "^5.1.1",
-    "ws": "^8.16.0"
+    "ws": "^8.16.0",
+    "@huggingface/inference": "^3.13.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"

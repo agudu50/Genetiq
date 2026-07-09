@@ -5,6 +5,7 @@ const cors = require("cors");
 const path = require("path");
 const authRoutes = require("./routes/auth");
 const messageRoutes = require("./routes/messages");
+const gemmaRoutes = require("./routes/gemma");
 const app = express();
 const socket = require("socket.io");
 
@@ -21,6 +22,7 @@ app.get("/ping", (_req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/gemma", gemmaRoutes);
 
 // Serve Static Files in Production
 const distPath = path.join(__dirname, "../dist");
