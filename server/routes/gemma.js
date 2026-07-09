@@ -14,7 +14,7 @@
 
 const express = require("express");
 const router = express.Router();
-const { chatCompletion, parseJsonResponse, MODEL_ID, HF_TOKEN } = require("../services/hfInference");
+const { chatCompletion, parseJsonResponse, MODEL_ID, GEMINI_API_KEY } = require("../services/aiStudioInference");
 const {
 	LAB_ANALYSIS_SYSTEM_PROMPT,
 	LAB_TEXT_ANALYSIS_SYSTEM_PROMPT,
@@ -32,10 +32,10 @@ const {
 router.get("/health", (_req, res) => {
 	res.json({
 		status: "ok",
-		model_loaded: Boolean(HF_TOKEN),
+		model_loaded: Boolean(GEMINI_API_KEY),
 		model_id: MODEL_ID,
-		device: "hf-inference-api",
-		supports_vision: false,
+		device: "google-ai-studio",
+		supports_vision: true,
 	});
 });
 
@@ -44,6 +44,7 @@ router.get("/health", (_req, res) => {
 router.post("/analyze", async (req, res) => {
 	try {
 		const {
+			image_base64,
 			lab_text,
 			preset_id,
 			patient_age = "35",
@@ -66,14 +67,17 @@ router.post("/analyze", async (req, res) => {
 				`Analyze this lab result text for a ${patient_age} year old ${patient_gender} patient in Ghana.\n` +
 				`The text was extracted from a photo (OCR) and may contain minor errors.\n\n` +
 				`--- LAB REPORT TEXT ---\n${labBody}\n--- END ---`;
+		} else if (image_base64) {
+			systemPrompt = LAB_ANALYSIS_SYSTEM_PROMPT;
+			userContent = `Analyze this lab result photo for a ${patient_age} year old ${patient_gender} patient in Ghana.`;
 		} else {
 			return res.status(400).json({
-				detail: "Provide preset_id or lab_text",
+				detail: "Provide preset_id, lab_text, or image_base64",
 			});
 		}
 
 		const messages = [
-			{ role: "user", content: systemPrompt + "\n\n" + userContent },
+			{ role: "user", content: systemPrompt + "\n\n" + userContent, image_base64 },
 		];
 
 		const rawResponse = await chatCompletion(messages, 1024);
@@ -99,7 +103,7 @@ router.post("/analyze", async (req, res) => {
 
 router.post("/chat", async (req, res) => {
 	try {
-		const { message, language = "english" } = req.body;
+		const { message, language = "english", image_base64 } = req.body;
 
 		// Small-talk fast-path — instant response, no API call needed
 		const smallTalk = getSmallTalkResponse(message, language);
@@ -115,7 +119,7 @@ router.post("/chat", async (req, res) => {
 		const systemPrompt = useShort ? CHAT_SYSTEM_PROMPT_SHORT : CHAT_SYSTEM_PROMPT;
 
 		const messages = [
-			{ role: "user", content: systemPrompt + "\n\n" + message },
+			{ role: "user", content: systemPrompt + "\n\n" + message, image_base64 },
 		];
 
 		const rawResponse = await chatCompletion(messages, 256);
