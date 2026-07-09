@@ -66,6 +66,7 @@ async function chatCompletion(messages, maxTokens = 1024) {
 				maxOutputTokens: maxTokens,
 				temperature: 0.7,
 				topP: 0.95,
+				responseMimeType: "application/json"
 			}
 		});
 
