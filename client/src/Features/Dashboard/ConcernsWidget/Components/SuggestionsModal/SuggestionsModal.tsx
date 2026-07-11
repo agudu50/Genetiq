@@ -1,11 +1,7 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import ReactDOM from "react-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/App/Redux/store";
-import { HealthGoal, setGoals } from "@/App/Redux/goalSlice";
-import { LocalVault } from "@/App/Services/LocalVault";
 import { useLanguage } from "@/App/i18n/LanguageContext";
-import { X, CheckCircle2, ClipboardList, Globe, Coins, Brain, Heart, HelpCircle, Check } from "lucide-react";
+import { X, ClipboardList, Globe, Coins, Brain, Heart, HelpCircle } from "lucide-react";
 import { Concern } from "../../helpers/concernsMockData";
 import {
 	AtrialFibrillationPlanMockData,
@@ -82,12 +78,6 @@ export const SuggestionsModal: React.FC<SuggestionsModalProps> = ({
 	onClose,
 }) => {
 	const { t } = useLanguage();
-	const dispatch = useDispatch();
-	const existingGoals = useSelector((state: RootState) => state.goals.items);
-
-	const [isActivating, setIsActivating] = useState(false);
-	const [activationSuccess, setActivationSuccess] = useState(false);
-	const [selectedActions, setSelectedActions] = useState<string[]>([]);
 
 	const planSections = useMemo(
 		() => (concern ? getPlanSectionsForConcern(concern) : []),
@@ -114,81 +104,9 @@ export const SuggestionsModal: React.FC<SuggestionsModalProps> = ({
 		return groups;
 	}, [allItems]);
 
-	useEffect(() => {
-		if (concern) {
-			setSelectedActions(allItems.map((item) => item.name));
-			setActivationSuccess(false);
-			setIsActivating(false);
-		} else {
-			setSelectedActions([]);
-			setActivationSuccess(false);
-			setIsActivating(false);
-		}
-	}, [concern, allItems]);
-
 	if (!concern) return null;
 
-	const handleActionToggle = (name: string) => {
-		setSelectedActions((prev) =>
-			prev.includes(name) ? prev.filter((item) => item !== name) : [...prev, name],
-		);
-	};
 
-	const handleSelectAll = () => {
-		setSelectedActions(allItems.map((item) => item.name));
-	};
-
-	const handleClearAll = () => {
-		setSelectedActions([]);
-	};
-
-	const handleActivate = async () => {
-		setIsActivating(true);
-
-		const newGoalsToAdd: HealthGoal[] = [];
-		selectedActions.forEach((actionName, idx) => {
-			const item = allItems.find((i) => i.name === actionName);
-			if (item) {
-				const alreadyExists = existingGoals.some(
-					(g) => g.title.toLowerCase() === item.name.toLowerCase(),
-				);
-				if (!alreadyExists) {
-					const goalCategory =
-						item.sectionTitle === "Lifestyle"
-							? "Activity"
-							: item.sectionTitle === "Supplements"
-								? "Nutrition"
-								: "Metabolic";
-
-					newGoalsToAdd.push({
-						id: `activated-goal-${Date.now()}-${idx}-${item.name.toLowerCase().replace(/\s+/g, "-")}`,
-						category: goalCategory as HealthGoal["category"],
-						title: item.name,
-						description: item.description,
-						target_value: "1",
-						current_value: "0",
-						unit: "times",
-						progress: 0,
-						status: "In Progress",
-						trend: "stable",
-						streak: 0,
-						completed: false,
-					});
-				}
-			}
-		});
-
-		if (newGoalsToAdd.length > 0) {
-			const updatedGoals = [...existingGoals, ...newGoalsToAdd];
-			await LocalVault.save("user_goals", updatedGoals);
-			dispatch(setGoals(updatedGoals));
-		}
-
-		setTimeout(() => {
-			setIsActivating(false);
-			setActivationSuccess(true);
-		}, 1500);
-	};
 
 	const getSeverityClass = (status: string) => {
 		if (status === "High") return styles.severityHigh;
@@ -207,9 +125,6 @@ export const SuggestionsModal: React.FC<SuggestionsModalProps> = ({
 		setIsActivating(false);
 		onClose();
 	};
-
-	const allSelected =
-		allItems.length > 0 && selectedActions.length === allItems.length;
 
 	return ReactDOM.createPortal(
 		<div className={styles.overlay} onClick={handleClose}>
@@ -264,123 +179,46 @@ export const SuggestionsModal: React.FC<SuggestionsModalProps> = ({
 				</div>
 
 				<div className={styles.body}>
-					{activationSuccess ? (
-						<div className={styles.successState}>
-							<div className={styles.successRing}>
-								<CheckCircle2 size={44} className={styles.successIcon} />
-							</div>
-							<h3>{t("plan_activated") || "Plan Activated Successfully!"}</h3>
-							<p>
-								{t("concern_activation_success", {
-									concern: t(concern.title),
-								})}
-							</p>
-							<button
-								type="button"
-								className={styles.closeSuccessBtn}
-								onClick={handleClose}
-							>
-								{t("close") || "Close"}
-							</button>
+					<div className={styles.introRow}>
+						<div className={styles.introIcon}>
+							<ClipboardList size={16} strokeWidth={2.25} />
 						</div>
-					) : isActivating ? (
-						<div className={styles.processingState}>
-							<div className={styles.spinner} />
-							<h3>{t("activating_plan") || "Activating Action Plan..."}</h3>
-							<p>
-								{t("syncing_clinical") ||
-									"Syncing selected items with your clinical profile..."}
-							</p>
+						<p className={styles.intro}>
+							{t("suggested_actions_intro") ||
+								"Recommended target actions and therapeutic options tailored for your risk panel:"}
+						</p>
+					</div>
+
+					{allItems.length === 0 ? (
+						<div className={styles.emptyState}>
+							<p>{t("no_details")}</p>
 						</div>
 					) : (
-						<>
-							<div className={styles.introRow}>
-								<div className={styles.introIcon}>
-									<ClipboardList size={16} strokeWidth={2.25} />
-								</div>
-								<p className={styles.intro}>
-									{t("suggested_actions_intro") ||
-										"Recommended target actions and therapeutic options tailored for your risk panel:"}
-								</p>
-								{allItems.length > 0 && (
-									<button
-										type="button"
-										className={styles.selectAllBtn}
-										onClick={allSelected ? handleClearAll : handleSelectAll}
-									>
-										{allSelected ? "Clear all" : "Select all"}
-									</button>
-								)}
-							</div>
-
-							{allItems.length === 0 ? (
-								<div className={styles.emptyState}>
-									<p>{t("no_details")}</p>
-								</div>
-							) : (
-								<div className={styles.itemsList}>
-									{Array.from(groupedItems.entries()).map(([section, items]) => (
-										<div key={section} className={styles.sectionGroup}>
-											<h3 className={styles.sectionHeading}>{t(section)}</h3>
-											<div className={styles.sectionItems}>
-												{items.map((item) => {
-													const isSelected = selectedActions.includes(item.name);
-													return (
-														<button
-															key={item.name}
-															type="button"
-															className={`${styles.itemRow} ${isSelected ? styles.itemRowSelected : ""}`}
-															onClick={() => handleActionToggle(item.name)}
-															aria-pressed={isSelected}
-														>
-															<div
-																className={`${styles.itemCheck} ${isSelected ? styles.itemCheckSelected : ""}`}
-																aria-hidden
-															>
-																{isSelected && (
-																	<Check size={12} strokeWidth={3} />
-																)}
-															</div>
-															<div className={styles.itemIconWrap}>
-																<PlanItemIcon icon={item.icon} size={18} />
-															</div>
-															<div className={styles.itemMeta}>
-																<h4>{t(item.name)}</h4>
-																<p>{t(item.description)}</p>
-															</div>
-														</button>
-													);
-												})}
+						<div className={styles.itemsList}>
+							{Array.from(groupedItems.entries()).map(([section, items]) => (
+								<div key={section} className={styles.sectionGroup}>
+									<h3 className={styles.sectionHeading}>{t(section)}</h3>
+									<div className={styles.sectionItems}>
+										{items.map((item) => (
+											<div
+												key={item.name}
+												className={styles.itemRow}
+											>
+												<div className={styles.itemIconWrap}>
+													<PlanItemIcon icon={item.icon} size={18} />
+												</div>
+												<div className={styles.itemMeta}>
+													<h4>{t(item.name)}</h4>
+													<p>{t(item.description)}</p>
+												</div>
 											</div>
-										</div>
-									))}
+										))}
+									</div>
 								</div>
-							)}
-						</>
+							))}
+						</div>
 					)}
 				</div>
-
-				{!activationSuccess && !isActivating && (
-					<div className={styles.footer}>
-						<div className={styles.footerSummary}>
-							<span className={styles.countPill}>
-								{selectedActions.length}
-							</span>
-							<span className={styles.countLabel}>
-								{t("items_selected") || "Items Selected"}
-							</span>
-						</div>
-						<button
-							type="button"
-							className={styles.checkoutBtn}
-							disabled={selectedActions.length === 0}
-							onClick={handleActivate}
-						>
-							<Brain size={15} strokeWidth={2.25} />
-							<span>{t("confirm_actions") || "Activate Selected"}</span>
-						</button>
-					</div>
-				)}
 			</div>
 		</div>,
 		document.body,
