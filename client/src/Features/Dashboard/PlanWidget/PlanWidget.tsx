@@ -84,14 +84,12 @@ export const PlanWidget = ({
 			<div className={styles["PlanWidget-content"]}>
 				{!propsPlanData && isLoading && (
 					<div className={styles.loadingBanner}>
-						<Sparkles size={14} strokeWidth={2.25} />
 						<span>{t("plan_generating")}</span>
 					</div>
 				)}
 
 				{showGemmaBadge && !isLoading && (
 					<div className={styles.gemmaBadge}>
-						<Sparkles size={12} strokeWidth={2.25} />
 						<span>{t("plan_gemma_powered")}</span>
 					</div>
 				)}

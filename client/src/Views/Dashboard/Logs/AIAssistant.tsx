@@ -657,7 +657,7 @@ function ScannerSection({ language, gemmaOnline }: { language: GemmaLanguage; ge
 							{loading ? (
 								<><div className={styles.miniSpinner} /> Analyzing with {gemmaOnline ? "Gemma 4" : "AI"}...</>
 							) : (
-								<><Sparkles size={16} /> Analyze with {gemmaOnline ? "Gemma 4" : "AI"}</>
+								<>Analyze with {gemmaOnline ? "Gemma 4" : "AI"}</>
 							)}
 						</button>
 					)}
@@ -748,7 +748,6 @@ function RemedySection({ language }: { language: GemmaLanguage }) {
 									</div>
 								</div>
 								<div className={styles.remedyDetail}>
-									<Sparkles size={13} />
 									<div>
 										<strong>How to use</strong>
 										<p>{translateRemedy(remedy.name, "usage", language, remedy.usage)}</p>

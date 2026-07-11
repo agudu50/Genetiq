@@ -176,7 +176,6 @@ export const HealthInsights = ({
 				<header className={styles.header}>
 					<div className={styles.headerTop}>
 						<span className={styles.eyebrow}>
-							<Sparkles size={11} strokeWidth={2.5} />
 							{t("insights_eyebrow")}
 						</span>
 						<span className={styles.countBadge}>

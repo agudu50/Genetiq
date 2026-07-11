@@ -187,7 +187,6 @@ export const PlanItemDetailModal = ({
 						<div className={styles.body}>
 							<section className={styles.surfaceCard}>
 								<div className={styles.surfaceHead}>
-									<Sparkles size={15} strokeWidth={2.25} />
 									<span>{t("plan_detail_benefit")}</span>
 								</div>
 								<p className={styles.benefitText}>{benefitText}</p>

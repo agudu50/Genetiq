@@ -387,7 +387,6 @@ export const SuggestionsModal: React.FC<SuggestionsModalProps> = ({
 							disabled={selectedActions.length === 0}
 							onClick={handleActivate}
 						>
-							<Sparkles size={15} strokeWidth={2.25} />
 							<span>{t("confirm_actions") || "Activate Selected"}</span>
 						</button>
 					</div>

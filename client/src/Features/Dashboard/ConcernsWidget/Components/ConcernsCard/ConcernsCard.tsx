@@ -150,7 +150,6 @@ export const ConcernsCard: React.FC<ConcernsCardProps> = ({
 				</div>
 
 				<span className={styles.actionHint}>
-					<Sparkles size={11} strokeWidth={2.25} aria-hidden />
 					{t("concerns_view_actions")}
 				</span>
 			</div>

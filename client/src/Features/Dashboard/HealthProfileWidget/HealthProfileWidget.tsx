@@ -123,7 +123,6 @@ export const HealthProfileWidget = () => {
 				<div className={styles.topRow}>
 					<span className={styles.eyebrow}>{t("profile_eyebrow")}</span>
 					<span className={styles.completenessPill}>
-						<Sparkles size={11} strokeWidth={2.5} />
 						{completeness}%
 					</span>
 				</div>
@@ -173,7 +172,6 @@ export const HealthProfileWidget = () => {
 									</>
 								) : (
 									<>
-										<Sparkles size={11} strokeWidth={2.5} />
 										{t("free_plan")}
 									</>
 								)}

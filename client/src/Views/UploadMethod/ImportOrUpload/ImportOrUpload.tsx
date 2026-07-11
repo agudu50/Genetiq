@@ -1436,7 +1436,6 @@ const ImportOrUpload = () => {
 								disabled={!canAnalyze}
 								onClick={handleAnalyze}
 							>
-								<Sparkles size={16} />
 								{canAnalyze
 									? hasLabText && !allDone && !selectedPreset
 										? "Analyse pasted results"
