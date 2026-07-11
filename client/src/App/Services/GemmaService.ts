@@ -170,10 +170,9 @@ function isValidAnalysisResult(r: unknown): r is GemmaAnalysisResult {
 	const x = r as GemmaAnalysisResult;
 	return (
 		typeof x.healthScore === "number" &&
-		x.healthScore > 0 &&
 		Array.isArray(x.findings) &&
-		x.findings.length > 0 &&
-		typeof x.summary === "string"
+		typeof x.summary === "string" &&
+		x.summary.length > 0
 	);
 }
 
