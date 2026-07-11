@@ -147,14 +147,19 @@ export const HealthHistoryWidget = () => {
 		return uploadRecords.map((rec) => {
 			let displayTitle = "Blood Panel Report";
 			if (rec.fileName) {
-				const dotIdx = rec.fileName.lastIndexOf(".");
-				const nameWithoutExt =
-					dotIdx !== -1 ? rec.fileName.substring(0, dotIdx) : rec.fileName;
-				displayTitle = nameWithoutExt
-					.replace(/[_-]/g, " ")
-					.split(" ")
-					.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-					.join(" ");
+				const files = rec.fileName.split(",").map(f => f.trim());
+				if (files.length > 2) {
+					displayTitle = `${files.length} Lab Reports Uploaded`;
+				} else {
+					displayTitle = files.map(f => {
+						const lastDot = f.lastIndexOf(".");
+						const base = lastDot !== -1 ? f.substring(0, lastDot) : f;
+						return base.replace(/[_-]/g, " ")
+							.split(" ")
+							.map(w => w.charAt(0).toUpperCase() + w.slice(1))
+							.join(" ");
+					}).join(" & ");
+				}
 			}
 			return {
 				id: rec.id,
