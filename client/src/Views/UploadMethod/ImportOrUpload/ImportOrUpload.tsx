@@ -421,7 +421,11 @@ const ImportOrUpload = () => {
 			{step === "analyzing" && (
 				<div className={styles.overlay}>
 					<div className={styles.overlayCard}>
-						<div className={styles.spinnerRing} />
+						<div className={styles.aiThinkingGraphic}>
+							<div className={styles.aiOrbit1} />
+							<div className={styles.aiOrbit2} />
+							<div className={styles.aiCore} />
+						</div>
 						<h2>{analyzeStatus.message || "Analysing your results…"}</h2>
 						<p>
 							{analyzePhase === "ocr"
