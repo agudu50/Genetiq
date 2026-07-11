@@ -1304,7 +1304,7 @@ const ImportOrUpload = () => {
 											{files.map(({ file, progress, done, previewUrl, hidePreview }) => (
 												<div 
 													key={file.name} 
-													className={`${styles.uploadFileRow || styles.fileRow} ${done ? (styles.uploadFileRowDone || styles.fileRowDone) : ""}`}
+													className={`${styles.fileRow} ${done ? styles.fileRowDone : ""}`}
 													style={previewUrl && !hidePreview ? { flexDirection: 'column', alignItems: 'stretch', padding: 0, overflow: 'hidden' } : {}}
 												>
 													{previewUrl && !hidePreview && (
@@ -1320,34 +1320,34 @@ const ImportOrUpload = () => {
 														</div>
 													)}
 													<div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: previewUrl && !hidePreview ? '12px 16px' : 0 }}>
-														<div className={styles.uploadFileIcon || styles.fileIcon}>
+														<div className={styles.fileIcon}>
 															{done ? <CheckCircle size={16} /> : <FileText size={16} />}
 														</div>
-														<div className={styles.uploadFileMeta || styles.fileMeta}>
-															<span className={styles.uploadFileName || styles.fileName}>{file.name}</span>
-															<span className={styles.uploadFileSize || styles.fileSize}>
+														<div className={styles.fileMeta}>
+															<span className={styles.fileName}>{file.name}</span>
+															<span className={styles.fileSize}>
 																{(file.size / 1024).toFixed(0)} KB
 																{done && " · Ready"}
 															</span>
 															{!done && (
-																<div className={styles.uploadProgressBar || styles.progressBar}>
-																	<div className={styles.uploadProgressFill || styles.progressFill} style={{ width: `${progress}%` }} />
+																<div className={styles.progressBar}>
+																	<div className={styles.progressFill} style={{ width: `${progress}%` }} />
 																</div>
 															)}
 														</div>
 														{done && (
 															<div style={{ display: 'flex', gap: 8 }}>
 																{previewUrl && hidePreview && (
-																	<button className={styles.uploadRemoveBtn || styles.removeBtn} onClick={(e) => togglePreview(file, e)} title="Show preview">
+																	<button className={styles.removeBtn} onClick={(e) => togglePreview(file, e)} title="Show preview">
 																		<Eye size={14} />
 																	</button>
 																)}
-																<button className={styles.uploadRemoveBtn || styles.removeBtn} onClick={(e) => { e.stopPropagation(); removeFile(file); }} title="Remove file">
+																<button className={styles.removeBtn} onClick={(e) => { e.stopPropagation(); removeFile(file); }} title="Remove file">
 																	<X size={14} />
 																</button>
 															</div>
 														)}
-														{!done && <Loader2 size={15} className={styles.uploadSpinner || styles.spinner} />}
+														{!done && <Loader2 size={15} className={styles.spinner} />}
 													</div>
 												</div>
 											))}
