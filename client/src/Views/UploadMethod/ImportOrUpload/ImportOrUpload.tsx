@@ -1300,7 +1300,7 @@ const ImportOrUpload = () => {
 									</div>
 
 									{files.length > 0 && (
-										<div className={styles.uploadFileList}>
+										<div className={styles.uploadFileList} style={{ marginTop: '24px' }}>
 											{files.map(({ file, progress, done, previewUrl, hidePreview }) => (
 												<div 
 													key={file.name} 
