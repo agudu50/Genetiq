@@ -1312,7 +1312,18 @@ const ImportOrUpload = () => {
 															<img src={previewUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
 															<button
 																onClick={(e) => togglePreview(file, e)}
-																style={{ position: 'absolute', top: 8, right: 8, background: 'rgba(0,0,0,0.5)', color: '#fff', border: 'none', borderRadius: '50%', width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+																style={{ 
+																	position: 'absolute', top: 8, right: 8, 
+																	background: 'var(--iou-card)', 
+																	color: 'var(--iou-text)', 
+																	border: '1px solid var(--iou-border)', 
+																	borderRadius: '50%', 
+																	width: 32, height: 32, 
+																	display: 'flex', alignItems: 'center', justifyContent: 'center', 
+																	cursor: 'pointer',
+																	zIndex: 10,
+																	boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+																}}
 																title="Hide preview"
 															>
 																<EyeOff size={16} />
