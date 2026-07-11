@@ -47,9 +47,13 @@ const LANGUAGES: { id: GemmaLanguage; label: string; flag: string; code: string 
 
 const PRESETS = [
 	{ id: "malaria_rdt", emoji: "🦟", title: "Malaria RDT Strip", desc: "Positive for P. falciparum malaria" },
-	{ id: "cbc_anemia", emoji: "🩸", title: "CBC — Severe Anemia", desc: "Critically low hemoglobin levels" },
-	{ id: "typhoid", emoji: "📝", title: "Typhoid Lab Result", desc: "Widal test positive for S. typhi" },
-	{ id: "urinalysis", emoji: "🧪", title: "Urinalysis Report", desc: "Dehydration and urinary infection" },
+	{ id: "cbc_anemia", emoji: "🩸", title: "Full Blood Count", desc: "Severe anemia & likely infection" },
+	{ id: "typhoid", emoji: "🦠", title: "Typhoid Test (Widal)", desc: "Positive for Salmonella typhi" },
+	{ id: "hep_b", emoji: "🧬", title: "Hepatitis B Profile", desc: "Reactive HBsAg screening" },
+	{ id: "fbs_diabetes", emoji: "🍬", title: "Fasting Blood Sugar", desc: "Elevated glucose levels (Diabetes)" },
+	{ id: "sickle_cell", emoji: "🔬", title: "Sickle Cell Screening", desc: "Hb electrophoresis (Sickle Trait)" },
+	{ id: "urinalysis", emoji: "🧪", title: "Urinalysis Report", desc: "Dehydration & urinary tract infection" },
+	{ id: "cholera", emoji: "💧", title: "Stool Analysis", desc: "Suspicion of acute watery diarrhea" },
 ];
 
 // ─── Component ────────────────────────────────────────────────────────────────

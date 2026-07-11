@@ -1211,6 +1211,53 @@ const PRESET_RESULTS: Record<string, GemmaAnalysisResult> = {
 			{ icon: "🔄", title: "Retest after treatment", body: "After completing your antibiotics, do another urinalysis to confirm the infection has cleared and check if the protein has resolved. If protein is still present, your doctor may want to check your kidney function." },
 		],
 	},
+	hep_b: {
+		healthScore: 70,
+		bodySystem: "Liver",
+		summary: "Your test shows you have Hepatitis B (HBsAg is Reactive). However, the other markers suggest it is a chronic infection with low viral activity at the moment. You need to see a doctor to monitor your liver.",
+		findings: [
+			{ id: "h1", name: "Hepatitis B Surface Antigen", marker: "HBsAg", value: "Reactive", status: "action", statusLabel: "Positive", note: "This means the Hepatitis B virus is present in your blood." }
+		],
+		recommendations: [
+			{ icon: "🩺", title: "See a doctor for liver tests", body: "You need a Liver Function Test (LFT) and an ultrasound to check your liver's health." },
+			{ icon: "🥗", title: "Eat liver-friendly foods", body: "Avoid alcohol completely. Eat plenty of fruits, vegetables, and complex carbohydrates." }
+		]
+	},
+	fbs_diabetes: {
+		healthScore: 60,
+		bodySystem: "Endocrine",
+		summary: "Your fasting blood sugar and HbA1c are significantly high, which indicates Diabetes. You should visit a doctor to start a management plan.",
+		findings: [
+			{ id: "d1", name: "Fasting Blood Sugar", marker: "FBS", value: "8.5 mmol/L", status: "action", statusLabel: "High", note: "Your fasting blood sugar is above the normal range, indicating poor glucose control." }
+		],
+		recommendations: [
+			{ icon: "🩺", title: "Consult a doctor", body: "You need to see a doctor to discuss medication and a diabetes management plan." },
+			{ icon: "🍲", title: "Adjust your diet", body: "Reduce simple sugars and heavy carbohydrates. Switch to local whole grains and vegetables." }
+		]
+	},
+	sickle_cell: {
+		healthScore: 90,
+		bodySystem: "Hematology",
+		summary: "Your screening shows you have the Sickle Cell Trait (AS), but NOT Sickle Cell Disease. You will not experience the illness, but you can pass the trait to your children.",
+		findings: [
+			{ id: "s1", name: "Hemoglobin S", marker: "HbS", value: "40%", status: "elevated", statusLabel: "Trait Carrier", note: "You carry one sickle cell gene. This does not cause disease in you." }
+		],
+		recommendations: [
+			{ icon: "👨‍👩‍👧‍👦", title: "Family Planning", body: "If your partner also has the sickle cell trait (AS), your child could have Sickle Cell Disease (SS). Ensure your partner gets tested before having children." }
+		]
+	},
+	cholera: {
+		healthScore: 30,
+		bodySystem: "Digestive",
+		summary: "Your stool analysis strongly suggests a Cholera infection. This is a medical emergency due to rapid dehydration.",
+		findings: [
+			{ id: "c1", name: "Appearance", marker: "Stool", value: "Rice-water", status: "action", statusLabel: "Critical", note: "This appearance is a classic sign of Cholera." }
+		],
+		recommendations: [
+			{ icon: "🚑", title: "Go to the hospital immediately", body: "Cholera causes dangerous dehydration very quickly. Seek emergency medical care now." },
+			{ icon: "💧", title: "Drink ORS constantly", body: "While on your way to the clinic, drink Oral Rehydration Solution (ORS) continuously." }
+		]
+	}
 };
 
 function simulateLabAnalysis(opts: {
@@ -1245,7 +1292,7 @@ function simulateLabAnalysis(opts: {
 					{
 						icon: "🩺",
 						title: "Try a sample report",
-						body: "Pick one of our example cases (Malaria, Anemia, Typhoid, or Urinalysis) to see how the analysis works.",
+						body: "Pick one of our example cases (like Malaria, Anemia, Hepatitis B, or Cholera) to see how the analysis works.",
 					},
 				],
 			};

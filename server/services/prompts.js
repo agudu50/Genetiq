@@ -282,6 +282,64 @@ This confirms active Typhoid fever infection. Provide analysis with Ghanaian die
 
 This suggests a urinary tract infection with significant dehydration. Provide analysis with Ghanaian remedies and hydration guidance.`,
 	},
+	hep_b: {
+		title: "Hepatitis B Profile",
+		description: "Reactive HBsAg screening",
+		emoji: "🧬",
+		prompt: `Analyze this Hepatitis B profile:
+- HBsAg (Hepatitis B surface antigen): REACTIVE
+- HBsAb (Hepatitis B surface antibody): Non-Reactive
+- HBcAb (Total Hepatitis B core antibody): REACTIVE
+- HBeAg (Hepatitis B e antigen): Non-Reactive
+- HBeAb (Hepatitis B e antibody): REACTIVE
+- Patient: {age} year old {gender}
+- Location: Ghana
+
+This suggests a chronic Hepatitis B infection with low viral replication. Provide analysis and highlight the importance of medical follow-up, along with general liver-friendly Ghanaian dietary advice.`,
+	},
+	fbs_diabetes: {
+		title: "Fasting Blood Sugar",
+		description: "Elevated glucose levels (Diabetes)",
+		emoji: "🍬",
+		prompt: `Analyze this Fasting Blood Sugar (FBS) result:
+- Fasting Blood Sugar: 8.5 mmol/L (Reference: 3.9 - 5.5 mmol/L) — HIGH
+- HbA1c: 7.2% (Reference: < 5.7%) — HIGH
+- Patient: {age} year old {gender}
+- Location: Ghana
+
+This indicates diabetes mellitus. Provide analysis and highlight Ghanaian dietary changes (like reducing heavy carbohydrates, switching to complex local carbs) and medical consultation.`,
+	},
+	sickle_cell: {
+		title: "Sickle Cell Screening",
+		description: "Hb electrophoresis (Sickle Trait)",
+		emoji: "🔬",
+		prompt: `Analyze this Sickle Cell screening (Hemoglobin Electrophoresis) result:
+- Hemoglobin A (HbA): 58%
+- Hemoglobin S (HbS): 40%
+- Hemoglobin F (HbF): 1.5%
+- Hemoglobin A2 (HbA2): 0.5%
+- Conclusion: Sickle Cell Trait (HbAS)
+- Patient: {age} year old {gender}
+- Location: Ghana
+
+This indicates the patient is a carrier of the sickle cell trait but does not have sickle cell disease. Provide a clear explanation of what this means for their health and future family planning.`,
+	},
+	cholera: {
+		title: "Stool Analysis",
+		description: "Suspicion of acute watery diarrhea",
+		emoji: "💧",
+		prompt: `Analyze this Stool Routine Examination:
+- Macroscopy: Watery, "rice-water" appearance
+- Microscopy: 
+  - Pus cells: Numerous
+  - RBCs: Occasional
+  - Ova/Parasites: None seen
+- Hanging Drop Preparation: Darting motility observed (vibrio suspected)
+- Patient: {age} year old {gender}
+- Location: Ghana
+
+This strongly suggests a Vibrio cholerae infection. Provide analysis stressing extreme urgency for rehydration (ORS) and immediate medical attention.`,
+	},
 };
 
 // ─── Small-Talk Responses ────────────────────────────────────────────────────
