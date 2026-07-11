@@ -31,6 +31,7 @@ interface UploadedFile {
 	file: File;
 	progress: number;
 	done: boolean;
+	previewUrl?: string;
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -191,7 +192,10 @@ const ImportOrUpload = () => {
 		if (!list) return;
 		setSelectedPreset(null); // Clear preset if files uploaded
 		const newFiles: UploadedFile[] = Array.from(list).map((file) => ({
-			file, progress: 0, done: false,
+			file, 
+			progress: 0, 
+			done: false,
+			previewUrl: file.type.startsWith("image/") ? URL.createObjectURL(file) : undefined
 		}));
 		setFiles((p) => [...p, ...newFiles]);
 		newFiles.forEach((f) => simulateProgress(f.file));
@@ -218,7 +222,13 @@ const ImportOrUpload = () => {
 	};
 
 	const removeFile = (file: File) =>
-		setFiles((p) => p.filter((f) => f.file !== file));
+		setFiles((p) => p.filter((f) => {
+			if (f.file === file) {
+				if (f.previewUrl) URL.revokeObjectURL(f.previewUrl);
+				return false;
+			}
+			return true;
+		}));
 
 	// ── Drag & Drop ───────────────────────────────────────────────────────────
 
@@ -1285,10 +1295,16 @@ const ImportOrUpload = () => {
 
 									{files.length > 0 && (
 										<div className={styles.uploadFileList}>
-											{files.map(({ file, progress, done }) => (
+											{files.map(({ file, progress, done, previewUrl }) => (
 												<div key={file.name} className={`${styles.uploadFileRow} ${done ? styles.uploadFileRowDone : ""}`}>
-													<div className={styles.uploadFileIcon}>
-														{done ? <CheckCircle size={16} /> : <FileText size={16} />}
+													<div className={styles.uploadFileIcon} style={previewUrl ? { padding: 0, overflow: 'hidden' } : {}}>
+														{previewUrl ? (
+															<img src={previewUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+														) : done ? (
+															<CheckCircle size={16} />
+														) : (
+															<FileText size={16} />
+														)}
 													</div>
 													<div className={styles.uploadFileMeta}>
 														<span className={styles.uploadFileName}>{file.name}</span>
