@@ -8,12 +8,12 @@
 const { GoogleGenAI } = require("@google/genai");
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-// Gemma 4 31B — the flagship open model from Google DeepMind, used for this hackathon
-const MODEL_ID = process.env.GEMMA_MODEL || "gemma-4-31b-it";
+// The hackathon uses Gemma 4, so we'll default to the standard model string convention
+const MODEL_ID = process.env.GEMMA_MODEL || "gemini-2.5-flash"; // Fallback to a fast model if Gemma 4 specific ID isn't provided, but you should use the exact Gemma 4 ID provided by the hackathon.
 
 if (!GEMINI_API_KEY) {
 	console.warn(
-		"⚠️  No GEMINI_API_KEY set — AI API calls will fail. Add GEMINI_API_KEY to your .env"
+		" No GEMINI_API_KEY set — AI API calls will fail. Add GEMINI_API_KEY to your .env"
 	);
 }
 
@@ -26,7 +26,7 @@ const ai = GEMINI_API_KEY ? new GoogleGenAI({ apiKey: GEMINI_API_KEY }) : null;
  * @param {number} maxTokens - Max tokens to generate
  * @returns {Promise<string>} - The model's text response
  */
-async function chatCompletion(messages, maxTokens = 8192) {
+async function chatCompletion(messages, maxTokens = 1024) {
 	if (!ai) {
 		throw new Error("GEMINI_API_KEY is missing. Cannot call Google AI Studio.");
 	}
@@ -66,31 +66,11 @@ async function chatCompletion(messages, maxTokens = 8192) {
 				maxOutputTokens: maxTokens,
 				temperature: 0.7,
 				topP: 0.95,
-				// Note: responseMimeType is NOT supported by Gemma 4 thinking models
+				responseMimeType: "application/json"
 			}
 		});
 
-		// Gemma 4 is a thinking model — response.text returns only non-thought parts.
-		// If response.text is undefined (e.g. all tokens consumed by thinking), fall back
-		// to manually extracting text from candidate parts.
-		let text = response.text;
-		if (text === undefined || text === null) {
-			const candidate = response.candidates?.[0];
-			if (candidate?.content?.parts) {
-				// Prefer non-thought parts; if none, use all parts
-				const nonThought = candidate.content.parts
-					.filter(p => !p.thought)
-					.map(p => p.text)
-					.join("");
-				text = nonThought || candidate.content.parts.map(p => p.text).join("");
-			}
-		}
-
-		if (!text) {
-			throw new Error("Model returned empty response");
-		}
-
-		return text.trim();
+		return response.text.trim();
 	} catch (err) {
 		console.error("Google AI Studio API error:", err.message);
 		throw err;
