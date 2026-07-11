@@ -11,7 +11,7 @@ import {
 	X, CheckCircle, ArrowLeft, Loader2, Sparkles,
 	Wifi, WifiOff, Brain, Stethoscope, User, Droplets,
 	Ruler, Scale, Activity, Clock, Check, Lock,
-	ChevronDown, EyeOff, Eye,
+	ChevronDown, ChevronUp,
 } from "lucide-react";
 import {
 	analyzeLabResults,
@@ -1326,7 +1326,7 @@ const ImportOrUpload = () => {
 																}}
 																title="Hide preview"
 															>
-																<EyeOff size={16} />
+																<ChevronUp size={16} />
 															</button>
 														</div>
 													)}
@@ -1350,7 +1350,7 @@ const ImportOrUpload = () => {
 															<div style={{ display: 'flex', gap: 8 }}>
 																{previewUrl && hidePreview && (
 																	<button className={styles.removeBtn} onClick={(e) => togglePreview(file, e)} title="Show preview">
-																		<Eye size={14} />
+																		<ChevronDown size={14} />
 																	</button>
 																)}
 																<button className={styles.removeBtn} onClick={(e) => { e.stopPropagation(); removeFile(file); }} title="Remove file">
