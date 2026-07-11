@@ -16,32 +16,32 @@
 	"concerns": [
 		{
 			"id": 1,
-			"title": "Specialist Distance",
-			"factors": ["High travel time", "Limited local centers"],
-			"icon": "Globe",
+			"title": "Hepatitis B Risk",
+			"factors": ["Elevated liver enzymes", "Endemic region prevalence"],
+			"icon": "Heart",
 			"status": "High",
 			"link": "cardiovascular"
 		},
 		{
 			"id": 2,
-			"title": "Diagnostic Cost",
-			"factors": ["Expensive repetitive tests", "Insurance gaps"],
-			"icon": "Financial",
+			"title": "Malaria Susceptibility",
+			"factors": ["Fever and chills", "Recent mosquito exposure"],
+			"icon": "Globe",
 			"status": "High",
 			"link": "cardiovascular"
 		},
 		{
 			"id": 3,
-			"title": "Information Gaps",
-			"factors": ["Limited research access", "Medical system complexity"],
-			"icon": "Brain",
+			"title": "Sickle Cell Management",
+			"factors": ["Family history", "Mild anemia symptoms"],
+			"icon": "Heart",
 			"status": "Medium"
 		},
 		{
 			"id": 4,
-			"title": "Hypertension Risk",
-			"factors": ["High blood pressure", "Stress", "High sodium diet"],
-			"icon": "Heart",
+			"title": "Cholera Alert",
+			"factors": ["Waterborne outbreak", "Gastrointestinal symptoms"],
+			"icon": "Globe",
 			"status": "Medium"
 		}
 	],
