@@ -234,7 +234,7 @@ export async function analyzeLabResults(opts: {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
-					image_base64: useVision ? images[0] : undefined,
+					image_base64_list: useVision ? images : undefined,
 					lab_text: labText || undefined,
 					preset_id: opts.presetId,
 					patient_age: opts.patientAge,

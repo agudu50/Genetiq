@@ -35,9 +35,10 @@ async function chatCompletion(messages, maxTokens = 1024) {
 		const contents = [];
 		for (const msg of messages) {
 			const parts = [];
-			if (msg.image_base64) {
-				// Extract base64 and mime type if it's a data URL
-				const matches = msg.image_base64.match(/^data:(image\/[a-zA-Z0-9]+);base64,(.+)$/);
+			const imagesToProcess = msg.image_base64_list || (msg.image_base64 ? [msg.image_base64] : []);
+			for (const img of imagesToProcess) {
+				// Try to extract base64 and mime type if it's a data URL
+				const matches = img.match(/^data:([a-zA-Z0-9-]+\/[a-zA-Z0-9.-]+);base64,(.+)$/);
 				if (matches) {
 					parts.push({
 						inlineData: {
@@ -46,11 +47,11 @@ async function chatCompletion(messages, maxTokens = 1024) {
 						}
 					});
 				} else {
-					// Fallback if it's just raw base64
+					// Fallback if it's just raw base64 (assume jpeg)
 					parts.push({
 						inlineData: {
 							mimeType: "image/jpeg",
-							data: msg.image_base64
+							data: img
 						}
 					});
 				}
@@ -70,7 +71,13 @@ async function chatCompletion(messages, maxTokens = 1024) {
 			}
 		});
 
-		return response.text.trim();
+		const text = response.text;
+		if (text === undefined) {
+			console.error("Google AI Studio returned a response with no text:", JSON.stringify(response, null, 2));
+			return "";
+		}
+
+		return text.trim();
 	} catch (err) {
 		console.error("Google AI Studio API error:", err.message);
 		throw err;

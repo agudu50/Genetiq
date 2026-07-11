@@ -45,6 +45,7 @@ router.post("/analyze", async (req, res) => {
 	try {
 		const {
 			image_base64,
+			image_base64_list,
 			lab_text,
 			preset_id,
 			patient_age = "35",
@@ -54,6 +55,7 @@ router.post("/analyze", async (req, res) => {
 
 		let userContent = "";
 		let systemPrompt = LAB_ANALYSIS_SYSTEM_PROMPT;
+		const finalImageList = image_base64_list || (image_base64 ? [image_base64] : []);
 
 		if (preset_id && PRESET_CASES[preset_id]) {
 			const preset = PRESET_CASES[preset_id];
@@ -67,7 +69,7 @@ router.post("/analyze", async (req, res) => {
 				`Analyze this lab result text for a ${patient_age} year old ${patient_gender} patient in Ghana.\n` +
 				`The text was extracted from a photo (OCR) and may contain minor errors.\n\n` +
 				`--- LAB REPORT TEXT ---\n${labBody}\n--- END ---`;
-		} else if (image_base64) {
+		} else if (finalImageList.length > 0) {
 			systemPrompt = LAB_ANALYSIS_SYSTEM_PROMPT;
 			userContent = `Analyze this lab result photo for a ${patient_age} year old ${patient_gender} patient in Ghana.`;
 		} else {
@@ -77,7 +79,7 @@ router.post("/analyze", async (req, res) => {
 		}
 
 		const messages = [
-			{ role: "user", content: systemPrompt + "\n\n" + userContent, image_base64 },
+			{ role: "user", content: systemPrompt + "\n\n" + userContent, image_base64_list: finalImageList },
 		];
 
 		const rawResponse = await chatCompletion(messages, 8192);
