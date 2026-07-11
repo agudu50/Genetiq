@@ -11,7 +11,7 @@ import {
 	X, CheckCircle, ArrowLeft, Loader2, Sparkles,
 	Wifi, WifiOff, Brain, Stethoscope, User, Droplets,
 	Ruler, Scale, Activity, Clock, Check, Lock,
-	ChevronDown,
+	ChevronDown, EyeOff, Eye,
 } from "lucide-react";
 import {
 	analyzeLabResults,
@@ -32,6 +32,7 @@ interface UploadedFile {
 	progress: number;
 	done: boolean;
 	previewUrl?: string;
+	hidePreview?: boolean;
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -229,6 +230,11 @@ const ImportOrUpload = () => {
 			}
 			return true;
 		}));
+
+	const togglePreview = (file: File, e?: React.MouseEvent) => {
+		if (e) e.stopPropagation();
+		setFiles((p) => p.map((f) => f.file === file ? { ...f, hidePreview: !f.hidePreview } : f));
+	};
 
 	// ── Drag & Drop ───────────────────────────────────────────────────────────
 
@@ -1295,18 +1301,25 @@ const ImportOrUpload = () => {
 
 									{files.length > 0 && (
 										<div className={styles.uploadFileList}>
-											{files.map(({ file, progress, done, previewUrl }) => (
+											{files.map(({ file, progress, done, previewUrl, hidePreview }) => (
 												<div 
 													key={file.name} 
 													className={`${styles.uploadFileRow || styles.fileRow} ${done ? (styles.uploadFileRowDone || styles.fileRowDone) : ""}`}
-													style={previewUrl ? { flexDirection: 'column', alignItems: 'stretch', padding: 0, overflow: 'hidden' } : {}}
+													style={previewUrl && !hidePreview ? { flexDirection: 'column', alignItems: 'stretch', padding: 0, overflow: 'hidden' } : {}}
 												>
-													{previewUrl && (
-														<div style={{ width: '100%', height: 180, background: 'var(--iou-surface)' }}>
+													{previewUrl && !hidePreview && (
+														<div style={{ width: '100%', height: 180, background: 'var(--iou-surface)', position: 'relative' }}>
 															<img src={previewUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+															<button
+																onClick={(e) => togglePreview(file, e)}
+																style={{ position: 'absolute', top: 8, right: 8, background: 'rgba(0,0,0,0.5)', color: '#fff', border: 'none', borderRadius: '50%', width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+																title="Hide preview"
+															>
+																<EyeOff size={16} />
+															</button>
 														</div>
 													)}
-													<div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: previewUrl ? '12px 16px' : 0 }}>
+													<div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: previewUrl && !hidePreview ? '12px 16px' : 0 }}>
 														<div className={styles.uploadFileIcon || styles.fileIcon}>
 															{done ? <CheckCircle size={16} /> : <FileText size={16} />}
 														</div>
@@ -1323,9 +1336,16 @@ const ImportOrUpload = () => {
 															)}
 														</div>
 														{done && (
-															<button className={styles.uploadRemoveBtn || styles.removeBtn} onClick={(e) => { e.stopPropagation(); removeFile(file); }}>
-																<X size={14} />
-															</button>
+															<div style={{ display: 'flex', gap: 8 }}>
+																{previewUrl && hidePreview && (
+																	<button className={styles.uploadRemoveBtn || styles.removeBtn} onClick={(e) => togglePreview(file, e)} title="Show preview">
+																		<Eye size={14} />
+																	</button>
+																)}
+																<button className={styles.uploadRemoveBtn || styles.removeBtn} onClick={(e) => { e.stopPropagation(); removeFile(file); }} title="Remove file">
+																	<X size={14} />
+																</button>
+															</div>
 														)}
 														{!done && <Loader2 size={15} className={styles.uploadSpinner || styles.spinner} />}
 													</div>
