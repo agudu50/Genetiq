@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useMemo } from "react";
+import { useState, useCallback, useRef, useMemo, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
@@ -57,6 +57,50 @@ const PRESETS = [
 ];
 
 // ─── Component ────────────────────────────────────────────────────────────────
+
+function AiThinkingStatus({ phase, gemmaOnline }: { phase: string | null; gemmaOnline: boolean }) {
+	const [elapsed, setElapsed] = useState(0);
+	const [msgIndex, setMsgIndex] = useState(0);
+
+	const messages = [
+		"Gemma AI is interpreting your lab values...",
+		"Cross-referencing with medical databases...",
+		"Reasoning through your health profile...",
+		"Formulating localized recommendations...",
+		"Finalizing your personalized plan..."
+	];
+
+	useEffect(() => {
+		if (phase !== "ai" || !gemmaOnline) return;
+		const timer = setInterval(() => setElapsed(e => e + 1), 1000);
+		const msgTimer = setInterval(() => setMsgIndex(i => Math.min(i + 1, messages.length - 1)), 8500);
+		return () => { clearInterval(timer); clearInterval(msgTimer); };
+	}, [phase, gemmaOnline]);
+
+	if (phase !== "ai" || !gemmaOnline) return null;
+
+	return (
+		<div style={{ marginTop: 24, display: "flex", flexDirection: "column", gap: 8, alignItems: "center" }}>
+			<p style={{ fontWeight: 600, color: "var(--iou-heading)", margin: 0, fontSize: "1rem" }}>
+				{messages[msgIndex]}
+			</p>
+			<div style={{ 
+				background: "var(--iou-surface)", 
+				border: "1px solid var(--iou-border)", 
+				padding: "4px 12px", 
+				borderRadius: 99, 
+				fontSize: "0.8rem", 
+				color: "var(--iou-muted)",
+				display: "flex",
+				alignItems: "center",
+				gap: 6
+			}}>
+				<Clock size={12} />
+				<span>Estimated time: ~45s (Elapsed: {elapsed}s)</span>
+			</div>
+		</div>
+	);
+}
 
 const ImportOrUpload = () => {
 	const navigate   = useNavigate();
@@ -427,18 +471,20 @@ const ImportOrUpload = () => {
 							<div className={styles.aiCore} />
 						</div>
 						<h2>{analyzeStatus.message || "Analysing your results…"}</h2>
-						<p>
-							{analyzePhase === "ocr"
-								? "Extracting values from your photo on this device, then AI will interpret them."
-								: gemmaOnline && cpuFastMode
-									? "Reading your lab text and building your personalised report — this is fast on CPU."
-									: gemmaOnline
-										? "Gemma AI is interpreting your lab values and building your plan."
+						{analyzePhase === "ai" && gemmaOnline && !cpuFastMode ? (
+							<AiThinkingStatus phase={analyzePhase} gemmaOnline={gemmaOnline} />
+						) : (
+							<p>
+								{analyzePhase === "ocr"
+									? "Extracting values from your photo on this device, then AI will interpret them."
+									: gemmaOnline && cpuFastMode
+										? "Reading your lab text and building your personalised report — this is fast on CPU."
 										: gemmaAvailable || mode === "starting"
 											? "Waiting for the AI model to finish loading, then your results will be ready."
 											: "Building your personalised health insights with smart offline analysis."
-							}
-						</p>
+								}
+							</p>
+						)}
 						{(analyzePhase === "ocr" || analyzeStatus.message.includes("Reading text")) && analyzeStatus.pct > 0 && (
 							<div className={styles.analyzeProgressTrack}>
 								<div
