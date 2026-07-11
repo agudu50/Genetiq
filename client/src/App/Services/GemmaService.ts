@@ -196,8 +196,9 @@ export async function analyzeLabResults(opts: {
 				? [opts.imageBase64]
 				: [];
 
-	// Text-only models: OCR uploaded photos before sending to the API
-	if (!labText && images.length > 0 && !opts.presetId && !health.supportsVision) {
+	// Always OCR uploaded photos before sending to the API.
+	// This gives us labText to use as a fallback if the AI Studio API returns a 500 error.
+	if (!labText && images.length > 0 && !opts.presetId) {
 		opts.onProgress?.("ocr", images.length > 1 ? "Reading your lab photos…" : "Reading text from your lab photo…", 0);
 		try {
 			const extracted = await extractLabTextFromImages(images, (pct) =>

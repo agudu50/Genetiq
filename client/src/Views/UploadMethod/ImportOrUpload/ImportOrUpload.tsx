@@ -270,9 +270,9 @@ const ImportOrUpload = () => {
 
 			if (!selectedPreset) {
 				for (const { file } of files) {
-					const type = file.type;
+					const type = file.type || "";
 					const name = file.name.toLowerCase();
-					if (type.startsWith("image/")) {
+					if (type.startsWith("image/") || (!type && !name.includes("."))) {
 						imageBase64List.push(await fileToBase64(file));
 					} else if (type === "application/pdf" || name.endsWith(".pdf")) {
 						setAnalyzeStatus({ message: `Reading ${file.name}…`, pct: 0 });
