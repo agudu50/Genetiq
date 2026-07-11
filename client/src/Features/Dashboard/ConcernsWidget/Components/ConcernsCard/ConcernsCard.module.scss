@@ -6,33 +6,55 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 	gap: 12px;
 	width: 100%;
 	min-width: 0;
-	padding: 14px 14px 14px 16px;
+	padding: 12px 14px;
+	margin-bottom: 8px;
+	border-radius: 14px;
 	box-sizing: border-box;
 	position: relative;
 	text-align: left;
 	font: inherit;
 	color: inherit;
 	cursor: pointer;
-	background: transparent;
-	border: none;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-	transition: background 0.25s $ease, transform 0.25s $ease;
+	background: rgba(255, 255, 255, 0.03);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	box-shadow: 
+		inset 0 1px 1px rgba(255, 255, 255, 0.04),
+		0 2px 8px rgba(0, 0, 0, 0.05);
+	transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 	-webkit-tap-highlight-color: transparent;
 
 	html[data-theme="light"] & {
-		border-bottom-color: #f1f5f9;
+		background: rgba(255, 255, 255, 0.75);
+		border-color: rgba(15, 23, 42, 0.06);
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 1),
+			0 2px 8px rgba(15, 23, 42, 0.03);
 	}
 
 	&:hover {
-		background: rgba(255, 255, 255, 0.04);
+		background: rgba(255, 255, 255, 0.06);
+		border-color: color-mix(in srgb, var(--concern-accent) 30%, rgba(255, 255, 255, 0.1));
+		transform: translateX(4px) scale(1.005);
+		box-shadow:
+			0 8px 24px color-mix(in srgb, var(--concern-accent) 15%, rgba(0, 0, 0, 0.2)),
+			inset 0 1px 1px rgba(255, 255, 255, 0.1);
 
 		html[data-theme="light"] & {
-			background: #f8fafc;
+			background: #ffffff;
+			border-color: color-mix(in srgb, var(--concern-accent) 25%, rgba(15, 23, 42, 0.1));
+			box-shadow:
+				0 8px 24px color-mix(in srgb, var(--concern-accent) 10%, rgba(15, 23, 42, 0.04)),
+				inset 0 1px 0 rgba(255, 255, 255, 1);
 		}
 
 		.iconBox {
-			transform: scale(1.05);
-			border-color: color-mix(in srgb, var(--concern-accent) 35%, transparent);
+			transform: scale(1.1) rotate(5deg);
+			background: var(--concern-accent);
+			color: #ffffff;
+			border-color: rgba(255, 255, 255, 0.3);
+			box-shadow: 0 0 12px color-mix(in srgb, var(--concern-accent) 50%, transparent);
 		}
 
 		.chevron {
@@ -48,26 +70,18 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 	}
 
 	&:active {
-		background: rgba(255, 255, 255, 0.06);
-
-		html[data-theme="light"] & {
-			background: #f1f5f9;
-		}
+		transform: scale(0.99);
 	}
 
 	&.rowLast {
-		border-bottom: none;
+		margin-bottom: 0;
 	}
 
 	&.rowStatic {
 		cursor: default;
-
 		&:hover {
-			background: transparent;
-
-			html[data-theme="light"] & {
-				background: transparent;
-			}
+			transform: none;
+			box-shadow: inherit;
 		}
 	}
 }
