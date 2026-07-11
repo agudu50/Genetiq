@@ -278,9 +278,9 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 .historyItem {
 	display: flex;
 	align-items: stretch;
-	gap: 14px;
+	gap: 12px;
 	padding: 0;
-	margin: 0 0 10px;
+	margin: 0 0 8px;
 	background: transparent;
 	border: none;
 	cursor: pointer;
@@ -301,18 +301,18 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 
 .timelineNode {
 	position: relative;
-	width: 40px;
+	width: 32px;
 	flex-shrink: 0;
 	display: flex;
 	justify-content: center;
-	padding-top: 18px;
+	padding-top: 14px;
 	z-index: 1;
 }
 
 .iconContainer {
-	width: 38px;
-	height: 38px;
-	border-radius: 12px;
+	width: 30px;
+	height: 30px;
+	border-radius: 10px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -320,14 +320,19 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 	background: color-mix(in srgb, var(--accent-color) 14%, transparent);
 	border: 1.5px solid color-mix(in srgb, var(--accent-color) 28%, transparent);
 	box-shadow:
-		0 0 0 4px var(--dash-card-bg, rgba(15, 23, 42, 0.9)),
-		0 4px 12px color-mix(in srgb, var(--accent-color) 18%, transparent);
+		0 0 0 3px var(--dash-card-bg, rgba(15, 23, 42, 0.9)),
+		0 2px 8px color-mix(in srgb, var(--accent-color) 18%, transparent);
 	transition: all 0.4s $ease-spring;
 
 	html[data-theme="light"] & {
 		box-shadow:
-			0 0 0 4px var(--dash-card-bg, #ffffff),
-			0 4px 12px color-mix(in srgb, var(--accent-color) 12%, transparent);
+			0 0 0 3px var(--dash-card-bg, #ffffff),
+			0 2px 8px color-mix(in srgb, var(--accent-color) 12%, transparent);
+	}
+	
+	svg {
+		width: 14px;
+		height: 14px;
 	}
 }
 
@@ -335,10 +340,10 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 	flex: 1;
 	display: flex;
 	align-items: center;
-	gap: 12px;
+	gap: 10px;
 	min-width: 0;
-	padding: 16px;
-	border-radius: 16px;
+	padding: 10px 12px;
+	border-radius: 12px;
 	position: relative;
 	overflow: hidden;
 	background: rgba(255, 255, 255, 0.04);
@@ -348,29 +353,29 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 	transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 	box-shadow: 
 		inset 0 1px 1px rgba(255, 255, 255, 0.06),
-		0 4px 12px rgba(0, 0, 0, 0.1);
+		0 2px 8px rgba(0, 0, 0, 0.08);
 
 	html[data-theme="light"] & {
 		background: rgba(255, 255, 255, 0.85);
 		border-color: rgba(15, 23, 42, 0.08);
 		box-shadow:
 			inset 0 1px 0 rgba(255, 255, 255, 1),
-			0 4px 12px rgba(15, 23, 42, 0.03);
+			0 2px 8px rgba(15, 23, 42, 0.03);
 	}
 
 	.historyItem:hover & {
 		background: rgba(255, 255, 255, 0.07);
 		border-color: color-mix(in srgb, var(--accent-color) 40%, rgba(255, 255, 255, 0.15));
-		transform: translateX(6px) scale(1.01);
+		transform: translateX(4px) scale(1.005);
 		box-shadow:
-			0 12px 32px color-mix(in srgb, var(--accent-color) 18%, rgba(0, 0, 0, 0.3)),
+			0 8px 24px color-mix(in srgb, var(--accent-color) 15%, rgba(0, 0, 0, 0.2)),
 			inset 0 1px 1px rgba(255, 255, 255, 0.15);
 
 		html[data-theme="light"] & {
 			background: #ffffff;
 			border-color: color-mix(in srgb, var(--accent-color) 30%, rgba(15, 23, 42, 0.1));
 			box-shadow:
-				0 12px 32px color-mix(in srgb, var(--accent-color) 12%, rgba(15, 23, 42, 0.05)),
+				0 8px 24px color-mix(in srgb, var(--accent-color) 10%, rgba(15, 23, 42, 0.04)),
 				inset 0 1px 0 rgba(255, 255, 255, 1);
 		}
 	}
@@ -380,7 +385,7 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 		background: var(--accent-color);
 		color: #ffffff;
 		border-color: rgba(255, 255, 255, 0.3);
-		box-shadow: 0 0 16px color-mix(in srgb, var(--accent-color) 60%, transparent);
+		box-shadow: 0 0 12px color-mix(in srgb, var(--accent-color) 50%, transparent);
 	}
 
 	.historyItem:hover .itemArrow {
@@ -397,8 +402,8 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 .itemAccent {
 	position: absolute;
 	left: 0;
-	top: 12px;
-	bottom: 12px;
+	top: 8px;
+	bottom: 8px;
 	width: 3px;
 	border-radius: 0 3px 3px 0;
 	background: linear-gradient(
@@ -414,26 +419,26 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 	flex: 1;
 	display: flex;
 	flex-direction: column;
-	gap: 5px;
+	gap: 3px;
 	min-width: 0;
-	padding-left: 4px;
+	padding-left: 2px;
 }
 
 .row {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	gap: 10px;
+	gap: 8px;
 	width: 100%;
 }
 
 .itemType {
 	display: inline-flex;
 	align-items: center;
-	gap: 6px;
-	font-size: 10px;
+	gap: 4px;
+	font-size: 9px;
 	font-weight: 800;
-	letter-spacing: 0.07em;
+	letter-spacing: 0.05em;
 	text-transform: uppercase;
 	color: var(--accent-color);
 
@@ -449,8 +454,8 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 .itemDate {
 	display: inline-flex;
 	align-items: center;
-	gap: 5px;
-	font-size: 11px;
+	gap: 4px;
+	font-size: 10px;
 	font-weight: 600;
 	color: var(--text-secondary, #94a3b8);
 	white-space: nowrap;
@@ -458,6 +463,8 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 
 	svg {
 		opacity: 0.55;
+		width: 10px;
+		height: 10px;
 	}
 
 	html[data-theme="light"] & {
@@ -466,12 +473,12 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .itemTitle {
-	font-size: 14px;
+	font-size: 13px;
 	font-weight: 700;
 	margin: 0;
 	color: var(--text, #ffffff);
-	letter-spacing: -0.015em;
-	line-height: 1.35;
+	letter-spacing: -0.01em;
+	line-height: 1.25;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
