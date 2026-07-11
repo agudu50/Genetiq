@@ -1313,16 +1313,16 @@ const ImportOrUpload = () => {
 															<button
 																onClick={(e) => togglePreview(file, e)}
 																style={{ 
-																	position: 'absolute', top: 8, right: 8, 
-																	background: 'var(--iou-card)', 
-																	color: 'var(--iou-text)', 
-																	border: '1px solid var(--iou-border)', 
+																	position: 'absolute', top: 12, right: 12, 
+																	background: 'rgba(0,0,0,0.7)', 
+																	color: '#ffffff', 
+																	border: '2px solid rgba(255,255,255,0.4)', 
 																	borderRadius: '50%', 
 																	width: 32, height: 32, 
 																	display: 'flex', alignItems: 'center', justifyContent: 'center', 
 																	cursor: 'pointer',
-																	zIndex: 10,
-																	boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+																	zIndex: 999,
+																	boxShadow: '0 4px 12px rgba(0,0,0,0.4)'
 																}}
 																title="Hide preview"
 															>
