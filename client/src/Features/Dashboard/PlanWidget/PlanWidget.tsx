@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Sparkles } from "lucide-react";
+import { Brain } from "lucide-react";
 import styles from "./PlanWidget.module.scss";
 import { Tabs } from "./Components/Tabs/Tabs";
 import { PlanTable } from "./Components/PlanTable/PlanTable";
@@ -84,12 +84,14 @@ export const PlanWidget = ({
 			<div className={styles["PlanWidget-content"]}>
 				{!propsPlanData && isLoading && (
 					<div className={styles.loadingBanner}>
+						<Brain size={14} strokeWidth={2.25} />
 						<span>{t("plan_generating")}</span>
 					</div>
 				)}
 
 				{showGemmaBadge && !isLoading && (
 					<div className={styles.gemmaBadge}>
+						<Brain size={12} strokeWidth={2.25} />
 						<span>{t("plan_gemma_powered")}</span>
 					</div>
 				)}

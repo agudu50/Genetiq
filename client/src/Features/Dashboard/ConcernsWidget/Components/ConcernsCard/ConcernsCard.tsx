@@ -4,15 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setCategory } from "@/App/Redux/categorySlice";
 import { useLanguage } from "@/App/i18n/LanguageContext";
-import {
-	ChevronRight,
-	Globe,
-	Coins,
-	Brain,
-	Heart,
-	HelpCircle,
-	Sparkles,
-} from "lucide-react";
+import { ChevronRight, Globe, Coins, Brain, Heart, HelpCircle } from "lucide-react";
 
 interface ConcernsCardProps {
 	concern: Concern;
@@ -150,6 +142,7 @@ export const ConcernsCard: React.FC<ConcernsCardProps> = ({
 				</div>
 
 				<span className={styles.actionHint}>
+					<Brain size={11} strokeWidth={2.25} aria-hidden />
 					{t("concerns_view_actions")}
 				</span>
 			</div>

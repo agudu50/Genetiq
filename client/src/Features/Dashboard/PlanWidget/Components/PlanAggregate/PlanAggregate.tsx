@@ -1,11 +1,4 @@
-import {
-	Activity,
-	ClipboardList,
-	Pill,
-	ChevronRight,
-	Sparkles,
-	Calendar,
-} from "lucide-react";
+import { Activity, ClipboardList, Pill, ChevronRight, Calendar, Brain } from "lucide-react";
 import { PlanItem, PlanSection } from "../../helpers/planMockData";
 import {
 	PlanItemSelection,
@@ -70,7 +63,8 @@ export const PlanAggregate = ({
 			<header className={styles.header}>
 				<div className={styles.titleBlock}>
 					<div className={styles.titleIconWrap}>
-						</div>
+						<Brain size={18} strokeWidth={2.25} />
+					</div>
 					<div className={styles.titleText}>
 						<h3 className={styles.title}>{t("plan_recommended_steps")}</h3>
 						<p className={styles.subtitle}>{t("plan_based_on_data")}</p>

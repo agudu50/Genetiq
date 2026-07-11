@@ -1,17 +1,5 @@
 import { useMemo, useState } from "react";
-import {
-	User,
-	Crown,
-	Ruler,
-	Scale,
-	Activity,
-	Pencil,
-	Check,
-	Sparkles,
-	Plus,
-	Wallet,
-	AlertCircle,
-} from "lucide-react";
+import { User, Crown, Ruler, Scale, Activity, Pencil, Check, Plus, Wallet, AlertCircle, Brain } from "lucide-react";
 import styles from "./HealthProfileWidget.module.scss";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/App/Redux/store";
@@ -123,6 +111,7 @@ export const HealthProfileWidget = () => {
 				<div className={styles.topRow}>
 					<span className={styles.eyebrow}>{t("profile_eyebrow")}</span>
 					<span className={styles.completenessPill}>
+						<Brain size={11} strokeWidth={2.5} />
 						{completeness}%
 					</span>
 				</div>
@@ -172,6 +161,7 @@ export const HealthProfileWidget = () => {
 									</>
 								) : (
 									<>
+										<Brain size={11} strokeWidth={2.5} />
 										{t("free_plan")}
 									</>
 								)}

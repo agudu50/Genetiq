@@ -6,13 +6,7 @@ import { updateUserInfo } from "@/App/Redux/userSlice";
 import { addUploadRecord } from "@/App/Redux/uploadHistorySlice";
 import type { LabFinding, Recommendation } from "@/App/Redux/uploadHistorySlice";
 import { paths } from "@/App/Routes/Paths";
-import {
-	Upload, FileText, ShieldCheck, Zap, ChevronRight,
-	X, CheckCircle, ArrowLeft, Loader2, Sparkles,
-	Wifi, WifiOff, Brain, Stethoscope, User, Droplets,
-	Ruler, Scale, Activity, Clock, Check, Lock,
-	ChevronDown,
-} from "lucide-react";
+import { Upload, FileText, ShieldCheck, Zap, ChevronRight, X, CheckCircle, ArrowLeft, Loader2, Wifi, WifiOff, Brain, Stethoscope, User, Droplets, Ruler, Scale, Activity, Clock, Check, Lock, ChevronDown } from "lucide-react";
 import {
 	analyzeLabResults,
 	getTranslation,
@@ -629,7 +623,7 @@ const ImportOrUpload = () => {
 									<Upload size={16} /> Go back and try again
 								</button>
 								<button className={styles.outlineBtn} onClick={() => navigate(paths.dashboard.root)}>
-									<Sparkles size={16} /> {t("Go to my dashboard")}
+									<Brain size={16} /> {t("Go to my dashboard")}
 								</button>
 							</div>
 						</>
@@ -819,7 +813,7 @@ const ImportOrUpload = () => {
 							<div className={styles.resultsCtasWrap}>
 								<div className={styles.resultsCtas}>
 									<button className={styles.primaryBtn} onClick={() => navigate(paths.dashboard.root)}>
-										<Sparkles size={16} /> {t("Go to my dashboard")}
+										<Brain size={16} /> {t("Go to my dashboard")}
 									</button>
 									<button className={styles.outlineBtn} onClick={() => navigate(paths.clinicalHistory)}>
 										<FileText size={16} /> {t("View clinical history")}
@@ -1436,6 +1430,7 @@ const ImportOrUpload = () => {
 								disabled={!canAnalyze}
 								onClick={handleAnalyze}
 							>
+								<Brain size={16} />
 								{canAnalyze
 									? hasLabText && !allDone && !selectedPreset
 										? "Analyse pasted results"

@@ -5,18 +5,7 @@ import { RootState } from "@/App/Redux/store";
 import { HealthGoal, setGoals } from "@/App/Redux/goalSlice";
 import { LocalVault } from "@/App/Services/LocalVault";
 import { useLanguage } from "@/App/i18n/LanguageContext";
-import {
-	X,
-	CheckCircle2,
-	Sparkles,
-	ClipboardList,
-	Globe,
-	Coins,
-	Brain,
-	Heart,
-	HelpCircle,
-	Check,
-} from "lucide-react";
+import { X, CheckCircle2, ClipboardList, Globe, Coins, Brain, Heart, HelpCircle, Check } from "lucide-react";
 import { Concern } from "../../helpers/concernsMockData";
 import {
 	AtrialFibrillationPlanMockData,
@@ -387,6 +376,7 @@ export const SuggestionsModal: React.FC<SuggestionsModalProps> = ({
 							disabled={selectedActions.length === 0}
 							onClick={handleActivate}
 						>
+							<Brain size={15} strokeWidth={2.25} />
 							<span>{t("confirm_actions") || "Activate Selected"}</span>
 						</button>
 					</div>

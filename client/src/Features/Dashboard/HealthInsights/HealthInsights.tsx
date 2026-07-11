@@ -2,19 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import styles from "./HealthInsights.module.scss";
 import { useLanguage } from "@/App/i18n/LanguageContext";
 import { useNavigate } from "react-router-dom";
-import {
-	Bell,
-	X,
-	ArrowRight,
-	Dna,
-	Target,
-	Users,
-	PiggyBank,
-	Lightbulb,
-	Calendar,
-	ChevronDown,
-	Sparkles,
-} from "lucide-react";
+import { Bell, X, ArrowRight, Dna, Target, Users, PiggyBank, Lightbulb, Calendar, ChevronDown, Brain } from "lucide-react";
 
 type InsightType = "warning" | "success" | "info" | "tip";
 
@@ -176,6 +164,7 @@ export const HealthInsights = ({
 				<header className={styles.header}>
 					<div className={styles.headerTop}>
 						<span className={styles.eyebrow}>
+							<Brain size={11} strokeWidth={2.5} />
 							{t("insights_eyebrow")}
 						</span>
 						<span className={styles.countBadge}>

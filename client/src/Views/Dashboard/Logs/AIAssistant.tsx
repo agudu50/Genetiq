@@ -1,10 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import {
-	Bot, Send, Sparkles, ImagePlus, X,
-	Phone, Heart, Leaf, AlertTriangle, Shield,
-	Wifi, WifiOff, Stethoscope,
-	ChevronRight,
-} from "lucide-react";
+import { Bot, Send, ImagePlus, X, Phone, Heart, Leaf, AlertTriangle, Shield, Wifi, WifiOff, Stethoscope, ChevronRight, Brain } from "lucide-react";
 import {
 	chatWithGemma,
 	analyzeLabResults,
@@ -657,7 +652,7 @@ function ScannerSection({ language, gemmaOnline }: { language: GemmaLanguage; ge
 							{loading ? (
 								<><div className={styles.miniSpinner} /> Analyzing with {gemmaOnline ? "Gemma 4" : "AI"}...</>
 							) : (
-								<>Analyze with {gemmaOnline ? "Gemma 4" : "AI"}</>
+								<><Brain size={16} /> Analyze with {gemmaOnline ? "Gemma 4" : "AI"}</>
 							)}
 						</button>
 					)}
@@ -748,6 +743,7 @@ function RemedySection({ language }: { language: GemmaLanguage }) {
 									</div>
 								</div>
 								<div className={styles.remedyDetail}>
+									<Brain size={13} />
 									<div>
 										<strong>How to use</strong>
 										<p>{translateRemedy(remedy.name, "usage", language, remedy.usage)}</p>

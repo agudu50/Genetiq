@@ -1,18 +1,7 @@
 import { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-	X,
-	Pill,
-	Calendar,
-	CheckCircle,
-	Bell,
-	ClipboardList,
-	Activity,
-	Sparkles,
-	ChevronRight,
-	Info,
-} from "lucide-react";
+import { X, Pill, Calendar, CheckCircle, Bell, ClipboardList, Activity, ChevronRight, Info, Brain } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
 import { HealthGoal, setGoals } from "@/App/Redux/goalSlice";
@@ -187,6 +176,7 @@ export const PlanItemDetailModal = ({
 						<div className={styles.body}>
 							<section className={styles.surfaceCard}>
 								<div className={styles.surfaceHead}>
+									<Brain size={15} strokeWidth={2.25} />
 									<span>{t("plan_detail_benefit")}</span>
 								</div>
 								<p className={styles.benefitText}>{benefitText}</p>
