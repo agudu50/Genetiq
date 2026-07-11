@@ -121,8 +121,6 @@ export const SuggestionsModal: React.FC<SuggestionsModalProps> = ({
 	};
 
 	const handleClose = () => {
-		setActivationSuccess(false);
-		setIsActivating(false);
 		onClose();
 	};
 
