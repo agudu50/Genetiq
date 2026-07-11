@@ -1296,34 +1296,39 @@ const ImportOrUpload = () => {
 									{files.length > 0 && (
 										<div className={styles.uploadFileList}>
 											{files.map(({ file, progress, done, previewUrl }) => (
-												<div key={file.name} className={`${styles.uploadFileRow} ${done ? styles.uploadFileRowDone : ""}`}>
-													<div className={styles.uploadFileIcon} style={previewUrl ? { padding: 0, overflow: 'hidden' } : {}}>
-														{previewUrl ? (
-															<img src={previewUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-														) : done ? (
-															<CheckCircle size={16} />
-														) : (
-															<FileText size={16} />
-														)}
-													</div>
-													<div className={styles.uploadFileMeta}>
-														<span className={styles.uploadFileName}>{file.name}</span>
-														<span className={styles.uploadFileSize}>
-															{(file.size / 1024).toFixed(0)} KB
-															{done && " · Ready"}
-														</span>
-														{!done && (
-															<div className={styles.uploadProgressBar}>
-																<div className={styles.uploadProgressFill} style={{ width: `${progress}%` }} />
-															</div>
-														)}
-													</div>
-													{done && (
-														<button className={styles.uploadRemoveBtn} onClick={(e) => { e.stopPropagation(); removeFile(file); }}>
-															<X size={14} />
-														</button>
+												<div 
+													key={file.name} 
+													className={`${styles.uploadFileRow || styles.fileRow} ${done ? (styles.uploadFileRowDone || styles.fileRowDone) : ""}`}
+													style={previewUrl ? { flexDirection: 'column', alignItems: 'stretch', padding: 0, overflow: 'hidden' } : {}}
+												>
+													{previewUrl && (
+														<div style={{ width: '100%', height: 180, background: 'var(--iou-surface)' }}>
+															<img src={previewUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+														</div>
 													)}
-													{!done && <Loader2 size={15} className={styles.uploadSpinner} />}
+													<div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: previewUrl ? '12px 16px' : 0 }}>
+														<div className={styles.uploadFileIcon || styles.fileIcon}>
+															{done ? <CheckCircle size={16} /> : <FileText size={16} />}
+														</div>
+														<div className={styles.uploadFileMeta || styles.fileMeta}>
+															<span className={styles.uploadFileName || styles.fileName}>{file.name}</span>
+															<span className={styles.uploadFileSize || styles.fileSize}>
+																{(file.size / 1024).toFixed(0)} KB
+																{done && " · Ready"}
+															</span>
+															{!done && (
+																<div className={styles.uploadProgressBar || styles.progressBar}>
+																	<div className={styles.uploadProgressFill || styles.progressFill} style={{ width: `${progress}%` }} />
+																</div>
+															)}
+														</div>
+														{done && (
+															<button className={styles.uploadRemoveBtn || styles.removeBtn} onClick={(e) => { e.stopPropagation(); removeFile(file); }}>
+																<X size={14} />
+															</button>
+														)}
+														{!done && <Loader2 size={15} className={styles.uploadSpinner || styles.spinner} />}
+													</div>
 												</div>
 											))}
 										</div>
