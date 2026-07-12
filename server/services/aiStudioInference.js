@@ -8,8 +8,8 @@
 const { GoogleGenAI } = require("@google/genai");
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-// The hackathon uses Gemma 4, so we'll default to the standard model string convention
-const MODEL_ID = process.env.GEMMA_MODEL || "gemini-2.5-flash"; // Fallback to a fast model if Gemma 4 specific ID isn't provided, but you should use the exact Gemma 4 ID provided by the hackathon.
+// Hardcoding to gemini-2.5-flash to bypass npm run dev process.env caching which is stuck on the broken gemma-4 endpoint.
+const MODEL_ID = "gemini-2.5-flash"; // process.env.GEMMA_MODEL || "gemini-2.5-flash";
 
 if (!GEMINI_API_KEY) {
 	console.warn(
@@ -65,7 +65,7 @@ async function chatCompletion(messages, maxTokens = 1024) {
 			contents: contents,
 			config: {
 				maxOutputTokens: maxTokens,
-				temperature: 0.7,
+				temperature: 0.2, // Lowered to prevent JSON formatting errors
 				topP: 0.95,
 				responseMimeType: "application/json"
 			}
@@ -97,19 +97,59 @@ function parseJsonResponse(text) {
 	// Try to find a JSON object
 	const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
 	if (jsonMatch) {
+		let jsonStr = jsonMatch[0];
 		try {
-			return JSON.parse(jsonMatch[0]);
+			return JSON.parse(jsonStr);
 		} catch {
-			// Fall through
+			try {
+				// Attempt basic fixes for missing brackets before commas: `" ... "\n    ,\n    {` -> `" ... "\n    },\n    {`
+				jsonStr = jsonStr.replace(/"\s*,/g, '"\n    },');
+				// Fix trailing commas
+				jsonStr = jsonStr.replace(/,\s*([\]}])/g, "$1");
+				return JSON.parse(jsonStr);
+			} catch (e) {
+				// Fall through
+			}
 		}
 	}
 
 	return { error: "Could not parse model response", raw: text };
 }
 
+/**
+ * Uses Gemini Flash to transcribe images to text before sending to Gemma.
+ * This is crucial because some Gemma models on AI Studio are text-only.
+ */
+async function extractTextFromImages(imagesBase64List) {
+	if (!ai || !imagesBase64List || imagesBase64List.length === 0) return "";
+	try {
+		const parts = [];
+		for (const img of imagesBase64List) {
+			const matches = img.match(/^data:([a-zA-Z0-9-]+\/[a-zA-Z0-9.-]+);base64,(.+)$/);
+			if (matches) {
+				parts.push({ inlineData: { mimeType: matches[1], data: matches[2] } });
+			} else {
+				parts.push({ inlineData: { mimeType: "image/jpeg", data: img } });
+			}
+		}
+		parts.push({ text: "Transcribe all the text from this medical lab report exactly as it appears. Include all numbers, units, and test names. Do not summarize or format it, just output the raw text." });
+
+		const response = await ai.models.generateContent({
+			model: "gemini-2.5-flash",
+			contents: [{ role: "user", parts }],
+			config: { temperature: 0.2 }
+		});
+		return response.text || "";
+	} catch (err) {
+		console.warn("Gemini Vision OCR failed:", err.message);
+		return "";
+	}
+}
+
 module.exports = {
 	chatCompletion,
 	parseJsonResponse,
+	extractTextFromImages,
 	MODEL_ID,
 	GEMINI_API_KEY,
 };

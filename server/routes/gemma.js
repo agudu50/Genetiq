@@ -14,7 +14,13 @@
 
 const express = require("express");
 const router = express.Router();
-const { chatCompletion, parseJsonResponse, MODEL_ID, GEMINI_API_KEY } = require("../services/aiStudioInference");
+const {
+	chatCompletion,
+	parseJsonResponse,
+	extractTextFromImages,
+	MODEL_ID,
+	GEMINI_API_KEY,
+} = require("../services/aiStudioInference");
 const {
 	LAB_ANALYSIS_SYSTEM_PROMPT,
 	LAB_TEXT_ANALYSIS_SYSTEM_PROMPT,
@@ -55,23 +61,40 @@ router.post("/analyze", async (req, res) => {
 
 		let userContent = "";
 		let systemPrompt = LAB_ANALYSIS_SYSTEM_PROMPT;
-		const finalImageList = image_base64_list || (image_base64 ? [image_base64] : []);
+		let finalImageList = image_base64_list || (image_base64 ? [image_base64] : []);
+		let labBody = lab_text ? lab_text.trim().slice(0, 4000) : null;
 
 		if (preset_id && PRESET_CASES[preset_id]) {
 			const preset = PRESET_CASES[preset_id];
 			userContent = preset.prompt
 				.replace("{age}", patient_age)
 				.replace("{gender}", patient_gender);
-		} else if (lab_text && lab_text.trim()) {
+		} else if (finalImageList.length > 0) {
+			try {
+				const ocrText = await extractTextFromImages(finalImageList);
+				if (ocrText && ocrText.trim().length > 10) {
+					labBody = ocrText;
+					systemPrompt = LAB_ANALYSIS_SYSTEM_PROMPT;
+					userContent = `Analyze this lab result for a ${patient_age} year old ${patient_gender} patient in Ghana.\n\n` +
+						`The text was extracted from a photo and may contain minor errors.\n\n` +
+						`--- LAB REPORT TEXT ---\n${labBody}\n--- END ---`;
+					finalImageList = []; // Clear images so Gemma 4 doesn't crash on AI Studio
+				} else {
+					// Fallback if OCR fails
+					systemPrompt = LAB_ANALYSIS_SYSTEM_PROMPT;
+					userContent = `Analyze this lab result photo for a ${patient_age} year old ${patient_gender} patient in Ghana.`;
+				}
+			} catch (e) {
+				console.warn("Vision extraction failed, proceeding with original images", e);
+				systemPrompt = LAB_ANALYSIS_SYSTEM_PROMPT;
+				userContent = `Analyze this lab result photo for a ${patient_age} year old ${patient_gender} patient in Ghana.`;
+			}
+		} else if (labBody) {
 			systemPrompt = LAB_TEXT_ANALYSIS_SYSTEM_PROMPT;
-			const labBody = lab_text.trim().slice(0, 4000);
 			userContent =
 				`Analyze this lab result text for a ${patient_age} year old ${patient_gender} patient in Ghana.\n` +
 				`The text was extracted from a photo (OCR) and may contain minor errors.\n\n` +
 				`--- LAB REPORT TEXT ---\n${labBody}\n--- END ---`;
-		} else if (finalImageList.length > 0) {
-			systemPrompt = LAB_ANALYSIS_SYSTEM_PROMPT;
-			userContent = `Analyze this lab result photo for a ${patient_age} year old ${patient_gender} patient in Ghana.`;
 		} else {
 			return res.status(400).json({
 				detail: "Provide preset_id, lab_text, or image_base64",

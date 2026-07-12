@@ -119,11 +119,10 @@ const ImportOrUpload = () => {
 	const [langDropdownOpen, setLangDropdownOpen] = useState(false);
 	const [selectedLanguage, setSelectedLanguage] = useState<GemmaLanguage>("english");
 	const { gemmaOnline, gemmaAvailable, mode, statusLabel, refresh, cpuFastMode } = useGemmaConnection();
-	const [analysisResult, setAnalysisResult] = useState<GemmaAnalysisResult | null>(null);
+	const [analysisResults, setAnalysisResults] = useState<{ result: GemmaAnalysisResult, fileName: string }[] | null>(null);
 	const [labTextPaste, setLabTextPaste] = useState("");
 	const [analyzeStatus, setAnalyzeStatus] = useState({ message: "", pct: 0 });
 	const [analyzePhase, setAnalyzePhase] = useState<AnalyzeProgressPhase | null>(null);
-	const [expandedFindingId, setExpandedFindingId] = useState<string | null>(null);
 
 	const user = useSelector((state: RootState) => state.user);
 
@@ -265,23 +264,76 @@ const ImportOrUpload = () => {
 		dispatch(updateUserInfo({ ...info, uploadStatus: "processing" }));
 
 		try {
-			const imageBase64List: string[] = [];
-			const extractedTextParts: string[] = [];
+			const newResults: { result: GemmaAnalysisResult, fileName: string }[] = [];
 
-			if (!selectedPreset) {
-				for (const { file } of files) {
+			if (selectedPreset || labTextPaste) {
+				const combinedLabText = labTextPaste.trim() || undefined;
+				const result = await analyzeLabResults({
+					labText: combinedLabText,
+					presetId: selectedPreset || undefined,
+					patientAge: info.age || "35",
+					patientGender: info.gender || "unknown",
+					language: selectedLanguage,
+					onProgress: (phase, message, pct) => {
+						setAnalyzePhase(phase);
+						setAnalyzeStatus({ message, pct: pct ?? 0 });
+					},
+				});
+
+				const enriched = enrichFindingsWithPlainNotes(result);
+				const fileName = selectedPreset
+					? PRESETS.find((p) => p.id === selectedPreset)?.title || "Preset Analysis"
+					: "Pasted Text";
+				
+				newResults.push({ result: enriched, fileName });
+
+				const findings: LabFinding[] = enriched.findings.map((f) => ({
+					id: f.id,
+					name: f.name,
+					marker: f.marker,
+					value: f.value,
+					status: f.status,
+					statusLabel: f.statusLabel,
+					note: f.note,
+				}));
+
+				const recommendations: Recommendation[] = result.recommendations.map((r) => ({
+					icon: r.icon,
+					title: r.title,
+					body: r.body,
+				}));
+
+				dispatch(addUploadRecord({
+					id: crypto.randomUUID(),
+					uploadedAt: new Date().toISOString(),
+					fileName,
+					healthScore: enriched.healthScore,
+					findings,
+					recommendations,
+					firstName: info.firstName,
+					lastName: info.lastName,
+					age: info.age,
+					gender: info.gender,
+					bloodType: info.bloodType,
+				}));
+			} else if (files.length > 0) {
+				for (let i = 0; i < files.length; i++) {
+					const { file } = files[i];
+					const prefix = files.length > 1 ? `[File ${i + 1} of ${files.length}] ` : "";
+					const imageBase64List: string[] = [];
+					const extractedTextParts: string[] = [];
 					const type = file.type || "";
 					const name = file.name.toLowerCase();
+
 					if (type.startsWith("image/") || (!type && !name.includes("."))) {
 						imageBase64List.push(await fileToBase64(file));
 					} else if (type === "application/pdf" || name.endsWith(".pdf")) {
-						setAnalyzeStatus({ message: `Reading ${file.name}…`, pct: 0 });
+						setAnalyzeStatus({ message: prefix + `Reading ${file.name}…`, pct: 0 });
 						try {
 							const pdf = await extractPdfContent(file);
 							if (pdf.text) {
 								extractedTextParts.push(pdf.text);
 							} else {
-								// Scanned PDF — pass rendered pages through the OCR pipeline
 								imageBase64List.push(...pdf.pageImagesBase64);
 							}
 						} catch (e) {
@@ -299,62 +351,58 @@ const ImportOrUpload = () => {
 							console.warn(`Could not read ${file.name}:`, e);
 						}
 					}
+
+					const combinedLabText = extractedTextParts.filter(Boolean).join("\n\n");
+
+					const result = await analyzeLabResults({
+						imageBase64List: imageBase64List.length ? imageBase64List : undefined,
+						labText: combinedLabText || undefined,
+						patientAge: info.age || "35",
+						patientGender: info.gender || "unknown",
+						language: selectedLanguage,
+						onProgress: (phase, message, pct) => {
+							setAnalyzePhase(phase);
+							setAnalyzeStatus({ message: prefix + message, pct: pct ?? 0 });
+						},
+					});
+
+					const enriched = enrichFindingsWithPlainNotes(result);
+					newResults.push({ result: enriched, fileName: file.name });
+
+					const findings: LabFinding[] = enriched.findings.map((f) => ({
+						id: f.id,
+						name: f.name,
+						marker: f.marker,
+						value: f.value,
+						status: f.status,
+						statusLabel: f.statusLabel,
+						note: f.note,
+					}));
+
+					const recommendations: Recommendation[] = result.recommendations.map((r) => ({
+						icon: r.icon,
+						title: r.title,
+						body: r.body,
+					}));
+
+					dispatch(addUploadRecord({
+						id: crypto.randomUUID(),
+						uploadedAt: new Date().toISOString(),
+						fileName: file.name,
+						healthScore: enriched.healthScore,
+						findings,
+						recommendations,
+						firstName: info.firstName,
+						lastName: info.lastName,
+						age: info.age,
+						gender: info.gender,
+						bloodType: info.bloodType,
+					}));
 				}
 			}
 
-			const combinedLabText = [labTextPaste.trim(), ...extractedTextParts]
-				.filter(Boolean)
-				.join("\n\n");
-
-			const result = await analyzeLabResults({
-				imageBase64List: imageBase64List.length ? imageBase64List : undefined,
-				labText: combinedLabText || undefined,
-				presetId: selectedPreset || undefined,
-				patientAge: info.age || "35",
-				patientGender: info.gender || "unknown",
-				language: selectedLanguage,
-				onProgress: (phase, message, pct) => {
-					setAnalyzePhase(phase);
-					setAnalyzeStatus({ message, pct: pct ?? 0 });
-				},
-			});
-
-			const enriched = enrichFindingsWithPlainNotes(result);
-			setAnalysisResult(enriched);
-
-			// Convert Gemma findings to Redux format
-			const findings: LabFinding[] = enriched.findings.map((f) => ({
-				id: f.id,
-				name: f.name,
-				marker: f.marker,
-				value: f.value,
-				status: f.status,
-				statusLabel: f.statusLabel,
-				note: f.note,
-			}));
-
-			const recommendations: Recommendation[] = result.recommendations.map((r) => ({
-				icon: r.icon,
-				title: r.title,
-				body: r.body,
-			}));
-
+			setAnalysisResults(newResults);
 			dispatch(updateUserInfo({ uploadStatus: "completed" }));
-			dispatch(addUploadRecord({
-				id: crypto.randomUUID(),
-				uploadedAt: new Date().toISOString(),
-				fileName: selectedPreset
-					? PRESETS.find((p) => p.id === selectedPreset)?.title || "Preset Analysis"
-					: files.map((f) => f.file.name).join(", "),
-				healthScore: enriched.healthScore,
-				findings,
-				recommendations,
-				firstName: info.firstName,
-				lastName: info.lastName,
-				age: info.age,
-				gender: info.gender,
-				bloodType: info.bloodType,
-			}));
 			setStep("done");
 		} catch (error) {
 			console.error("Analysis error:", error);
@@ -381,78 +429,8 @@ const ImportOrUpload = () => {
 	// Helper to translate status labels
 	const t = (text: string) => getTranslation(text, selectedLanguage);
 
-	const scoreTier = useMemo(() => {
-		const score = analysisResult?.healthScore ?? 0;
-		if (score <= 50) {
-			return {
-				key: "attention" as const,
-				label: "Needs attention",
-				plain: "Some results look off. Take this to a clinic soon.",
-				range: "0 – 50",
-			};
-		}
-		if (score <= 74) {
-			return {
-				key: "improve" as const,
-				label: "Room to improve",
-				plain: "A few values need follow-up. Ask your doctor what to watch.",
-				range: "51 – 74",
-			};
-		}
-		if (score <= 89) {
-			return {
-				key: "good" as const,
-				label: "Looking good",
-				plain: "Most results look fine. Keep healthy habits and check-ups.",
-				range: "75 – 89",
-			};
-		}
-		return {
-			key: "excellent" as const,
-			label: "Excellent",
-			plain: "Your results look strong overall. Stay consistent.",
-			range: "90 – 100",
-		};
-	}, [analysisResult?.healthScore]);
-
-	const scoreBands = useMemo(
-		() => [
-			{
-				key: "attention" as const,
-				range: "0 – 50",
-				label: "Needs attention",
-				hint: "See a clinic soon",
-				active: (analysisResult?.healthScore ?? 0) <= 50,
-			},
-			{
-				key: "improve" as const,
-				range: "51 – 74",
-				label: "Room to improve",
-				hint: "Follow up on a few values",
-				active: (analysisResult?.healthScore ?? 0) > 50 && (analysisResult?.healthScore ?? 0) <= 74,
-			},
-			{
-				key: "good" as const,
-				range: "75 – 89",
-				label: "Looking good",
-				hint: "Mostly in a healthy range",
-				active: (analysisResult?.healthScore ?? 0) > 74 && (analysisResult?.healthScore ?? 0) <= 89,
-			},
-			{
-				key: "excellent" as const,
-				range: "90 – 100",
-				label: "Excellent",
-				hint: "Strong overall results",
-				active: (analysisResult?.healthScore ?? 0) > 89,
-			},
-		],
-		[analysisResult?.healthScore],
-	);
-
-	const summarySections = useMemo(() => {
-		if (!analysisResult) return [];
-		return buildResultsSummarySections(analysisResult, info.age, info.gender);
-	}, [analysisResult, info.age, info.gender]);
+	// Removed specific useMemos for scoreBands, scoreTier, and summarySections.
+	// They will be moved to the SingleResultView component.
 
 	const analyzeConnBadge = useMemo(() => {
 		if (analyzePhase === "ocr") {
@@ -523,322 +501,73 @@ const ImportOrUpload = () => {
 			)}
 
 			{/* ── AI Results screen ─────────────────────────────────── */}
-			{step === "done" && analysisResult && (
+			{step === "done" && analysisResults && analysisResults.length > 0 && (
 				<div className={styles.resultsPage}>
-
-					{/* ── Unavailable State (custom image with text-only model) ── */}
-					{analysisResult.healthScore === 0 && analysisResult.findings.length === 0 ? (
-						<>
-							{/* Notice Hero */}
-							<div className={styles.unavailableHero}>
-								<div className={styles.unavailableIconWrap}>
-									<div className={styles.unavailableIcon}>
-										<Stethoscope size={32} />
-									</div>
-									<div className={styles.unavailablePulse} />
+					{analysisResults.map((res, idx) => (
+						<div key={idx} className={styles.multiResultContainer}>
+							{analysisResults.length > 1 && (
+								<div className={styles.multiResultHeader}>
+									<FileText size={18} /> 
+									<h3>Results for: {res.fileName}</h3>
 								</div>
-
-								<div className={styles.unavailableContent}>
-									<div className={styles.unavailableBadge}>
-										<WifiOff size={12} /> Couldn't complete analysis
-									</div>
-									<h1>We couldn't read your lab report</h1>
-									<p>{analysisResult.summary}</p>
-								</div>
-							</div>
-
-							{/* What You Can Do */}
-							<div className={styles.section}>
-								<div className={styles.sectionHead}>
-									<h2 className={styles.sectionTitle}>Here's what to try</h2>
-									<p className={styles.sectionSub}>Pick any option below — each takes about a minute</p>
-								</div>
-
-								<div className={styles.unavailableActions}>
-									{analysisResult.recommendations.map((rec) => (
-										<button
-											key={rec.title}
-											className={styles.unavailableActionCard}
-											onClick={() => {
-												setFiles([]);
-												setSelectedPreset(null);
-												setLabTextPaste("");
-												setAnalysisResult(null);
-												setStep("upload");
-												window.scrollTo({ top: 0, behavior: "smooth" });
-											}}
-										>
-											<div className={styles.unavailableActionIcon} data-color="teal">
-												<span>{rec.icon}</span>
-											</div>
-											<div className={styles.unavailableActionText}>
-												<h3>{rec.title}</h3>
-												<p>{rec.body}</p>
-											</div>
-											<ChevronRight size={18} className={styles.unavailableActionArrow} />
-										</button>
-									))}
-								</div>
-							</div>
-
-							{/* Capabilities Overview — trimmed; remove duplicate preset/gpu cards below */}
-							<div className={styles.unavailableCapabilities}>
-								<h3>You can still use Genetiq for:</h3>
-								<div className={styles.unavailableCapGrid}>
-									<div className={styles.unavailableCapItem}>
-										<CheckCircle size={16} />
-										<span>Example lab reports</span>
-									</div>
-									<div className={styles.unavailableCapItem}>
-										<CheckCircle size={16} />
-										<span>Health questions</span>
-									</div>
-									<div className={styles.unavailableCapItem}>
-										<CheckCircle size={16} />
-										<span>Symptom check</span>
-									</div>
-									<div className={styles.unavailableCapItem}>
-										<CheckCircle size={16} />
-										<span>English, Twi, Ga &amp; more</span>
-									</div>
-								</div>
-							</div>
-
-							{/* Disclaimer */}
-							<div className={styles.disclaimer}>
-								<ShieldCheck size={14} />
-								<span>
-									{t("This analysis is for information only") ||
-										"This analysis is for information only and does not replace professional medical advice."}{" "}
-									{t("Always speak to a qualified doctor about your health.")}
-								</span>
-							</div>
-
-							{/* CTAs */}
-							<div className={styles.resultsCtas}>
-								<button className={styles.primaryBtn} onClick={() => {
+							)}
+							<SingleResultView 
+								analysisResult={res.result} 
+								info={info} 
+								t={t} 
+								selectedLanguage={selectedLanguage}
+								setSelectedLanguage={setSelectedLanguage}
+								onRetry={() => {
 									setFiles([]);
 									setSelectedPreset(null);
 									setLabTextPaste("");
-									setAnalysisResult(null);
+									setAnalysisResults(null);
 									setStep("upload");
 									window.scrollTo({ top: 0, behavior: "smooth" });
-								}}>
-									<Upload size={16} /> Go back and try again
-								</button>
-								<button className={styles.outlineBtn} onClick={() => navigate(paths.dashboard.root)}>
-									<Brain size={16} /> {t("Go to my dashboard")}
-								</button>
-							</div>
-						</>
-					) : (
-						/* ── Normal Results Layout (presets / real analysis) ── */
-						<>
-							{/* ── Native App Style Score Hero ─────────────────────────────────── */}
-							<div className={`${styles.card} ${styles.mainScoreCard}`}>
-								<div className={styles.scoreTop}>
-									<div className={`${styles.scoreCircleNative} ${styles[`scoreCircle-${scoreTier.key}`]}`}>
-										<div className={styles.scoreCircleValue}>{analysisResult.healthScore}</div>
-										<div className={styles.scoreCircleTotal}>/100</div>
-									</div>
-									<div className={styles.scoreInfoNative}>
-										<div className={styles.scoreTitleNative}>{t("Health Score")}</div>
-										<div className={`${styles.scoreStatusNative} ${styles[`scoreStatus-${scoreTier.key}`]}`}>{t(scoreTier.label)}</div>
-									</div>
-								</div>
-								
-								<p className={styles.scoreDescNative}>{t(scoreTier.plain)}</p>
-								
-								<div className={styles.miniScale}>
-									<div className={`${styles.miniScaleSeg} ${styles.seg1}`}></div>
-									<div className={`${styles.miniScaleSeg} ${styles.seg2}`}></div>
-									<div className={`${styles.miniScaleSeg} ${styles.seg3}`}></div>
-									<div className={`${styles.miniScaleSeg} ${styles.seg4}`}></div>
-									<div className={styles.miniScaleMarker} style={{ left: `${Math.min(100, Math.max(0, analysisResult.healthScore))}%` }}></div>
-								</div>
-
-								{/* Lang selection inside the card for compactness */}
-								<div className={styles.langSectionNative}>
-									{LANGUAGES.map((lang) => (
-										<button
-											key={lang.id}
-											type="button"
-											className={`${styles.langPillNative} ${lang.id === selectedLanguage ? styles.langPillActiveNative : ""}`}
-											onClick={() => setSelectedLanguage(lang.id)}
-										>
-											{lang.flag} {lang.code}
-										</button>
-									))}
-								</div>
-							</div>
-
-							{/* ── Legend Card ──────────────────────────────── */}
-							<div className={styles.card}>
-								<div className={styles.legendListNative}>
-									{scoreBands.map((band) => (
-										<div
-											key={band.key}
-											className={`${styles.legendItemNative} ${band.active ? styles.legendItemActiveNative : ""}`}
-										>
-											<div className={`${styles.legendDotNative} ${styles[`legendDot-${band.key}`]}`}></div>
-											<div className={styles.legendRangeNative}>{band.range}</div>
-											<div className={styles.legendLabelNative}>{t(band.label)}</div>
-											{band.active && <div className={styles.legendHereNative}>{t("You are here")}</div>}
-										</div>
-									))}
-								</div>
-							</div>
-
-							{/* ── Plain-English summary (re-styled) ──────────────────────── */}
-							{summarySections.length > 0 && (
-								<div className={styles.sectionHeaderNative}>
-									<h2>{t("What this means for you")}</h2>
-									<p>{t("Brief insights from your data.")}</p>
-								</div>
+								}}
+							/>
+							{idx < analysisResults.length - 1 && (
+								<hr className={styles.multiResultDivider} />
 							)}
-							<div className={styles.resultsBriefNative}>
-								<dl className={styles.resultsBriefList}>
-									{summarySections.map((section) => (
-										<div
-											key={section.id}
-											className={`${styles.resultsBriefItem} ${styles[`resultsBriefItem-${section.tone}`]}`}
-										>
-											<dt className={styles.resultsBriefTerm}>
-												{t(section.title) || section.title}
-											</dt>
-											<dd className={styles.resultsBriefDesc}>
-												{t(section.body) || section.body}
-											</dd>
-										</div>
-									))}
-								</dl>
-							</div>
+						</div>
+					))}
 
-							{/* ── Key findings ───────────────────────────────── */}
-							<div className={styles.section}>
-								<div className={styles.sectionHeaderNative}>
-									<h2>{t("What we found")}</h2>
-									<p>{t("Each result explained in plain English — no medical jargon.")}</p>
-								</div>
+					{/* ── Global Disclaimer & CTAs ───────────────────────────────────────── */}
+					<div className={styles.disclaimer} style={{ marginTop: 32 }}>
+						<div className={styles.disclaimerIcon}>
+							<ShieldCheck size={18} />
+						</div>
+						<div className={styles.disclaimerText}>
+							<strong>{t("This analysis is for information only") || "This analysis is for information only"}</strong>
+							<span>
+								{t("Always speak to a qualified doctor about your health.")}{" "}
+								{t("Visit your nearest CHPS compound") || ""}
+							</span>
+						</div>
+					</div>
 
-								<div className={styles.findingsListNative}>
-									{analysisResult.findings.map((f) => {
-										const statusClass = f.status === "normal" ? "good"
-											: f.status === "action" ? "critical"
-											: "warning";
-										const displayName = t(f.name) || f.name;
-										const displayMarker = t(f.marker) || f.marker;
-										const showMarker = displayMarker.toLowerCase() !== displayName.toLowerCase();
-										const isOpen = expandedFindingId === f.id;
-										const hasNote = Boolean((f.note || "").trim());
-
-										return (
-											<div key={f.id} className={`${styles.resultCardNative} ${styles[`resultCard-${statusClass}`]}`}>
-												<div className={styles.resultHeaderNative}>
-													<div className={styles.resultTitleNative}>{displayName}</div>
-													{showMarker && <div className={styles.resultSubtitleNative}>{displayMarker}</div>}
-												</div>
-												<div className={`${styles.resultStatusNative} ${styles[`resultStatusText-${statusClass}`]}`}>{t(f.statusLabel) || f.statusLabel}</div>
-												
-												<div className={styles.findingTopNative}>
-													<span className={`${styles.findingValueNative} ${styles[`value-${statusClass}`]}`}>{f.value}</span>
-												</div>
-
-												{hasNote && (
-													<button className={styles.resultActionNative} onClick={() => setExpandedFindingId(isOpen ? null : f.id)}>
-														{isOpen ? t("Hide Details") : t("Why this matters")}
-														<ChevronDown size={16} style={{ transform: isOpen ? 'rotate(180deg)' : 'none', transition: '0.2s' }} />
-													</button>
-												)}
-												
-												{isOpen && hasNote && (
-													<div className={styles.findingNoteNative}>
-														{(t(f.note) || f.note)
-															.split(/\n\n+/)
-															.map((block) => block.trim())
-															.filter(Boolean)
-															.map((block, i) => {
-																const lines = block.split("\n").map((l) => l.trim()).filter(Boolean);
-																const heading = lines[0];
-																const isHeading = /^(what this means|in simple words|what you should|what to|what helps|get emergency|urgent|still important|if this)/i.test(heading);
-																const bodyLines = isHeading ? lines.slice(1) : lines;
-																return (
-																	<div key={`${f.id}-note-${i}`} className={styles.findingNoteBlock}>
-																		{isHeading ? <span className={styles.findingNoteHeading}>{heading}</span> : null}
-																		{(isHeading ? bodyLines : lines).map((line, li) => (
-																			<p key={`${f.id}-line-${i}-${li}`} className={styles.findingNoteLine}>{line}</p>
-																		))}
-																	</div>
-																);
-															})}
-													</div>
-												)}
-											</div>
-										);
-									})}
-								</div>
-							</div>
-
-							{/* ── What to do next ────────────────────────────── */}
-							<div className={styles.section}>
-								<div className={styles.sectionHead}>
-									<h2 className={styles.sectionTitle}>{t("What to do next")}</h2>
-									<p className={styles.sectionSub}>{t("Simple steps based on your results.")}</p>
-								</div>
-								<div className={styles.recsList}>
-									{analysisResult.recommendations.map((r, idx) => (
-										<div key={r.title} className={styles.recCard}>
-											<span className={styles.recStep}>{idx + 1}</span>
-											<span className={styles.recIcon} data-step={idx + 1}>{r.icon}</span>
-											<div className={styles.recContent}>
-												<div className={styles.recTitle}>{t(r.title) || r.title}</div>
-												<div className={styles.recBody}>{t(r.body) || r.body}</div>
-											</div>
-										</div>
-									))}
-								</div>
-							</div>
-
-							{/* ── Disclaimer ─────────────────────────────────── */}
-							<div className={styles.disclaimer}>
-								<div className={styles.disclaimerIcon}>
-									<ShieldCheck size={18} />
-								</div>
-								<div className={styles.disclaimerText}>
-									<strong>{t("This analysis is for information only") || "This analysis is for information only"}</strong>
-									<span>
-										{t("Always speak to a qualified doctor about your health.")}{" "}
-										{t("Visit your nearest CHPS compound") || ""}
-									</span>
-								</div>
-							</div>
-
-							{/* ── CTAs ───────────────────────────────────────── */}
-							<div className={styles.resultsCtasWrap}>
-								<div className={styles.resultsCtas}>
-									<button className={styles.primaryBtn} onClick={() => navigate(paths.dashboard.root)}>
-										<Brain size={16} /> {t("Go to my dashboard")}
-									</button>
-									<button className={styles.outlineBtn} onClick={() => navigate(paths.clinicalHistory)}>
-										<FileText size={16} /> {t("View clinical history")}
-									</button>
-									<button
-										className={styles.ghostBtn}
-										onClick={() => {
-											setFiles([]);
-											setSelectedPreset(null);
-											setAnalysisResult(null);
-											setStep("upload");
-											window.scrollTo({ top: 0, behavior: "smooth" });
-										}}
-									>
-										<Upload size={14} /> {t("Upload more results")}
-									</button>
-								</div>
-							</div>
-						</>
-					)}
-
+					<div className={styles.resultsCtasWrap}>
+						<div className={styles.resultsCtas}>
+							<button className={styles.primaryBtn} onClick={() => navigate(paths.dashboard.root)}>
+								<Brain size={16} /> {t("Go to my dashboard")}
+							</button>
+							<button className={styles.outlineBtn} onClick={() => navigate(paths.clinicalHistory)}>
+								<FileText size={16} /> {t("View clinical history")}
+							</button>
+							<button
+								className={styles.ghostBtn}
+								onClick={() => {
+									setFiles([]);
+									setSelectedPreset(null);
+									setAnalysisResults(null);
+									setStep("upload");
+									window.scrollTo({ top: 0, behavior: "smooth" });
+								}}
+							>
+								<Upload size={14} /> {t("Upload more results")}
+							</button>
+						</div>
+					</div>
 				</div>
 			)}
 
@@ -1471,5 +1200,316 @@ const ImportOrUpload = () => {
 		</div>
 	);
 };
+
+function SingleResultView({
+	analysisResult,
+	info,
+	t,
+	selectedLanguage,
+	setSelectedLanguage,
+	onRetry
+}: {
+	analysisResult: GemmaAnalysisResult;
+	info: any;
+	t: (text: string) => string;
+	selectedLanguage: GemmaLanguage;
+	setSelectedLanguage: (lang: GemmaLanguage) => void;
+	onRetry: () => void;
+}) {
+	const [expandedFindingId, setExpandedFindingId] = useState<string | null>(null);
+
+	const scoreTier = useMemo(() => {
+		const score = analysisResult?.healthScore ?? 0;
+		if (score <= 50) {
+			return {
+				key: "attention" as const,
+				label: "Needs attention",
+				plain: "Some results look off. Take this to a clinic soon.",
+				range: "0 – 50",
+			};
+		}
+		if (score <= 74) {
+			return {
+				key: "improve" as const,
+				label: "Room to improve",
+				plain: "A few values need follow-up. Ask your doctor what to watch.",
+				range: "51 – 74",
+			};
+		}
+		if (score <= 89) {
+			return {
+				key: "good" as const,
+				label: "Looking good",
+				plain: "Most results look fine. Keep healthy habits and check-ups.",
+				range: "75 – 89",
+			};
+		}
+		return {
+			key: "excellent" as const,
+			label: "Excellent",
+			plain: "Your results look strong overall. Stay consistent.",
+			range: "90 – 100",
+		};
+	}, [analysisResult?.healthScore]);
+
+	const scoreBands = useMemo(
+		() => [
+			{
+				key: "attention" as const,
+				range: "0 – 50",
+				label: "Needs attention",
+				hint: "See a clinic soon",
+				active: (analysisResult?.healthScore ?? 0) <= 50,
+			},
+			{
+				key: "improve" as const,
+				range: "51 – 74",
+				label: "Room to improve",
+				hint: "Follow up on a few values",
+				active: (analysisResult?.healthScore ?? 0) > 50 && (analysisResult?.healthScore ?? 0) <= 74,
+			},
+			{
+				key: "good" as const,
+				range: "75 – 89",
+				label: "Looking good",
+				hint: "Mostly in a healthy range",
+				active: (analysisResult?.healthScore ?? 0) > 74 && (analysisResult?.healthScore ?? 0) <= 89,
+			},
+			{
+				key: "excellent" as const,
+				range: "90 – 100",
+				label: "Excellent",
+				hint: "Strong overall results",
+				active: (analysisResult?.healthScore ?? 0) > 89,
+			},
+		],
+		[analysisResult?.healthScore],
+	);
+
+	const summarySections = useMemo(() => {
+		if (!analysisResult) return [];
+		return buildResultsSummarySections(analysisResult, info.age, info.gender);
+	}, [analysisResult, info.age, info.gender]);
+
+	if (analysisResult.healthScore === 0 && analysisResult.findings.length === 0) {
+		return (
+			<>
+				{/* Notice Hero */}
+				<div className={styles.unavailableHero}>
+					<div className={styles.unavailableIconWrap}>
+						<div className={styles.unavailableIcon}>
+							<Stethoscope size={32} />
+						</div>
+						<div className={styles.unavailablePulse} />
+					</div>
+
+					<div className={styles.unavailableContent}>
+						<div className={styles.unavailableBadge}>
+							<WifiOff size={12} /> Couldn't complete analysis
+						</div>
+						<h1>We couldn't read your lab report</h1>
+						<p>{analysisResult.summary}</p>
+					</div>
+				</div>
+
+				{/* What You Can Do */}
+				<div className={styles.section}>
+					<div className={styles.sectionHead}>
+						<h2 className={styles.sectionTitle}>Here's what to try</h2>
+						<p className={styles.sectionSub}>Pick any option below — each takes about a minute</p>
+					</div>
+
+					<div className={styles.unavailableActions}>
+						{analysisResult.recommendations.map((rec) => (
+							<button
+								key={rec.title}
+								className={styles.unavailableActionCard}
+								onClick={onRetry}
+							>
+								<div className={styles.unavailableActionIcon} data-color="teal">
+									<span>{rec.icon}</span>
+								</div>
+								<div className={styles.unavailableActionText}>
+									<h3>{rec.title}</h3>
+									<p>{rec.body}</p>
+								</div>
+								<ChevronRight size={18} className={styles.unavailableActionArrow} />
+							</button>
+						))}
+					</div>
+				</div>
+			</>
+		);
+	}
+
+	return (
+		<>
+			{/* ── Native App Style Score Hero ─────────────────────────────────── */}
+			<div className={`${styles.card} ${styles.mainScoreCard}`}>
+				<div className={styles.scoreTop}>
+					<div className={`${styles.scoreCircleNative} ${styles[`scoreCircle-${scoreTier.key}`]}`}>
+						<div className={styles.scoreCircleValue}>{analysisResult.healthScore}</div>
+						<div className={styles.scoreCircleTotal}>/100</div>
+					</div>
+					<div className={styles.scoreInfoNative}>
+						<div className={styles.scoreTitleNative}>{t("Health Score")}</div>
+						<div className={`${styles.scoreStatusNative} ${styles[`scoreStatus-${scoreTier.key}`]}`}>{t(scoreTier.label)}</div>
+					</div>
+				</div>
+				
+				<p className={styles.scoreDescNative}>{t(scoreTier.plain)}</p>
+				
+				<div className={styles.miniScale}>
+					<div className={`${styles.miniScaleSeg} ${styles.seg1}`}></div>
+					<div className={`${styles.miniScaleSeg} ${styles.seg2}`}></div>
+					<div className={`${styles.miniScaleSeg} ${styles.seg3}`}></div>
+					<div className={`${styles.miniScaleSeg} ${styles.seg4}`}></div>
+					<div className={styles.miniScaleMarker} style={{ left: `${Math.min(100, Math.max(0, analysisResult.healthScore))}%` }}></div>
+				</div>
+
+				{/* Lang selection inside the card for compactness */}
+				<div className={styles.langSectionNative}>
+					{LANGUAGES.map((lang) => (
+						<button
+							key={lang.id}
+							type="button"
+							className={`${styles.langPillNative} ${lang.id === selectedLanguage ? styles.langPillActiveNative : ""}`}
+							onClick={() => setSelectedLanguage(lang.id)}
+						>
+							{lang.flag} {lang.code}
+						</button>
+					))}
+				</div>
+			</div>
+
+			{/* ── Legend Card ──────────────────────────────── */}
+			<div className={styles.card}>
+				<div className={styles.legendListNative}>
+					{scoreBands.map((band) => (
+						<div
+							key={band.key}
+							className={`${styles.legendItemNative} ${band.active ? styles.legendItemActiveNative : ""}`}
+						>
+							<div className={`${styles.legendDotNative} ${styles[`legendDot-${band.key}`]}`}></div>
+							<div className={styles.legendRangeNative}>{band.range}</div>
+							<div className={styles.legendLabelNative}>{t(band.label)}</div>
+							{band.active && <div className={styles.legendHereNative}>{t("You are here")}</div>}
+						</div>
+					))}
+				</div>
+			</div>
+
+			{/* ── Plain-English summary (re-styled) ──────────────────────── */}
+			{summarySections.length > 0 && (
+				<div className={styles.sectionHeaderNative}>
+					<h2>{t("What this means for you")}</h2>
+					<p>{t("Brief insights from your data.")}</p>
+				</div>
+			)}
+			<div className={styles.resultsBriefNative}>
+				<dl className={styles.resultsBriefList}>
+					{summarySections.map((section) => (
+						<div
+							key={section.id}
+							className={`${styles.resultsBriefItem} ${styles[`resultsBriefItem-${section.tone}`]}`}
+						>
+							<dt className={styles.resultsBriefTerm}>
+								{t(section.title) || section.title}
+							</dt>
+							<dd className={styles.resultsBriefDesc}>
+								{t(section.body) || section.body}
+							</dd>
+						</div>
+					))}
+				</dl>
+			</div>
+
+			{/* ── Key findings ───────────────────────────────── */}
+			<div className={styles.section}>
+				<div className={styles.sectionHeaderNative}>
+					<h2>{t("What we found")}</h2>
+					<p>{t("Each result explained in plain English — no medical jargon.")}</p>
+				</div>
+
+				<div className={styles.findingsListNative}>
+					{analysisResult.findings.map((f) => {
+						const statusClass = f.status === "normal" ? "good"
+							: f.status === "action" ? "critical"
+							: "warning";
+						const displayName = t(f.name) || f.name;
+						const displayMarker = t(f.marker) || f.marker;
+						const showMarker = displayMarker.toLowerCase() !== displayName.toLowerCase();
+						const isOpen = expandedFindingId === f.id;
+						const hasNote = Boolean((f.note || "").trim());
+
+						return (
+							<div key={f.id} className={`${styles.resultCardNative} ${styles[`resultCard-${statusClass}`]}`}>
+								<div className={styles.resultHeaderNative}>
+									<div className={styles.resultTitleNative}>{displayName}</div>
+									{showMarker && <div className={styles.resultSubtitleNative}>{displayMarker}</div>}
+								</div>
+								<div className={`${styles.resultStatusNative} ${styles[`resultStatusText-${statusClass}`]}`}>{t(f.statusLabel) || f.statusLabel}</div>
+								
+								<div className={styles.findingTopNative}>
+									<span className={`${styles.findingValueNative} ${styles[`value-${statusClass}`]}`}>{f.value}</span>
+								</div>
+
+								{hasNote && (
+									<button className={styles.resultActionNative} onClick={() => setExpandedFindingId(isOpen ? null : f.id)}>
+										{isOpen ? t("Hide Details") : t("Why this matters")}
+										<ChevronDown size={16} style={{ transform: isOpen ? 'rotate(180deg)' : 'none', transition: '0.2s' }} />
+									</button>
+								)}
+								
+								{isOpen && hasNote && (
+									<div className={styles.findingNoteNative}>
+										{(t(f.note) || f.note)
+											.split(/\n\n+/)
+											.map((block) => block.trim())
+											.filter(Boolean)
+											.map((block, i) => {
+												const lines = block.split("\n").map((l) => l.trim()).filter(Boolean);
+												const heading = lines[0];
+												const isHeading = /^(what this means|in simple words|what you should|what to|what helps|get emergency|urgent|still important|if this)/i.test(heading);
+												const bodyLines = isHeading ? lines.slice(1) : lines;
+												return (
+													<div key={`${f.id}-note-${i}`} className={styles.findingNoteBlock}>
+														{isHeading ? <span className={styles.findingNoteHeading}>{heading}</span> : null}
+														{(isHeading ? bodyLines : lines).map((line, li) => (
+															<p key={`${f.id}-line-${i}-${li}`} className={styles.findingNoteLine}>{line}</p>
+														))}
+													</div>
+												);
+											})}
+									</div>
+								)}
+							</div>
+						);
+					})}
+				</div>
+			</div>
+
+			{/* ── What to do next ────────────────────────────── */}
+			<div className={styles.section}>
+				<div className={styles.sectionHead}>
+					<h2 className={styles.sectionTitle}>{t("What to do next")}</h2>
+					<p className={styles.sectionSub}>{t("Simple steps based on your results.")}</p>
+				</div>
+				<div className={styles.recsList}>
+					{analysisResult.recommendations.map((r, idx) => (
+						<div key={r.title} className={styles.recCard}>
+							<span className={styles.recStep}>{idx + 1}</span>
+							<span className={styles.recIcon} data-step={idx + 1}>{r.icon}</span>
+							<div className={styles.recContent}>
+								<div className={styles.recTitle}>{t(r.title) || r.title}</div>
+								<div className={styles.recBody}>{t(r.body) || r.body}</div>
+							</div>
+						</div>
+					))}
+				</div>
+			</div>
+		</>
+	);
+}
 
 export default ImportOrUpload;
