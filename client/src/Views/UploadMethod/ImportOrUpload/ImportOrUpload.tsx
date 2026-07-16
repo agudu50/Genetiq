@@ -1361,7 +1361,7 @@ function SingleResultView({
 					</div>
 				</div>
 				
-				<p className={styles.scoreDescNative}>{analysisResult?.summary || t(scoreTier.plain)}</p>
+				<p className={styles.scoreDescNative}>{t(scoreTier.plain)}</p>
 				
 				<div className={styles.miniScale}>
 					<div className={`${styles.miniScaleSeg} ${styles.seg1}`}></div>
