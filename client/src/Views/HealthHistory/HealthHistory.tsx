@@ -21,6 +21,13 @@ import {
 	Shield,
 	Zap,
 	Heart,
+	TrendingUp,
+	BarChart3,
+	Filter,
+	SortAsc,
+	SortDesc,
+	ChevronLeft,
+	ChevronRight,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -43,6 +50,13 @@ function formatTime(isoString: string) {
 	return new Date(isoString).toLocaleTimeString("en-GB", {
 		hour: "2-digit",
 		minute: "2-digit",
+	});
+}
+
+function formatShortDate(isoString: string) {
+	return new Date(isoString).toLocaleDateString("en-GB", {
+		day: "numeric",
+		month: "short",
 	});
 }
 
@@ -81,6 +95,329 @@ function getInitials(name: string) {
 	if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
 	return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
+
+// ─── Sort & Filter types ──────────────────────────────────────────────────────
+
+const RECORDS_PER_PAGE = 5;
+
+type SortBy = "date" | "score" | "findings";
+type SortDir = "desc" | "asc";
+type FilterStatus = "all" | "abnormal" | "normal";
+
+// ─── Health Score Trend Chart ─────────────────────────────────────────────────
+
+const HealthScoreChart = ({ records }: { records: UploadRecord[] }) => {
+	const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+
+	// Sort chronologically for the chart
+	const chronoRecords = useMemo(
+		() =>
+			[...records].sort(
+				(a, b) => new Date(a.uploadedAt).getTime() - new Date(b.uploadedAt).getTime(),
+			),
+		[records],
+	);
+
+	if (chronoRecords.length < 2) return null;
+
+	const width = 600;
+	const height = 200;
+	const padX = 48;
+	const padTop = 24;
+	const padBot = 40;
+	const chartW = width - padX * 2;
+	const chartH = height - padTop - padBot;
+
+	const points = chronoRecords.map((r, i) => ({
+		x: padX + (i / (chronoRecords.length - 1)) * chartW,
+		y: padTop + chartH - (r.healthScore / 100) * chartH,
+		score: r.healthScore,
+		date: formatShortDate(r.uploadedAt),
+		fullDate: formatDate(r.uploadedAt),
+	}));
+
+	// Build smooth SVG path
+	const linePath = points
+		.map((p, i) => (i === 0 ? `M ${p.x} ${p.y}` : `L ${p.x} ${p.y}`))
+		.join(" ");
+
+	// Fill area path
+	const areaPath = `${linePath} L ${points[points.length - 1].x} ${padTop + chartH} L ${points[0].x} ${padTop + chartH} Z`;
+
+	// Zone lines (horizontal)
+	const zones = [
+		{ value: 50, color: "#ef4444", label: "50" },
+		{ value: 75, color: "#f59e0b", label: "75" },
+		{ value: 90, color: "#10b981", label: "90" },
+	];
+
+	return (
+		<section className={styles.trendSection}>
+			<div className={styles.trendHeader}>
+				<div className={styles.trendHeaderLeft}>
+					<TrendingUp size={18} />
+					<h2>Health Score Trend</h2>
+				</div>
+				<span className={styles.trendSubtitle}>
+					Track your score across {chronoRecords.length} uploads
+				</span>
+			</div>
+			<div className={styles.trendChartWrap}>
+				<svg
+					viewBox={`0 0 ${width} ${height}`}
+					className={styles.trendSvg}
+					preserveAspectRatio="xMidYMid meet"
+				>
+					<defs>
+						<linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1">
+							<stop offset="0%" stopColor="#00a69d" stopOpacity="0.35" />
+							<stop offset="100%" stopColor="#00a69d" stopOpacity="0.02" />
+						</linearGradient>
+						<linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+							<stop offset="0%" stopColor="#00a69d" />
+							<stop offset="100%" stopColor="#38bdf8" />
+						</linearGradient>
+					</defs>
+
+					{/* Zone bands */}
+					{zones.map((z) => {
+						const y = padTop + chartH - (z.value / 100) * chartH;
+						return (
+							<g key={z.value}>
+								<line
+									x1={padX}
+									y1={y}
+									x2={width - padX}
+									y2={y}
+									stroke={z.color}
+									strokeWidth="0.5"
+									strokeDasharray="4 4"
+									opacity="0.35"
+								/>
+								<text
+									x={padX - 6}
+									y={y + 3}
+									textAnchor="end"
+									fill={z.color}
+									fontSize="9"
+									fontWeight="700"
+									opacity="0.7"
+								>
+									{z.label}
+								</text>
+							</g>
+						);
+					})}
+
+					{/* Area fill */}
+					<path d={areaPath} fill="url(#trendGrad)" />
+
+					{/* Line */}
+					<path
+						d={linePath}
+						fill="none"
+						stroke="url(#lineGrad)"
+						strokeWidth="2.5"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+					/>
+
+					{/* Data points */}
+					{points.map((p, i) => (
+						<g key={i}>
+							{/* Hover area (invisible, wider) */}
+							<circle
+								cx={p.x}
+								cy={p.y}
+								r={16}
+								fill="transparent"
+								onMouseEnter={() => setHoveredIdx(i)}
+								onMouseLeave={() => setHoveredIdx(null)}
+								style={{ cursor: "pointer" }}
+							/>
+							{/* Outer glow */}
+							<circle
+								cx={p.x}
+								cy={p.y}
+								r={hoveredIdx === i ? 10 : 6}
+								fill={healthScoreColour(p.score)}
+								opacity={hoveredIdx === i ? 0.2 : 0.12}
+								style={{ transition: "r 0.2s ease, opacity 0.2s ease" }}
+							/>
+							{/* Dot */}
+							<circle
+								cx={p.x}
+								cy={p.y}
+								r={hoveredIdx === i ? 5 : 3.5}
+								fill={healthScoreColour(p.score)}
+								stroke="#fff"
+								strokeWidth="1.5"
+								style={{ transition: "r 0.2s ease" }}
+							/>
+							{/* X-axis label */}
+							<text
+								x={p.x}
+								y={height - 10}
+								textAnchor="middle"
+								fill="var(--hh-muted)"
+								fontSize="9"
+								fontWeight="600"
+							>
+								{p.date}
+							</text>
+							{/* Hover tooltip */}
+							{hoveredIdx === i && (
+								<g>
+									<rect
+										x={p.x - 36}
+										y={p.y - 34}
+										width={72}
+										height={24}
+										rx={6}
+										fill="var(--hh-card-solid)"
+										stroke="var(--hh-border)"
+										strokeWidth="1"
+									/>
+									<text
+										x={p.x}
+										y={p.y - 18}
+										textAnchor="middle"
+										fill={healthScoreColour(p.score)}
+										fontSize="12"
+										fontWeight="800"
+									>
+										{p.score}/100
+									</text>
+								</g>
+							)}
+						</g>
+					))}
+				</svg>
+			</div>
+		</section>
+	);
+};
+
+// ─── Findings Donut Chart ─────────────────────────────────────────────────────
+
+const FindingsDonut = ({ records }: { records: UploadRecord[] }) => {
+	const counts = useMemo(() => {
+		let normal = 0;
+		let elevated = 0;
+		let low = 0;
+		let action = 0;
+		for (const r of records) {
+			for (const f of r.findings) {
+				if (f.status === "normal") normal++;
+				else if (f.status === "elevated") elevated++;
+				else if (f.status === "low") low++;
+				else action++;
+			}
+		}
+		return { normal, elevated, low, action, total: normal + elevated + low + action };
+	}, [records]);
+
+	if (counts.total === 0) return null;
+
+	const r = 40;
+	const circ = 2 * Math.PI * r;
+	const segments = [
+		{ key: "normal", count: counts.normal, color: "#10b981", label: "Normal" },
+		{ key: "elevated", count: counts.elevated, color: "#f59e0b", label: "Elevated" },
+		{ key: "low", count: counts.low, color: "#3b82f6", label: "Low" },
+		{ key: "action", count: counts.action, color: "#ef4444", label: "Needs action" },
+	].filter((s) => s.count > 0);
+
+	let accumulated = 0;
+	const arcs = segments.map((seg) => {
+		const pct = seg.count / counts.total;
+		const dash = pct * circ;
+		const gap = circ - dash;
+		const offset = -(accumulated * circ) + circ / 4; // rotate -90deg start
+		accumulated += pct;
+		return { ...seg, dash, gap, offset, pct };
+	});
+
+	return (
+		<section className={styles.insightsSection}>
+			<div className={styles.insightsHeader}>
+				<div className={styles.insightsHeaderLeft}>
+					<BarChart3 size={18} />
+					<h2>Insights at a Glance</h2>
+				</div>
+				<span className={styles.insightsSubtitle}>
+					{counts.total} total findings across {records.length} upload{records.length !== 1 ? "s" : ""}
+				</span>
+			</div>
+			<div className={styles.insightsGrid}>
+				<div className={styles.donutWrap}>
+					<svg viewBox="0 0 96 96" width="140" height="140" className={styles.donutSvg}>
+						<circle
+							cx="48"
+							cy="48"
+							r={r}
+							fill="none"
+							stroke="var(--hh-ring-track)"
+							strokeWidth="10"
+						/>
+						{arcs.map((arc) => (
+							<circle
+								key={arc.key}
+								cx="48"
+								cy="48"
+								r={r}
+								fill="none"
+								stroke={arc.color}
+								strokeWidth="10"
+								strokeDasharray={`${arc.dash} ${arc.gap}`}
+								strokeDashoffset={arc.offset}
+								strokeLinecap="butt"
+								style={{ transition: "stroke-dasharray 0.6s ease, stroke-dashoffset 0.6s ease" }}
+							/>
+						))}
+						<text
+							x="48"
+							y="45"
+							textAnchor="middle"
+							dominantBaseline="middle"
+							fill="var(--hh-text)"
+							fontSize="18"
+							fontWeight="900"
+						>
+							{counts.total}
+						</text>
+						<text
+							x="48"
+							y="58"
+							textAnchor="middle"
+							dominantBaseline="middle"
+							fill="var(--hh-muted)"
+							fontSize="8"
+							fontWeight="700"
+						>
+							findings
+						</text>
+					</svg>
+				</div>
+				<div className={styles.donutLegend}>
+					{arcs.map((arc) => (
+						<div key={arc.key} className={styles.donutLegendRow}>
+							<span
+								className={styles.donutLegendDot}
+								style={{ background: arc.color }}
+							/>
+							<span className={styles.donutLegendLabel}>{arc.label}</span>
+							<span className={styles.donutLegendCount}>{arc.count}</span>
+							<span className={styles.donutLegendPct}>
+								{Math.round(arc.pct * 100)}%
+							</span>
+						</div>
+					))}
+				</div>
+			</div>
+		</section>
+	);
+};
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -264,7 +601,11 @@ export const HealthHistory: React.FC = () => {
 	const records  = useSelector((state: RootState) => state.uploadHistory.records);
 	const user     = useSelector((state: RootState) => state.user);
 
-	const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
+	const [sortBy, setSortBy] = useState<SortBy>("date");
+	const [sortDir, setSortDir] = useState<SortDir>("desc");
+	const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
+	const [currentPage, setCurrentPage] = useState(1);
+
 	// Derive display name — use the most recent upload's name if user slice is empty
 	const userFullName = `${user.firstName || ""} ${user.lastName || ""}`.trim();
 	const recordFullName = records[0]
@@ -279,12 +620,50 @@ export const HealthHistory: React.FC = () => {
 	const age       = user.age       || records[0]?.age       || "";
 	const gender    = user.gender    || records[0]?.gender     || "";
 
-	// Sort records based on uploadedAt time
-	const sortedRecords = [...records].sort((a, b) => {
-		const timeA = new Date(a.uploadedAt).getTime();
-		const timeB = new Date(b.uploadedAt).getTime();
-		return sortOrder === "desc" ? timeB - timeA : timeA - timeB;
-	});
+	// Filter records
+	const filteredRecords = useMemo(() => {
+		if (filterStatus === "all") return records;
+		if (filterStatus === "abnormal") {
+			return records.filter((r) => r.findings.some((f) => f.status !== "normal"));
+		}
+		return records.filter((r) => r.findings.every((f) => f.status === "normal"));
+	}, [records, filterStatus]);
+
+	// Sort records
+	const sortedRecords = useMemo(() => {
+		const arr = [...filteredRecords];
+		arr.sort((a, b) => {
+			let cmp = 0;
+			if (sortBy === "date") {
+				cmp = new Date(a.uploadedAt).getTime() - new Date(b.uploadedAt).getTime();
+			} else if (sortBy === "score") {
+				cmp = a.healthScore - b.healthScore;
+			} else {
+				cmp = a.findings.length - b.findings.length;
+			}
+			return sortDir === "desc" ? -cmp : cmp;
+		});
+		return arr;
+	}, [filteredRecords, sortBy, sortDir]);
+
+	// Pagination
+	const totalPages = Math.max(1, Math.ceil(sortedRecords.length / RECORDS_PER_PAGE));
+	const safePage = Math.min(currentPage, totalPages);
+	const paginatedRecords = sortedRecords.slice(
+		(safePage - 1) * RECORDS_PER_PAGE,
+		safePage * RECORDS_PER_PAGE,
+	);
+
+	// Reset to page 1 when filter/sort changes
+	const prevFilter = React.useRef(filterStatus);
+	const prevSortBy = React.useRef(sortBy);
+	const prevSortDir = React.useRef(sortDir);
+	if (prevFilter.current !== filterStatus || prevSortBy.current !== sortBy || prevSortDir.current !== sortDir) {
+		prevFilter.current = filterStatus;
+		prevSortBy.current = sortBy;
+		prevSortDir.current = sortDir;
+		if (currentPage !== 1) setCurrentPage(1);
+	}
 
 	const latestRecord = sortedRecords[0] ?? records[0] ?? null;
 
@@ -310,6 +689,15 @@ export const HealthHistory: React.FC = () => {
 
 	const scrollToHistory = () => {
 		document.getElementById("upload-history")?.scrollIntoView({ behavior: "smooth" });
+	};
+
+	const toggleSort = (by: SortBy) => {
+		if (sortBy === by) {
+			setSortDir((d) => (d === "desc" ? "asc" : "desc"));
+		} else {
+			setSortBy(by);
+			setSortDir("desc");
+		}
 	};
 
 	return (
@@ -517,6 +905,17 @@ export const HealthHistory: React.FC = () => {
 									</div>
 								</div>
 							)}
+
+							<button
+								type="button"
+								className={styles.newUploadBannerBtn}
+								onClick={() =>
+									navigate(paths.config.importOrUpload, { state: { skipToUpload: true } })
+								}
+							>
+								<Upload size={16} />
+								<span>New Upload</span>
+							</button>
 						</div>
 					</div>
 
@@ -546,59 +945,144 @@ export const HealthHistory: React.FC = () => {
 							</span>
 						</div>
 
-						<button
-							type="button"
-							className={styles.newUploadBannerBtn}
-							onClick={() =>
-								navigate(paths.config.importOrUpload, { state: { skipToUpload: true } })
-							}
-						>
-							<Upload size={16} />
-							<span>New Upload</span>
-						</button>
 					</div>
 				</section>
 
-				{/* ── Upload history timeline ─────────────────────────────── */}
-				<section className={styles.historySection} id="upload-history">
-					<div className={styles.historyPanel}>
-					<div className={styles.historyHeader}>
-						<div className={styles.historyHeaderLeft}>
-							<FileText size={18} />
-							<h2>Upload History</h2>
-							<span className={styles.historyCount}>
-								{records.length} record{records.length !== 1 ? "s" : ""}
-							</span>
-						</div>
-						{records.length > 1 && (
-							<button
-								className={styles.sortToggleBtn}
-								onClick={() => setSortOrder((order) => (order === "desc" ? "asc" : "desc"))}
-								title={sortOrder === "desc" ? "Showing latest first" : "Showing oldest first"}
-							>
-								<ArrowUpDown size={13} />
-								<span>{sortOrder === "desc" ? "Latest first" : "Oldest first"}</span>
-							</button>
+				{/* ── Charts & History Column ───────────────────────────── */}
+				<div className={styles.historyColumn}>
+					
+					{/* Charts Grid */}
+					<div className={styles.chartsGrid}>
+						{/* Health Score Trend Chart */}
+						{records.length >= 2 && <HealthScoreChart records={records} />}
+
+						{/* Findings Donut Chart */}
+						{records.length > 0 && <FindingsDonut records={records} />}
+					</div>
+
+					{/* ── Upload history timeline ─────────────────────────────── */}
+					<section className={styles.historySection} id="upload-history">
+						<div className={styles.historyPanel}>
+							<div className={styles.historyHeader}>
+								<div className={styles.historyHeaderLeft}>
+									<FileText size={18} />
+									<h2>Upload History</h2>
+									<span className={styles.historyCount}>
+										{filteredRecords.length} of {records.length} record{records.length !== 1 ? "s" : ""}
+									</span>
+								</div>
+							</div>
+
+							{/* ── Sort & Filter toolbar ────────────────────────── */}
+							{records.length > 0 && (
+								<div className={styles.sortFilterBar}>
+									<div className={styles.sortGroup}>
+										<span className={styles.sortGroupLabel}>
+											<ArrowUpDown size={12} />
+											Sort
+										</span>
+										{(["date", "score", "findings"] as SortBy[]).map((by) => (
+											<button
+												key={by}
+												className={`${styles.sortPill} ${sortBy === by ? styles.sortPillActive : ""}`}
+												onClick={() => toggleSort(by)}
+											>
+												{by === "date" ? "Date" : by === "score" ? "Score" : "Findings"}
+												{sortBy === by && (
+													sortDir === "desc"
+														? <SortDesc size={11} />
+														: <SortAsc size={11} />
+												)}
+											</button>
+										))}
+									</div>
+									<div className={styles.filterGroup}>
+										<span className={styles.sortGroupLabel}>
+											<Filter size={12} />
+											Filter
+										</span>
+										{(["all", "abnormal", "normal"] as FilterStatus[]).map((f) => (
+											<button
+												key={f}
+												className={`${styles.filterPill} ${filterStatus === f ? styles.filterPillActive : ""}`}
+												onClick={() => setFilterStatus(f)}
+											>
+												{f === "all" ? "All" : f === "abnormal" ? "Abnormal" : "Normal"}
+											</button>
+										))}
+									</div>
+								</div>
+							)}
+
+							{filteredRecords.length === 0 && records.length > 0 ? (
+								<div className={styles.emptyFilterState}>
+									<Filter size={24} />
+									<p>No records match this filter. Try a different filter.</p>
+								</div>
+							) : records.length === 0 ? (
+								<EmptyState onUpload={() => navigate(paths.config.importOrUpload)} />
+							) : (
+								<>
+									{/* Page info */}
+									<div className={styles.pageInfo}>
+										Showing {(safePage - 1) * RECORDS_PER_PAGE + 1}–{Math.min(safePage * RECORDS_PER_PAGE, sortedRecords.length)} of {sortedRecords.length}
+									</div>
+
+									<div className={styles.cardsList}>
+										{paginatedRecords.map((record) => (
+											<RecordCard key={record.id} record={record} index={records.indexOf(record)} />
+										))}
+									</div>
+
+									{/* Pagination controls */}
+									{totalPages > 1 && (
+										<div className={styles.pagination}>
+											<button
+												className={styles.pageBtn}
+												disabled={safePage <= 1}
+												onClick={() => { setCurrentPage(safePage - 1); document.getElementById("upload-history")?.scrollIntoView({ behavior: "smooth" }); }}
+											>
+												<ChevronLeft size={14} />
+											</button>
+
+											{Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+												// Show: first, last, current, and neighbors of current. Ellipsis for gaps.
+												const showPage = page === 1 || page === totalPages || Math.abs(page - safePage) <= 1;
+												const showEllipsisBefore = page === safePage - 2 && safePage > 4;
+												const showEllipsisAfter = page === safePage + 2 && safePage < totalPages - 3;
+
+												if (!showPage && !showEllipsisBefore && !showEllipsisAfter) return null;
+
+												if (showEllipsisBefore || showEllipsisAfter) {
+													return <span key={`e${page}`} className={styles.pageEllipsis}>…</span>;
+												}
+
+												return (
+													<button
+														key={page}
+														className={`${styles.pageNumBtn} ${page === safePage ? styles.pageNumBtnActive : ""}`}
+														onClick={() => { setCurrentPage(page); document.getElementById("upload-history")?.scrollIntoView({ behavior: "smooth" }); }}
+													>
+														{page}
+													</button>
+												);
+											})}
+
+											<button
+												className={styles.pageBtn}
+												disabled={safePage >= totalPages}
+												onClick={() => { setCurrentPage(safePage + 1); document.getElementById("upload-history")?.scrollIntoView({ behavior: "smooth" }); }}
+											>
+												<ChevronRight size={14} />
+											</button>
+										</div>
+									)}
+								</>
 						)}
 					</div>
+					</section>
+				</div>
 
-					{records.length === 0 ? (
-						<EmptyState onUpload={() => navigate(paths.config.importOrUpload)} />
-					) : (
-						<div className={styles.timeline}>
-							{sortedRecords.map((record, i) => (
-								<div key={record.id} className={styles.timelineEntry}>
-									<div className={styles.timelineLine}>
-										<div className={styles.timelineDot} />
-										{i < sortedRecords.length - 1 && <div className={styles.timelineConnector} />}
-									</div>
-									<RecordCard record={record} index={records.indexOf(record)} />
-								</div>
-							))}
-						</div>
-					)}
-					</div>
-				</section>
 				{/* ── Disclaimer ──────────────────────────────────────────── */}
 				{records.length > 0 && (
 					<div className={styles.disclaimer}>
