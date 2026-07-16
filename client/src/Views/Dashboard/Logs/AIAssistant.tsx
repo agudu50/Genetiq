@@ -31,7 +31,7 @@ const LOCALIZED_TEXTS: Record<GemmaLanguage, Record<string, string>> = {
 		scanner_tab: "Lab Scanner",
 		remedies_tab: "Remedy Guide",
 		emergency_tab: "Emergency",
-		welcome_msg: "Hello! I'm your Gemma 4 Health Assistant, designed for Ghanaian healthcare. Tell me your symptoms or ask any health question — I'll guide you.\n\nYou can ask in English, Twi, Ga, Ewe, or Fante. I understand common conditions like malaria, typhoid, anemia, and more.",
+		welcome_msg: "Hello! I'm your Genetiq AI Health Assistant, designed for Ghanaian healthcare. Tell me your symptoms or ask any health question — I'll guide you.\n\nYou can ask in English, Twi, Ga, Ewe, or Fante. I understand common conditions like malaria, typhoid, anemia, and more.",
 		placeholder: "Describe your symptoms or ask a question...",
 		quick_chips_malaria: "🦟 Malaria symptoms",
 		quick_chips_typhoid: "🤒 Typhoid fever",

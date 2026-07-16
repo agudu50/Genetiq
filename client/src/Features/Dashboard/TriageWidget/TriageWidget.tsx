@@ -169,7 +169,7 @@ export const TriageWidget: React.FC<TriageWidgetProps> = ({ onClose }) => {
 							/>
 						</div>
 						<div className={styles.headerCopy}>
-							<h3 className={styles.title}>Gemma 4 Health Assistant</h3>
+							<h3 className={styles.title}>Genetiq AI Health Assistant</h3>
 							<span
 								className={`${styles.statusPill} ${
 									aiMode === "live"
