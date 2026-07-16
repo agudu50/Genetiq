@@ -309,9 +309,9 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 // Legacy aliases (used by status class on row)
-.status-high {}
-.status-medium {}
-.status-low {}
+.status-high { --status: high; }
+.status-medium { --status: medium; }
+.status-low { --status: low; }
 
 @media (max-width: 768px) {
 	.row {
