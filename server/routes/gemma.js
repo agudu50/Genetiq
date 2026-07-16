@@ -102,10 +102,10 @@ router.post("/analyze", async (req, res) => {
 		}
 
 		const messages = [
-			{ role: "user", content: systemPrompt + "\n\n" + userContent, image_base64_list: finalImageList },
+			{ role: "user", content: userContent, image_base64_list: finalImageList },
 		];
 
-		const rawResponse = await chatCompletion(messages, 8192);
+		const rawResponse = await chatCompletion(messages, 8192, systemPrompt);
 		const result = parseJsonResponse(rawResponse);
 
 		if (result.error && result.raw) {
@@ -147,10 +147,10 @@ router.post("/chat", async (req, res) => {
 		const systemPrompt = useShort ? CHAT_SYSTEM_PROMPT_SHORT : CHAT_SYSTEM_PROMPT;
 
 		const messages = [
-			{ role: "user", content: systemPrompt + "\n\n" + message, image_base64 },
+			{ role: "user", content: message, image_base64 },
 		];
 
-		const rawResponse = await chatCompletion(messages, 256);
+		const rawResponse = await chatCompletion(messages, 1024, systemPrompt);
 		let result = parseJsonResponse(rawResponse);
 
 		// If JSON parsing failed, build a fallback structure
@@ -251,11 +251,11 @@ router.post("/action-plan", async (req, res) => {
 		const messages = [
 			{
 				role: "user",
-				content: ACTION_PLAN_SYSTEM_PROMPT + "\n\n" + promptParts.join("\n"),
+				content: promptParts.join("\n"),
 			},
 		];
 
-		const rawResponse = await chatCompletion(messages, 768);
+		const rawResponse = await chatCompletion(messages, 2048, ACTION_PLAN_SYSTEM_PROMPT);
 		const result = parseJsonResponse(rawResponse);
 
 		if (language !== "english" && TRANSLATIONS[language]) {

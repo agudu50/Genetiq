@@ -24,9 +24,10 @@ const ai = GEMINI_API_KEY ? new GoogleGenAI({ apiKey: GEMINI_API_KEY }) : null;
  * Run a chat completion against the hosted model.
  * @param {Array<{role: string, content: string}>} messages - Chat messages (OpenAI/HF style)
  * @param {number} maxTokens - Max tokens to generate
+ * @param {string} [systemInstruction] - Optional system instruction to enforce model behavior
  * @returns {Promise<string>} - The model's text response
  */
-async function chatCompletion(messages, maxTokens = 1024) {
+async function chatCompletion(messages, maxTokens = 1024, systemInstruction = null) {
 	if (!ai) {
 		throw new Error("GEMINI_API_KEY is missing. Cannot call Google AI Studio.");
 	}
@@ -60,15 +61,20 @@ async function chatCompletion(messages, maxTokens = 1024) {
 			contents.push({ role: msg.role === "assistant" ? "model" : "user", parts });
 		}
 
+		const config = {
+			maxOutputTokens: maxTokens,
+			temperature: 0.2, // Lowered to prevent JSON formatting errors
+			topP: 0.95,
+			responseMimeType: "application/json"
+		};
+		if (systemInstruction) {
+			config.systemInstruction = systemInstruction;
+		}
+
 		const response = await ai.models.generateContent({
 			model: MODEL_ID,
 			contents: contents,
-			config: {
-				maxOutputTokens: maxTokens,
-				temperature: 0.2, // Lowered to prevent JSON formatting errors
-				topP: 0.95,
-				responseMimeType: "application/json"
-			}
+			config: config
 		});
 
 		const text = response.text;

@@ -480,7 +480,7 @@ export async function chatWithGemma(opts: {
 	}
 
 	const health = await checkGemmaHealth();
-	const onGpu = /cuda/i.test(health.device);
+	const onGpu = /cuda|google-ai-studio/i.test(health.device);
 
 	// GPU: real Gemma inference. CPU: instant triage (Gemma takes minutes per reply).
 	if (health.available && health.modelLoaded && onGpu) {
