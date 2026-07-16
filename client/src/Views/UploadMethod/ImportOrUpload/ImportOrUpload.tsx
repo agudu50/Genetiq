@@ -1221,7 +1221,7 @@ function SingleResultView({
 			return {
 				key: "attention" as const,
 				label: "Needs attention",
-				plain: "Some results look off. Take this to a clinic soon.",
+				plain: "Some results look off. Discuss these with your doctor soon.",
 				range: "0 – 50",
 			};
 		}
@@ -1255,7 +1255,7 @@ function SingleResultView({
 				key: "attention" as const,
 				range: "0 – 50",
 				label: "Needs attention",
-				hint: "See a clinic soon",
+				hint: "Discuss with your doctor",
 				active: (analysisResult?.healthScore ?? 0) <= 50,
 			},
 			{
