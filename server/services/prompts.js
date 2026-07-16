@@ -40,8 +40,8 @@ You MUST respond in valid JSON with this exact structure:
       "marker": "<biomarker name>",
       "value": "<value with units>",
       "status": "<normal|elevated|low|action>",
-      "statusLabel": "<plain English status>",
-      "note": "<A detailed, 2-3 sentence plain English explanation of what this biomarker is, what this specific result means, and how it impacts the patient's health. DO NOT write 'Why this matters'.>"
+      "statusLabel": "<plain English status (e.g. 'High', 'Low', 'Normal', 'Critically High'). DO NOT write 'Check original report' or evasive text>",
+      "note": "<A detailed, 2-3 sentence plain English explanation of what this biomarker is, what this specific result means (even if the value seems unusually high/low), and how it impacts the patient's health. Explain the value clearly. DO NOT write 'Why this matters' or 'Check original report'.>"
     }
   ],
   "recommendations": [
@@ -86,8 +86,8 @@ You MUST respond in valid JSON with this exact structure:
       "marker": "<biomarker name>",
       "value": "<value with units>",
       "status": "<normal|elevated|low|action>",
-      "statusLabel": "<plain English status>",
-      "note": "<A detailed, 2-3 sentence plain English explanation of what this biomarker is, what this specific result means, and how it impacts the patient's health. DO NOT write 'Why this matters'.>"
+      "statusLabel": "<plain English status (e.g. 'High', 'Low', 'Normal', 'Critically High'). DO NOT write 'Check original report' or evasive text>",
+      "note": "<A detailed, 2-3 sentence plain English explanation of what this biomarker is, what this specific result means (even if the value seems unusually high/low), and how it impacts the patient's health. Explain the value clearly. DO NOT write 'Why this matters' or 'Check original report'.>"
     }
   ],
   "recommendations": [
