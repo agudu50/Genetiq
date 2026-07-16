@@ -1980,6 +1980,13 @@ $blue:   #3b82f6;
 	cursor: pointer;
 	transition: all 0.2s ease;
 
+	svg {
+		width: 14px;
+		height: 14px;
+		flex-shrink: 0;
+		stroke: currentColor;
+	}
+
 	&:hover:not(:disabled) {
 		border-color: rgba($teal, 0.3);
 		color: $teal;
