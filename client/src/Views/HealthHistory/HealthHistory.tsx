@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { motion, Variants } from "framer-motion";
 import {
 	Calendar,
 	UserRound,
@@ -16,7 +17,6 @@ import {
 	InboxIcon,
 	ShieldCheck,
 	ArrowUpDown,
-	Sparkles,
 	ArrowRight,
 	Shield,
 	Zap,
@@ -89,12 +89,7 @@ function titleCase(value: string) {
 		.join(" ");
 }
 
-function getInitials(name: string) {
-	const parts = name.trim().split(/\s+/).filter(Boolean);
-	if (parts.length === 0) return "?";
-	if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-	return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-}
+
 
 // ─── Sort & Filter types ──────────────────────────────────────────────────────
 
@@ -616,7 +611,6 @@ export const HealthHistory: React.FC = () => {
 	const displayName = userFullName || recordFullName || "Your";
 	const formattedName =
 		displayName === "Your" ? "Your Profile" : titleCase(displayName);
-	const initials = displayName === "Your" ? "?" : getInitials(displayName);
 	const latestScore = records[0]?.healthScore;
 	const bloodType = user.bloodType || records[0]?.bloodType || "";
 	const age       = user.age       || records[0]?.age       || "";
@@ -702,11 +696,33 @@ export const HealthHistory: React.FC = () => {
 		}
 	};
 
+	const containerVariants: Variants = {
+		hidden: { opacity: 0 },
+		show: {
+			opacity: 1,
+			transition: { staggerChildren: 0.12 },
+		},
+	};
+
+	const itemVariants: Variants = {
+		hidden: { opacity: 0, y: 20 },
+		show: {
+			opacity: 1,
+			y: 0,
+			transition: { type: "spring", stiffness: 300, damping: 24 },
+		},
+	};
+
 	return (
 		<div className={styles.page}>
-			<div className={styles.pageContent}>
+			<motion.div 
+				className={styles.pageContent}
+				variants={containerVariants}
+				initial="hidden"
+				animate="show"
+			>
 				{/* ── Page hero (matches Health Diagnostics) ─────────────── */}
-				<section className={styles.pageHero}>
+				<motion.section className={styles.pageHero} variants={itemVariants}>
 					<div className={styles.pageHeroBg} aria-hidden />
 					<div className={styles.pageHeroMesh} aria-hidden />
 					<div className={styles.pageHeroGlow} aria-hidden />
@@ -715,18 +731,36 @@ export const HealthHistory: React.FC = () => {
 						<div className={styles.heroTop}>
 							<div className={styles.heroCopy}>
 								<span className={styles.pageEyebrow}>
-									<Sparkles size={12} strokeWidth={2.5} />
-									Clinical history
+									<UserRound size={12} strokeWidth={2.5} />
+									{formattedName}'s Record
 								</span>
 								<h1 className={styles.pageTitle}>
 									<span className={styles.titleMuted}>Clinical</span>{" "}
 									<span className={styles.titleAccent}>History</span>
 								</h1>
 								<p className={styles.pageSubtitle}>
-									Your personal health timeline — lab uploads, AI-explained findings,
+									Your personal health timeline lab uploads, AI-explained findings,
 									and scores secured privately on this device.
 								</p>
 								<div className={styles.heroFeaturePills}>
+									{age && (
+										<span className={styles.heroFeaturePill}>
+											<Calendar size={12} strokeWidth={2.5} />
+											{age} yrs
+										</span>
+									)}
+									{gender && (
+										<span className={styles.heroFeaturePill}>
+											<UserRound size={12} strokeWidth={2.5} />
+											{gender}
+										</span>
+									)}
+									{bloodType && (
+										<span className={styles.heroFeaturePill}>
+											<Droplets size={12} strokeWidth={2.5} />
+											{bloodType}
+										</span>
+									)}
 									<span className={styles.heroFeaturePill}>
 										<Shield size={12} strokeWidth={2.5} />
 										Encrypted vault
@@ -869,89 +903,13 @@ export const HealthHistory: React.FC = () => {
 							</div>
 						</div>
 					</div>
-				</section>
+				</motion.section>
 
-			<main className={styles.mainContent}>
-				{/* ── Patient profile banner ──────────────────────────────── */}
-				<section className={styles.profileBanner}>
-					<div className={styles.profileHero}>
-						<div className={styles.profileHeroBg} aria-hidden />
-						<div className={styles.profileHeroMesh} aria-hidden />
-						<div className={styles.profileHeroGlow} aria-hidden />
+				<motion.section className={styles.mainContent} variants={itemVariants}>
 
-						<div className={styles.profileHeroInner}>
-							<div className={styles.profileAvatar} aria-hidden="true">
-								<span className={styles.profileInitials}>{initials}</span>
-							</div>
-
-							<div className={styles.profileIdentity}>
-								<span className={styles.profileEyebrow}>
-									<ShieldCheck size={11} strokeWidth={2.5} />
-									Patient profile
-								</span>
-								<h1 className={styles.profileName}>{formattedName}</h1>
-								<p className={styles.profileSubtitle}>Health Record</p>
-							</div>
-
-							{latestScore != null && (
-								<div className={styles.profileHeroScore}>
-									<ScoreRing score={latestScore} compact />
-									<div className={styles.profileScoreMeta}>
-										<span className={styles.profileScoreLabel}>Health Score</span>
-										<span
-											className={styles.profileScoreStatus}
-											style={{ color: healthScoreColour(latestScore) }}
-										>
-											{healthScoreLabel(latestScore)}
-										</span>
-									</div>
-								</div>
-							)}
-
-							<button
-								type="button"
-								className={styles.newUploadBannerBtn}
-								onClick={() =>
-									navigate(paths.config.importOrUpload, { state: { skipToUpload: true } })
-								}
-							>
-								<Upload size={16} />
-								<span>New Upload</span>
-							</button>
-						</div>
-					</div>
-
-					<div className={styles.profileBody}>
-						<div className={styles.profileChips}>
-							{age && (
-								<span className={styles.profileChip}>
-									<Calendar size={13} />
-									{age} yrs
-								</span>
-							)}
-							{gender && (
-								<span className={styles.profileChip}>
-									<UserRound size={13} />
-									{gender}
-								</span>
-							)}
-							{bloodType && (
-								<span className={`${styles.profileChip} ${styles.profileChipBlood}`}>
-									<Droplets size={13} />
-									{bloodType}
-								</span>
-							)}
-							<span className={styles.profileChip}>
-								<Files size={13} />
-								{records.length} upload{records.length !== 1 ? "s" : ""}
-							</span>
-						</div>
-
-					</div>
-				</section>
 
 				{/* ── Charts & History Column ───────────────────────────── */}
-				<div className={styles.historyColumn}>
+				<motion.div className={styles.historyColumn} variants={itemVariants}>
 					
 					{/* Charts Grid */}
 					<div className={styles.chartsGrid}>
@@ -1083,17 +1041,17 @@ export const HealthHistory: React.FC = () => {
 						)}
 					</div>
 					</section>
-				</div>
+				</motion.div>
 
 				{/* ── Disclaimer ──────────────────────────────────────────── */}
 				{records.length > 0 && (
-					<div className={styles.disclaimer}>
+					<motion.div className={styles.disclaimer} variants={itemVariants}>
 						<ShieldCheck size={13} />
 						<span>This record is for personal reference only and does not replace professional medical advice. Always consult a qualified doctor.</span>
-					</div>
+					</motion.div>
 				)}
-			</main>
-			</div>
+			</motion.section>
+			</motion.div>
 		</div>
 	);
 };

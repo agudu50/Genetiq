@@ -227,9 +227,14 @@ $blue:   #3b82f6;
 .heroCopy {
 	flex: 1;
 	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	text-align: left;
 }
 
 .pageEyebrow {
+	align-self: center;
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
@@ -283,10 +288,12 @@ $blue:   #3b82f6;
 }
 
 .heroFeaturePills {
+	align-self: center;
 	display: flex;
 	flex-wrap: wrap;
 	gap: 8px;
 	margin-top: 14px;
+	justify-content: center;
 }
 
 .heroFeaturePill {
@@ -455,6 +462,14 @@ $blue:   #3b82f6;
 	align-items: center;
 	gap: 10px;
 	flex-wrap: wrap;
+
+	@media (max-width: 600px) {
+		width: 100%;
+		> button {
+			flex: 1;
+			justify-content: center;
+		}
+	}
 }
 
 .latestRecordBtn {
@@ -511,10 +526,6 @@ $blue:   #3b82f6;
 
 	@media (max-width: 900px) {
 		grid-template-columns: repeat(2, 1fr);
-	}
-
-	@media (max-width: 480px) {
-		grid-template-columns: 1fr;
 	}
 }
 
