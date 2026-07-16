@@ -255,16 +255,18 @@ const HealthScoreChart = ({ records }: { records: UploadRecord[] }) => {
 								style={{ transition: "r 0.2s ease" }}
 							/>
 							{/* X-axis label */}
-							<text
-								x={p.x}
-								y={height - 10}
-								textAnchor="middle"
-								fill="var(--hh-muted)"
-								fontSize="9"
-								fontWeight="600"
-							>
-								{p.date}
-							</text>
+							{(points.length <= 7 || i === 0 || i === points.length - 1 || (i % Math.ceil(points.length / 5) === 0 && i < points.length - Math.ceil(points.length / 10))) && (
+								<text
+									x={p.x}
+									y={height - 10}
+									textAnchor="middle"
+									fill="var(--hh-muted)"
+									fontSize="9"
+									fontWeight="600"
+								>
+									{p.date}
+								</text>
+							)}
 							{/* Hover tooltip */}
 							{hoveredIdx === i && (
 								<g>
