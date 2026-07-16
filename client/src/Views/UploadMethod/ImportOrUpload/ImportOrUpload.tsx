@@ -13,7 +13,7 @@ import {
 } from "@/App/Services/GemmaService";
 import type { GemmaLanguage, GemmaAnalysisResult, AnalyzeProgressPhase } from "@/App/Services/GemmaService";
 import { useGemmaConnection } from "@/App/Hooks/useGemmaConnection";
-import { buildResultsSummarySections, enrichFindingsWithPlainNotes } from "@/App/Utils/buildResultsSummary";
+import { enrichFindingsWithPlainNotes } from "@/App/Utils/buildResultsSummary";
 import { extractPdfContent, readTextFile } from "@/App/Utils/extractFileText";
 import styles from "./ImportOrUpload.module.scss";
 
@@ -513,7 +513,6 @@ const ImportOrUpload = () => {
 							)}
 							<SingleResultView 
 								analysisResult={res.result} 
-								info={info} 
 								t={t} 
 								selectedLanguage={selectedLanguage}
 								setSelectedLanguage={setSelectedLanguage}
@@ -1203,14 +1202,12 @@ const ImportOrUpload = () => {
 
 function SingleResultView({
 	analysisResult,
-	info,
 	t,
 	selectedLanguage,
 	setSelectedLanguage,
 	onRetry
 }: {
 	analysisResult: GemmaAnalysisResult;
-	info: any;
 	t: (text: string) => string;
 	selectedLanguage: GemmaLanguage;
 	setSelectedLanguage: (lang: GemmaLanguage) => void;
@@ -1287,9 +1284,16 @@ function SingleResultView({
 	);
 
 	const summarySections = useMemo(() => {
-		if (!analysisResult) return [];
-		return buildResultsSummarySections(analysisResult, info.age, info.gender);
-	}, [analysisResult, info.age, info.gender]);
+		if (!analysisResult || !analysisResult.summary) return [];
+		return [
+			{
+				id: "ai-summary",
+				title: "Report Overview",
+				body: analysisResult.summary,
+				tone: (analysisResult.healthScore ?? 0) >= 75 ? "info" : "caution" as "info" | "caution" | "neutral",
+			}
+		];
+	}, [analysisResult]);
 
 	if (analysisResult.healthScore === 0 && analysisResult.findings.length === 0) {
 		return (

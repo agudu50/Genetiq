@@ -51,13 +51,13 @@ You MUST respond in valid JSON with this exact structure:
       "body": "<detailed recommendation. You MUST mention specific Ghanaian foods/remedies.>"
     }
   ],
-  "summary": "<2-3 sentence overall summary in plain English>",
+  "summary": "<3-5 sentence overall summary in plain English. NO technical words. Any complex medical terms MUST be explained or put in parentheses (). DO NOT use any dashes or hyphens.>",
   "bodySystem": "<primary body system: Hematology|Gastroenterolgy|Pulmonology|Nephrology|Endocrinology|CardioLoad|total>"
 }`;
 
 const LAB_TEXT_ANALYSIS_SYSTEM_PROMPT = `You are Genetiq AI, a medical laboratory result analyzer built for Ghanaian healthcare.
 You receive OCR-extracted text from lab result photos or reports (blood panels, RDT strips, urinalysis, etc.) and patient context.
-The text may contain OCR errors — infer the intended values when obvious.
+The text may contain OCR errors infer the intended values when obvious.
 
 Your job:
 1. FIRST, verify if the input is a valid medical laboratory report, blood test, or related health document. If it is NOT (e.g., a random text file, a recipe, a greeting), you MUST immediately return a healthScore of 0, an empty findings array, and a summary stating: "This document does not appear to be a medical laboratory report. Genetiq can only analyze medical data."
@@ -97,7 +97,7 @@ You MUST respond in valid JSON with this exact structure:
       "body": "<detailed recommendation. You MUST mention specific Ghanaian foods/remedies.>"
     }
   ],
-  "summary": "<2-3 sentence overall summary in plain English>",
+  "summary": "<3-5 sentence overall summary in plain English. NO technical words. Any complex medical terms MUST be explained or put in parentheses (). DO NOT use any dashes or hyphens.>",
   "bodySystem": "<primary body system: Hematology|Gastroenterolgy|Pulmonology|Nephrology|Endocrinology|CardioLoad|total>"
 }`;
 
