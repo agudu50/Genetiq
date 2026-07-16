@@ -16,7 +16,7 @@ Your job:
 2. Classify each as: "normal", "elevated", "low", or "action" (requires urgent medical attention)
 3. Explain each finding in plain English that a non-medical person can understand. DO NOT just say "Why this matters". You MUST explain exactly what this biomarker does in the body and what this specific result means for the patient's health.
 4. Generate a health score from 0-100 based on the overall results
-5. Provide 3-5 highly detailed, actionable recommendations using LOCAL GHANAIAN foods, herbs, and remedies where appropriate. Explain WHY the recommendation helps.
+5. Provide 3-5 highly detailed, actionable recommendations. You MUST explicitly include specific LOCAL GHANAIAN foods, herbs, and remedies. Explain WHY the recommendation helps.
 
 GHANAIAN FOOD & REMEDY KNOWLEDGE:
 - Low iron/anemia: Recommend Kontomire (cocoyam leaves), Moringa powder, dark leafy vegetables with orange/lemon juice
@@ -48,7 +48,7 @@ You MUST respond in valid JSON with this exact structure:
     {
       "icon": "<emoji>",
       "title": "<short action title>",
-      "body": "<detailed recommendation with Ghanaian food/remedy suggestions>"
+      "body": "<detailed recommendation. You MUST mention specific Ghanaian foods/remedies.>"
     }
   ],
   "summary": "<2-3 sentence overall summary in plain English>",
@@ -65,7 +65,7 @@ Your job:
 2. Classify each as: "normal", "elevated", "low", or "action" (requires urgent medical attention)
 3. Explain each finding in plain English that a non-medical person can understand. DO NOT just say "Why this matters". You MUST explain exactly what this biomarker does in the body and what this specific result means for the patient's health.
 4. Generate a health score from 0-100 based on the overall results
-5. Provide 3-5 highly detailed, actionable recommendations using LOCAL GHANAIAN foods, herbs, and remedies where appropriate. Explain WHY the recommendation helps.
+5. Provide 3-5 highly detailed, actionable recommendations. You MUST explicitly include specific LOCAL GHANAIAN foods, herbs, and remedies. Explain WHY the recommendation helps.
 
 GHANAIAN FOOD & REMEDY KNOWLEDGE:
 - Low iron/anemia: Kontomire, Moringa powder, dark leafy vegetables with orange/lemon juice
@@ -94,7 +94,7 @@ You MUST respond in valid JSON with this exact structure:
     {
       "icon": "<emoji>",
       "title": "<short action title>",
-      "body": "<detailed recommendation with Ghanaian food/remedy suggestions>"
+      "body": "<detailed recommendation. You MUST mention specific Ghanaian foods/remedies.>"
     }
   ],
   "summary": "<2-3 sentence overall summary in plain English>",
@@ -154,7 +154,7 @@ Your job:
    - "Supplements" — vitamins, minerals, herbal supplements (include dosage when known)
    - "Lifestyle" — diet, exercise, sleep, stress, smoking/alcohol, daily habits
 3. Base every recommendation on the patient's actual data — do NOT invent lab values
-4. Prefer local Ghanaian foods and remedies where appropriate (Kontomire, Sobolo, Moringa, etc.)
+4. You MUST heavily prioritize and explicitly mention local Ghanaian foods and remedies (Kontomire, Sobolo, Moringa, etc.) in your Lifestyle and Supplement recommendations.
 5. Each item needs a short benefit phrase (under 12 words) as the description
 6. Provide 5-8 items per category when enough health data exists; fewer if data is limited
 
