@@ -10,6 +10,7 @@ import { Upload, FileText, ShieldCheck, Zap, ChevronRight, X, CheckCircle, Arrow
 import {
 	analyzeLabResults,
 	getTranslation,
+	translateAnalysisResult,
 } from "@/App/Services/GemmaService";
 import type { GemmaLanguage, GemmaAnalysisResult, AnalyzeProgressPhase } from "@/App/Services/GemmaService";
 import { useGemmaConnection } from "@/App/Hooks/useGemmaConnection";
@@ -1201,7 +1202,7 @@ const ImportOrUpload = () => {
 };
 
 function SingleResultView({
-	analysisResult,
+	analysisResult: rawAnalysisResult,
 	t,
 	selectedLanguage,
 	setSelectedLanguage,
@@ -1213,6 +1214,10 @@ function SingleResultView({
 	setSelectedLanguage: (lang: GemmaLanguage) => void;
 	onRetry: () => void;
 }) {
+	const analysisResult = useMemo(() => {
+		return translateAnalysisResult(rawAnalysisResult, selectedLanguage);
+	}, [rawAnalysisResult, selectedLanguage]);
+
 	const [expandedFindingId, setExpandedFindingId] = useState<string | null>(null);
 
 	const scoreTier = useMemo(() => {

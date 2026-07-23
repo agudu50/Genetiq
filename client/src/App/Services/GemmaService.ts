@@ -215,20 +215,20 @@ export async function analyzeLabResults(opts: {
 	const useVision = health.supportsVision && images.length > 0 && !opts.presetId && !labText;
 	const onCpu = /cpu/i.test(health.device);
 
+	let result: GemmaAnalysisResult | null = null;
+
 	// CPU Gemma analysis can take 5–15+ min — use OCR + local parser for instant results
 	if (onCpu && health.modelLoaded) {
 		if (opts.presetId) {
 			opts.onProgress?.("ai", "Building your analysis…");
-			return simulateLabAnalysis({ ...opts, labText });
-		}
-		if (labText) {
+			result = simulateLabAnalysis({ ...opts, labText });
+		} else if (labText) {
 			opts.onProgress?.("ai", "Interpreting your lab values…");
-			const parsed = parseAndBuildFallback(labText, opts.patientAge, opts.patientGender);
-			if (parsed) return parsed;
+			result = parseAndBuildFallback(labText, opts.patientAge, opts.patientGender);
 		}
 	}
 
-	if (health.available && health.modelLoaded) {
+	if (!result && health.available && health.modelLoaded) {
 		try {
 			opts.onProgress?.("ai", "Analysing your results with Gemma AI…");
 			const res = await fetch(`${GEMMA_BASE_URL}/api/gemma/analyze`, {
@@ -247,9 +247,10 @@ export async function analyzeLabResults(opts: {
 			if (res.ok) {
 				const data = await res.json();
 				if (isValidAnalysisResult(data)) {
-					return data as GemmaAnalysisResult;
+					result = data as GemmaAnalysisResult;
+				} else {
+					console.warn("Gemma returned incomplete analysis, using local parser");
 				}
-				console.warn("Gemma returned incomplete analysis, using local parser");
 			} else {
 				const errBody = await res.json().catch(() => null);
 				console.warn("Gemma analyze failed:", res.status, errBody);
@@ -260,12 +261,15 @@ export async function analyzeLabResults(opts: {
 	}
 
 	// Local parser fallback — works even when AI server is offline
-	if (labText && !opts.presetId) {
-		const parsed = parseAndBuildFallback(labText, opts.patientAge, opts.patientGender);
-		if (parsed) return parsed;
+	if (!result && labText && !opts.presetId) {
+		result = parseAndBuildFallback(labText, opts.patientAge, opts.patientGender);
 	}
 
-	return simulateLabAnalysis({ ...opts, labText });
+	if (!result) {
+		result = simulateLabAnalysis({ ...opts, labText });
+	}
+
+	return translateAnalysisResult(result, opts.language);
 }
 
 // ─── Chat with Gemma ─────────────────────────────────────────────────────────
@@ -634,6 +638,22 @@ export async function generateActionPlan(opts: {
 
 const OFFLINE_TRANSLATIONS: Record<string, Record<string, string>> = {
 	twi: {
+		"Report Overview": "Nkyerɛkyerɛmu Titire",
+		"Check original report": "Sɔw krataa ankasa no hwɛ",
+		"Seen on report": "Wɔhunuu wɔ krataa no so",
+		"Total protein measures the combined amount of albumin and globulin in your blood — it reflects hydration, nutrition, and immune activity.": "Total protein susuw albumin ne globulin dodoɔ a ɛwɔ wo mogya mu — ɛkyerɛ nsuo dodoɔ, aduane pa, ne honam mu banbɔ.",
+		"Common reasons include dehydration, chronic inflammation, or infection.": "Nneɛma a ɛtaa de ba ne nsuo a ɛnnɔɔso, ahonam a ɛhuru, anaa yadeɛ mmoawa.",
+		"Bring your original report to your clinic so your doctor can confirm the number and decide if more tests are needed.": "Fa wo krataa ankasa no kɔ wo clinic sɛdeɛ wo dɔkota bɛtumi ahwɛ akontaahyɛdeɛ no na wafeɛ sɛ wohia nhwehwɛmu foforo.",
+		"One test is outside the usual range on your report.": "Nhwehwɛmu baako mfa deɛ ɛtaa yɛ mu wɔ wo krataa no so.",
+		"That is a signal to follow up — not a diagnosis.": "Ɛyɛ nsɛnkyerɛnneɛ a wobɛdi akyi — ɛnnyɛ yadeɛ a wɔahunu.",
+		"Dehydration, a recent infection, or even a blurry photo can affect results.": "Nsuo a ɛnnɔɔso wɔ wo mu, ɔyare foforo, anaasɛ mfoni a ɛnna hɔ yie betumi asesa nhwehwɛmu no.",
+		"A doctor who knows you is the best person to say what it means.": "Dɔkota a onim wo yɛ obi a ɔbɛtumi aka deɛ ɛkyerɛ.",
+		"Your report includes blood protein tests (such as total protein or an M-spike on SPEP).": "Wo krataa no ka mogya protein nhwehwɛmu ho asɛm (te sɛ total protein anaa M-spike wɔ SPEP so).",
+		"These show the mix of proteins in your blood.": "Yeinom kyerɛ sɛnea protein ahodoɔ wɔ wo mogya mu.",
+		"Unusual patterns are a common reason for follow-up blood work — they are not usually an emergency on their own.": "Nsɛm a ɛnyɛ deɛ ɛtaa yɛ taa yɛ nea ɛma wɔyɛ mogya nhwehwɛmu foforo — ɛnyɛ mmerɛ nyinaa deɛ ɛyɛ ntɛmpɛ.",
+		"Visit your clinic or hospital, bring the original lab slip, and ask whether you need a test called immunofixation.": "Kɔ wo clinic anaa ayaresabea, fa krataa ankasa no kɔ, na bisa sɛ wohia nhwehwɛmu bi a wɔfrɛ no immunofixation anaa.",
+		"This summary is meant to help you understand your report — it is not medical advice or a final diagnosis.": "Saa nkyerɛkyerɛmu yi yɛ sɛ ɛbɛboa wo ma woate wo krataa no ase — ɛnnyɛ ayaresa afotuo anaa yadeɛ a wɔahunu koraa.",
+		"Only a qualified clinician can confirm your results and tell you what to do next.": "Dɔkota pa nko ara na ɔbɛtumi agye wo nhwehwɛmu no ato mu na waka deɛ ɛsɛ sɛ woyɛ.",
 		"Your results are ready": "Wo ntoboa no awie",
 		"Normal": "Ɛyɛ papa",
 		"A little high": "Ɛkɔ soro kakra",
@@ -673,17 +693,13 @@ const OFFLINE_TRANSLATIONS: Record<string, Record<string, string>> = {
 		"Important": "Ɛho hia",
 		"Every value we could read looks within the normal ranges printed on your report. Keep your healthy habits and routine check-ups.": "Nsɛm a yɛtumi kenkanee nyinaa wɔ deɛ ɛtaa yɛ mu wɔ wo krataa no so. Kɔ so yɛ akwahosan nneyɛeɛ na kɔ nhwehwɛmu daa.",
 		"At least one value may have been misread from the photo. Compare this summary with your paper report or lab printout — if a number looks wrong, trust the original document and ask the lab to confirm.": "Ebia yɛankenkan akontaahyɛdeɛ baako yiye wɔ mfoni no mu. Fa saa nkyerɛkyerɛmu yi toto wo krataa anaa lab printout no ho — sɛ akontaahyɛdeɛ bi nte sɛ deɛ ɛtaa yɛ a, gye krataa ankasa no die na bisa lab no.",
-		"One test is outside the usual range on your report. That is a signal to follow up — not a diagnosis. Dehydration, a recent infection, or even a blurry photo can affect results. A doctor who knows you is the best person to say what it means.": "Nhwehwɛmu baako mfa deɛ ɛtaa yɛ mu wɔ wo krataa no so. Ɛyɛ nsɛnkyerɛnneɛ a wobɛdi akyi — ɛnnyɛ yadeɛ a wɔahunu. Nsuo a ɛnnɔɔso wɔ wo mu, ɔyare foforo, anaasɛ mfoni a ɛnna hɔ yie betumi asesa nhwehwɛmu no. Dɔkota a onim wo yɛ obi a ɔbɛtumi aka deɛ ɛkyerɛ.",
-		"Your report includes blood protein tests (such as total protein or an M-spike on SPEP). These show the mix of proteins in your blood. Unusual patterns are a common reason for follow-up blood work — they are not usually an emergency on their own. Visit your clinic or hospital, bring the original lab slip, and ask whether you need a test called immunofixation.": "Wo krataa no ka mogya protein nhwehwɛmu ho asɛm (te sɛ total protein anaa M-spike wɔ SPEP so). Yeinom kyerɛ sɛnea protein ahodoɔ wɔ wo mogya mu. Nsɛm a ɛnyɛ deɛ ɛtaa yɛ taa yɛ nea ɛma wɔyɛ mogya nhwehwɛmu foforo — ɛnyɛ mmerɛ nyinaa deɛ ɛyɛ ntɛmpɛ. Kɔ wo clinic anaa ayaresabea, fa krataa ankasa no kɔ, na bisa sɛ wohia nhwehwɛmu bi a wɔfrɛ no immunofixation anaa.",
 		"Some liver markers on your report are outside the usual range. That can reflect diet, alcohol, medicines, or infection. Avoid alcohol until your doctor reviews the results, stay hydrated, and mention any stomach pain, yellow skin, or dark urine.": "Berebo nhwehwɛmu bi a ɛwɔ wo krataa no so mfa deɛ ɛtaa yɛ mu. Ɛbɛtumi afiri aduane a wodie, nsa, aduro, anaa ɔyare foforo. Nnom nsa kɔsi sɛ wo dɔkota bɛhwɛ nsonsonoeɛ no mu, nom nsuo pii, na sɛ wote yafunu yaw, ahonam a ayɛ akɔkɔsrade, anaa ahomirim a ɛyɛ tuntum a, ka kyerɛ wo dɔkota.",
-		"This summary is meant to help you understand your report — it is not medical advice or a final diagnosis. Only a qualified clinician can confirm your results and tell you what to do next.": "Saa nkyerɛkyerɛmu yi yɛ sɛ ɛbɛboa wo ma woate wo krataa no ase — ɛnnyɛ ayaresa afotuo anaa yadeɛ a wɔahunu koraa. Dɔkota pa nko ara na ɔbɛtumi agye wo nhwehwɛmu no ato mu na waka deɛ ɛsɛ sɛ woyɛ.",
 		"Looks typical": "Ɛte sɛ deɛ ɛtaa yɛ",
 		"Higher than usual": "Ɛkorɔn sen deɛ ɛtaa yɛ",
 		"Lower than usual": "Ɛba fam sen deɛ ɛtaa yɛ",
 		"Worth a doctor visit": "Ɛfata sɛ wokɔ dɔkota nkyɛn",
 		"M-spike (protein band)": "M-spike (protein sononko)",
 		"SPEP M-spike": "SPEP M-spike",
-		"Seen on report": "Wɔhunuu wɔ krataa no so",
 		"Ask about a specialist follow-up": "Bisa ɛfa specialist nhwehwɛmu ho",
 		"Your report flags an M-spike — an unusual protein band on a blood protein test (SPEP). That means the lab saw a protein pattern worth a closer look. It does not mean you are definitely seriously ill — infections and other conditions can sometimes look similar. See your doctor soon; they may order a follow-up test called immunofixation to learn more.": "Wo krataa no kyerɛ M-spike — protein sononko bi a ɛda adi wɔ mogya protein nhwehwɛmu (SPEP) mu. Ɛkyerɛ sɛ lab no hunuu protein nhyehyɛeɛ bi a ɛsɛ sɛ wɔhwɛ mu yiye. Ɛnkyerɛ sɛ wo yadeɛ mu yɛ den ankasa — ɔyare foforo betumi ayɛ sɛ eyi ara. Kɔ wo dɔkota nkyɛn ntɛm; ebia ɔbɛma wo nhwehwɛmu foforo a wɔfrɛ no immunofixation na woahunu pii.",
 		"Share these results with your doctor": "Fa saa nsɛm yi kɔma wo dɔkota",
@@ -721,6 +737,22 @@ const OFFLINE_TRANSLATIONS: Record<string, Record<string, string>> = {
 		"⚠️ DEMO NOTICE: You uploaded a custom image. In full GPU mode, Google Gemma 4 Multimodal Vision reads this image to extract health data. Because the local Gemma 4 server is currently not running, we cannot analyze custom images.\n\nTo test the interface, please go back and select one of the pre-loaded 'Ghanaian Medical Case Presets' (such as Malaria RDT Strip, CBC Severe Anemia, or Typhoid Report) which work fully offline.": "⚠️ SƆHWƐ NKRATO: Wode mfoni foforo na ɛtooo gua. Sɛ full GPU dwumadie no da adi a, Google Gemma 4 Multimodal Vision bɛkan saa mfoni yi de ayi yareɛ ho nsɛm afiri mu. Esiane sɛ local Gemma 4 server no nnwuma mprempren nti, yɛntumi nhwehwɛ mfoni foforo mu.\n\nSɛ wobɛsɔ interface yi ahwɛ a, yɛsrɛ wo san kɔ akyi na kɔfa 'Ghanaian Medical Case Presets' (te sɛ Malaria RDT Strip, CBC Severe Anemia, anaa Typhoid Report) a ɛyɛ adwuma offline fully no baako."
 	},
 	ga: {
+		"Report Overview": "Report mli nsɛm",
+		"Check original report": "Kwɛ krataa diɛŋtsɛ lɛ",
+		"Seen on report": "Aná yɛ report lɛ nɔ",
+		"Total protein measures the combined amount of albumin and globulin in your blood — it reflects hydration, nutrition, and immune activity.": "Total protein susuo albumin kɛ globulin ni yɛ o la mli — etsɔɔ nu ni obɛ, niyenii, kɛ hewalɛ.",
+		"Common reasons include dehydration, chronic inflammation, or infection.": "Nii ni fɔɔ haa ji nu ni obɛnu, hela foforɔ, loo mmoawa.",
+		"Bring your original report to your clinic so your doctor can confirm the number and decide if more tests are needed.": "Kɛ o report diɛŋtsɛ lɛ yaa o clinic koni o dɔkita ekwɛ akontaabuu lɛ ni ebi kɛji ohiaa kaimɔi Pii.",
+		"One test is outside the usual range on your report.": "Test kome eyeee tamɔ bɔ ni efɔɔ mli yɛ o report lɛ nɔ.",
+		"That is a signal to follow up — not a diagnosis.": "Eji okadi ni obaadi sɛɛ — ejeee hela ni ana.",
+		"Dehydration, a recent infection, or even a blurry photo can affect results.": "Nu ni obɛnu, hela foforɔ, loo mfoni ni eyeee faŋŋ baanyɛ atsake results.",
+		"A doctor who knows you is the best person to say what it means.": "Dɔkita ni le bo ji mɔ ni baanyɛ atsɔɔ nɔ ni ejɛɔ mli.",
+		"Your report includes blood protein tests (such as total protein or an M-spike on SPEP).": "O report lɛ kɛ la protein kaimɔi ba (tamɔ total protein loo M-spike yɛ SPEP nɔ).",
+		"These show the mix of proteins in your blood.": "Nɛɛ tsɔɔ bɔ ni protein srɔtoi yɛ o la mli.",
+		"Unusual patterns are a common reason for follow-up blood work — they are not usually an emergency on their own.": "Nii ni eyeee tamɔ bɔ ni efɔɔ mli ji nɔ ni haa akɛ ayafee la kaimɔ ekoŋŋ — ejeee oyaigbamɔ daa diɛŋtsɛ.",
+		"Visit your clinic or hospital, bring the original lab slip, and ask whether you need a test called immunofixation.": "Yaa o clinic loo tsɔfabuu, kɛmɔ krataa diɛŋtsɛ lɛ yaa, ni obi kɛji ohiaa kaimɔ ko ni atsɛɔ lɛ immunofixation.",
+		"This summary is meant to help you understand your report — it is not medical advice or a final diagnosis.": "Sane kuku nɛɛ hewɔ ji akɛ eeye ebua bo ni onu o report lɛ shishi — ejeee tsofai ŋaawoo loo hela ni ana kwraa.",
+		"Only a qualified clinician can confirm your results and tell you what to do next.": "Dɔkita kpakpa pɛ baanyɛ akɛ o results ato mli ni etsɔɔ bo nɔ ni esa akɛ oyɛ.",
 		"Your results are ready": "Wo results lɛ esɛɛ",
 		"Normal": "Enyɛ bɔɔlɛ",
 		"A little high": "Eji ko pipi",
@@ -755,19 +787,12 @@ const OFFLINE_TRANSLATIONS: Record<string, Record<string, string>> = {
 		"About the protein tests": "Yɛ protein kaimɔi ahe",
 		"About the liver-related tests": "Yɛ berebo kaimɔi ahe",
 		"Important": "Ehe hiaa",
-		"Every value we could read looks within the normal ranges printed on your report. Keep your healthy habits and routine check-ups.": "Nii fɛɛ ni wɔnyɛ wɔkane lɛ eyeɔ tamɔ bɔ ni efɔɔ mli yɛ o report lɛ nɔ. Yaa nɔ kɛ hewalɛ kɛjɔɔmɔi kɛ kwɛmɔi daa.",
-		"At least one value may have been misread from the photo. Compare this summary with your paper report or lab printout — if a number looks wrong, trust the original document and ask the lab to confirm.": "Ekɔɔɔ akɛ akane akontaabuu kome yɛ mfoni lɛ mli jogbaŋŋ. Kɛ nɛɛ tsuo kɛ o krataa diɛŋtsɛ lɛ he — kɛji akontaabuu kome eyeee jogbaŋŋ lɛ, ye o krataa diɛŋtsɛ lɛ nɔ, ni obi lab lɛ akɛ ekwɛ.",
-		"One test is outside the usual range on your report. That is a signal to follow up — not a diagnosis. Dehydration, a recent infection, or even a blurry photo can affect results. A doctor who knows you is the best person to say what it means.": "Test kome eyeee tamɔ bɔ ni efɔɔ mli yɛ o report lɛ nɔ. Eji okadi ni obaadi sɛɛ — ejeee hela ni ana. Nu ni obɛnu, hela foforɔ, loo mfoni ni eyeee faŋŋ baanyɛ atsake results. Dɔkita ni le bo ji mɔ ni baanyɛ atsɔɔ nɔ ni ejɛɔ mli.",
-		"Your report includes blood protein tests (such as total protein or an M-spike on SPEP). These show the mix of proteins in your blood. Unusual patterns are a common reason for follow-up blood work — they are not usually an emergency on their own. Visit your clinic or hospital, bring the original lab slip, and ask whether you need a test called immunofixation.": "O report lɛ kɛ la protein kaimɔi ba (tamɔ total protein loo M-spike yɛ SPEP nɔ). Nɛɛ tsɔɔ bɔ ni protein srɔtoi yɛ o la mli. Nii ni eyeee tamɔ bɔ ni efɔɔ mli ji nɔ ni haa akɛ ayafee la kaimɔ ekoŋŋ — ejeee oyaigbamɔ daa diɛŋtsɛ. Yaa o clinic loo tsɔfabuu, kɛmɔ krataa diɛŋtsɛ lɛ yaa, ni obi kɛji ohiaa kaimɔ ko ni atsɛɔ lɛ immunofixation.",
-		"Some liver markers on your report are outside the usual range. That can reflect diet, alcohol, medicines, or infection. Avoid alcohol until your doctor reviews the results, stay hydrated, and mention any stomach pain, yellow skin, or dark urine.": "Berebo kaimɔi komɛi yɛ o report lɛ nɔ eyeee tamɔ bɔ ni efɔɔ mli. Enɛ baanyɛ aje niyenii, dãa, tsofai, loo hela mli. Ke dãa shi kɛyashi o dɔkita lɛ ekwɛ results lɛ, nu nu pii, ni okɛɛ kɛji onaa lamlɛŋ dziɛ, hewɔ ni eeflɔ, loo tsu ni eeflɔ tuntu.",
-		"This summary is meant to help you understand your report — it is not medical advice or a final diagnosis. Only a qualified clinician can confirm your results and tell you what to do next.": "Sane kuku nɛɛ hewɔ ji akɛ eeye ebua bo ni onu o report lɛ shishi — ejeee tsofai ŋaawoo loo hela ni ana kwraa. Dɔkita kpakpa pɛ baanyɛ akɛ o results ato mli ni etsɔɔ bo nɔ ni esa akɛ oyɛ.",
 		"Looks typical": "Eyeɔ tamɔ bɔ ni efɔɔ mli",
 		"Higher than usual": "Eyi kɛ nɔ ni efɔɔ mli",
 		"Lower than usual": "Eba shi fe fe ni efɔɔ mli",
 		"Worth a doctor visit": "Esa akɛ oyaa dɔkita he",
 		"M-spike (protein band)": "M-spike (protein srɔtoi)",
 		"SPEP M-spike": "SPEP M-spike",
-		"Seen on report": "Aná yɛ report lɛ nɔ",
 		"Ask about a specialist follow-up": "Bi specialist kaimɔ he sane",
 		"Your report flags an M-spike — an unusual protein band on a blood protein test (SPEP). That means the lab saw a protein pattern worth a closer look. It does not mean you are definitely seriously ill — infections and other conditions can sometimes look similar. See your doctor soon; they may order a follow-up test called immunofixation to learn more.": "O report lɛ tsɔɔ M-spike — protein srɔto ko ni eyeee tamɔ bɔ ni efɔɔ mli yɛ la protein kaimɔ (SPEP) nɔ. Enɛ tsɔɔ akɛ lab lɛ ná protein nhyehyɛeɛ ko ni esa akɛ akwɛ mli jogbaŋŋ. Ekɔɔɔ akɛ o hela mli wa diɛŋtsɛ — hela foforɔ baanyɛ afee nakai. Yaa o dɔkita he ekpakpa; ebaanyɛ akɛ ohia kaimɔ foforɔ ni atsɛɔ lɛ immunofixation ni ona pii.",
 		"Share these results with your doctor": "Kɛ nɛɛ results ha o dɔkita",
@@ -805,6 +830,22 @@ const OFFLINE_TRANSLATIONS: Record<string, Record<string, string>> = {
 		"⚠️ DEMO NOTICE: You uploaded a custom image. In full GPU mode, Google Gemma 4 Multimodal Vision reads this image to extract health data. Because the local Gemma 4 server is currently not running, we cannot analyze custom images.\n\nTo test the interface, please go back and select one of the pre-loaded 'Ghanaian Medical Case Presets' (such as Malaria RDT Strip, CBC Severe Anemia, or Typhoid Report) which work fully offline.": "⚠️ DEMO NOTICE: O-upload mfoni kroko. Kɛji GPU asoeɛ lɛ yaa nɔ, Google Gemma 4 Multimodal Vision baakane mfoni nɛɛ kɛha hewale he. Kɛji local Gemma 4 server lɛ yɛɛɛ nɔ mprempren, wónyɛɛ woloa hela he.\n\nKɛha sɔhwɛ, yaa sɛɛ ni owie 'Ghanaian Medical Case Presets' (tamɔ Malaria RDT Strip, CBC Severe Anemia, aloo Typhoid Report) ni yaa nɔ offline."
 	},
 	ewe: {
+		"Report Overview": "Nusi le agbalẽa me",
+		"Check original report": "Kpɔ agbalẽ ŋutɔŋutɔ la",
+		"Seen on report": "Wokpɔe le agbalẽ la dzi",
+		"Total protein measures the combined amount of albumin and globulin in your blood — it reflects hydration, nutrition, and immune activity.": "Total protein dzidzonu albumin kple globulin le wò ʋu me — efia tsi, nuɖuɖu, kple lãmesẽ.",
+		"Common reasons include dehydration, chronic inflammation, or infection.": "Nusiwo hea esia vee nye tsi manɔmee, atike fufui, alo dɔléle.",
+		"Bring your original report to your clinic so your doctor can confirm the number and decide if more tests are needed.": "Tsɔ wò agbalẽ ŋutɔŋutɔ la yi wò kɔdzi be wò dɔnɔkɔdola naxɔ xexlẽmea se eye wòatso nya ne èhiã dodokpɔ bubuwo.",
+		"One test is outside the usual range on your report.": "Dodokpɔ ɖeka mele abe ale si wònɔna ene le wò agbalẽ la dzi o.",
+		"That is a signal to follow up — not a diagnosis.": "Enye dzesi be nàdze eyome — menye dɔléle si wokpɔ o.",
+		"Dehydration, a recent infection, or even a blurry photo can affect results.": "Tsi manɔmee, dɔléle aɖe si va yi la nu, alo foto si mele nyuie o gɔ̃ hã ate ŋu atrɔ ŋkuɖoɖoawo.",
+		"A doctor who knows you is the best person to say what it means.": "Dɔnɔkɔdola si nya wò lae anya gblɔ nusi wòfia.",
+		"Your report includes blood protein tests (such as total protein or an M-spike on SPEP).": "Wò agbalẽ la lɔ ʋu me protein dodokpɔwo ɖe eme (abe total protein alo M-spike le SPEP dzi ene).",
+		"These show the mix of proteins in your blood.": "Esiawo fia protein ƒomevi siwo le wò ʋu me.",
+		"Unusual patterns are a common reason for follow-up blood work — they are not usually an emergency on their own.": "Nɔnɔme siwo mele abe ale si wònɔna ene la zua susu na ʋudodokpɔ bubu — womenye dzɔdzɔmenya gbegblẽ le wo ɖokui si o.",
+		"Visit your clinic or hospital, bring the original lab slip, and ask whether you need a test called immunofixation.": "Yi wò kɔdzi alo kɔdzigã, tsɔ agbalẽ gbãtɔ la yi, eye nàbia ne èhiã dodokpɔ bubu si woyɔna be immunofixation.",
+		"This summary is meant to help you understand your report — it is not medical advice or a final diagnosis.": "Nyatakaka sia ɖo be wòakpe ɖe ŋuwò nàse wò agbalẽ la gɔme — menye dɔnɔkɔdola ƒe aɖaŋuɖoɖo alo dɔléle si wokpɔ mlɔeba o.",
+		"Only a qualified clinician can confirm your results and tell you what to do next.": "Dɔnɔkɔdola nyuitɔ koe ate ŋu akpɔ wò ŋkuɖoɖoawo dzi ɖa eye wòagblɔ nusi wòle be nàwɔ emegbe.",
 		"Your results are ready": "Wò ŋkuɖoɖo siwo sɔ",
 		"Normal": "Edzɔ le eŋu",
 		"A little high": "Ede ɖe dzi viɖe",
@@ -841,17 +882,12 @@ const OFFLINE_TRANSLATIONS: Record<string, Record<string, string>> = {
 		"Important": "Vevie",
 		"Every value we could read looks within the normal ranges printed on your report. Keep your healthy habits and routine check-ups.": "Xexlẽme ɖesiaɖe si míate ŋu axlẽ la le abe ale si wònɔna ene le wò agbalẽ la dzi. Yi edzi kple lãmesẽ nɔnɔme nyuiwo kple dodokpɔ.",
 		"At least one value may have been misread from the photo. Compare this summary with your paper report or lab printout — if a number looks wrong, trust the original document and ask the lab to confirm.": "Ate ŋu anye be woaxlẽ xexlẽme ɖeka gbegblẽ le foto la me. Tsɔ nyatakaka sia sɔ kple wò agbalẽ alo lab ƒe nuŋlɔɖi la — ne xexlẽme aɖe mele eme o la, xɔ agbalẽ gbãtɔ dzi se, eye nàbia lab la be wòakpɔ egbɔ.",
-		"One test is outside the usual range on your report. That is a signal to follow up — not a diagnosis. Dehydration, a recent infection, or even a blurry photo can affect results. A doctor who knows you is the best person to say what it means.": "Dodokpɔ ɖeka mele abe ale si wònɔna ene le wò agbalẽ la dzi o. Enye dzesi be nàdze eyome — menye dɔléle si wokpɔ o. Tsi manɔmee, dɔléle aɖe si va yi la nu, alo foto si mele nyuie o gɔ̃ hã ate ŋu atrɔ ŋkuɖoɖoawo. Dɔnɔkɔdola si nya wò lae anya gblɔ nusi wòfia.",
-		"Your report includes blood protein tests (such as total protein or an M-spike on SPEP). These show the mix of proteins in your blood. Unusual patterns are a common reason for follow-up blood work — they are not usually an emergency on their own. Visit your clinic or hospital, bring the original lab slip, and ask whether you need a test called immunofixation.": "Wò agbalẽ la lɔ ʋu me protein dodokpɔwo ɖe eme (abe total protein alo M-spike le SPEP dzi ene). Esiawo fia protein ƒomevi siwo le wò ʋu me. Nɔnɔme siwo mele abe ale si wònɔna ene la zua susu na ʋudodokpɔ bubu — womenye dzɔdzɔmenya gbegblẽ le wo ɖokui si o. Yi wò kɔdzi alo kɔdzigã, tsɔ agbalẽ gbãtɔ la yi, eye nàbia ne èhiã dodokpɔ bubu si woyɔna be immunofixation.",
-		"Some liver markers on your report are outside the usual range. That can reflect diet, alcohol, medicines, or infection. Avoid alcohol until your doctor reviews the results, stay hydrated, and mention any stomach pain, yellow skin, or dark urine.": "Aklã ƒe dzesi aɖewo le wò agbalẽ la dzi mele abe ale si wònɔna ene o. Esia ate ŋu afia nuɖuɖu ƒomevi, aha, atike, alo dɔléle. Ƒo asa na aha va se ɖe esime wò dɔnɔkɔdola akpɔ ŋkuɖoɖoawo ɖa, no tsi geɖe, eye nàgblɔ ne dɔmenu le fu ɖem na wò, ŋutilã fu le fifi, alo aɖunyui yi be dzo.",
-		"This summary is meant to help you understand your report — it is not medical advice or a final diagnosis. Only a qualified clinician can confirm your results and tell you what to do next.": "Nyatakaka sia ɖo be wòakpe ɖe ŋuwò nàse wò agbalẽ la gɔme — menye dɔnɔkɔdola ƒe aɖaŋuɖoɖo alo dɔléle si wokpɔ mlɔeba o. Dɔnɔkɔdola nyuitɔ koe ate ŋu akpɔ wò ŋkuɖoɖoawo dzi ɖa eye wòagblɔ nusi wòle be nàwɔ emegbe.",
 		"Looks typical": "Ele abe ale si wònɔna ene",
 		"Higher than usual": "Kɔkɔ wu ale si wònɔna",
 		"Lower than usual": "Ede ɖe anyi wu ale si wònɔna",
-		"Worth a doctor visit": "Edze be nàyi dɔkta gbɔ",
+		"Worth a doctor visit": "Edze be meyi dɔkta gbɔ",
 		"M-spike (protein band)": "M-spike (protein ƒomevi)",
 		"SPEP M-spike": "SPEP M-spike",
-		"Seen on report": "Wokpɔe le agbalẽ la dzi",
 		"Ask about a specialist follow-up": "Bia nunyala ƒe dodokpɔ bubu ŋu nya",
 		"Your report flags an M-spike — an unusual protein band on a blood protein test (SPEP). That means the lab saw a protein pattern worth a closer look. It does not mean you are definitely seriously ill — infections and other conditions can sometimes look similar. See your doctor soon; they may order a follow-up test called immunofixation to learn more.": "Wò agbalẽ la fia M-spike — protein ƒomevi si mele abe ale si wònɔna ene le ʋu protein dodokpɔ (SPEP) me. Esia fia be lab la kpɔ protein ƒe nɔnɔme aɖe si dze be woakpɔ ɖa nyuie. Mefia be wò dɔléle sesẽ tututu o — dɔléle bubuwo hã ate ŋu adze nenema. Yi wò dɔnɔkɔdola gbɔ kaba; ate ŋu aɖe se dodokpɔ bubu si woyɔna be immunofixation be yeanya nu geɖe.",
 		"Share these results with your doctor": "Tsɔ ŋkuɖoɖo siawo na wò dɔnɔkɔdola",
@@ -889,6 +925,22 @@ const OFFLINE_TRANSLATIONS: Record<string, Record<string, string>> = {
 		"⚠️ DEMO NOTICE: You uploaded a custom image. In full GPU mode, Google Gemma 4 Multimodal Vision reads this image to extract health data. Because the local Gemma 4 server is currently not running, we cannot analyze custom images.\n\nTo test the interface, please go back and select one of the pre-loaded 'Ghanaian Medical Case Presets' (such as Malaria RDT Strip, CBC Severe Anemia, or Typhoid Report) which work fully offline.": "⚠️ DEMO NOTICE: Wòe-upload foto foforo. Le GPU full me la, Google Gemma 4 Multimodal Vision baaxlẽ foto sia na lãmesẽ nyaso. Elabena local Gemma 4 server megbam o, míate ŋu axlẽ lãmesẽ foto siwo sɔ o.\n\nNa sɔsɔ la, de fu kpo na lãmesẽ Preset siwo nye (Malaria RDT Strip, CBC Severe Anemia, alo Typhoid Report) siwo dɔwɔna offline fully."
 	},
 	fante: {
+		"Report Overview": "Nkyerɛkyerɛmu Titir",
+		"Check original report": "Hwɛ krataa ankasa no",
+		"Seen on report": "Wɔhunuu wɔ krataa no do",
+		"Total protein measures the combined amount of albumin and globulin in your blood — it reflects hydration, nutrition, and immune activity.": "Total protein susuw albumin ne globulin dodow a ɛwɔ wo mogya mu — ɛkyerɛ nsuo dodow, aduane pa, ne honam mu banbɔ.",
+		"Common reasons include dehydration, chronic inflammation, or infection.": "Ndzɛmba a ɔtaa de ba ne nsuo a ɔnnɔso, ahonam a ɛhuru, anaa yarba mmoawa.",
+		"Bring your original report to your clinic so your doctor can confirm the number and decide if more tests are needed.": "Fa wo krataa ankasa no kɔ wo clinic sɛdɛ wo datser bɛtum ahwɛ akontaahyɛdze no na wafeɛ sɛ wohia nhwehwɛmu fofor.",
+		"One test is outside the usual range on your report.": "Nhwehwɛmu kor mfa dɛ ɔtaa yɛ mu wɔ wo krataa no do.",
+		"That is a signal to follow up — not a diagnosis.": "Ɔyɛ nsɛnkyerɛdze a wobɛdzi ekyir — ɔnnyɛ yarba a wɔahu.",
+		"Dehydration, a recent infection, or even a blurry photo can affect results.": "Nsuo a ɔnnɔso wɔ wo mu, yarba fofor, anaadɛ mfonyin a ɛnna hɔ yie botum sesa nhwehwɛmu no.",
+		"A doctor who knows you is the best person to say what it means.": "Datser a onyim wo yɛ obi a ɔbɛtum aka deɛ ɔkyerɛ.",
+		"Your report includes blood protein tests (such as total protein or an M-spike on SPEP).": "Wo krataa no ka mogya protein nhwehwɛmu ho asɛm (tse dɛ total protein anaa M-spike wɔ SPEP do).",
+		"These show the mix of proteins in your blood.": "Yeinom kyerɛ dɛ protein ahodow wɔ wo mogya mu.",
+		"Unusual patterns are a common reason for follow-up blood work — they are not usually an emergency on their own.": "Nsɛm a ɔnnyɛ dɛ ɔtaa yɛ taa yɛ dza ɛma wɔyɛ mogya nhwehwɛmu fofor — ɔnnyɛ mmerɛ nyina dza ɛyɛ ntɛmpɛ.",
+		"Visit your clinic or hospital, bring the original lab slip, and ask whether you need a test called immunofixation.": "Kɔ wo clinic anaa ayaresabea, fa krataa ankasa no kɔ, na bisa dɛ wohia nhwehwɛmu bi a wɔfrɛ no immunofixation anaa.",
+		"This summary is meant to help you understand your report — it is not medical advice or a final diagnosis.": "Saa nkyerɛkyerɛmu yi yɛ dɛ ɛbɛboa wo ma woate wo krataa no ase — ɔnnyɛ ayaresa afotu anaa yarba a wɔahu koraa.",
+		"Only a qualified clinician can confirm your results and tell you what to do next.": "Datser pa nko ara na ɔbɛtum agye wo nhwehwɛmu no to mu na waka deɛ ɛsɛ dɛ woyɛ.",
 		"Your results are ready": "Wo results no awie",
 		"Normal": "Ɛyɛ papa",
 		"A little high": "Ɛkɔ soro kakra",
@@ -924,17 +976,12 @@ const OFFLINE_TRANSLATIONS: Record<string, Record<string, string>> = {
 		"Important": "Ɔho hia",
 		"Every value we could read looks within the normal ranges printed on your report. Keep your healthy habits and routine check-ups.": "Nsɛm a yɛtum kenkanee nyina wɔ dɛ ɔtaa yɛ mu wɔ wo krataa no do. Kɔ do yɛ akwahoodzen nneyɛe na kɔ nhwehwɛmu daa.",
 		"At least one value may have been misread from the photo. Compare this summary with your paper report or lab printout — if a number looks wrong, trust the original document and ask the lab to confirm.": "Ebia yɛnkenkan akontaahyɛdze kor yie wɔ mfonyin no mu. Fa saa nkyerɛkyerɛmu yi toto wo krataa anaa lab printout no ho — sɛ akontaahyɛdze bi nntsi dɛ ɔtaa yɛ a, gye krataa ankasa no dzi na bisa lab no.",
-		"One test is outside the usual range on your report. That is a signal to follow up — not a diagnosis. Dehydration, a recent infection, or even a blurry photo can affect results. A doctor who knows you is the best person to say what it means.": "Nhwehwɛmu kor mfa dɛ ɔtaa yɛ mu wɔ wo krataa no do. Ɔyɛ nsɛnkyerɛdze a wobɛdzi ekyir — ɔnnyɛ yarba a wɔahu. Nsuo a ɔnnɔso wɔ wo mu, yarba fofor, anaadɛ mfonyin a ɛnna hɔ yie botum sesa nhwehwɛmu no. Datser a onyim wo yɛ obi a ɔbɛtum aka deɛ ɔkyerɛ.",
-		"Your report includes blood protein tests (such as total protein or an M-spike on SPEP). These show the mix of proteins in your blood. Unusual patterns are a common reason for follow-up blood work — they are not usually an emergency on their own. Visit your clinic or hospital, bring the original lab slip, and ask whether you need a test called immunofixation.": "Wo krataa no ka mogya protein nhwehwɛmu ho asɛm (tse dɛ total protein anaa M-spike wɔ SPEP do). Yeinom kyerɛ dɛ protein ahodow wɔ wo mogya mu. Nsɛm a ɔnnyɛ dɛ ɔtaa yɛ taa yɛ dza ɛma wɔyɛ mogya nhwehwɛmu fofor — ɔnnyɛ mmerɛ nyina dza ɛyɛ ntɛmpɛ. Kɔ wo clinic anaa ayaresabea, fa krataa ankasa no kɔ, na bisa dɛ wohia nhwehwɛmu bi a wɔfrɛ no immunofixation anaa.",
-		"Some liver markers on your report are outside the usual range. That can reflect diet, alcohol, medicines, or infection. Avoid alcohol until your doctor reviews the results, stay hydrated, and mention any stomach pain, yellow skin, or dark urine.": "Berebo nhwehwɛmu bi a ɛwɔ wo krataa no do mfa dɛ ɔtaa yɛ mu. Ɛbɛtum afiri aduane a wodzi, nsa, aduro, anaa yarba fofor. Nnom nsa kosi dɛ wo datser bɛhwɛ nsonsonoe no mu, nom nsuo pii, na sɛ wote yafunu yaw, ahonam a ayɛ akɔkɔsrade, anaa ahomirim a ɛyɛ tuntum a, ka kyerɛ wo datser.",
-		"This summary is meant to help you understand your report — it is not medical advice or a final diagnosis. Only a qualified clinician can confirm your results and tell you what to do next.": "Saa nkyerɛkyerɛmu yi yɛ dɛ ɛbɛboa wo ma woate wo krataa no ase — ɔnnyɛ ayaresa afotu anaa yarba a wɔahu koraa. Datser pa nko ara na ɔbɛtum agye wo nhwehwɛmu no to mu na waka deɛ ɛsɛ dɛ woyɛ.",
 		"Looks typical": "Ɔte dɛ deɛ ɔtaa yɛ",
 		"Higher than usual": "Ɔkorɔn sen dɛ ɔtaa yɛ",
 		"Lower than usual": "Ɔba fam sen dɛ ɔtaa yɛ",
 		"Worth a doctor visit": "Ɔfata dɛ wokɔ dɔkota nkyɛn",
 		"M-spike (protein band)": "M-spike (protein sononko)",
 		"SPEP M-spike": "SPEP M-spike",
-		"Seen on report": "Wɔhunuu wɔ krataa no do",
 		"Ask about a specialist follow-up": "Bisa ɔfa specialist nhwehwɛmu ho",
 		"Your report flags an M-spike — an unusual protein band on a blood protein test (SPEP). That means the lab saw a protein pattern worth a closer look. It does not mean you are definitely seriously ill — infections and other conditions can sometimes look similar. See your doctor soon; they may order a follow-up test called immunofixation to learn more.": "Wo krataa no kyerɛ M-spike — protein sononko bi a ɛda edzi wɔ mogya protein nhwehwɛmu (SPEP) mu. Ɛkyerɛ dɛ lab no hunuu protein nhyehyɛe bi a ɛsɛ dɛ wɔhwɛ mu yie. Ɛnkyerɛ dɛ wo yarba mu yɛ dzen ankasa — yarba fofor botum ayɛ dɛ eyi ara. Kɔ wo datser nkyɛn ntɛm; ebia ɔbɛma wo nhwehwɛmu fofor a wɔfrɛ no immunofixation na woahu pii.",
 		"Share these results with your doctor": "Fa saa nsɛm yi kɔma wo datser",
@@ -981,46 +1028,82 @@ const OFFLINE_TRANSLATIONS: Record<string, Record<string, string>> = {
 const TEMPLATE_TRANSLATIONS: Record<string, Array<[RegExp, string]>> = {
 	twi: [
 		[
-			/^We picked out (\d+) results? from your lab report.*language\.$/i,
+			/^We picked out (\d+) results? from your lab report.*$/i,
 			"Yɛyii nsɛmmuae $1 firii wo lab krataa no mu, na yɛakyerɛkyerɛ emu biara mu wɔ kasa a ɛnyɛ den mu.",
 		],
 		[/^(\d+) results stood out$/i, "Nsɛmmuae $1 da nsow"],
 		[
-			/^(\d+) tests are outside the usual ranges.*context\.$/i,
+			/^(\d+) tests are outside the usual ranges.*$/i,
 			"Nsɔhwɛ $1 nni deɛ ɛtaa yɛ mu wɔ wo krataa no so. Ɛyɛ nsɛnkyerɛnneɛ a wobɛdi akyi — ɛnnyɛ yadeɛ a wɔahunu. Nneɛma ahodoɔ betumi sesa lab akontaahyɛdeɛ. Kɔ dɔkota nkyɛn na fa wo krataa ankasa no kɔ sɛdeɛ ɔbɛhwɛ mu yie.",
+		],
+		[
+			/^Your reading \((.*?)\) is above the usual adult range.*/i,
+			"Wo akontaahyɛdeɛ ($1) korɔn sen deɛ ɛtaa yɛ wɔ mpanyimfoɔ mu.",
+		],
+		[
+			/^Total protein is below the usual range \((.*?)\).*/i,
+			"Total protein baa fam sen deɛ ɛtaa yɛ ($1).",
+		],
+		[
+			/^(.*?) \((.*?)\) is (higher|lower) than the usual range.*/i,
+			"$1 ($2) mfa deɛ ɛtaa yɛ mu.",
 		],
 	],
 	ga: [
 		[
-			/^We picked out (\d+) results? from your lab report.*language\.$/i,
+			/^We picked out (\d+) results? from your lab report.*$/i,
 			"Mijie results $1 kɛjɛ o lab report lɛ mli, ni mitsɔɔ emli fɛɛ shishi yɛ wiemɔ ni yɔɔ mlɛo mli.",
 		],
 		[/^(\d+) results stood out$/i, "Results $1 je kpo"],
 		[
-			/^(\d+) tests are outside the usual ranges.*context\.$/i,
+			/^(\d+) tests are outside the usual ranges.*$/i,
 			"Tests $1 yɛɛɛ bɔ ni efɔɔ mli yɛ o report lɛ nɔ. Eji okadi ni obaadi sɛɛ — ejeee hela ni ana. Nibii srɔtoi baanyɛ atsake lab numbers. Yaa dɔkita he ni okɛ o krataa diɛŋtsɛ lɛ yaa koni ekwɛ mli jogbaŋŋ.",
+		],
+		[
+			/^Your reading \((.*?)\) is above the usual adult range.*/i,
+			"O akontaabuu ($1) yi kɛ nɔ ni efɔɔ baa yɛ gbodoi ahe.",
+		],
+		[
+			/^Total protein is below the usual range \((.*?)\).*/i,
+			"Total protein ba shi fe fe ni efɔɔ baa ($1).",
 		],
 	],
 	ewe: [
 		[
-			/^We picked out (\d+) results? from your lab report.*language\.$/i,
+			/^We picked out (\d+) results? from your lab report.*$/i,
 			"Míetia ŋkuɖoɖo $1 tso wò lab agbalẽ la me, eye míeɖe ɖe sia ɖe me le nya bɔbɔewo me.",
 		],
 		[/^(\d+) results stood out$/i, "Ŋkuɖoɖo $1 ɖe dzesi"],
 		[
-			/^(\d+) tests are outside the usual ranges.*context\.$/i,
+			/^(\d+) tests are outside the usual ranges.*$/i,
 			"Dodokpɔ $1 mele afisi wonɔna le wò agbalẽ la dzi o. Enye dzesi be nàdze eyome — menye dɔléle si wokpɔ o. Nu vovovowo ate ŋu atrɔ lab ƒe xexlẽmewo. Yi dɔkta gbɔ eye nàtsɔ wò agbalẽ ŋutɔŋutɔ la ayi be wòakpɔ eme nyuie.",
+		],
+		[
+			/^Your reading \((.*?)\) is above the usual adult range.*/i,
+			"Wò xexlẽme ($1) kɔkɔ wu ale si wònɔna le tsitsiewo me.",
+		],
+		[
+			/^Total protein is below the usual range \((.*?)\).*/i,
+			"Total protein ge ɖe anyi wu ale si wònɔna ($1).",
 		],
 	],
 	fante: [
 		[
-			/^We picked out (\d+) results? from your lab report.*language\.$/i,
+			/^We picked out (\d+) results? from your lab report.*$/i,
 			"Yɛyii nsɛmmuae $1 fii wo lab krataa no mu, na yɛakyerɛkyerɛ emu biara mu wɔ kasa a ɔnnyɛ dzen mu.",
 		],
 		[/^(\d+) results stood out$/i, "Nsɛmmuae $1 da nsow"],
 		[
-			/^(\d+) tests are outside the usual ranges.*context\.$/i,
+			/^(\d+) tests are outside the usual ranges.*$/i,
 			"Nsɔhwɛ $1 nnyi deɛ ɔtaa yɛ mu wɔ wo krataa no do. Ɔyɛ nsɛnkyerɛdze a wobɛdzi ekyir — ɔnnyɛ yarba a wɔahu. Ndzɛmba ahorow botum sesa lab akontaahyɛdze. Kɔ dɔkota nkyɛn na fa wo krataa ankasa no kɔ amba ɔbɔhwɛ mu yie.",
+		],
+		[
+			/^Your reading \((.*?)\) is above the usual adult range.*/i,
+			"Wo akontaahyɛdze ($1) korɔn sen dɛ ɔtaa yɛ wɔ mpanyimfo mu.",
+		],
+		[
+			/^Total protein is below the usual range \((.*?)\).*/i,
+			"Total protein baa fam sen dɛ ɔtaa yɛ ($1).",
 		],
 	],
 };
@@ -1058,13 +1141,72 @@ export function getReviewCountText(count: number, language: GemmaLanguage): stri
 }
 
 export function getTranslation(text: string, language: GemmaLanguage): string {
-	if (language === "english") return text;
-	const exact = OFFLINE_TRANSLATIONS[language]?.[text];
+	if (!text || language === "english") return text;
+
+	const trimmed = text.trim();
+	const exact = OFFLINE_TRANSLATIONS[language]?.[trimmed] || OFFLINE_TRANSLATIONS[language]?.[text];
 	if (exact) return exact;
+
 	for (const [pattern, replacement] of TEMPLATE_TRANSLATIONS[language] ?? []) {
-		if (pattern.test(text)) return text.replace(pattern, replacement);
+		if (pattern.test(trimmed)) return trimmed.replace(pattern, replacement);
 	}
+
+	// For multiline text blocks, translate line by line
+	if (text.includes("\n")) {
+		const lines = text.split("\n");
+		const translatedLines = lines.map((line) => getTranslation(line, language));
+		return translatedLines.join("\n");
+	}
+
+	// For multi-sentence text blocks (separated by ". "), translate sentence by sentence
+	if (text.includes(". ")) {
+		const sentences = text.split(/(?<=\.\s+)/);
+		if (sentences.length > 1) {
+			const translated = sentences.map((s) => getTranslation(s.trim(), language));
+			return translated.join(" ");
+		}
+	}
+
 	return text;
+}
+
+export function translateAnalysisResult(
+	result: GemmaAnalysisResult,
+	language: GemmaLanguage,
+): GemmaAnalysisResult {
+	if (!result || language === "english") return result;
+
+	const summary = getTranslation(result.summary, language);
+
+	const summarySections = result.summarySections?.map((sec) => ({
+		...sec,
+		title: getTranslation(sec.title, language),
+		body: getTranslation(sec.body, language),
+	}));
+
+	const findings =
+		result.findings?.map((f) => ({
+			...f,
+			name: getTranslation(f.name, language),
+			statusLabel: getTranslation(f.statusLabel, language),
+			note: getTranslation(f.note, language),
+		})) ?? [];
+
+	const recommendations =
+		result.recommendations?.map((r) => ({
+			...r,
+			title: getTranslation(r.title, language),
+			body: getTranslation(r.body, language),
+		})) ?? [];
+
+	return {
+		...result,
+		summary,
+		summarySections,
+		findings,
+		recommendations,
+		translations: OFFLINE_TRANSLATIONS[language] || result.translations,
+	};
 }
 
 // ─── Offline Simulator: Lab Analysis ─────────────────────────────────────────

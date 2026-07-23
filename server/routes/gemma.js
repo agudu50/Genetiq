@@ -101,6 +101,10 @@ router.post("/analyze", async (req, res) => {
 			});
 		}
 
+		if (language && language !== "english") {
+			userContent += `\n\nCRITICAL LANGUAGE REQUIREMENT: The patient requests this analysis in ${language.toUpperCase()}. Write the summary, every finding's note, every statusLabel, and every recommendation title and body in simple, clear, patient-friendly ${language.toUpperCase()}. Standard biomarker names and units may remain in English alongside clear ${language.toUpperCase()} explanation.`;
+		}
+
 		const messages = [
 			{ role: "user", content: userContent, image_base64_list: finalImageList },
 		];

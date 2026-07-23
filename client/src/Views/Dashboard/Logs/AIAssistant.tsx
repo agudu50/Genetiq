@@ -3,6 +3,7 @@ import { Bot, Send, ImagePlus, X, Phone, Heart, Leaf, AlertTriangle, Shield, Wif
 import {
 	chatWithGemma,
 	analyzeLabResults,
+	translateAnalysisResult,
 	GHANAIAN_REMEDIES,
 	EMERGENCY_CONTACTS,
 } from "@/App/Services/GemmaService";
@@ -615,6 +616,8 @@ function ScannerSection({ language, gemmaOnline }: { language: GemmaLanguage; ge
 		setResult(null);
 	};
 
+	const displayResult = result ? translateAnalysisResult(result, language) : null;
+
 	return (
 		<div className={styles.scannerSection}>
 			{!image ? (
@@ -647,7 +650,7 @@ function ScannerSection({ language, gemmaOnline }: { language: GemmaLanguage; ge
 							<X size={14} /> Remove
 						</button>
 					</div>
-					{!result && (
+					{!displayResult && (
 						<button className={styles.scanAnalyzeBtn} onClick={analyze} disabled={loading}>
 							{loading ? (
 								<><div className={styles.miniSpinner} /> Analyzing with {gemmaOnline ? "Gemma 4" : "AI"}...</>
@@ -656,17 +659,17 @@ function ScannerSection({ language, gemmaOnline }: { language: GemmaLanguage; ge
 							)}
 						</button>
 					)}
-					{result && (
+					{displayResult && (
 						<div className={styles.scanResults}>
 							<div className={styles.scanScoreRow}>
 								<div className={styles.scanScore}>
-									<span className={styles.scanScoreNum}>{result.healthScore}</span>
+									<span className={styles.scanScoreNum}>{displayResult.healthScore}</span>
 									<span className={styles.scanScoreLabel}>Health Score</span>
 								</div>
-								<p className={styles.scanSummary}>{result.summary}</p>
+								<p className={styles.scanSummary}>{displayResult.summary}</p>
 							</div>
 
-							{result.findings.map((f) => (
+							{displayResult.findings.map((f) => (
 								<div key={f.id} className={`${styles.scanFinding} ${styles[`sf-${f.status}`]}`}>
 									<div className={styles.sfTop}>
 										<span className={styles.sfName}>{f.name}</span>
@@ -678,7 +681,7 @@ function ScannerSection({ language, gemmaOnline }: { language: GemmaLanguage; ge
 							))}
 
 							<h4 className={styles.scanRecsTitle}>Recommendations</h4>
-							{result.recommendations.map((r) => (
+							{displayResult.recommendations.map((r) => (
 								<div key={r.title} className={styles.scanRec}>
 									<span className={styles.scanRecIcon}>{r.icon}</span>
 									<div>

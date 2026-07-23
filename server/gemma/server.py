@@ -541,6 +541,16 @@ async def analyze_lab_results(req: AnalyzeRequest):
             detail="Provide preset_id, lab_text, image_base64, or image_url",
         )
 
+    if req.language and req.language != "english":
+        lang_prompt = f"\n\nCRITICAL LANGUAGE REQUIREMENT: The patient requests this analysis in {req.language.upper()}. Write the summary, every finding's note, every statusLabel, and every recommendation title and body in simple, clear, patient-friendly {req.language.upper()}. Standard biomarker names and units may remain in English alongside clear {req.language.upper()} explanation."
+        if isinstance(content, str):
+            content += lang_prompt
+        elif isinstance(content, list):
+            for item in content:
+                if item.get("type") == "text":
+                    item["text"] += lang_prompt
+                    break
+
     messages = [
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": content},
