@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
 	Sparkles, Home, Flame, Shield, RefreshCw, 
 	Globe, BookOpen, Search, Bookmark, Check, ArrowRight,
-	Sun, Wind, Droplets, Utensils, Smile, Activity, Moon, Coffee, Dna
+	Sun, Wind, Droplets, Utensils, Smile, Activity, Moon, Coffee, Dna,
+	BrainCircuit, Wand2
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { 
@@ -247,12 +248,14 @@ const Tests = () => {
 					<div className={styles.spotlightCard}>
 						<div className={styles.spotlightHeader}>
 							<span className={styles.spotlightBadge}>
-								<Sparkles size={11} /> AI Suggested Daily Habit
+								<BrainCircuit size={11} /> AI Suggested Daily Habit
 							</span>
 							<span className={styles.spotlightCategory}>{spotlightTip.categoryLabel}</span>
 						</div>
-						<h3 className={styles.spotlightTitle}>{spotlightTip.title}</h3>
-						<p className={styles.spotlightSummary}>{spotlightTip.shortSummary}</p>
+						<div className={styles.spotlightBody}>
+							<h3 className={styles.spotlightTitle}>{spotlightTip.title}</h3>
+							<p className={styles.spotlightSummary}>{spotlightTip.shortSummary}</p>
+						</div>
 						<div className={styles.spotlightFooter}>
 							<button
 								type="button"
@@ -267,7 +270,7 @@ const Tests = () => {
 									</>
 								) : (
 									<>
-										<Sparkles size={13} />
+										<Wand2 size={13} />
 										<span>Generate Fresh AI Tip</span>
 									</>
 								)}
