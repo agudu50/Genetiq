@@ -1837,3 +1837,165 @@ export const EMERGENCY_CONTACTS = {
 		"Visit your nearest CHPS (Community-based Health Planning and Services) compound for non-emergency care",
 	mentalHealth: "0800 678 678 (Mental Health Authority Helpline)",
 } as const;
+
+// ─── AI Bio-Lifestyle & Hygiene Generator ───────────────────────────────────
+
+export interface AiLifestyleTipResult {
+	id: string;
+	title: string;
+	category: "Fitness" | "Nutrition" | "Hygiene" | "Sleep" | "Mind" | "Environment";
+	categoryLabel: string;
+	shortSummary: string;
+	whyItMatters: string;
+	actionableSteps: string[];
+	safetyRule: string;
+	source: string;
+}
+
+const AI_LIFESTYLE_POOL: AiLifestyleTipResult[] = [
+	{
+		id: "ai-tip-fitness-1",
+		title: "30-Minute Daily Brisk Movement",
+		category: "Fitness",
+		categoryLabel: "General Fitness & Vitality",
+		shortSummary: "Engaging in 30 minutes of moderate aerobic movement daily reduces all-cause mortality risk by 27% and enhances mitochondrial energy flexibility.",
+		whyItMatters: "Cardiovascular exercise increases nitric oxide production in blood vessels, improving arterial elasticity and delivering oxygen to vital organs.",
+		actionableSteps: [
+			"Take a 30-minute brisk walk every morning or after work.",
+			"Incorporate bodyweight squats or climbing stairs during breaks.",
+			"Maintain an upright posture to prevent spinal compression.",
+			"Stay hydrated with clean water throughout physical activity."
+		],
+		safetyRule: "Warm up with light movements before intense physical exertion.",
+		source: "World Health Organization (WHO) & CDC Exercise Guidelines"
+	},
+	{
+		id: "ai-tip-nutrition-1",
+		title: "Moringa & Kontomire Iron-Maximizer",
+		category: "Nutrition",
+		categoryLabel: "Nutrition & Local Bio-Foods",
+		shortSummary: "Pairing local iron-rich greens (Kontomire, Moringa) with natural Vitamin C (lime or orange juice) increases non-heme iron absorption in blood by over 300%.",
+		whyItMatters: "Iron is essential for red blood cell hemoglobin production. Vitamin C converts ferric iron into a soluble ferrous form easily absorbed in the duodenum.",
+		actionableSteps: [
+			"Squeeze fresh lime or lemon juice over cooked Kontomire stew or Moringa soup.",
+			"Avoid drinking black tea or coffee within 1 hour of meals, as tannins block iron.",
+			"Steam or lightly boil greens rather than over-boiling to preserve folates.",
+			"Include local citrus or papaya as post-meal dessert."
+		],
+		safetyRule: "Always cook Kontomire (cocoyam leaves) thoroughly to remove calcium oxalate crystals that cause throat irritation.",
+		source: "Ghana Health Service & NIH Nutrition Science"
+	},
+	{
+		id: "ai-tip-hygiene-1",
+		title: "20-Second Hand Hygiene Protocol",
+		category: "Hygiene",
+		categoryLabel: "Personal Hygiene & Care",
+		shortSummary: "Proper 20-second handwashing with soap breaks down pathogen lipid outer membranes, reducing respiratory and intestinal bacterial transmission by up to 47%.",
+		whyItMatters: "Soap molecules have a hydrophobic tail that latches onto virus lipids and dissolves them, effectively neutralizing pathogens before they enter mouth, eyes, or food.",
+		actionableSteps: [
+			"Wet hands with clean running water and apply soap.",
+			"Lather palm to palm, interlace fingers, and rub back of hands.",
+			"Scrub under fingernails and wrists for a full 20 seconds.",
+			"Rinse thoroughly and air dry or use a clean personal towel."
+		],
+		safetyRule: "Always wash hands before preparing food, eating, and immediately after handling cash or public door handles.",
+		source: "World Health Organization (WHO) & Ghana Health Service"
+	},
+	{
+		id: "ai-tip-sleep-1",
+		title: "Circadian Light Hygiene & Melatonin Repair",
+		category: "Sleep",
+		categoryLabel: "Sleep & Recovery",
+		shortSummary: "Getting 10 minutes of morning sunlight while avoiding blue screen light 90 minutes before bed aligns your circadian pacemaker for deep restorative sleep.",
+		whyItMatters: "Morning light triggers cortisol for daytime energy, while evening darkness triggers pineal gland melatonin synthesis essential for nighttime cellular repair.",
+		actionableSteps: [
+			"Step outside for 10-15 minutes of natural sunlight after waking up.",
+			"Dim indoor lights and switch phone screens to warm/night mode 2 hours before bed.",
+			"Keep bedroom dark, cool, and quiet during sleep.",
+			"Establish a consistent sleep-wake schedule, even on weekends."
+		],
+		safetyRule: "Never look directly at the sun; ambient daylight facing outdoors is sufficient.",
+		source: "National Institutes of Health (NIH)"
+	},
+	{
+		id: "ai-tip-mind-1",
+		title: "Vagus Nerve Resonant Breathing",
+		category: "Mind",
+		categoryLabel: "Mind & Stress Resilience",
+		shortSummary: "Practicing 6-second slow inhalation and 6-second exhalation for 5 minutes activates the vagus nerve, rapidly lowering heart rate and blood pressure.",
+		whyItMatters: "Slow rhythmic diaphragmatic breathing increases parasympathetic nerve activity, reducing stress hormone output (cortisol and adrenaline).",
+		actionableSteps: [
+			"Sit comfortably with shoulders relaxed and spine straight.",
+			"Inhale slowly through the nose for 5 to 6 seconds into your belly.",
+			"Exhale smoothly through the mouth or nose for 5 to 6 seconds.",
+			"Repeat for 5 minutes when feeling stressed or before sleep."
+		],
+		safetyRule: "If feeling lightheaded, return to normal natural breathing immediately.",
+		source: "Harvard Medical School Mind/Body Institute"
+	},
+	{
+		id: "ai-tip-env-1",
+		title: "Indoor Air Sanitation & Ventilation",
+		category: "Environment",
+		categoryLabel: "Clean Living Environment",
+		shortSummary: "Opening windows for 15 minutes twice daily replaces trapped carbon dioxide, indoor dust, and airborne mold spores with fresh oxygenated outdoor air.",
+		whyItMatters: "Enclosed living spaces accumulate volatile organic compounds, humidity, and fine dust that irritate respiratory linings and trigger asthma or chronic fatigue.",
+		actionableSteps: [
+			"Open cross-ventilating windows every morning and late afternoon.",
+			"Damp-wipe surfaces instead of dry sweeping to prevent stirring up airborne dust.",
+			"Ensure damp towels and laundry dry outdoors in direct sunlight.",
+			"Clean fan blades and air vents weekly with soapy water."
+		],
+		safetyRule: "Avoid burning garbage or plastic near living spaces; indoor smoke irritates lung alveoli.",
+		source: "Centers for Disease Control and Prevention (CDC)"
+	}
+];
+
+export async function generateAiLifestyleTip(category: string, topic?: string): Promise<AiLifestyleTipResult> {
+	// Check if backend AI is available
+	const health = await checkGemmaHealth();
+	if (health.modelLoaded) {
+		try {
+			const prompt = `Provide a concise, practical, science-based health and lifestyle tip for category '${category}' (Topic: ${topic || 'daily wellness and sanitation'}). Include:
+Title: short title
+Summary: 1-2 sentence overview
+WhyItMatters: 1-2 sentences on biological reason
+Steps: 3 bullet points
+SafetyRule: 1 important safety rule
+Source: official guideline source.`;
+
+			const chatRes = await chatWithGemma({ message: prompt, language: "english" });
+			if (chatRes && chatRes.message) {
+				const lines = chatRes.message.split("\n").filter((l) => l.trim().length > 0);
+				return {
+					id: `ai-gen-${Date.now()}`,
+					title: lines[0]?.replace(/^[#*-\d.]+\s*/, "") || `${category} AI Guidance`,
+					category: (category as any) || "Hygiene",
+					categoryLabel: `${category} & Daily Wellness`,
+					shortSummary: lines[1] || `AI recommended guidance for ${category.toLowerCase()}.`,
+					whyItMatters: lines[2] || "Supports long-term health, immunity, and clean living environments.",
+					actionableSteps: lines.slice(3, 7).map((s) => s.replace(/^[#*-\d.]+\s*/, "")) || ["Keep a clean routine.", "Stay hydrated."],
+					safetyRule: "Follow official health guidelines and consult a medical professional for personal concerns.",
+					source: "Gemma 4 AI & Health Guidelines"
+				};
+			}
+		} catch (e) {
+			console.warn("AI lifestyle tip prompt failed, returning curated model suggestion", e);
+		}
+	}
+
+	// Curated model recommendation pool
+	const matching = AI_LIFESTYLE_POOL.filter(
+		(t) => t.category.toLowerCase() === category.toLowerCase() || t.categoryLabel.toLowerCase().includes(category.toLowerCase())
+	);
+	
+	if (matching.length > 0) {
+		const randomIndex = Math.floor(Math.random() * matching.length);
+		return matching[randomIndex];
+	}
+
+	// Fallback
+	const randomIndex = Math.floor(Math.random() * AI_LIFESTYLE_POOL.length);
+	return AI_LIFESTYLE_POOL[randomIndex];
+}
+
