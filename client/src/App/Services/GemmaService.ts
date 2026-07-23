@@ -2036,7 +2036,7 @@ export async function generateAiLifestyleTip(category: string, topic?: string): 
 					.split("\n")
 					.map((l) => cleanAiLifestyleText(l))
 					.filter((l) => l.length > 0 && l !== "[" && l !== "]");
-
+					
 				return {
 					id: `ai-gen-${Date.now()}`,
 					title: cleanLines[0] || `${category} AI Guidance`,
@@ -2067,5 +2067,132 @@ export async function generateAiLifestyleTip(category: string, topic?: string): 
 	// Fallback
 	const randomIndex = Math.floor(Math.random() * AI_LIFESTYLE_POOL.length);
 	return AI_LIFESTYLE_POOL[randomIndex];
+}
+
+// ─── Daily Model Suggested Ghanaian Meal Plan ─────────────────────────────
+
+export interface MealItem {
+	title: string;
+	description: string;
+	benefits: string;
+	localFoods: string;
+}
+
+export interface DailyMealPlan {
+	breakfast: MealItem;
+	lunch: MealItem;
+	supper: MealItem;
+}
+
+const GHANAIAN_MEAL_PLANS: DailyMealPlan[] = [
+	{
+		breakfast: {
+			title: "Hausa Koko & Koose with Moringa Tea",
+			description: "Warm fermented millet porridge served with protein-rich cowpea fritters and fresh moringa tea.",
+			benefits: "Probiotics for gut fermentation, stable morning blood sugar, and high iron.",
+			localFoods: "Millet, Cowpeas, Moringa leaves, Ginger"
+		},
+		lunch: {
+			title: "Kontomire Stew with Boiled Plantain & Fresh Citrus",
+			description: "Iron-dense cocoyam leaf stew with palm fruit oil, served with boiled green plantain and orange slices.",
+			benefits: "Non-heme iron and folates paired with Vitamin C for 300% higher blood iron absorption.",
+			localFoods: "Kontomire, Green Plantain, Palm Oil, Lime/Orange"
+		},
+		supper: {
+			title: "Light Garden Egg Soup with Grilled Tilapia & Small Agbelima",
+			description: "Nutrient-dense eggplant soup with fresh tilapia fish and a small light portion of cassava/corn swallow.",
+			benefits: "Low-glycemic evening protein with Omega-3 fatty acids for overnight cellular repair.",
+			localFoods: "Garden eggs, Tilapia, Tomato, Ginger, Garlic"
+		}
+	},
+	{
+		breakfast: {
+			title: "Boiled Eggs, Local Avocado & Oats Koko",
+			description: "Two boiled eggs paired with fresh avocado slices and fiber-rich oat porridge.",
+			benefits: "High choline for brain neurotransmitters, healthy monounsaturated fats, and sustained satiety.",
+			localFoods: "Local Eggs, Avocado, Oats, Cinnamon"
+		},
+		lunch: {
+			title: "Waakye with Beans, Fish & Fresh Cabbage Salad",
+			description: "Fiber-rich rice and cowpeas cooked with sorghum leaves, served with grilled fish and cabbage.",
+			benefits: "Antioxidant polyphenols from sorghum leaves with complete protein and digestive fiber.",
+			localFoods: "Cowpeas, Brown Rice, Sorghum leaves, Cabbage, Tilapia"
+		},
+		supper: {
+			title: "Okra Stew with Smoked Fish & Light Cornmeal",
+			description: "Soluble mucilage okra stew loaded with smoked fish, garden spices, and a small cornmeal swallow.",
+			benefits: "Mucilage fiber coats stomach lining, supporting gut mucus integrity and low evening glucose.",
+			localFoods: "Okra, Smoked Fish, Pepper, Onion, Garlic"
+		}
+	},
+	{
+		breakfast: {
+			title: "Atadwe (Tiger Nut) Milk with Papaya & Roasted Groundnuts",
+			description: "Chilled natural tiger nut extract with fresh papaya slices and roasted peanuts.",
+			benefits: "Prebiotic resistant starch, digestive papain enzymes, and high natural magnesium.",
+			localFoods: "Tiger nuts, Papaya, Groundnuts"
+		},
+		lunch: {
+			title: "Red Red (Black-Eyed Beans Stew) with Ripe Plantain",
+			description: "Slow-cooked black-eyed pea stew in red palm oil served with roasted or lightly fried plantain.",
+			benefits: "High protein, zinc, and carotenoids (Vitamin A precursor) for tissue repair.",
+			localFoods: "Black-eyed beans, Red Palm Oil, Ripe Plantain"
+		},
+		supper: {
+			title: "Aromatic Smoked Fish Light Soup with Boiled Yam",
+			description: "Clear tomato, pepper, and ginger fish broth served with small boiled yam portions.",
+			benefits: "Hydrating, easy on the digestive tract before bed, and low in evening fat.",
+			localFoods: "Smoked Fish, Yam, Tomatoes, Habanero, Ginger"
+		}
+	}
+];
+
+export async function generateDailyMealPlan(seed?: number): Promise<DailyMealPlan> {
+	const health = await checkGemmaHealth();
+	if (health.modelLoaded) {
+		try {
+			const prompt = `Return a JSON object only for a daily Ghanaian healthy meal plan with Breakfast, Lunch, and Supper. Format:
+{
+  "breakfast": { "title": "...", "description": "...", "benefits": "...", "localFoods": "..." },
+  "lunch": { "title": "...", "description": "...", "benefits": "...", "localFoods": "..." },
+  "supper": { "title": "...", "description": "...", "benefits": "...", "localFoods": "..." }
+}`;
+			const chatRes = await chatWithGemma({ message: prompt, language: "english" });
+			if (chatRes && chatRes.message) {
+				const jsonMatch = chatRes.message.match(/\{[\s\S]*\}/);
+				if (jsonMatch) {
+					const parsed = JSON.parse(jsonMatch[0]);
+					if (parsed.breakfast && parsed.lunch && parsed.supper) {
+						return {
+							breakfast: {
+								title: cleanAiLifestyleText(parsed.breakfast.title || "Hausa Koko & Koose"),
+								description: cleanAiLifestyleText(parsed.breakfast.description || "Nutritious morning porridge."),
+								benefits: cleanAiLifestyleText(parsed.breakfast.benefits || "Probiotics and steady glucose."),
+								localFoods: cleanAiLifestyleText(parsed.breakfast.localFoods || "Millet, Cowpeas, Moringa")
+							},
+							lunch: {
+								title: cleanAiLifestyleText(parsed.lunch.title || "Kontomire Stew & Plantain"),
+								description: cleanAiLifestyleText(parsed.lunch.description || "Iron-rich leafy stew with plantain."),
+								benefits: cleanAiLifestyleText(parsed.lunch.benefits || "High blood iron absorption."),
+								localFoods: cleanAiLifestyleText(parsed.lunch.localFoods || "Kontomire, Plantain, Lime")
+							},
+							supper: {
+								title: cleanAiLifestyleText(parsed.supper.title || "Light Garden Egg Soup & Fish"),
+								description: cleanAiLifestyleText(parsed.supper.description || "Light vegetable soup with fresh fish."),
+								benefits: cleanAiLifestyleText(parsed.supper.benefits || "Easy digestion before sleep."),
+								localFoods: cleanAiLifestyleText(parsed.supper.localFoods || "Garden eggs, Tilapia, Ginger")
+							}
+						};
+					}
+				}
+			}
+		} catch (e) {
+			console.warn("AI meal plan generation failed, using curated daily plan", e);
+		}
+	}
+
+	const dateSeed = seed || (new Date().getFullYear() * 1000 + (new Date().getMonth() + 1) * 100 + new Date().getDate());
+	const index = Math.abs(dateSeed) % GHANAIAN_MEAL_PLANS.length;
+	return GHANAIAN_MEAL_PLANS[index];
 }
 

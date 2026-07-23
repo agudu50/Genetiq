@@ -780,3 +780,159 @@
 		}
 	}
 }
+
+.humanMealSection {
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 16px;
+	padding: 24px;
+	margin-bottom: 28px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.humanMealHeader {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 14px;
+}
+
+.humanMealTitle {
+	font-size: 18px;
+	font-weight: 700;
+	color: #ffffff;
+	margin: 0;
+}
+
+.humanMealSubtitle {
+	font-size: 13px;
+	color: var(--text-secondary, #94a3b8);
+	margin: 4px 0 0 0;
+}
+
+.humanRefreshBtn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 7px 14px;
+	border-radius: 8px;
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--text-secondary, #cbd5e1);
+	background: rgba(255, 255, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	cursor: pointer;
+	transition: all 0.2s ease;
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.1);
+		color: #ffffff;
+	}
+}
+
+.humanMealGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+	gap: 16px;
+}
+
+.humanMealCard {
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 12px;
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+
+	&:hover {
+		border-color: rgba(255, 255, 255, 0.16);
+	}
+}
+
+.humanTimeRow {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: var(--accent, #10b981);
+}
+
+.humanIcon {
+	color: var(--accent, #10b981);
+}
+
+.humanTimeLabel {
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	color: var(--accent, #10b981);
+}
+
+.humanDishTitle {
+	font-size: 16px;
+	font-weight: 700;
+	color: #ffffff;
+	margin: 0;
+	line-height: 1.35;
+}
+
+.humanDishDesc {
+	font-size: 13px;
+	color: var(--text-secondary, #94a3b8);
+	margin: 0;
+	line-height: 1.5;
+}
+
+.humanBioBox {
+	background: rgba(255, 255, 255, 0.03);
+	border-radius: 8px;
+	padding: 10px 12px;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+
+	.humanBioLabel {
+		font-size: 11px;
+		font-weight: 700;
+		color: #10b981;
+	}
+
+	p {
+		font-size: 12px;
+		color: rgba(255, 255, 255, 0.85);
+		margin: 0;
+		line-height: 1.45;
+	}
+}
+
+.humanIngBox {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin-top: auto;
+}
+
+.humanIngLabel {
+	font-size: 11px;
+	font-weight: 700;
+	color: var(--text-secondary, #94a3b8);
+}
+
+.humanPillRow {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.humanPill {
+	font-size: 11px;
+	font-weight: 500;
+	color: rgba(255, 255, 255, 0.8);
+	background: rgba(255, 255, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	padding: 3px 8px;
+	border-radius: 6px;
+}

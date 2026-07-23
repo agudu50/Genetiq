@@ -1,12 +1,18 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
 	Sparkles, Home, Flame, Shield, RefreshCw, 
 	Globe, BookOpen, Search, Bookmark, Check, ArrowRight,
-	Sun, Wind, Droplets, Utensils, Smile, Activity
+	Sun, Wind, Droplets, Utensils, Smile, Activity, Moon, Coffee
 } from "lucide-react";
 import { toast } from "react-toastify";
-import { generateAiLifestyleTip, type AiLifestyleTipResult, GHANAIAN_REMEDIES } from "@/App/Services/GemmaService";
+import { 
+	generateAiLifestyleTip, 
+	generateDailyMealPlan, 
+	type DailyMealPlan, 
+	type AiLifestyleTipResult, 
+	GHANAIAN_REMEDIES 
+} from "@/App/Services/GemmaService";
 import styles from "./Tests.module.scss";
 
 type LifestyleCategory = "All" | "Fitness" | "Nutrition" | "Hygiene" | "Sleep" | "Mind" | "Environment";
@@ -115,11 +121,33 @@ const Tests = () => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [expandedTipId, setExpandedTipId] = useState<string | null>(null);
 	
-	// AI Tip Generation State
+	// AI Tip & Meal Plan State
 	const [aiTips, setAiTips] = useState<AiLifestyleTipResult[]>(CURATED_LIFESTYLE_TIPS);
+	const [dailyMealPlan, setDailyMealPlan] = useState<DailyMealPlan | null>(null);
 	const [isGenerating, setIsGenerating] = useState(false);
+	const [isMealGenerating, setIsMealGenerating] = useState(false);
 	const [customPrompt, setCustomPrompt] = useState("");
 	const [showGenerator, setShowGenerator] = useState(false);
+
+	// Load Initial Model Daily Meal Plan
+	useEffect(() => {
+		generateDailyMealPlan().then(setDailyMealPlan);
+	}, []);
+
+	// Refresh Meal Plan Handler
+	const handleRefreshMealPlan = useCallback(async () => {
+		setIsMealGenerating(true);
+		try {
+			const freshSeed = Date.now();
+			const plan = await generateDailyMealPlan(freshSeed);
+			setDailyMealPlan(plan);
+			toast.success("Fresh AI Model Daily Ghanaian Meal Plan Suggested!", { autoClose: 3000 });
+		} catch {
+			toast.error("Failed to generate meal plan.");
+		} finally {
+			setIsMealGenerating(false);
+		}
+	}, []);
 
 	// Saved Habits in Local Storage
 	const [savedHabitIds, setSavedHabitIds] = useState<string[]>(() => {
@@ -191,7 +219,7 @@ const Tests = () => {
 							General Healthy Living <span className={styles.accentText}>& Bio-Habits</span>
 						</h1>
 						<p className={styles.heroSubtitle}>
-							Comprehensive guidance for daily fitness, balanced nutrition, restorative sleep, mental clarity, personal hygiene, and clean living — suggested by the AI Model.
+							Daily guidance suggested by the AI Model for fitness, local Ghanaian meals (Breakfast, Lunch & Supper), sleep, hygiene, and mental resilience.
 						</p>
 					</div>
 
@@ -285,6 +313,101 @@ const Tests = () => {
 							<span>Clean Environment</span>
 						</button>
 					</div>
+
+					{/* AI Model Suggested Daily Ghanaian Meal Plan (Shown in Nutrition & All) */}
+					{(activeCategory === "Nutrition" || activeCategory === "All") && dailyMealPlan && (
+						<div className={styles.humanMealSection}>
+							<div className={styles.humanMealHeader}>
+								<div>
+									<h3 className={styles.humanMealTitle}>Daily Bio-Nutritional Meal Guide</h3>
+									<p className={styles.humanMealSubtitle}>Model-suggested Ghanaian meals designed for energy, digestion, and daily health.</p>
+								</div>
+								<button
+									type="button"
+									className={styles.humanRefreshBtn}
+									onClick={handleRefreshMealPlan}
+									disabled={isMealGenerating}
+								>
+									<RefreshCw size={13} className={isMealGenerating ? styles.spinIcon : ""} />
+									<span>{isMealGenerating ? "Updating..." : "Refresh Meals"}</span>
+								</button>
+							</div>
+
+							<div className={styles.humanMealGrid}>
+								{/* Breakfast */}
+								<div className={styles.humanMealCard}>
+									<div className={styles.humanTimeRow}>
+										<Coffee size={14} className={styles.humanIcon} />
+										<span className={styles.humanTimeLabel}>Breakfast (Morning)</span>
+									</div>
+									<h4 className={styles.humanDishTitle}>{dailyMealPlan.breakfast.title}</h4>
+									<p className={styles.humanDishDesc}>{dailyMealPlan.breakfast.description}</p>
+									
+									<div className={styles.humanBioBox}>
+										<span className={styles.humanBioLabel}>🧬 Biological Benefit:</span>
+										<p>{dailyMealPlan.breakfast.benefits}</p>
+									</div>
+
+									<div className={styles.humanIngBox}>
+										<span className={styles.humanIngLabel}>🇬🇭 Local Ingredients:</span>
+										<div className={styles.humanPillRow}>
+											{dailyMealPlan.breakfast.localFoods.split(",").map((food, fIdx) => (
+												<span key={fIdx} className={styles.humanPill}>{food.trim()}</span>
+											))}
+										</div>
+									</div>
+								</div>
+
+								{/* Lunch */}
+								<div className={styles.humanMealCard}>
+									<div className={styles.humanTimeRow}>
+										<Sun size={14} className={styles.humanIcon} />
+										<span className={styles.humanTimeLabel}>Lunch (Midday)</span>
+									</div>
+									<h4 className={styles.humanDishTitle}>{dailyMealPlan.lunch.title}</h4>
+									<p className={styles.humanDishDesc}>{dailyMealPlan.lunch.description}</p>
+									
+									<div className={styles.humanBioBox}>
+										<span className={styles.humanBioLabel}>🧬 Biological Benefit:</span>
+										<p>{dailyMealPlan.lunch.benefits}</p>
+									</div>
+
+									<div className={styles.humanIngBox}>
+										<span className={styles.humanIngLabel}>🇬🇭 Local Ingredients:</span>
+										<div className={styles.humanPillRow}>
+											{dailyMealPlan.lunch.localFoods.split(",").map((food, fIdx) => (
+												<span key={fIdx} className={styles.humanPill}>{food.trim()}</span>
+											))}
+										</div>
+									</div>
+								</div>
+
+								{/* Supper */}
+								<div className={styles.humanMealCard}>
+									<div className={styles.humanTimeRow}>
+										<Moon size={14} className={styles.humanIcon} />
+										<span className={styles.humanTimeLabel}>Supper / Dinner (Evening)</span>
+									</div>
+									<h4 className={styles.humanDishTitle}>{dailyMealPlan.supper.title}</h4>
+									<p className={styles.humanDishDesc}>{dailyMealPlan.supper.description}</p>
+									
+									<div className={styles.humanBioBox}>
+										<span className={styles.humanBioLabel}>🧬 Biological Benefit:</span>
+										<p>{dailyMealPlan.supper.benefits}</p>
+									</div>
+
+									<div className={styles.humanIngBox}>
+										<span className={styles.humanIngLabel}>🇬🇭 Local Ingredients:</span>
+										<div className={styles.humanPillRow}>
+											{dailyMealPlan.supper.localFoods.split(",").map((food, fIdx) => (
+												<span key={fIdx} className={styles.humanPill}>{food.trim()}</span>
+											))}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					)}
 
 					{/* Search Bar & AI Generator Trigger Header */}
 					<div className={styles.searchHeader}>
