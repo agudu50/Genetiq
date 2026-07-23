@@ -641,6 +641,20 @@ const OFFLINE_TRANSLATIONS: Record<string, Record<string, string>> = {
 		"Report Overview": "Nkyerɛkyerɛmu Titire",
 		"Check original report": "Sɔw krataa ankasa no hwɛ",
 		"Seen on report": "Wɔhunuu wɔ krataa no so",
+		"Monoclonal Gammopathy (M-spike)": "Monoclonal Gammopathy (M-spike / Protein sononko)",
+		"Protein Electrophoresis - M-spike": "Protein Electrophoresis - M-spike",
+		"Requires Urgent Medical Attention": "Hia ayaresa ntɛmpɛ",
+		"Faint restricted band detected": "Wɔhunuu protein band a ɛnyɛ den wɔ krataa no so",
+		"Consult Your Doctor Immediately": "Kɔ wo dɔkota nkyɛn ntɛm pa ara",
+		"Maintain a Balanced Ghanaian Diet": "Di Ghana aduane pa a ahoɔden wɔ mu daa",
+		"Stay Well Hydrated": "Nom nsuo pa pii daa",
+		"Manage Stress and Get Rest": "Gye wo ho na home yiye",
+		"Your lab report indicates a significant finding: a 'faint restricted band' or 'M-spike' in your blood. This abnormal protein requires immediate medical follow-up, specifically an 'Immunofixation' test, to determine its cause and significance. While this finding can sometimes be benign, it can also be an early sign of more serious conditions. It is crucial to consult your doctor without delay for further evaluation and guidance. Please remember, this analysis is AI-assisted and not a replacement for a qualified medical doctor.": "Wo lab krataa no kyerɛ nsɛm titire bi: protein band a ɛnyɛ den anaa 'M-spike' wɔ wo mogya mu. Saa protein sononko yi hia dɔkota nhwehwɛmu ntɛmpɛ, titire ne 'Immunofixation' nhwehwɛmu, na wɔahunu ne fapem ne deɛ ɛkyerɛ. Ɛwom sɛ eyi betumi ayɛ deɛ ɛnnyɛ bɔne deɛ, nanso ɛbetumi nso ayɛ yadeɛ mu den foforo nsɛnkyerɛnneɛ. Ɛho hia pa ara sɛ wobɛkɔ wo dɔkota nkyɛn a kyɛre nni mu ma wafeɛ mu bio na wama wo afotuo. Yɛsrɛ wo kae sɛ, saa nhwehwɛmu yi yɛ AI mmoa na ɛnnyɛ dɔkota pa ananmu.",
+		"Your lab report indicates the presence of a 'faint restricted band' or 'M-spike' in the gamma globulin region. This M-spike is an abnormal protein that can be a sign of a condition called monoclonal gammopathy. While it can sometimes be harmless (known as MGUS - Monoclonal Gammopathy of Undetermined Significance), it can also be an early indicator of more serious conditions affecting the blood cells, such as multiple myeloma. It is crucial to follow up with a doctor for further investigation, as recommended by the lab report, specifically an 'Immunofixation' test, to understand the nature of this protein.": "Wo lab krataa no kyerɛ sɛ protein band sononko anaa 'M-spike' wɔ gamma globulin mu. Saa M-spike yi yɛ protein a ɛnyɛ deɛ ɛtaa yɛ a ɛbetumi ayɛ monoclonal gammopathy yadeɛ nsɛnkyerɛnneɛ. Ɛwom sɛ ɛbetumi ayɛ deɛ pɔtee biara nni mu (a wɔfrɛ no MGUS), nanso ɛbetumi nso ayɛ mogya yadeɛ a ɛyɛ den te sɛ multiple myeloma nsɛnkyerɛnneɛ. Ɛho hia pa ara sɛ wobɛdi akyi wɔ dɔkota nkyɛn na wode 'Immunofixation' nhwehwɛmu bɛsɔ ahwɛ sɛdeɛ ebɛyɛ a wobɛte protein yi ase yiye.",
+		"The most important step is to take this lab report to your doctor as soon as possible. Discuss the finding of the 'faint restricted band' (M-spike) and the lab's recommendation for an 'Immunofixation' test. This follow-up test is essential to determine the exact type and significance of the abnormal protein found in your blood. Do not delay this consultation.": "Anamɔn a ɛho hia sen biara ne sɛ wode saa lab krataa yi bɛkɔ wo dɔkota nkyɛn ntɛmpɛ. Kasa fa protein band sononko (M-spike) no ne lab no afotuo a ɛfa 'Immunofixation' nhwehwɛmu ho. Saa nhwehwɛmu foforo yi ho hia na wɔahunu protein sononko a wɔhunuu wɔ wo mogya mu no su ne deɛ ɛkyerɛ. Mma kyɛre nni eyi kɔ mu.",
+		"While awaiting further diagnosis, continue to support your overall health with a nutritious diet. Focus on local Ghanaian foods rich in vitamins and minerals. Include plenty of kontomire (cocoyam leaves), garden eggs, and other dark leafy greens. Incorporate fruits like mangoes, oranges, and pineapples. Reduce your intake of processed foods, excessive salt, and sugary drinks. A healthy diet helps your body function optimally and can support your immune system.": "Wɔberɛ a woretwɛn nhwehwɛmu foforo no, kɔ so boa wo ahoɔden koraa de aduane pa. Di Ghana aduane ahodoɔ a vitamins ne minerals wɔ mu pii. Di kontomire, ntoropo, ne nhaban frɔmfrɔm ahodoɔ pii. Di nsuaba te sɛ mangoes, ankaa, ne aborɔbɛ. Te aduane a wɔayɛ no package, nkyene pii, ne nsuo a ɛyɛ dɛ so. Aduane pa boa wo honam ma ɛyɛ adwuma yiye na ɛma wo yareɛ banbɔ mu yɛ den.",
+		"Ensure you are drinking enough clean water throughout the day. Staying hydrated is vital for all bodily functions, including kidney health and blood circulation. You can also supplement with natural Ghanaian options like fresh coconut water, which is a good source of electrolytes, or light koko (porridge) to keep your energy levels up.": "Hwɛ sɛ worenom nsuo fiideɛ a ɛdɔɔso da mu nyinaa. Nsuo a worenom no ho hia ma wo honam dwumadie nyinaa, a berebo ne mogya kɔ ne ba ka ho. Wobɛtumi nso anom nneɛma pa a ɛwɔ Ghana te sɛ kubesuo foforo a ɛma ahoɔden, anaa koko mmerɛw sɛdeɛ ebɛma wo ho ayɛ den.",
+		"Receiving an abnormal lab result can be stressful. Try to manage stress through relaxation techniques, light exercise, or spending time with loved ones. Ensure you are getting adequate sleep each night. A well-rested body is better equipped to handle any health challenges. Consider traditional Ghanaian practices like meditation or spending time in nature if that brings you calm.": "Lab nhwehwɛmu a ɛnyɛ papa a wobɛnya no betumi ama woadwen pii. Bɔ mmodden sɛ wobɛte adwenehaw so denam home, apɔw-mu-teɛteɛ mmerɛw, anaa deɛ wode berɛ bɛdi kɔmfo mu wɔ wo nnipa dɔfoɔ nkyɛn. Hwɛ sɛ wobɛda yiye anadwo biara. Honam a ahome yiye na ɛtumi ko yareɛ ahodoɔ. Dwen nneɛma pa ho anaa kɔ nsubonten ne mfanti mu sɛ eyi bɛma wo ho adwo wo a.",
 		"Total protein measures the combined amount of albumin and globulin in your blood — it reflects hydration, nutrition, and immune activity.": "Total protein susuw albumin ne globulin dodoɔ a ɛwɔ wo mogya mu — ɛkyerɛ nsuo dodoɔ, aduane pa, ne honam mu banbɔ.",
 		"Common reasons include dehydration, chronic inflammation, or infection.": "Nneɛma a ɛtaa de ba ne nsuo a ɛnnɔɔso, ahonam a ɛhuru, anaa yadeɛ mmoawa.",
 		"Bring your original report to your clinic so your doctor can confirm the number and decide if more tests are needed.": "Fa wo krataa ankasa no kɔ wo clinic sɛdeɛ wo dɔkota bɛtumi ahwɛ akontaahyɛdeɛ no na wafeɛ sɛ wohia nhwehwɛmu foforo.",
@@ -740,6 +754,20 @@ const OFFLINE_TRANSLATIONS: Record<string, Record<string, string>> = {
 		"Report Overview": "Report mli nsɛm",
 		"Check original report": "Kwɛ krataa diɛŋtsɛ lɛ",
 		"Seen on report": "Aná yɛ report lɛ nɔ",
+		"Monoclonal Gammopathy (M-spike)": "Monoclonal Gammopathy (M-spike)",
+		"Protein Electrophoresis - M-spike": "Protein Electrophoresis - M-spike",
+		"Requires Urgent Medical Attention": "Hia yelikɛlɔ ntɛm pa ara",
+		"Faint restricted band detected": "Aná protein band a eyeee faŋŋ yɛ report lɛ nɔ",
+		"Consult Your Doctor Immediately": "Yaa o dɔkita he ntɛm pa ara",
+		"Maintain a Balanced Ghanaian Diet": "Ye Ghana niyenii kpakpa ni yɔɔ hewalɛ daa",
+		"Stay Well Hydrated": "Nu nu pii daa",
+		"Manage Stress and Get Rest": "Jɔɔ ohe ni ojɔɔ ohe yiye",
+		"Your lab report indicates a significant finding: a 'faint restricted band' or 'M-spike' in your blood. This abnormal protein requires immediate medical follow-up, specifically an 'Immunofixation' test, to determine its cause and significance. While this finding can sometimes be benign, it can also be an early sign of more serious conditions. It is crucial to consult your doctor without delay for further evaluation and guidance. Please remember, this analysis is AI-assisted and not a replacement for a qualified medical doctor.": "O lab report lɛ tsɔɔ sane titiri ko: protein band ko ni eyeee faŋŋ loo 'M-spike' yɛ o la mli. Sane nɛɛ hiaa akɛ aya dɔkita he ntɛm pa ara yɛ 'Immunofixation' kaimɔ nɔ...",
+		"Your lab report indicates the presence of a 'faint restricted band' or 'M-spike' in the gamma globulin region. This M-spike is an abnormal protein that can be a sign of a condition called monoclonal gammopathy. While it can sometimes be harmless (known as MGUS - Monoclonal Gammopathy of Undetermined Significance), it can also be an early indicator of more serious conditions affecting the blood cells, such as multiple myeloma. It is crucial to follow up with a doctor for further investigation, as recommended by the lab report, specifically an 'Immunofixation' test, to understand the nature of this protein.": "O lab report lɛ tsɔɔ akɛ M-spike loo protein band ko yɛ gamma globulin mli. Enɛ baanyɛ afee monoclonal gammopathy okadi...",
+		"The most important step is to take this lab report to your doctor as soon as possible. Discuss the finding of the 'faint restricted band' (M-spike) and the lab's recommendation for an 'Immunofixation' test. This follow-up test is essential to determine the exact type and significance of the abnormal protein found in your blood. Do not delay this consultation.": "Nɔ ni he hiaa fe fɛɛ ji akɛ okɛ lab report nɛɛ aya o dɔkita he ekpakpa. Wiemɔ yɛ M-spike kɛ Immunofixation kaimɔ lɛ he. Enɛ baaye abua kɛha la kaimɔ foforo...",
+		"While awaiting further diagnosis, continue to support your overall health with a nutritious diet. Focus on local Ghanaian foods rich in vitamins and minerals. Include plenty of kontomire (cocoyam leaves), garden eggs, and other dark leafy greens. Incorporate fruits like mangoes, oranges, and pineapples. Reduce your intake of processed foods, excessive salt, and sugary drinks. A healthy diet helps your body function optimally and can support your immune system.": "Beni okwɛɔ kaimɔ foforo, yaa nɔ kɛ niyenii kpakpa ni yɔɔ hewalɛ yɛ Ghana tamɔ kontomire, gbonu, kɛ yibii...",
+		"Ensure you are drinking enough clean water throughout the day. Staying hydrated is vital for all bodily functions, including kidney health and blood circulation. You can also supplement with natural Ghanaian options like fresh coconut water, which is a good source of electrolytes, or light koko (porridge) to keep your energy levels up.": "Kwɛ akɛ eenu nu pii ni tse yɛ gbi lɛ mli fɛɛ. Nu ni eenu lɛ he hiaa kɛha o berebo kɛ la tsuɔmɔ...",
+		"Receiving an abnormal lab result can be stressful. Try to manage stress through relaxation techniques, light exercise, or spending time with loved ones. Ensure you are getting adequate sleep each night. A well-rested body is better equipped to handle any health challenges. Consider traditional Ghanaian practices like meditation or spending time in nature if that brings you calm.": "Kɛji oná lab result ni eyeee faŋŋ lɛ, ebaanyɛ eha ojɔɔ ohe pii. Bɔ mɔdɛŋ ni ojɔɔ ohe yɛ jɔɔmɔ, kɛ wɔmɔ jogbaŋŋ mli...",
 		"Total protein measures the combined amount of albumin and globulin in your blood — it reflects hydration, nutrition, and immune activity.": "Total protein susuo albumin kɛ globulin ni yɛ o la mli — etsɔɔ nu ni obɛ, niyenii, kɛ hewalɛ.",
 		"Common reasons include dehydration, chronic inflammation, or infection.": "Nii ni fɔɔ haa ji nu ni obɛnu, hela foforɔ, loo mmoawa.",
 		"Bring your original report to your clinic so your doctor can confirm the number and decide if more tests are needed.": "Kɛ o report diɛŋtsɛ lɛ yaa o clinic koni o dɔkita ekwɛ akontaabuu lɛ ni ebi kɛji ohiaa kaimɔi Pii.",
@@ -833,6 +861,20 @@ const OFFLINE_TRANSLATIONS: Record<string, Record<string, string>> = {
 		"Report Overview": "Nusi le agbalẽa me",
 		"Check original report": "Kpɔ agbalẽ ŋutɔŋutɔ la",
 		"Seen on report": "Wokpɔe le agbalẽ la dzi",
+		"Monoclonal Gammopathy (M-spike)": "Monoclonal Gammopathy (M-spike)",
+		"Protein Electrophoresis - M-spike": "Protein Electrophoresis - M-spike",
+		"Requires Urgent Medical Attention": "Hiã dɔnɔkɔdola kaba",
+		"Faint restricted band detected": "Wokpɔ protein band aɖe le agbalẽ la dzi",
+		"Consult Your Doctor Immediately": "Yi wò dɔnɔkɔdola gbɔ kaba",
+		"Maintain a Balanced Ghanaian Diet": "Ɖu Ghana nuɖuɖu nyui siwo me lãmesẽ le daa",
+		"Stay Well Hydrated": "No tsi geɖe daa",
+		"Manage Stress and Get Rest": "Ɖe fu kpo eye nàgbɔ ɖe eme",
+		"Your lab report indicates a significant finding: a 'faint restricted band' or 'M-spike' in your blood. This abnormal protein requires immediate medical follow-up, specifically an 'Immunofixation' test, to determine its cause and significance. While this finding can sometimes be benign, it can also be an early sign of more serious conditions. It is crucial to consult your doctor without delay for further evaluation and guidance. Please remember, this analysis is AI-assisted and not a replacement for a qualified medical doctor.": "Wò lab agbalẽ la fia nu vevi aɖe: protein band aɖe alo 'M-spike' le wò ʋu me. Esia hiã be nàyi dɔnɔkɔdola gbɔ kaba le 'Immunofixation' dodokpɔ ŋuti...",
+		"Your lab report indicates the presence of a 'faint restricted band' or 'M-spike' in the gamma globulin region. This M-spike is an abnormal protein that can be a sign of a condition called monoclonal gammopathy. While it can sometimes be harmless (known as MGUS - Monoclonal Gammopathy of Undetermined Significance), it can also be an early indicator of more serious conditions affecting the blood cells, such as multiple myeloma. It is crucial to follow up with a doctor for further investigation, as recommended by the lab report, specifically an 'Immunofixation' test, to understand the nature of this protein.": "Wò lab agbalẽ la fia be M-spike alo protein band aɖe le gamma globulin me. Esia ate ŋu anye monoclonal gammopathy dɔléle dzesi...",
+		"The most important step is to take this lab report to your doctor as soon as possible. Discuss the finding of the 'faint restricted band' (M-spike) and the lab's recommendation for an 'Immunofixation' test. This follow-up test is essential to determine the exact type and significance of the abnormal protein found in your blood. Do not delay this consultation.": "Afɔɖeɖe vevitɔ nye be nàtsɔ lab agbalẽ sia ayi wò dɔnɔkɔdola gbɔ kaba...",
+		"While awaiting further diagnosis, continue to support your overall health with a nutritious diet. Focus on local Ghanaian foods rich in vitamins and minerals. Include plenty of kontomire (cocoyam leaves), garden eggs, and other dark leafy greens. Incorporate fruits like mangoes, oranges, and pineapples. Reduce your intake of processed foods, excessive salt, and sugary drinks. A healthy diet helps your body function optimally and can support your immune system.": "Esime nèle lalam na dodokpɔ bubu la, yi edzi nàɖu Ghana nuɖuɖu nyuiwo abe kontomire, agboma, kple atitowo ene...",
+		"Ensure you are drinking enough clean water throughout the day. Staying hydrated is vital for all bodily functions, including kidney health and blood circulation. You can also supplement with natural Ghanaian options like fresh coconut water, which is a good source of electrolytes, or light koko (porridge) to keep your energy levels up.": "Kpɔ egbɔ be nàno tsi dzadzɛ geɖe le ŋkeke la me katã...",
+		"Receiving an abnormal lab result can be stressful. Try to manage stress through relaxation techniques, light exercise, or spending time with loved ones. Ensure you are getting adequate sleep each night. A well-rested body is better equipped to handle any health challenges. Consider traditional Ghanaian practices like meditation or spending time in nature if that brings you calm.": "Xɔxɔ lab ŋkuɖoɖo si mele nyuie o la ate ŋu ana nàtsi dzi. Te kpɔ be nàɖe fu kpo eye nàdɔ alɔ̃ nyuie...",
 		"Total protein measures the combined amount of albumin and globulin in your blood — it reflects hydration, nutrition, and immune activity.": "Total protein dzidzonu albumin kple globulin le wò ʋu me — efia tsi, nuɖuɖu, kple lãmesẽ.",
 		"Common reasons include dehydration, chronic inflammation, or infection.": "Nusiwo hea esia vee nye tsi manɔmee, atike fufui, alo dɔléle.",
 		"Bring your original report to your clinic so your doctor can confirm the number and decide if more tests are needed.": "Tsɔ wò agbalẽ ŋutɔŋutɔ la yi wò kɔdzi be wò dɔnɔkɔdola naxɔ xexlẽmea se eye wòatso nya ne èhiã dodokpɔ bubuwo.",
@@ -928,6 +970,20 @@ const OFFLINE_TRANSLATIONS: Record<string, Record<string, string>> = {
 		"Report Overview": "Nkyerɛkyerɛmu Titir",
 		"Check original report": "Hwɛ krataa ankasa no",
 		"Seen on report": "Wɔhunuu wɔ krataa no do",
+		"Monoclonal Gammopathy (M-spike)": "Monoclonal Gammopathy (M-spike / Protein sononko)",
+		"Protein Electrophoresis - M-spike": "Protein Electrophoresis - M-spike",
+		"Requires Urgent Medical Attention": "Hia ayaresa ntɛmpɛ",
+		"Faint restricted band detected": "Wɔhunuu protein band a ɔnnyɛ dzen wɔ krataa no do",
+		"Consult Your Doctor Immediately": "Kɔ wo datser nkyɛn ntɛm pa ara",
+		"Maintain a Balanced Ghanaian Diet": "Dzi Ghana aduane pa a ahoɔden wɔ mu daa",
+		"Stay Well Hydrated": "Nom nsuo pa pii daa",
+		"Manage Stress and Get Rest": "Gye wo ho na home yie",
+		"Your lab report indicates a significant finding: a 'faint restricted band' or 'M-spike' in your blood. This abnormal protein requires immediate medical follow-up, specifically an 'Immunofixation' test, to determine its cause and significance. While this finding can sometimes be benign, it can also be an early sign of more serious conditions. It is crucial to consult your doctor without delay for further evaluation and guidance. Please remember, this analysis is AI-assisted and not a replacement for a qualified medical doctor.": "Wo lab krataa no kyerɛ nsɛm titir bi: protein band a ɔnnyɛ dzen anaa 'M-spike' wɔ wo mogya mu. Saa protein sononko yi hia datser nhwehwɛmu ntɛmpɛ...",
+		"Your lab report indicates the presence of a 'faint restricted band' or 'M-spike' in the gamma globulin region. This M-spike is an abnormal protein that can be a sign of a condition called monoclonal gammopathy. While it can sometimes be harmless (known as MGUS - Monoclonal Gammopathy of Undetermined Significance), it can also be an early indicator of more serious conditions affecting the blood cells, such as multiple myeloma. It is crucial to follow up with a doctor for further investigation, as recommended by the lab report, specifically an 'Immunofixation' test, to understand the nature of this protein.": "Wo lab krataa no kyerɛ dɛ protein band sononko anaa 'M-spike' wɔ gamma globulin mu. Saa M-spike yi yɛ protein a ɔnnyɛ dɛ ɔtaa yɛ...",
+		"The most important step is to take this lab report to your doctor as soon as possible. Discuss the finding of the 'faint restricted band' (M-spike) and the lab's recommendation for an 'Immunofixation' test. This follow-up test is essential to determine the exact type and significance of the abnormal protein found in your blood. Do not delay this consultation.": "Anamɔn a ɔho hia sen biara ne dɛ wode saa lab krataa yi bɛkɔ wo datser nkyɛn ntɛmpɛ...",
+		"While awaiting further diagnosis, continue to support your overall health with a nutritious diet. Focus on local Ghanaian foods rich in vitamins and minerals. Include plenty of kontomire (cocoyam leaves), garden eggs, and other dark leafy greens. Incorporate fruits like mangoes, oranges, and pineapples. Reduce your intake of processed foods, excessive salt, and sugary drinks. A healthy diet helps your body function optimally and can support your immune system.": "Ber a woretwɛn nhwehwɛmu fofor no, kɔ do boa wo ahoɔden koraa de aduane pa. Dzi Ghana aduane ahorow tse dɛ kontomire, ntoropo, ne nsuaba...",
+		"Ensure you are drinking enough clean water throughout the day. Staying hydrated is vital for all bodily functions, including kidney health and blood circulation. You can also supplement with natural Ghanaian options like fresh coconut water, which is a good source of electrolytes, or light koko (porridge) to keep your energy levels up.": "Hwɛ dɛ worenom nsuo fiewedze a ɔdɔso da mu nyina...",
+		"Receiving an abnormal lab result can be stressful. Try to manage stress through relaxation techniques, light exercise, or spending time with loved ones. Ensure you are getting adequate sleep each night. A well-rested body is better equipped to handle any health challenges. Consider traditional Ghanaian practices like meditation or spending time in nature if that brings you calm.": "Lab nhwehwɛmu a ɔnnyɛ papa a wobɛnya no botum ma woadwen pii. Bɔ mbɔdzen dɛ wobɛte adwenehaw do...",
 		"Total protein measures the combined amount of albumin and globulin in your blood — it reflects hydration, nutrition, and immune activity.": "Total protein susuw albumin ne globulin dodow a ɛwɔ wo mogya mu — ɛkyerɛ nsuo dodow, aduane pa, ne honam mu banbɔ.",
 		"Common reasons include dehydration, chronic inflammation, or infection.": "Ndzɛmba a ɔtaa de ba ne nsuo a ɔnnɔso, ahonam a ɛhuru, anaa yarba mmoawa.",
 		"Bring your original report to your clinic so your doctor can confirm the number and decide if more tests are needed.": "Fa wo krataa ankasa no kɔ wo clinic sɛdɛ wo datser bɛtum ahwɛ akontaahyɛdze no na wafeɛ sɛ wohia nhwehwɛmu fofor.",
@@ -1140,6 +1196,73 @@ export function getReviewCountText(count: number, language: GemmaLanguage): stri
 	}
 }
 
+const PHRASE_TRANSLATIONS: Record<string, Record<string, string>> = {
+	twi: {
+		"Your lab report indicates": "Wo lab krataa no kyerɛ",
+		"a significant finding": "nsɛm titire bi",
+		"in your blood": "wɔ wo mogya mu",
+		"requires immediate medical follow-up": "hia dɔkota nhwehwɛmu ntɛmpɛ",
+		"determine its cause and significance": "hunu ne fapem ne deɛ ɛkyerɛ",
+		"consult your doctor without delay": "kɔ wo dɔkota nkyɛn a kyɛre nni mu",
+		"for further evaluation and guidance": "ma wafeɛ mu bio na wama wo afotuo",
+		"this analysis is AI-assisted": "saa nhwehwɛmu yi yɛ AI mmoa",
+		"not a replacement for a qualified medical doctor": "na ɛnnyɛ dɔkota pa ananmu",
+		"The most important step is": "Anamɔn a ɛho hia sen biara ne sɛ",
+		"as soon as possible": "ntɛmpɛ pa ara",
+		"Do not delay this consultation": "Mma kyɛre nni eyi kɔ mu",
+		"While awaiting further diagnosis": "Wɔberɛ a woretwɛn nhwehwɛmu foforo no",
+		"support your overall health": "boa wo ahoɔden koraa",
+		"with a nutritious diet": "de aduane pa",
+		"local Ghanaian foods": "Ghana aduane ahodoɔ",
+		"rich in vitamins and minerals": "a vitamins ne minerals wɔ mu pii",
+		"Ensure you are drinking enough clean water": "Hwɛ sɛ worenom nsuo fiideɛ a ɛdɔɔso",
+		"throughout the day": "da mu nyinaa",
+		"Staying hydrated is vital": "Nsuo a worenom no ho hia",
+		"Manage Stress and Get Rest": "Gye wo ho na home yiye",
+		"Receiving an abnormal lab result can be stressful": "Lab nhwehwɛmu a ɛnyɛ papa a wobɛnya no betumi ama woadwen pii",
+		"Ensure you are getting adequate sleep": "Hwɛ sɛ wobɛda yiye",
+		"Consult Your Doctor Immediately": "Kɔ wo dɔkota nkyɛn ntɛm pa ara",
+		"Maintain a Balanced Ghanaian Diet": "Di Ghana aduane pa a ahoɔden wɔ mu daa",
+		"Stay Well Hydrated": "Nom nsuo pa pii daa",
+	},
+	ga: {
+		"Your lab report indicates": "O lab report lɛ tsɔɔ",
+		"a significant finding": "sane titiri ko",
+		"in your blood": "yɛ o la mli",
+		"requires immediate medical follow-up": "hiaa akɛ aya dɔkita he ntɛm pa ara",
+		"consult your doctor without delay": "yaa o dɔkita he ntɛm pa ara",
+		"this analysis is AI-assisted": "sane nɛɛ yɛ AI yelikɛlɔ mli",
+		"Consult Your Doctor Immediately": "Yaa o dɔkita he ntɛm pa ara",
+		"Maintain a Balanced Ghanaian Diet": "Ye Ghana niyenii kpakpa ni yɔɔ hewalɛ daa",
+		"Stay Well Hydrated": "Nu nu pii daa",
+		"Manage Stress and Get Rest": "Jɔɔ ohe ni ojɔɔ ohe yiye",
+	},
+	ewe: {
+		"Your lab report indicates": "Wò lab agbalẽ la fia",
+		"a significant finding": "nu vevi aɖe",
+		"in your blood": "le wò ʋu me",
+		"requires immediate medical follow-up": "hiã be nàyi dɔnɔkɔdola gbɔ kaba",
+		"consult your doctor without delay": "yi wò dɔnɔkɔdola gbɔ kaba",
+		"this analysis is AI-assisted": "numekɔkɔ sia le AI kpeɖeŋutɔ me",
+		"Consult Your Doctor Immediately": "Yi wò dɔnɔkɔdola gbɔ kaba",
+		"Maintain a Balanced Ghanaian Diet": "Ɖu Ghana nuɖuɖu nyui siwo me lãmesẽ le daa",
+		"Stay Well Hydrated": "No tsi geɖe daa",
+		"Manage Stress and Get Rest": "Ɖe fu kpo eye nàgbɔ ɖe eme",
+	},
+	fante: {
+		"Your lab report indicates": "Wo lab krataa no kyerɛ",
+		"a significant finding": "nsɛm titir bi",
+		"in your blood": "wɔ wo mogya mu",
+		"requires immediate medical follow-up": "hia datser nhwehwɛmu ntɛmpɛ",
+		"consult your doctor without delay": "kɔ wo datser nkyɛn a kyɛre nni mu",
+		"this analysis is AI-assisted": "saa nhwehwɛmu yi yɛ AI mmoa",
+		"Consult Your Doctor Immediately": "Kɔ wo datser nkyɛn ntɛm pa ara",
+		"Maintain a Balanced Ghanaian Diet": "Dzi Ghana aduane pa a ahoɔden wɔ mu daa",
+		"Stay Well Hydrated": "Nom nsuo pa pii daa",
+		"Manage Stress and Get Rest": "Gye wo ho na home yie",
+	},
+};
+
 export function getTranslation(text: string, language: GemmaLanguage): string {
 	if (!text || language === "english") return text;
 
@@ -1167,7 +1290,18 @@ export function getTranslation(text: string, language: GemmaLanguage): string {
 		}
 	}
 
-	return text;
+	// Phrase / Keyword Fallback
+	let output = text;
+	const phrases = PHRASE_TRANSLATIONS[language];
+	if (phrases) {
+		for (const [eng, loc] of Object.entries(phrases)) {
+			if (output.includes(eng)) {
+				output = output.replace(new RegExp(eng, "gi"), loc);
+			}
+		}
+	}
+
+	return output;
 }
 
 export function translateAnalysisResult(
