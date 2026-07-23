@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
 	Brain, Heart, Flame, Layers, Shield, Sparkles, CheckCircle2, 
-	XCircle, ArrowRight, RefreshCw, Trophy, ExternalLink, Copy,
-	Globe, Zap, BookOpen
+	XCircle, ArrowRight, ArrowLeft, RefreshCw, Trophy, Copy,
+	Globe, Zap, BookOpen, Lock, Award
 } from "lucide-react";
 import { toast } from "react-toastify";
 import styles from "./Tests.module.scss";
@@ -38,7 +38,7 @@ const EXAM_SYSTEMS: ExamSystem[] = [
 	{
 		id: "brain",
 		name: "Cognitive & Nervous System",
-		icon: <Brain size={22} />,
+		icon: <Brain size={20} />,
 		colorClass: "brain",
 		description: "Evaluate circadian alignment, memory pre-cursors, and parasympathetic autonomic resilience.",
 		focus: "Epigenetic regulation, neuro-transmitters, and stress adaptability.",
@@ -108,7 +108,7 @@ const EXAM_SYSTEMS: ExamSystem[] = [
 	{
 		id: "heart",
 		name: "Cardiovascular System",
-		icon: <Heart size={22} />,
+		icon: <Heart size={20} />,
 		colorClass: "heart",
 		description: "Assess atherogenic particle concentrations, arterial vasodilation, and vascular inflammatory stress.",
 		focus: "Lipid transport efficiency, arterial elasticity, and inflammatory risk.",
@@ -178,7 +178,7 @@ const EXAM_SYSTEMS: ExamSystem[] = [
 	{
 		id: "metabolic",
 		name: "Metabolic & Blood Markers",
-		icon: <Flame size={22} />,
+		icon: <Flame size={20} />,
 		colorClass: "metabolic",
 		description: "Examine long-term glycemic control, alternative ketone fuel utilization, and cellular insulin sensitivity.",
 		focus: "Glycation indices, mitochondria fuel flexibility, and insulin resistance.",
@@ -248,7 +248,7 @@ const EXAM_SYSTEMS: ExamSystem[] = [
 	{
 		id: "gut",
 		name: "Digestive & Gut Microbiome",
-		icon: <Layers size={22} />,
+		icon: <Layers size={20} />,
 		colorClass: "gut",
 		description: "Analyze mucosal epithelial integrity, short-chain fatty acid fuel, and the gut-brain communications network.",
 		focus: "Microbiome fermentation, gut barrier junctions, and neuro-endocrine signaling.",
@@ -317,43 +317,21 @@ const EXAM_SYSTEMS: ExamSystem[] = [
 	}
 ];
 
-
-
 const ShieldIcon = memo(() => (
-	<svg
-		width='12'
-		height='12'
-		viewBox='0 0 24 24'
-		fill='none'
-		stroke='currentColor'
-		strokeWidth='2.5'
-		strokeLinecap='round'
-		strokeLinejoin='round'
-	>
-		<path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z' />
-		<path d='m9 12 2 2 4-4' />
+	<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+		<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+		<path d="m9 12 2 2 4-4" />
 	</svg>
 ));
 
 const TwinIcon = memo(() => (
-	<svg
-		width='14'
-		height='14'
-		viewBox='0 0 24 24'
-		fill='none'
-		stroke='currentColor'
-		strokeWidth='2'
-		strokeLinecap='round'
-		strokeLinejoin='round'
-	>
-		<path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2' />
-		<circle cx='12' cy='7' r='4' />
-		<path d='M12 11v4' />
-		<path d='M12 19v2' />
+	<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+		<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+		<circle cx="12" cy="7" r="4" />
+		<path d="M12 11v4" />
+		<path d="M12 19v2" />
 	</svg>
 ));
-
-
 
 const getDaySeed = () => {
 	const today = new Date();
@@ -364,15 +342,15 @@ const Tests = () => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
-
+	// Tab View State
+	const [activeTab, setActiveTab] = useState<"quizzes" | "tips" | "library">("quizzes");
 
 	// Daily Epigenetic Rotating Tips State & Curated Pool
 	const [expandedTipId, setExpandedTipId] = useState<string | null>(null);
 	const [expandedBiomarkerId, setExpandedBiomarkerId] = useState<string | null>(null);
-	const [newRotationTriggered, setNewRotationTriggered] = useState(false);
+
 	const dailyBiomarkers = useMemo(() => {
 		const today = new Date();
-		// Date-based seed for 24h automatic rotation
 		const seed = today.getFullYear() * 1000 + (today.getMonth() + 1) * 100 + today.getDate();
 		
 		const pool = [
@@ -382,10 +360,10 @@ const Tests = () => {
 				categoryClass: "brain",
 				title: "Acetylcholine",
 				simpleTitle: "Brain Speed & Focus Chemical",
-				description: "A key brain chemical that helps send signals between brain cells. It is responsible for how fast you think, focus, and remember things.",
+				description: "A key brain chemical that helps send signals between brain cells. Responsible for thinking speed, focus, and memory.",
 				range: "Balanced baseline level",
 				impact: "Enhances nerve-signal speed, memory retention, and mental focus.",
-				booster: "Cruciferous vegetables, egg yolks, and Alpha-GPC supplements.",
+				booster: "Cruciferous vegetables, egg yolks, and Alpha-GPC.",
 				icon: <Brain size={12} />
 			},
 			{
@@ -394,7 +372,7 @@ const Tests = () => {
 				categoryClass: "heart",
 				title: "Apolipoprotein B (ApoB)",
 				simpleTitle: "Heart Plaque Particle Count",
-				description: "The most accurate measure of the actual number of cholesterol particles in your blood. High numbers can build up in your blood vessels and block blood flow.",
+				description: "The most accurate measure of cholesterol particle count in your blood. High numbers can build up in blood vessels.",
 				range: "Under 80 mg/dL",
 				impact: "Measures the absolute number of artery-clogging particles in your bloodstream.",
 				booster: "Soluble fiber (beans, oats), extra virgin olive oil, and wild salmon.",
@@ -406,7 +384,7 @@ const Tests = () => {
 				categoryClass: "metabolic",
 				title: "HbA1c Glycation",
 				simpleTitle: "3-Month Average Blood Sugar",
-				description: "A simple marker that shows the average amount of sugar in your blood over the past 3 months. It helps you see your long-term blood sugar health.",
+				description: "A marker that shows average blood sugar over the past 3 months to track long-term glycemic health.",
 				range: "Under 5.3%",
 				impact: "Tracks how much sugar has bonded to your red blood cells over the last 90 days.",
 				booster: "Daily brisk walking, apple cider vinegar, and limiting refined carbohydrates.",
@@ -418,7 +396,7 @@ const Tests = () => {
 				categoryClass: "gut",
 				title: "Butyrate Synthesis",
 				simpleTitle: "Gut Shield & Fuel Chemical",
-				description: "A healthy fat made by good gut bacteria when you eat fiber. It acts as the primary fuel to repair, seal, and protect your stomach and intestinal lining.",
+				description: "A healthy fat made by good gut bacteria from fiber. It acts as primary fuel to repair and protect stomach lining.",
 				range: "High production levels",
 				impact: "Fuels the cells lining your colon and seals the gut barrier against leaks.",
 				booster: "Raw oats, chicory root, garlic, onions, and fermented foods.",
@@ -430,7 +408,7 @@ const Tests = () => {
 				categoryClass: "metabolic",
 				title: "Vitamin D3 Control",
 				simpleTitle: "Immune & Bone Control Hormone",
-				description: "A vital compound that acts like a hormone, turning on and off over 200 health genes to support bone strength and defense against sickness.",
+				description: "A vital compound that acts like a hormone, turning on over 200 health genes to support bone strength and immunity.",
 				range: "50 - 80 ng/mL",
 				impact: "Regulates immune cell response, calcium absorption, and vascular health.",
 				booster: "Midday sun exposure, wild-caught salmon, and D3 supplementation.",
@@ -442,7 +420,7 @@ const Tests = () => {
 				categoryClass: "brain",
 				title: "Heart Rate Variability (HRV)",
 				simpleTitle: "Nervous System Recovery Tracker",
-				description: "A measure of the tiny variations in time between each heartbeat. A higher score means your nervous system is relaxed and highly resilient to stress.",
+				description: "A measure of tiny variations in time between heartbeats. Higher scores indicate relaxation and stress resilience.",
 				range: "High baseline adaptability",
 				impact: "Indicates high parasympathetic tone, stress adaptability, and efficient cardiac recovery.",
 				booster: "Deep resonant breathing (6 breaths/min), cold showers, and quality sleep.",
@@ -454,7 +432,7 @@ const Tests = () => {
 				categoryClass: "metabolic",
 				title: "Fasting Insulin",
 				simpleTitle: "Metabolic Speed & Energy Sensor",
-				description: "The amount of insulin in your blood when you haven't eaten. A low level means your body clears sugar easily and burns fat efficiently.",
+				description: "Fasting insulin level in blood. Low levels mean your body clears sugar easily and burns fat efficiently.",
 				range: "Under 6.0 uIU/mL",
 				impact: "Determines muscle glucose absorption speed and adipose tissue fat burning capacity.",
 				booster: "Brisk walking after meals, strength training, and eating fiber first.",
@@ -466,7 +444,7 @@ const Tests = () => {
 				categoryClass: "heart",
 				title: "High-Sensitivity C-Reactive Protein (hs-CRP)",
 				simpleTitle: "Vessel Inflammation Signal",
-				description: "A protein made by the liver that rises when there is hidden swelling or stress in your blood vessels, helping you track vascular safety.",
+				description: "A protein made by the liver that rises when there is hidden swelling or stress in blood vessels.",
 				range: "Under 1.0 mg/L",
 				impact: "Tracks vascular endothelium irritation and systemic inflammatory status.",
 				booster: "Extra virgin olive oil, regular low-intensity cardio, and quality sleep.",
@@ -502,10 +480,6 @@ const Tests = () => {
 		const lastSeed = localStorage.getItem("genetiq_last_tip_seed");
 		
 		if (lastSeed !== String(currentSeed)) {
-			// Trigger rotation shimmer animation state
-			setNewRotationTriggered(true);
-			
-			// Fire a beautiful toast notification alerting the user in the notification area
 			toast(
 				<div className={styles["toast-guidelines-update"]}>
 					<div className={styles["toast-icon-wrap"]}>
@@ -515,7 +489,7 @@ const Tests = () => {
 					<div className={styles["toast-content"]}>
 						<span className={styles["toast-title"]}>Daily Bio-Tips Updated!</span>
 						<span className={styles["toast-desc"]}>
-							We put today's personalized health tips together using official clinical guidelines from the WHO, NIH, and CDC.
+							Personalized health tips compiled from WHO, NIH, and CDC guidelines.
 						</span>
 					</div>
 				</div>,
@@ -529,29 +503,21 @@ const Tests = () => {
 				}
 			);
 
-			// Save seed to avoid repeated triggers on every single reload today
 			localStorage.setItem("genetiq_last_tip_seed", String(currentSeed));
-			
-			const timer = setTimeout(() => {
-				setNewRotationTriggered(false);
-			}, 4000);
-			return () => clearTimeout(timer);
 		}
 	}, []);
 
 	const dailyTips = useMemo(() => {
 		const today = new Date();
-		// Create a seed based on year, month, and day to ensure it rotates every 24 hours
 		const seed = today.getFullYear() * 1000 + (today.getMonth() + 1) * 100 + today.getDate();
 		
-		// Curated pool of 12 simplified health bio-tips
 		const pool = [
 			{
 				id: "tip-1",
 				category: "Circadian",
 				title: "Evening Screen Light",
 				short: "Did you know that using screens at night can block your brain's sleep signals by up to 85%?",
-				readMore: "The blue light from phones and TVs tricks your brain into thinking it is daytime. This stops the brain from making melatonin, which is the chemical you need to fall asleep and recover. Countermeasure: Put your phone away 2 hours before bed or use warm night-mode screens.",
+				readMore: "The blue light from phones and TVs tricks your brain into thinking it is daytime. This stops the brain from making melatonin. Countermeasure: Put your phone away 2 hours before bed or use warm night-mode screens.",
 				source: "World Health Organization (WHO)"
 			},
 			{
@@ -559,7 +525,7 @@ const Tests = () => {
 				category: "Cardio",
 				title: "Understanding Heart Risk",
 				short: "Did you know that having normal cholesterol levels can sometimes hide a real risk of heart disease?",
-				readMore: "Standard tests only measure the weight of your cholesterol. A better test looks at the actual number of tiny cholesterol particles (ApoB). Think of them as cars on a highway: the more cars there are, the more likely they are to cause a traffic jam in your blood vessels.",
+				readMore: "Standard tests only measure total cholesterol weight. A better test looks at actual cholesterol particle count (ApoB). Think of them as cars on a highway: more cars mean higher risk of plaque traffic jams.",
 				source: "Centers for Disease Control and Prevention (CDC)"
 			},
 			{
@@ -567,7 +533,7 @@ const Tests = () => {
 				category: "Endocrine",
 				title: "Stress and Blood Sugar",
 				short: "Did you know that feeling stressed for a long time can actually raise your blood sugar, even if you eat healthy?",
-				readMore: "When you are stressed, your body releases a hormone called cortisol. Cortisol prepares your body for a fight by dumping extra sugar into your blood. If you stay stressed, this sugar stays high and can lead to weight gain. Countermeasure: Take 5 slow, deep breaths to tell your body it is safe.",
+				readMore: "When you are stressed, your body releases cortisol, which dumps extra sugar into your blood. If you stay stressed, sugar stays high. Countermeasure: Take 5 slow, deep breaths to signal safety.",
 				source: "National Institutes of Health (NIH)"
 			},
 			{
@@ -575,7 +541,7 @@ const Tests = () => {
 				category: "Microbiome",
 				title: "Feeding Your Gut",
 				short: "Did you know that not eating enough fiber forces gut bacteria to eat the protective lining of your stomach?",
-				readMore: "Your gut is full of friendly bacteria that need fiber to survive. If you do not eat enough fiber, they get hungry and start eating the natural mucus shield that protects your intestines. This can cause gut pain and bloating. Countermeasure: Eat more vegetables, beans, and oats.",
+				readMore: "Friendly gut bacteria need fiber to survive. Without enough fiber, they break down the natural mucus shield protecting your intestines. Countermeasure: Eat more vegetables, beans, and oats.",
 				source: "Mayo Clinic"
 			},
 			{
@@ -583,15 +549,15 @@ const Tests = () => {
 				category: "Neuro",
 				title: "Green Tea Relaxation",
 				short: "Did you know that a natural ingredient in green tea can calm your mind without making you feel sleepy?",
-				readMore: "Green tea contains L-Theanine, a natural compound that slows down overactive signals in your brain. It increases your brain's natural 'relax' chemicals while keeping you focused. Countermeasure: Drink a cup of green tea in the morning instead of strong coffee.",
+				readMore: "Green tea contains L-Theanine, a natural compound that slows overactive signals in your brain. It increases natural relax chemicals while keeping you focused.",
 				source: "Harvard Medical School"
 			},
 			{
 				id: "tip-6",
 				category: "Metabolic",
 				title: "Sugar and Aging",
-				short: "Did you know that eating too much sugar can permanently stiffen your skin and blood vessels, making you age faster?",
-				readMore: "When there is too much sugar in your blood, it sticks to proteins and forms sticky clumps. These clumps damage your skin's collagen, causing wrinkles, and make your blood vessels stiff. Countermeasure: Limit sugary snacks and drinks to protect your youthfulness.",
+				short: "Did you know that eating too much sugar can permanently stiffen your skin and blood vessels?",
+				readMore: "Excess sugar in blood binds to proteins, forming sticky clumps that damage skin collagen and make blood vessels stiff. Countermeasure: Limit sugary drinks and processed snacks.",
 				source: "World Health Organization (WHO)"
 			},
 			{
@@ -599,7 +565,7 @@ const Tests = () => {
 				category: "Mitochondria",
 				title: "Fitness and Lifespan",
 				short: "Did you know that improving your fitness by just a small amount can lower your risk of early death by 12%?",
-				readMore: "Your fitness level is the single best predictor of how long you will live. Daily aerobic exercise makes your heart larger and stronger, allowing it to pump more oxygen to your organs. Countermeasure: Aim for 20 minutes of brisk walking or cycling every day.",
+				readMore: "Fitness level is a strong predictor of long-term health. Daily aerobic exercise strengthens your heart and delivers oxygen to organs. Countermeasure: 20 mins brisk walking daily.",
 				source: "Centers for Disease Control and Prevention (CDC)"
 			},
 			{
@@ -607,7 +573,7 @@ const Tests = () => {
 				category: "Longevity",
 				title: "Cellular Clean Up",
 				short: "Did you know that giving your body a break from eating helps your cells clean out old, damaged parts?",
-				readMore: "When you fast or eat less, your cells go into a self-cleaning mode. They break down old, broken cellular parts and recycle them to build fresh, healthy cells. This process helps fight aging and diseases. Countermeasure: Try eating within a 10-hour window and resting your stomach.",
+				readMore: "When you rest your stomach, cells trigger self-cleaning (autophagy), recycling damaged parts to build healthy fresh cells. Countermeasure: Eat within a 10-hour daily window.",
 				source: "National Institutes of Health (NIH)"
 			},
 			{
@@ -615,7 +581,7 @@ const Tests = () => {
 				category: "Brain",
 				title: "Magnesium for Brain",
 				short: "Did you know that a special type of magnesium can enter your brain directly to boost your memory?",
-				readMore: "Most magnesium supplements do not reach the brain easily. But Magnesium L-Threonate can cross into the brain to increase the connections between your brain cells. This helps you learn faster and remember things better. Countermeasure: Take a high-quality magnesium before bed.",
+				readMore: "Magnesium L-Threonate crosses the blood-brain barrier to strengthen synaptic connections between brain cells, aiding memory and learning.",
 				source: "World Health Organization (WHO)"
 			},
 			{
@@ -623,7 +589,7 @@ const Tests = () => {
 				category: "Gut",
 				title: "Your Gut Shield",
 				short: "Did you know that your gut has its own physical shield that blocks bad bacteria before they make you sick?",
-				readMore: "Your gut produces a special antibody (sIgA) that acts like a sticky net. It catches bad bacteria and toxins, preventing them from entering your body. Countermeasure: Support this shield by eating healthy yogurt and fermented foods.",
+				readMore: "Your gut produces sIgA antibodies that act like a net, catching pathogens before they cross mucosal walls. Countermeasure: Eat yogurt and fermented foods.",
 				source: "Harvard Medical School"
 			},
 			{
@@ -631,7 +597,7 @@ const Tests = () => {
 				category: "Gene Regulation",
 				title: "Vitamin D Control Center",
 				short: "Did you know that Vitamin D acts more like a control hormone than a simple vitamin?",
-				readMore: "Vitamin D turns on and off over 200 health genes in your body. It helps build strong bones, boosts your immune system to fight colds, and protects your heart. Countermeasure: Get 15 minutes of midday sun exposure or take a D3 supplement.",
+				readMore: "Vitamin D regulates over 200 health genes, assisting bone density, immune response, and vascular health. Countermeasure: Get 15 mins morning sun or take D3.",
 				source: "National Institutes of Health (NIH)"
 			},
 			{
@@ -639,12 +605,11 @@ const Tests = () => {
 				category: "Vagal Stimulation",
 				title: "Deep Resonant Breathing",
 				short: "Did you know that breathing slowly at 6 breaths per minute sends an instant signal to calm your heart?",
-				readMore: "Breathing slowly aligns your lungs with your heart rate. This triggers your vagus nerve, which acts as a brake on stress, instantly lowering your blood pressure and making you feel safe. Countermeasure: Breathe in for 5 seconds, and breathe out for 5 seconds.",
+				readMore: "Breathing slowly aligns heart rate variability with respiratory rhythms, signaling the vagus nerve to reduce heart stress and lower pressure.",
 				source: "World Health Organization (WHO)"
 			}
 		];
 
-		// Derive 3 tips deterministically using the day seed
 		const result = [];
 		for (let i = 0; i < 3; i++) {
 			const index = (seed + i * 4) % pool.length;
@@ -661,7 +626,7 @@ const Tests = () => {
 	const [examCompleted, setExamCompleted] = useState<boolean>(false);
 	const [score, setScore] = useState<number>(0);
 
-	// Secure Enclave vault proof states
+	// Vault proof states
 	const [isSealing, setIsSealing] = useState<boolean>(false);
 	const [showReceipt, setShowReceipt] = useState<boolean>(false);
 	const [receiptTx, setReceiptTx] = useState<{ hash: string; keySize: string; timestamp: string } | null>(null);
@@ -718,11 +683,8 @@ const Tests = () => {
 
 	const submitAnswer = useCallback(() => {
 		if (!currentQuestion || !selectedOption) return;
-		
 		const isCorrect = selectedOption === currentQuestion.correct;
-		if (isCorrect) {
-			setScore((s) => s + 1);
-		}
+		if (isCorrect) setScore((s) => s + 1);
 		setIsSubmitted(true);
 	}, [currentQuestion, selectedOption]);
 
@@ -734,8 +696,6 @@ const Tests = () => {
 			setIsSubmitted(false);
 		} else {
 			setExamCompleted(true);
-			
-			// Record completed quiz in local storage history
 			try {
 				const currentHistory = localStorage.getItem("genetiq_quiz_history");
 				const historyList = currentHistory ? JSON.parse(currentHistory) : [];
@@ -746,7 +706,7 @@ const Tests = () => {
 					title: `${activeSystem.name} Exam`,
 					date: new Date().toISOString(),
 					status: `Score: ${finalScore}/${activeSystem.questions.length}`,
-					color: "#8b5cf6", // Purple/Violet
+					color: "#8b5cf6",
 				};
 				localStorage.setItem("genetiq_quiz_history", JSON.stringify([newQuizRecord, ...historyList].slice(0, 10)));
 				window.dispatchEvent(new Event("genetiq_history_updated"));
@@ -754,7 +714,6 @@ const Tests = () => {
 				console.error("Failed to store quiz record in local history", e);
 			}
 
-			// If this was today's active daily exam, mark it completed to clear the notification badge!
 			const today = new Date();
 			const seed = today.getFullYear() * 1000 + (today.getMonth() + 1) * 100 + today.getDate();
 			const activeExamIndex = seed % EXAM_SYSTEMS.length;
@@ -771,7 +730,6 @@ const Tests = () => {
 		if (!activeSystem) return;
 		setIsSealing(true);
 		
-		// Simulate local hardware enclave AES-GCM 256-bit credentials sealing
 		setTimeout(() => {
 			const randomHash = `${Array.from({ length: 64 }, () => 
 				Math.floor(Math.random() * 16).toString(16)
@@ -784,7 +742,7 @@ const Tests = () => {
 			});
 			setIsSealing(false);
 			setShowReceipt(true);
-		}, 2000);
+		}, 1800);
 	}, [activeSystem]);
 
 	const copyReceiptHash = useCallback(() => {
@@ -795,686 +753,571 @@ const Tests = () => {
 	}, [receiptTx]);
 
 	return (
-		<div className={styles["tests-container"]}>
-			<div className={styles["tests-content"]}>
-				{/* Hero */}
-				<section className={styles.pageHero}>
-					<div className={styles.pageHeroBg} aria-hidden />
-					<div className={styles.pageHeroMesh} aria-hidden />
-					<div className={styles.pageHeroGlow} aria-hidden />
-
-					<div className={styles.pageHeroInner}>
-						<div className={styles.heroTop}>
-							<div className={styles.header}>
-								<div className={styles["header-text"]}>
-									<span className={styles.pageEyebrow}>
-										<Sparkles size={12} strokeWidth={2.5} />
-										Health diagnostics
-									</span>
-									<h1 className={styles.title}>
-										<span className={styles.titleMuted}>Health</span>{" "}
-										<span className={styles.titleAccent}>Diagnostics</span>
-									</h1>
-									<p className={styles.subtitle}>
-										Interactive body-system quizzes, daily bio-insights from WHO & NIH guidelines,
-										and a personal biomarker library — all secured on your device.
-									</p>
-									<div className={styles.heroFeaturePills}>
-										<span className={styles.heroFeaturePill}>
-											<Shield size={12} strokeWidth={2.5} />
-											Local secure vault
-										</span>
-										<span className={styles.heroFeaturePill}>
-											<Globe size={12} strokeWidth={2.5} />
-											Evidence-based tips
-										</span>
-										<span className={styles.heroFeaturePill}>
-											<BookOpen size={12} strokeWidth={2.5} />
-											{EXAM_SYSTEMS.length} system quizzes
-										</span>
-									</div>
-								</div>
-							</div>
-
-							<div className={styles.heroAside} aria-hidden>
-								<div className={styles.heroOrb}>
-									<div className={styles.heroOrbRing} />
-									<div className={`${styles.heroOrbIcon} ${styles.heroOrbBrain}`}>
-										<Brain size={18} />
-									</div>
-									<div className={`${styles.heroOrbIcon} ${styles.heroOrbHeart}`}>
-										<Heart size={18} />
-									</div>
-									<div className={`${styles.heroOrbIcon} ${styles.heroOrbMetabolic}`}>
-										<Flame size={18} />
-									</div>
-									<div className={`${styles.heroOrbIcon} ${styles.heroOrbGut}`}>
-										<Layers size={18} />
-									</div>
-									<div className={styles.heroOrbCore}>
-										<Zap size={20} strokeWidth={2.25} />
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<div
-							className={`${styles.dailyQuizBanner} ${styles[todayFeaturedSystem.colorClass]} ${
-								dailyQuizDone ? styles.dailyQuizDone : ""
-							}`}
-						>
-							<div className={styles.dailyQuizCopy}>
-								<span className={styles.dailyQuizEyebrow}>
-									{dailyQuizDone ? "Completed today" : "Today's diagnostic focus"}
-								</span>
-								<strong className={styles.dailyQuizTitle}>{todayFeaturedSystem.name}</strong>
-								<p className={styles.dailyQuizDesc}>{todayFeaturedSystem.focus}</p>
-							</div>
-							<button
-								type="button"
-								className={styles.dailyQuizBtn}
-								onClick={() => startExam(todayFeaturedSystem)}
-								disabled={dailyQuizDone}
-							>
-								{dailyQuizDone ? (
-									<>
-										<CheckCircle2 size={16} />
-										Quiz complete
-									</>
-								) : (
-									<>
-										Start today's quiz
-										<ArrowRight size={16} />
-									</>
-								)}
-							</button>
-						</div>
-
-						<div className={styles.heroStatsStrip}>
-							<div className={styles.heroStat}>
-								<span className={`${styles.heroStatIcon} ${styles.heroStatIconGreen}`}>
-									<span className={styles["stats-dot-active"]} />
-								</span>
-								<div className={styles.heroStatCopy}>
-									<span className={styles.heroStatLabel}>Health vault</span>
-									<strong className={styles.heroStatValue}>Fully secured</strong>
-								</div>
-							</div>
-							<div className={styles.heroStat}>
-								<span className={`${styles.heroStatIcon} ${styles.heroStatIconPurple}`}>
-									<Shield size={15} />
-								</span>
-								<div className={styles.heroStatCopy}>
-									<span className={styles.heroStatLabel}>Protection</span>
-									<strong className={styles.heroStatValue}>Verified safe</strong>
-								</div>
-							</div>
-							<div className={styles.heroStat}>
-								<span className={`${styles.heroStatIcon} ${styles.heroStatIconGold}`}>
-									<Trophy size={15} />
-								</span>
-								<div className={styles.heroStatCopy}>
-									<span className={styles.heroStatLabel}>Quizzes taken</span>
-									<strong className={styles.heroStatValue}>{quizzesCompleted} completed</strong>
-								</div>
-							</div>
-							<div className={styles.heroStat}>
-								<span className={`${styles.heroStatIcon} ${styles.heroStatIconTeal}`}>
-									<Sparkles size={15} />
-								</span>
-								<div className={styles.heroStatCopy}>
-									<span className={styles.heroStatLabel}>Question bank</span>
-									<strong className={styles.heroStatValue}>20 questions</strong>
-								</div>
-							</div>
-						</div>
+		<div className={styles.testsContainer}>
+			{/* Hero Header */}
+			<section className={styles.heroSection}>
+				<div className={styles.heroGlowBg} aria-hidden />
+				<div className={styles.heroInner}>
+					<div className={styles.heroTitleGroup}>
+						<span className={styles.eyebrowTag}>
+							<Sparkles size={12} />
+							Health Diagnostics
+						</span>
+						<h1 className={styles.heroTitle}>
+							Health <span className={styles.accentText}>Diagnostics</span>
+						</h1>
+						<p className={styles.heroSubtitle}>
+							Interactive body-system quizzes, daily bio-insights from WHO & NIH guidelines, and a biomarker reference library.
+						</p>
 					</div>
-				</section>
 
-				{/* MODE 1: INTERACTIVE DIAGNOSTIC EXAMS */}
-				{true && (
-					<div className={styles["exams-flow-container"]}>
-						<AnimatePresence mode='wait'>
-							
-							{/* STEP A: Systems Selection Grid */}
-							{!activeSystem && (
-								<motion.div
-									initial={{ opacity: 0, y: 15 }}
-									animate={{ opacity: 1, y: 0 }}
-									exit={{ opacity: 0, y: -15 }}
-									transition={{ duration: 0.35 }}
-									className={styles["systems-hub"]}
-								>
-									<div className={styles["systems-section"]}>
-										<div className={styles["hub-intro"]}>
-											<span className={styles["section-eyebrow"]}>Interactive exams</span>
-											<h2>Select a body system</h2>
-											<p>Choose a quiz to test your knowledge. Score perfectly to seal a verified credential in your secure health vault.</p>
-										</div>
+					{/* Spotlight Featured Quiz Card */}
+					<div className={`${styles.featuredSpotlight} ${styles[todayFeaturedSystem.colorClass]}`}>
+						<div className={styles.spotlightContent}>
+							<span className={styles.spotlightTag}>
+								{dailyQuizDone ? "Completed Today" : "Today's Diagnostic Quiz"}
+							</span>
+							<h3 className={styles.spotlightTitle}>{todayFeaturedSystem.name}</h3>
+							<p className={styles.spotlightDesc}>{todayFeaturedSystem.focus}</p>
+						</div>
+						<button
+							type="button"
+							className={styles.spotlightBtn}
+							onClick={() => {
+								setActiveTab("quizzes");
+								startExam(todayFeaturedSystem);
+							}}
+							disabled={dailyQuizDone}
+						>
+							{dailyQuizDone ? (
+								<>
+									<CheckCircle2 size={15} />
+									<span>Quiz Done</span>
+								</>
+							) : (
+								<>
+									<span>Start Quiz</span>
+									<ArrowRight size={14} />
+								</>
+							)}
+						</button>
+					</div>
+				</div>
+			</section>
 
-										<div className={styles["systems-grid"]}>
-										{EXAM_SYSTEMS.map((sys) => {
-											return (
-												<div 
-													key={sys.id} 
-													className={`${styles["system-card"]} ${styles[sys.colorClass]}`}
-												>
-													<div className={styles["sys-card-header"]}>
-														<div className={styles["sys-icon-box"]}>
-															{sys.icon}
-														</div>
-														<div className={styles["sys-meta-badges-row"]}>
-															<div className={styles["sys-meta-badge"]}>{sys.questions.length} questions</div>
-														</div>
-													</div>
-													<h3 className={styles["sys-title"]}>{sys.name}</h3>
-													<p className={styles["sys-desc"]}>{sys.description}</p>
-													
-													<div className={styles["sys-focus-line"]}>
-														<strong>Focus: </strong>{sys.focus}
-													</div>
- 
-													<button
-														type="button"
-														className={styles["sys-action-btn"]}
-														onClick={() => startExam(sys)}
-													>
-														Start quiz
-														<ArrowRight size={14} />
-													</button>
+			{/* Main Two-Column Layout */}
+			<div className={styles.mainLayout}>
+				{/* Left Primary Column */}
+				<div className={styles.primaryColumn}>
+					{/* Workspace Navigation Tabs */}
+					<div className={styles.tabBar}>
+						<button
+							className={`${styles.tabBtn} ${activeTab === "quizzes" ? styles.active : ""}`}
+							onClick={() => setActiveTab("quizzes")}
+						>
+							<Brain size={14} />
+							<span>Body System Quizzes</span>
+						</button>
+						<button
+							className={`${styles.tabBtn} ${activeTab === "tips" ? styles.active : ""}`}
+							onClick={() => setActiveTab("tips")}
+						>
+							<Globe size={14} />
+							<span>Daily Bio-Tips</span>
+						</button>
+						<button
+							className={`${styles.tabBtn} ${activeTab === "library" ? styles.active : ""}`}
+							onClick={() => setActiveTab("library")}
+						>
+							<BookOpen size={14} />
+							<span>Biomarker Library</span>
+						</button>
+					</div>
+
+					{/* TAB 1: Body System Quizzes */}
+					<AnimatePresence mode="wait">
+						{activeTab === "quizzes" && (
+							<motion.div
+								key="quizzes-tab"
+								initial={{ opacity: 0, y: 10 }}
+								animate={{ opacity: 1, y: 0 }}
+								exit={{ opacity: 0, y: -10 }}
+								transition={{ duration: 0.2 }}
+								className={styles.tabContent}
+							>
+								{/* Systems Grid if no active exam running */}
+								{!activeSystem && (
+									<div className={styles.systemsGrid}>
+										{EXAM_SYSTEMS.map((sys) => (
+											<div key={sys.id} className={`${styles.systemCard} ${styles[sys.colorClass]}`}>
+												<div className={styles.cardHeader}>
+													<div className={styles.systemIconBox}>{sys.icon}</div>
+													<span className={styles.questionCountTag}>{sys.questions.length} Questions</span>
 												</div>
-											);
-										})}
-										</div>
-									</div>
-
-									<div className={`${styles["daily-tips-container"]} ${newRotationTriggered ? styles["rotating-active"] : ""}`}>
-										<div className={styles["daily-tips-header"]}>
-											<div className={styles["header-row-meta"]}>
-												<Sparkles size={16} className={styles["sparkles-icon"]} />
-												<div>
-													<span className={styles["section-eyebrow"]}>Daily insights</span>
-													<h3>Molecular epigenetic bio-tips</h3>
+												<h3 className={styles.systemTitle}>{sys.name}</h3>
+												<p className={styles.systemDesc}>{sys.description}</p>
+												<div className={styles.systemFocusText}>
+													<strong>Focus:</strong> {sys.focus}
 												</div>
-											</div>
-											<div className={styles["header-actions-row"]}>
-												<span className={styles["daily-rotate-badge"]}>WHO, NIH & CDC</span>
 												<button
 													type="button"
-													className={styles["resync-btn"]}
-													onClick={() => {
-														localStorage.removeItem("genetiq_last_tip_seed");
-														localStorage.removeItem("genetiq_tips_read_seed");
-														window.location.reload();
-													}}
-													title="Simulate 24h Rotation & Re-sync"
+													className={styles.startExamBtn}
+													onClick={() => startExam(sys)}
 												>
-													<RefreshCw size={11} />
-													Sync
+													<span>Start Quiz</span>
+													<ArrowRight size={14} />
 												</button>
 											</div>
+										))}
+									</div>
+								)}
+
+								{/* Active Question Flow */}
+								{activeSystem && !examCompleted && currentQuestion && (
+									<motion.div
+										initial={{ opacity: 0, scale: 0.98 }}
+										animate={{ opacity: 1, scale: 1 }}
+										exit={{ opacity: 0 }}
+										className={styles.examRunnerCard}
+									>
+										<div className={styles.runnerHeader}>
+											<button
+												className={styles.exitBtn}
+												onClick={() => setActiveSystem(null)}
+											>
+												<ArrowLeft size={13} strokeWidth={2.5} />
+												<span>Exit Quiz</span>
+											</button>
+											<span className={styles.runnerTopic}>
+												{activeSystem.name}
+											</span>
+											<span className={styles.runnerCounter}>
+												Q {currentQIndex + 1} of {activeSystem.questions.length}
+											</span>
 										</div>
 
-										<div className={styles["daily-tips-grid"]}>
-											{dailyTips.map((tip, index) => {
-												const isExpanded = expandedTipId === tip.id;
-												return (
-													<motion.div 
-														key={tip.id} 
-														initial={{ opacity: 0, x: -30 }}
-														animate={{ opacity: 1, x: 0 }}
-														transition={{ duration: 0.4, delay: index * 0.08 }}
-														className={`${styles["daily-tip-card"]} ${isExpanded ? styles["expanded"] : ""}`}
-														whileHover={{ y: -4, transition: { duration: 0.2 } }}
-													>
-														<div className={styles["tip-meta-row"]}>
-															<span className={`${styles["tip-badge"]} ${styles[tip.category.toLowerCase().replace(" ", "-")]}`}>{tip.category}</span>
-															<span className={styles["tip-tag"]}>Biomarker Insight</span>
-														</div>
-														<h4 className={styles["tip-title"]}>{tip.title}</h4>
-														<p className={styles["tip-short"]}>{tip.short}</p>
+										<div className={styles.runnerProgressTrack}>
+											<motion.div 
+												className={styles.runnerProgressFill}
+												initial={{ width: 0 }}
+												animate={{ 
+													width: `${((currentQIndex + (isSubmitted ? 1 : 0)) / activeSystem.questions.length) * 100}%` 
+												}}
+												transition={{ duration: 0.3 }}
+											/>
+										</div>
 
-														{/* Smooth height expand for full science insight */}
-														<AnimatePresence>
-															{isExpanded && (
-																<motion.div
-																	initial={{ height: 0, opacity: 0 }}
-																	animate={{ height: "auto", opacity: 1 }}
-																	exit={{ height: 0, opacity: 0 }}
-																	transition={{ duration: 0.25 }}
-																	className={styles["tip-full-science"]}
-																>
-																	<div className={styles["tip-divider"]} />
-																	<h5>🧬 Science Actions & Countermeasures</h5>
-																	<p>{tip.readMore}</p>
-																	<div className={styles["tip-source-row"]}>
-																		<span>Source: {tip.source}</span>
-																	</div>
-																</motion.div>
-															)}
-														</AnimatePresence>
+										<div className={styles.questionContent}>
+											<h2 className={styles.questionTitle}>{currentQuestion.text}</h2>
 
+											<div className={styles.optionsList}>
+												{(["A", "B", "C", "D"] as const).map((key) => {
+													const optionText = currentQuestion.options[key];
+													const isSelected = selectedOption === key;
+													const isCorrectOption = currentQuestion.correct === key;
+													
+													let optStateClass = "";
+													if (isSubmitted) {
+														if (isCorrectOption) optStateClass = styles.correct;
+														else if (isSelected) optStateClass = styles.incorrect;
+														else optStateClass = styles.disabled;
+													} else if (isSelected) {
+														optStateClass = styles.selected;
+													}
+
+													return (
 														<button
-															type="button"
-															className={styles["tip-readmore-btn"]}
-															onClick={() => {
-																setExpandedTipId(isExpanded ? null : tip.id);
-																if (!isExpanded) {
-																	const today = new Date();
-																	const currentSeed = today.getFullYear() * 1000 + (today.getMonth() + 1) * 100 + today.getDate();
-																	localStorage.setItem("genetiq_tips_read_seed", String(currentSeed));
-																	window.dispatchEvent(new Event("genetiq_tips_read"));
-																}
-															}}
+															key={key}
+															disabled={isSubmitted}
+															className={`${styles.optionBtn} ${optStateClass}`}
+															onClick={() => setSelectedOption(key)}
 														>
-															{isExpanded ? "Close Insight" : "Read More & Science Insight →"}
-														</button>
-													</motion.div>
-												);
-											})}
-										</div>
-									</div>
-
-									<div className={styles["insights-library"]}>
-										<div className={styles["library-header"]}>
-											<Sparkles size={20} className={styles["sparkle-icon"]} />
-											<span className={styles["section-eyebrow"]}>Reference</span>
-											<h2>Your personal biomarker library</h2>
-											<p>Key health markers Genetiq tracks from your labs, devices, and health history.</p>
-										</div>
-										
-										<div className={styles["insights-grid"]}>
-											{dailyBiomarkers.map((bio, index) => {
-												const isExpanded = expandedBiomarkerId === bio.id;
-												return (
-													<motion.div
-														key={bio.id}
-														initial={{ opacity: 0, y: 15 }}
-														animate={{ opacity: 1, y: 0 }}
-														transition={{ duration: 0.4, delay: index * 0.05 }}
-														className={`${styles["insight-card"]} ${isExpanded ? styles["expanded"] : ""}`}
-														whileHover={{ y: -4, transition: { duration: 0.2 } }}
-													>
-														<div className={styles["insight-header-row"]}>
-															<div className={styles["insight-meta-wrap"]}>
-																<span className={`${styles["insight-badge"]} ${styles[bio.categoryClass]}`}>
-																	{bio.icon}
-																	{bio.category}
-																</span>
-																<span className={styles["insight-simple-tag"]}>{bio.simpleTitle}</span>
-															</div>
-															<h3>{bio.title}</h3>
-														</div>
-														<p>{bio.description}</p>
-
-														{/* Expanding Scientific Details Panel */}
-														<AnimatePresence>
-															{isExpanded && (
-																<motion.div
-																	initial={{ height: 0, opacity: 0 }}
-																	animate={{ height: "auto", opacity: 1 }}
-																	exit={{ height: 0, opacity: 0 }}
-																	transition={{ duration: 0.25 }}
-																	className={styles["insight-full-detail"]}
-																>
-																	<div className={styles["tip-divider"]} />
-																	<div className={styles["insight-detail-grid"]}>
-																		<div className={styles["detail-item"]}>
-																			<strong>Target Level</strong>
-																			<span>{bio.range}</span>
-																		</div>
-																		<div className={styles["detail-item"]}>
-																			<strong>Primary Role</strong>
-																			<span>{bio.impact}</span>
-																		</div>
-																		<div className={styles["detail-item"]}>
-																			<strong>How to Support</strong>
-																			<span>{bio.booster}</span>
-																		</div>
-																	</div>
-																</motion.div>
+															<span className={styles.optKey}>{key}</span>
+															<span className={styles.optVal}>{optionText}</span>
+															{isSubmitted && isCorrectOption && (
+																<CheckCircle2 size={16} className={styles.correctIcon} />
 															)}
-														</AnimatePresence>
-
-														<button
-															type="button"
-															className={styles["tip-readmore-btn"]}
-															onClick={() => setExpandedBiomarkerId(isExpanded ? null : bio.id)}
-															style={{ marginTop: "12px", alignSelf: "flex-start" }}
-														>
-															{isExpanded ? "Close Science Ranges" : "View Optimal Ranges & Boosters →"}
+															{isSubmitted && isSelected && !isCorrectOption && (
+																<XCircle size={16} className={styles.incorrectIcon} />
+															)}
 														</button>
-													</motion.div>
-												);
-											})}
-										</div>
-									</div>
-								</motion.div>
-							)}
+													);
+												})}
+											</div>
 
-							{/* STEP B: Active Question Flow */}
-							{activeSystem && !examCompleted && currentQuestion && (
-								<motion.div
-									initial={{ opacity: 0, scale: 0.98 }}
-									animate={{ opacity: 1, scale: 1 }}
-									exit={{ opacity: 0 }}
-									transition={{ duration: 0.3 }}
-									className={styles["active-exam-panel"]}
-								>
-									{/* Top control bar */}
-									<div className={styles["exam-bar-header"]}>
-										<button
-											className={styles["exit-exam-btn"]}
-											onClick={() => setActiveSystem(null)}
-										>
-											← Exit to Hub
-										</button>
-										<div className={styles["exam-topic-tag"]}>
-											<span className={styles["topic-dot"]} />
-											Examining: {activeSystem.name}
-										</div>
-										<div className={styles["exam-q-counter"]}>
-											Question <strong>{currentQIndex + 1}</strong> of {activeSystem.questions.length}
-										</div>
-									</div>
-
-									{/* Animated progress bar */}
-									<div className={styles["exam-progress-track"]}>
-										<motion.div 
-											className={styles["exam-progress-fill"]}
-											initial={{ width: 0 }}
-											animate={{ 
-												width: `${((currentQIndex + (isSubmitted ? 1 : 0)) / activeSystem.questions.length) * 100}%` 
-											}}
-											transition={{ duration: 0.4 }}
-										/>
-									</div>
-
-									{/* Question display */}
-									<div className={styles["question-card"]}>
-										<h2 className={styles["question-text"]}>
-											{currentQuestion.text}
-										</h2>
-
-										{/* A-D option buttons */}
-										<div className={styles["options-grid"]}>
-											{(["A", "B", "C", "D"] as const).map((key) => {
-												const optionText = currentQuestion.options[key];
-												const isSelected = selectedOption === key;
-												const isCorrectOption = currentQuestion.correct === key;
-												
-												let optionClass = "";
-												if (isSubmitted) {
-													if (isCorrectOption) optionClass = styles["correct-opt"];
-													else if (isSelected) optionClass = styles["incorrect-opt"];
-													else optionClass = styles["disabled-opt"];
-												} else if (isSelected) {
-													optionClass = styles["selected-opt"];
-												}
-
-												return (
+											<div className={styles.runnerFooter}>
+												{!isSubmitted ? (
 													<button
-														key={key}
-														disabled={isSubmitted}
-														className={`${styles["option-btn"]} ${optionClass}`}
-														onClick={() => setSelectedOption(key)}
+														className={styles.verifyBtn}
+														disabled={selectedOption === null}
+														onClick={submitAnswer}
 													>
-														<div className={styles["opt-prefix"]}>{key}</div>
-														<div className={styles["opt-label"]}>{optionText}</div>
-														{isSubmitted && isCorrectOption && (
-															<CheckCircle2 size={16} className={styles["opt-status-icon-correct"]} />
-														)}
-														{isSubmitted && isSelected && !isCorrectOption && (
-															<XCircle size={16} className={styles["opt-status-icon-incorrect"]} />
-														)}
+														<span>Verify Answer</span>
+														<Shield size={14} />
 													</button>
-												);
-											})}
+												) : (
+													<button
+														className={styles.nextBtn}
+														onClick={nextQuestion}
+													>
+														<span>{currentQIndex === activeSystem.questions.length - 1 ? "Finish Quiz" : "Next Question"}</span>
+														<ArrowRight size={14} />
+													</button>
+												)}
+											</div>
+
+											{/* Science insight box */}
+											<AnimatePresence>
+												{isSubmitted && (
+													<motion.div
+														initial={{ opacity: 0, y: 12 }}
+														animate={{ opacity: 1, y: 0 }}
+														className={`${styles.insightBox} ${selectedOption === currentQuestion.correct ? styles.correctInsight : styles.incorrectInsight}`}
+													>
+														<div className={styles.insightHeader}>
+															<Sparkles size={15} />
+															<h4>
+																{selectedOption === currentQuestion.correct 
+																	? "🎉 Correct! +1 Point" 
+																	: `❌ Incorrect (Correct answer: ${currentQuestion.correct})`}
+															</h4>
+														</div>
+														<p>{currentQuestion.insight}</p>
+													</motion.div>
+												)}
+											</AnimatePresence>
+										</div>
+									</motion.div>
+								)}
+
+								{/* Completion Scorecard */}
+								{activeSystem && examCompleted && (
+									<motion.div
+										initial={{ opacity: 0, scale: 0.96 }}
+										animate={{ opacity: 1, scale: 1 }}
+										className={styles.scorecardBox}
+									>
+										<div className={styles.trophyBadge}>
+											<Trophy size={42} />
 										</div>
 
-										{/* Action trigger footer */}
-										<div className={styles["exam-actions-footer"]}>
-											{!isSubmitted ? (
+										<h2 className={styles.scorecardTitle}>Evaluation Complete!</h2>
+										<p className={styles.scorecardSys}>{activeSystem.name}</p>
+
+										<div className={styles.scoreDisplayCard}>
+											<span className={styles.scoreBigNum}>{score}</span>
+											<span className={styles.scoreDivider}>/</span>
+											<span className={styles.scoreTotalNum}>{activeSystem.questions.length}</span>
+											<span className={styles.scorePctText}>
+												{Math.round((score / activeSystem.questions.length) * 100)}% Accuracy
+											</span>
+										</div>
+
+										<div className={styles.scoreSummaryText}>
+											{score === activeSystem.questions.length ? (
+												<p><strong>Perfect Score!</strong> Outstanding mastery of biological pathways and molecular health mechanisms.</p>
+											) : (
+												<p><strong>Great Effort!</strong> Study the science insights and retake the quiz to seal a perfect proof credential in your health vault.</p>
+											)}
+										</div>
+
+										<div className={styles.scorecardActions}>
+											{score === activeSystem.questions.length ? (
 												<button
-													className={styles["submit-q-btn"]}
-													disabled={selectedOption === null}
-													onClick={submitAnswer}
+													className={styles.sealVaultBtn}
+													onClick={triggerSealCredentials}
+													disabled={isSealing || showReceipt}
 												>
-													Verify Biomarker Answer
-													<Shield size={14} />
+													{isSealing ? (
+														<>
+															<RefreshCw size={15} className={styles.spinIcon} />
+															<span>Encrypting & Sealing...</span>
+														</>
+													) : showReceipt ? (
+														<>
+															<ShieldIcon />
+															<span>Credentials Sealed</span>
+														</>
+													) : (
+														<>
+															<Shield size={15} />
+															<span>Seal in Health Vault</span>
+														</>
+													)}
 												</button>
 											) : (
 												<button
-													className={styles["next-q-btn"]}
-													onClick={nextQuestion}
+													className={styles.retakeQuizBtn}
+													onClick={() => startExam(activeSystem)}
 												>
-													{currentQIndex === activeSystem.questions.length - 1 
-														? "Complete Diagnosis" 
-														: "Continue to Next Question"}
-													<ArrowRight size={14} />
+													<RefreshCw size={15} />
+													<span>Retake Quiz</span>
 												</button>
 											)}
-										</div>
 
-										{/* Scientific insight box (shown after submission) */}
-										<AnimatePresence>
-											{isSubmitted && (
-												<motion.div
-													initial={{ opacity: 0, y: 15 }}
-													animate={{ opacity: 1, y: 0 }}
-													className={`${styles["science-insight-panel"]} ${
-														selectedOption === currentQuestion.correct 
-															? styles["insight-correct"] 
-															: styles["insight-incorrect"]
-													}`}
+											<button
+												className={styles.returnHubBtn}
+												onClick={() => setActiveSystem(null)}
+											>
+												Back to Quiz List
+											</button>
+										</div>
+									</motion.div>
+								)}
+							</motion.div>
+						)}
+
+						{/* TAB 2: Daily Bio-Tips */}
+						{activeTab === "tips" && (
+							<motion.div
+								key="tips-tab"
+								initial={{ opacity: 0, y: 10 }}
+								animate={{ opacity: 1, y: 0 }}
+								exit={{ opacity: 0, y: -10 }}
+								transition={{ duration: 0.2 }}
+								className={styles.tabContent}
+							>
+								<div className={styles.tipsList}>
+									{dailyTips.map((tip, index) => {
+										const isExpanded = expandedTipId === tip.id;
+										return (
+											<motion.div
+												key={tip.id}
+												initial={{ opacity: 0, y: 12 }}
+												animate={{ opacity: 1, y: 0 }}
+												transition={{ duration: 0.25, delay: index * 0.05 }}
+												className={styles.tipCard}
+											>
+												<div className={styles.tipHeader}>
+													<span className={styles.tipCategoryBadge}>{tip.category}</span>
+													<span className={styles.tipSourceBadge}>{tip.source}</span>
+												</div>
+												<h3 className={styles.tipTitle}>{tip.title}</h3>
+												<p className={styles.tipShort}>{tip.short}</p>
+
+												<AnimatePresence>
+													{isExpanded && (
+														<motion.div
+															initial={{ height: 0, opacity: 0 }}
+															animate={{ height: "auto", opacity: 1 }}
+															exit={{ height: 0, opacity: 0 }}
+															className={styles.tipExpandedBody}
+														>
+															<div className={styles.tipDivider} />
+															<h4>🧬 Actionable Science & Countermeasures</h4>
+															<p>{tip.readMore}</p>
+														</motion.div>
+													)}
+												</AnimatePresence>
+
+												<button
+													type="button"
+													className={styles.expandTipBtn}
+													onClick={() => setExpandedTipId(isExpanded ? null : tip.id)}
 												>
-													<div className={styles["insight-title"]}>
-														<Sparkles size={16} />
-														<h4>
-															{selectedOption === currentQuestion.correct 
-																? "🎉 Correct Answer! +1 Point Earned" 
-																: `❌ Incorrect (Correct Option was ${currentQuestion.correct})`}
-														</h4>
-													</div>
-													<p className={styles["insight-text"]}>
-														<strong>Why it's correct:</strong> {currentQuestion.insight}
-													</p>
-												</motion.div>
-											)}
-										</AnimatePresence>
-									</div>
-								</motion.div>
-							)}
+													<span>{isExpanded ? "Close Insight" : "Read Full Science Insight →"}</span>
+												</button>
+											</motion.div>
+										);
+									})}
+								</div>
+							</motion.div>
+						)}
 
-							{/* STEP C: Exam Scorecard & Completion Dashboard */}
-							{activeSystem && examCompleted && (
-								<motion.div
-									initial={{ opacity: 0, scale: 0.97 }}
-									animate={{ opacity: 1, scale: 1 }}
-									exit={{ opacity: 0 }}
-									className={styles["completion-panel"]}
-								>
-									<div className={styles["trophy-circle"]}>
-										<Trophy size={48} className={styles["trophy-icon"]} />
-									</div>
-
-									<h2 className={styles["complete-title"]}>
-										Diagnostic Evaluation Complete!
-									</h2>
-									<p className={styles["complete-sys"]}>{activeSystem.name}</p>
-
-									{/* Score meters */}
-									<div className={styles["score-card"]}>
-										<div className={styles["score-header"]}>Clinical Accuracy Score</div>
-										<div className={styles["score-display"]}>
-											<span className={styles["score-num"]}>{score}</span>
-											<span className={styles["score-slash"]}>/</span>
-											<span className={styles["score-total"]}>{activeSystem.questions.length}</span>
-										</div>
-										<div className={styles["score-percentage"]}>
-											{Math.round((score / activeSystem.questions.length) * 100)}% Proficiency
-										</div>
-									</div>
-
-									{/* Dynamic scientific summary based on score */}
-									<div className={styles["summary-speech-bubble"]}>
-										{score === activeSystem.questions.length ? (
-											<p><strong>Perfect Score Unlocked!</strong> Your comprehension of molecular health pathways, cell regulation, and biological mechanisms is outstanding. You are actively optimizing your epigenetic blueprints.</p>
-										) : (
-											<p><strong>Diagnosis Complete!</strong> You completed the evaluation and learned valuable epigenetic insights. Study the science and retake the test to secure a perfect score and seal your credentials in the local secure vault.</p>
-										)}
-									</div>
-
-									{/* Secure vault block sealing action */}
-									<div className={styles["complete-actions"]}>
-										{score === activeSystem.questions.length ? (
-											<button
-												className={`${styles["seal-vault-btn"]} ${isSealing ? styles["loading"] : ""}`}
-												onClick={triggerSealCredentials}
-												disabled={isSealing || showReceipt}
+						{/* TAB 3: Biomarker Library */}
+						{activeTab === "library" && (
+							<motion.div
+								key="library-tab"
+								initial={{ opacity: 0, y: 10 }}
+								animate={{ opacity: 1, y: 0 }}
+								exit={{ opacity: 0, y: -10 }}
+								transition={{ duration: 0.2 }}
+								className={styles.tabContent}
+							>
+								<div className={styles.biomarkerGrid}>
+									{dailyBiomarkers.map((bio, index) => {
+										const isExpanded = expandedBiomarkerId === bio.id;
+										return (
+											<motion.div
+												key={bio.id}
+												initial={{ opacity: 0, y: 12 }}
+												animate={{ opacity: 1, y: 0 }}
+												transition={{ duration: 0.25, delay: index * 0.04 }}
+												className={styles.biomarkerCard}
 											>
-												{isSealing ? (
-													<>
-														<RefreshCw size={16} className={styles["spin-icon"]} />
-														Sealing in local vault...
-													</>
-												) : showReceipt ? (
-													<>
-														<ShieldIcon />
-														Credentials Encrypted & Sealed
-													</>
-												) : (
-													<>
-														<Shield size={16} />
-														Seal in Secure Health Vault
-													</>
-												)}
-											</button>
-										) : (
-											<button
-												className={styles["retake-btn"]}
-												onClick={() => startExam(activeSystem)}
-											>
-												<RefreshCw size={16} />
-												Retake Examination
-											</button>
-										)}
-										
-										{showReceipt && (
-											<button
-												className={styles["view-receipt-btn"]}
-												onClick={() => setShowReceipt(true)}
-											>
-												<ExternalLink size={16} />
-												Show Security Receipt
-											</button>
-										)}
+												<div className={styles.bioMetaRow}>
+													<span className={styles.bioCategoryTag}>
+														{bio.icon}
+														{bio.category}
+													</span>
+													<span className={styles.bioSimpleTitle}>{bio.simpleTitle}</span>
+												</div>
+												<h3 className={styles.bioTitle}>{bio.title}</h3>
+												<p className={styles.bioDesc}>{bio.description}</p>
 
-										<button
-											className={styles["back-hub-btn"]}
-											onClick={() => setActiveSystem(null)}
-										>
-											Back to Diagnostic Hub
-										</button>
-									</div>
-								</motion.div>
-							)}
+												<AnimatePresence>
+													{isExpanded && (
+														<motion.div
+															initial={{ height: 0, opacity: 0 }}
+															animate={{ height: "auto", opacity: 1 }}
+															exit={{ height: 0, opacity: 0 }}
+															className={styles.bioExpandedDetails}
+														>
+															<div className={styles.bioDivider} />
+															<div className={styles.bioDetailsGrid}>
+																<div className={styles.bioDetailItem}>
+																	<strong>Target Level</strong>
+																	<span>{bio.range}</span>
+																</div>
+																<div className={styles.bioDetailItem}>
+																	<strong>Primary Role</strong>
+																	<span>{bio.impact}</span>
+																</div>
+																<div className={styles.bioDetailItem}>
+																	<strong>How to Support</strong>
+																	<span>{bio.booster}</span>
+																</div>
+															</div>
+														</motion.div>
+													)}
+												</AnimatePresence>
 
-						</AnimatePresence>
+												<button
+													type="button"
+													className={styles.expandBioBtn}
+													onClick={() => setExpandedBiomarkerId(isExpanded ? null : bio.id)}
+												>
+													<span>{isExpanded ? "Close Ranges" : "View Target Levels & Boosters →"}</span>
+												</button>
+											</motion.div>
+										);
+									})}
+								</div>
+							</motion.div>
+						)}
+					</AnimatePresence>
+				</div>
+
+				{/* Right Sidebar Column */}
+				<aside className={styles.sidebarColumn}>
+					{/* Diagnostic Status Card */}
+					<div className={styles.sidebarCard}>
+						<div className={styles.cardTitleRow}>
+							<Award size={16} className={styles.cardIconGold} />
+							<h3>Diagnostic Progress</h3>
+						</div>
+
+						<div className={styles.quizStatWidget}>
+							<div className={styles.statBox}>
+								<span className={styles.statVal}>{quizzesCompleted}</span>
+								<span className={styles.statLbl}>Quizzes Taken</span>
+							</div>
+							<div className={styles.statBox}>
+								<span className={styles.statVal}>{dailyQuizDone ? "100%" : "0%"}</span>
+								<span className={styles.statLbl}>Today's Focus</span>
+							</div>
+						</div>
 					</div>
-				)}
 
+					{/* Daily Biomarker Spotlight Card */}
+					<div className={styles.sidebarCard}>
+						<div className={styles.cardTitleRow}>
+							<Zap size={16} className={styles.cardIconZap} />
+							<h3>Biomarker Spotlight</h3>
+						</div>
+						<div className={styles.spotlightItem}>
+							<h4>{dailyBiomarkers[0]?.title}</h4>
+							<p>{dailyBiomarkers[0]?.description}</p>
+							<span className={styles.spotlightRange}>Target: {dailyBiomarkers[0]?.range}</span>
+						</div>
+					</div>
 
+					{/* Vault Security Status Card */}
+					<div className={styles.sidebarCard}>
+						<div className={styles.cardTitleRow}>
+							<Lock size={16} className={styles.cardIconLock} />
+							<h3>Vault Security</h3>
+						</div>
+						<div className={styles.vaultSecurityBanner}>
+							<Shield size={15} />
+							<span>Zero-Knowledge Encryption: Quizzes & bio-data are encrypted locally.</span>
+						</div>
+					</div>
+				</aside>
 			</div>
 
-			{/* HOLOGRAPHIC SECURE VAULT RECEIPT MODAL */}
+			{/* Vault Receipt Modal */}
 			<AnimatePresence>
 				{showReceipt && receiptTx && activeSystem && (
 					<motion.div
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
-						className={styles["modal-overlay"]}
+						className={styles.modalOverlay}
 					>
 						<motion.div
-							initial={{ opacity: 0, scale: 0.95, y: 30 }}
+							initial={{ opacity: 0, scale: 0.95, y: 20 }}
 							animate={{ opacity: 1, scale: 1, y: 0 }}
-							exit={{ opacity: 0, scale: 0.95, y: 30 }}
-							transition={{ duration: 0.35, ease: "easeOut" }}
-							className={styles["receipt-modal"]}
+							exit={{ opacity: 0, scale: 0.95 }}
+							className={styles.receiptModal}
 						>
-							<div className={styles["receipt-holo-glow"]} />
-							
-							<div className={styles["receipt-header"]}>
-								<div className={styles["vault-logo-box"]}>
-									<Shield size={28} className={styles["receipt-logo"]} />
-								</div>
-								<h3>Secure Vault Credentials Sealed</h3>
-								<p>AES-256 Encrypted & Locally Protected</p>
+							<div className={styles.modalHeader}>
+								<Shield size={28} className={styles.modalShieldIcon} />
+								<h3>Credentials Encrypted & Sealed</h3>
+								<p>AES-GCM 256-Bit Hardware Vault Proof</p>
 							</div>
 
-							<div className={styles["receipt-ledger-box"]}>
-								<div className={styles["ledger-row"]}>
-									<span className={styles["label"]}>Security Standard:</span>
-									<span className={styles["val"]}>Zero-Knowledge Enclave</span>
+							<div className={styles.modalBody}>
+								<div className={styles.ledgerRow}>
+									<span>Security Standard:</span>
+									<strong>Zero-Knowledge Local Enclave</strong>
 								</div>
-								<div className={styles["ledger-row"]}>
-									<span className={styles["label"]}>Verified Target:</span>
-									<span className={styles["val"]}>{activeSystem.name}</span>
+								<div className={styles.ledgerRow}>
+									<span>Verified Exam:</span>
+									<strong>{activeSystem.name}</strong>
 								</div>
-								<div className={styles["ledger-row"]}>
-									<span className={styles["label"]}>Encryption Key:</span>
-									<span className={styles["val"]}>{receiptTx.keySize}</span>
+								<div className={styles.ledgerRow}>
+									<span>Key Specification:</span>
+									<strong>{receiptTx.keySize}</strong>
 								</div>
-								<div className={styles["ledger-row"]}>
-									<span className={styles["label"]}>Sealed Timestamp:</span>
-									<span className={styles["val"]}>{receiptTx.timestamp}</span>
+								<div className={styles.ledgerRow}>
+									<span>Sealed Timestamp:</span>
+									<strong>{receiptTx.timestamp}</strong>
 								</div>
-								<div className={styles["ledger-row"]}>
-									<span className={styles["label"]}>Access Control:</span>
-									<span className={styles["val"]}>Local Biometric Verification</span>
-								</div>
-								<div className={styles["ledger-divider"]} />
-								<div className={styles["ledger-hash-block"]}>
-									<div className={styles["hash-label"]}>
-										<span>Cryptographic Integrity Seal (SHA-256)</span>
-										<button 
-											onClick={copyReceiptHash} 
-											className={styles["copy-btn"]}
-											title="Copy Seal"
-										>
+
+								<div className={styles.hashBox}>
+									<div className={styles.hashLabelRow}>
+										<span>SHA-256 Cryptographic Seal</span>
+										<button onClick={copyReceiptHash} className={styles.copyHashBtn}>
 											<Copy size={12} />
 										</button>
 									</div>
-									<div className={styles["hash-code"]}>
-										{receiptTx.hash}
-									</div>
+									<div className={styles.hashCode}>{receiptTx.hash}</div>
 								</div>
 							</div>
 
-							<div className={styles["receipt-footer"]}>
+							<div className={styles.modalFooter}>
 								<button
-									className={styles["twin-redirect-btn"]}
+									className={styles.twinBtn}
 									onClick={() => {
 										dispatch(setCategory(activeSystem.id === "brain" ? "StressManagement" : activeSystem.id === "gut" ? "Gastroenterolgy" : "Cardiology"));
 										navigate("/dashboard");
 									}}
 								>
 									<TwinIcon />
-									View Synced Twin System
+									<span>View Synced Twin System</span>
 								</button>
 								<button
-									className={styles["close-receipt-btn"]}
+									className={styles.closeBtn}
 									onClick={() => setShowReceipt(false)}
 								>
-									Dismiss Credentials
+									Dismiss Receipt
 								</button>
 							</div>
 						</motion.div>
 					</motion.div>
 				)}
 			</AnimatePresence>
-
 		</div>
 	);
 };
