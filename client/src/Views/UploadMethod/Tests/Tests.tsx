@@ -367,9 +367,11 @@ const Tests = () => {
 										</div>
 										<span className={styles.humanTimeLabel}>Breakfast (Morning)</span>
 									</div>
-									<h4 className={styles.humanDishTitle}>{dailyMealPlan.breakfast.title}</h4>
-									<p className={styles.humanDishDesc}>{dailyMealPlan.breakfast.description}</p>
-									
+									<div className={styles.humanDishBody}>
+										<h4 className={styles.humanDishTitle}>{dailyMealPlan.breakfast.title}</h4>
+										<p className={styles.humanDishDesc}>{dailyMealPlan.breakfast.description}</p>
+									</div>
+
 									<div className={styles.humanBioBox}>
 										<div className={styles.humanBioBadge}>
 											<Dna size={13} />
@@ -404,9 +406,11 @@ const Tests = () => {
 										</div>
 										<span className={styles.humanTimeLabel}>Lunch (Midday)</span>
 									</div>
-									<h4 className={styles.humanDishTitle}>{dailyMealPlan.lunch.title}</h4>
-									<p className={styles.humanDishDesc}>{dailyMealPlan.lunch.description}</p>
-									
+									<div className={styles.humanDishBody}>
+										<h4 className={styles.humanDishTitle}>{dailyMealPlan.lunch.title}</h4>
+										<p className={styles.humanDishDesc}>{dailyMealPlan.lunch.description}</p>
+									</div>
+
 									<div className={styles.humanBioBox}>
 										<div className={styles.humanBioBadge}>
 											<Dna size={13} />
@@ -441,9 +445,11 @@ const Tests = () => {
 										</div>
 										<span className={styles.humanTimeLabel}>Supper / Dinner (Evening)</span>
 									</div>
-									<h4 className={styles.humanDishTitle}>{dailyMealPlan.supper.title}</h4>
-									<p className={styles.humanDishDesc}>{dailyMealPlan.supper.description}</p>
-									
+									<div className={styles.humanDishBody}>
+										<h4 className={styles.humanDishTitle}>{dailyMealPlan.supper.title}</h4>
+										<p className={styles.humanDishDesc}>{dailyMealPlan.supper.description}</p>
+									</div>
+
 									<div className={styles.humanBioBox}>
 										<div className={styles.humanBioBadge}>
 											<Dna size={13} />
