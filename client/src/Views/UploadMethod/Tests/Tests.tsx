@@ -4,7 +4,7 @@ import {
 	Sparkles, Home, Flame, Shield, RefreshCw, 
 	Globe, BookOpen, Search, Bookmark, Check, ArrowRight,
 	Sun, Wind, Droplets, Utensils, Smile, Activity, Moon, Coffee, Dna,
-	BrainCircuit, Wand2
+	BrainCircuit, Zap, HeartPulse
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { 
@@ -233,7 +233,7 @@ const Tests = () => {
 				<div className={styles.heroInner}>
 					<div className={styles.heroTitleGroup}>
 						<span className={styles.eyebrowTag}>
-							<Sparkles size={12} />
+							<HeartPulse size={12} />
 							Healthy Lifestyle & Wellness Hub
 						</span>
 						<h1 className={styles.heroTitle}>
@@ -270,7 +270,7 @@ const Tests = () => {
 									</>
 								) : (
 									<>
-										<Wand2 size={13} />
+										<Zap size={13} />
 										<span>Generate Fresh AI Tip</span>
 									</>
 								)}
