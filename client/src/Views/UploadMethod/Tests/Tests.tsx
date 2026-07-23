@@ -3,126 +3,110 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
 	Sparkles, Home, Flame, Shield, RefreshCw, 
 	Globe, BookOpen, Search, Bookmark, Check, ArrowRight,
-	Sun, Wind, Droplets, Utensils, Smile
+	Sun, Wind, Droplets, Utensils, Smile, Activity
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { generateAiLifestyleTip, type AiLifestyleTipResult, GHANAIAN_REMEDIES } from "@/App/Services/GemmaService";
 import styles from "./Tests.module.scss";
 
-type LifestyleCategory = "All" | "Hygiene" | "Environment" | "Nutrition" | "Sleep" | "Mind";
+type LifestyleCategory = "All" | "Fitness" | "Nutrition" | "Hygiene" | "Sleep" | "Mind" | "Environment";
 
 const CURATED_LIFESTYLE_TIPS: AiLifestyleTipResult[] = [
+	{
+		id: "tip-fitness-1",
+		title: "30-Minute Daily Brisk Movement",
+		category: "Fitness",
+		categoryLabel: "General Fitness & Vitality",
+		shortSummary: "Engaging in 30 minutes of moderate aerobic movement daily lowers all-cause mortality risk by 27% and boosts mitochondrial energy output.",
+		whyItMatters: "Exercise stimulates vascular nitric oxide release, relaxing blood vessels, improving heart health, and delivering oxygen to tissues.",
+		actionableSteps: [
+			"Take a 30-minute brisk walk in the morning or early evening.",
+			"Incorporate bodyweight squats, lunges, or climbing stairs.",
+			"Maintain an upright posture to prevent neck and back strain.",
+			"Drink clean water before and after physical activity."
+		],
+		safetyRule: "Warm up with gentle stretches before engaging in vigorous exercise.",
+		source: "World Health Organization (WHO) & CDC Guidelines"
+	},
+	{
+		id: "tip-nutrition-1",
+		title: "Moringa & Kontomire Iron Uptake",
+		category: "Nutrition",
+		categoryLabel: "Nutrition & Local Bio-Foods",
+		shortSummary: "Pairing local iron-rich greens (Kontomire, Moringa) with natural Vitamin C (lime or lemon) triples iron absorption in your bloodstream.",
+		whyItMatters: "Plant-based iron requires Vitamin C to dissolve into a soluble form that your stomach and intestine can absorb efficiently.",
+		actionableSteps: [
+			"Squeeze fresh lime or lemon juice over cooked Kontomire or Moringa soup.",
+			"Avoid drinking tea or coffee within 1 hour of meals to prevent iron blocking.",
+			"Steam or lightly boil greens to preserve natural folates.",
+			"Enjoy fresh oranges or papaya as a healthy post-meal dessert."
+		],
+		safetyRule: "Cook Kontomire leaves thoroughly to break down natural calcium oxalates.",
+		source: "Ghana Health Service & NIH Nutrition Science"
+	},
 	{
 		id: "tip-hygiene-1",
 		title: "20-Second Hand Hygiene Protocol",
 		category: "Hygiene",
-		categoryLabel: "Hygiene & Personal Care",
-		shortSummary: "Washing hands with soap and water for 20 seconds breaks down viral and bacterial outer membranes, preventing infection.",
-		whyItMatters: "Soap molecules dissolve lipid membranes on viruses and bacteria, washing pathogens away before they reach your eyes, nose, or mouth.",
+		categoryLabel: "Personal Hygiene & Care",
+		shortSummary: "Proper 20-second handwashing with soap breaks down viral and bacterial outer membranes, preventing common infections.",
+		whyItMatters: "Soap molecules latch onto pathogen lipid membranes, neutralizing virus and bacterial particles before they enter mouth, eyes, or food.",
 		actionableSteps: [
 			"Wet hands with clean running water and apply soap.",
 			"Lather palm to palm, interlace fingers, and scrub back of hands.",
 			"Clean under fingernails and wrists for 20 seconds.",
 			"Rinse and dry with a clean towel or air dry."
 		],
-		safetyRule: "Always wash hands before meals, after using the washroom, and after handling money.",
-		source: "World Health Organization (WHO) & Ghana Health Service"
-	},
-	{
-		id: "tip-env-1",
-		title: "Indoor Air Ventilation & Sanitation",
-		category: "Environment",
-		categoryLabel: "Neat Environment & Sanitation",
-		shortSummary: "Opening windows for 15 minutes twice daily replaces trapped dust, carbon dioxide, and mold spores with fresh oxygenated air.",
-		whyItMatters: "Enclosed rooms trap moisture, dust mites, and volatile compounds that irritate lung linings and trigger respiratory fatigue.",
-		actionableSteps: [
-			"Open cross-ventilating windows every morning and late afternoon.",
-			"Damp-wipe surfaces instead of dry sweeping to avoid raising dust.",
-			"Ensure laundry and damp mats dry thoroughly in outdoor sunlight.",
-			"Clean ceiling fans and window sills weekly."
-		],
-		safetyRule: "Avoid burning plastics or garbage near living quarters to protect lung health.",
-		source: "Centers for Disease Control and Prevention (CDC)"
-	},
-	{
-		id: "tip-nutrition-1",
-		title: "Moringa & Kontomire Iron Absorption",
-		category: "Nutrition",
-		categoryLabel: "Nutrition & Local Foods",
-		shortSummary: "Pairing local iron-rich greens like Kontomire and Moringa with natural Vitamin C (lime or citrus) triples iron uptake in your blood.",
-		whyItMatters: "Plant-based (non-heme) iron requires Vitamin C to dissolve into a form that your stomach and intestine can absorb easily.",
-		actionableSteps: [
-			"Squeeze fresh lime or lemon juice over cooked Kontomire or Moringa soup.",
-			"Avoid drinking black tea or coffee within 1 hour of meals.",
-			"Steam or lightly cook greens to preserve folic acid.",
-			"Eat fresh orange or papaya after green meals."
-		],
-		safetyRule: "Cook Kontomire leaves thoroughly to break down naturally occurring oxalates.",
-		source: "Ghana Health Service & NIH Nutrition"
-	},
-	{
-		id: "tip-env-2",
-		title: "Safe Household Water Storage",
-		category: "Environment",
-		categoryLabel: "Neat Environment & Sanitation",
-		shortSummary: "Keeping drinking water in covered, narrow-necked vessels cleaned weekly prevents mosquito breeding and bacterial contamination.",
-		whyItMatters: "Uncovered water containers serve as prime breeding grounds for mosquitoes and harbor bacterial biofilms.",
-		actionableSteps: [
-			"Boil drinking water for 1 full minute or use an approved filter.",
-			"Store water in clean, covered containers with a narrow spout or tap.",
-			"Scrub container walls with soap and clean water every 7 days.",
-			"Never dip unwashed cups directly into storage buckets."
-		],
-		safetyRule: "Let boiled water cool naturally in a closed vessel before drinking.",
-		source: "UNICEF & Ministry of Sanitation Ghana"
-	},
-	{
-		id: "tip-hygiene-2",
-		title: "Oral Microbiome & Gum Protection",
-		category: "Hygiene",
-		categoryLabel: "Hygiene & Personal Care",
-		shortSummary: "Brushing twice daily with fluoride toothpaste and tongue cleaning eliminates plaque bacteria that trigger vascular inflammation.",
-		whyItMatters: "Oral plaque bacteria can enter systemic circulation through microscopic gum bleeding, raising inflammatory markers.",
-		actionableSteps: [
-			"Brush for 2 full minutes morning and night.",
-			"Use gentle circular motions along the gum line.",
-			"Scrub your tongue gently from back to front.",
-			"Replace toothbrush or chewing stick every 3 months."
-		],
-		safetyRule: "Spit out foam after brushing without immediate heavy water rinsing so fluoride protects enamel.",
-		source: "Mayo Clinic & Ghana Dental Association"
+		safetyRule: "Always wash hands before eating, preparing food, and after handling money.",
+		source: "World Health Organization (WHO)"
 	},
 	{
 		id: "tip-sleep-1",
-		title: "Circadian Light & Sleep Hygiene",
+		title: "Circadian Light & Restful Sleep",
 		category: "Sleep",
-		categoryLabel: "Sleep & Circadian Science",
-		shortSummary: "Getting morning daylight exposure and putting away phone screens 90 minutes before bed restores natural melatonin production.",
-		whyItMatters: "Blue light from screens tricks the brain into suppressing melatonin, leaving you tired and disrupting overnight cell repair.",
+		categoryLabel: "Sleep & Recovery",
+		shortSummary: "Getting 10–15 minutes of morning sunlight while turning off phone screens 90 minutes before bed restores natural melatonin repair.",
+		whyItMatters: "Blue light from phone screens tricks the brain into suppressing melatonin, disrupting deep slow-wave sleep and cellular recovery.",
 		actionableSteps: [
-			"Get 10–15 minutes of outdoor daylight shortly after waking up.",
-			"Turn on night-mode screen filters 2 hours before bed.",
+			"Get natural outdoor sunlight shortly after waking up.",
+			"Enable night-mode screen filters 2 hours before bed.",
 			"Keep your sleeping area dark, cool, and quiet.",
-			"Keep a consistent sleep schedule."
+			"Maintain a consistent sleep-wake schedule."
 		],
-		safetyRule: "Avoid heavy meals or caffeine late at night to ensure deep slow-wave sleep.",
+		safetyRule: "Avoid heavy caffeine or large late-night meals near bedtime.",
 		source: "National Institutes of Health (NIH)"
 	},
 	{
 		id: "tip-mind-1",
-		title: "Vagus Nerve Resonant Breathing",
+		title: "Vagus Nerve Diaphragmatic Breathing",
 		category: "Mind",
 		categoryLabel: "Mind & Stress Resilience",
-		shortSummary: "5 minutes of slow diaphragmatic breathing (6 seconds in, 6 seconds out) triggers the vagus nerve to calm your heart and reduce stress.",
-		whyItMatters: "Slow rhythmic breathing increases parasympathetic nervous activity, lowering stress hormones like cortisol and adrenaline.",
+		shortSummary: "5 minutes of slow resonant breathing (6s in, 6s out) triggers the vagus nerve to calm your heart and reduce stress hormone output.",
+		whyItMatters: "Rhythmic breathing increases parasympathetic nervous activity, rapidly lowering elevated cortisol and blood pressure.",
 		actionableSteps: [
-			"Sit comfortably with a straight posture.",
-			"Inhale deeply through your nose for 5–6 seconds.",
+			"Sit comfortably with shoulders relaxed and spine straight.",
+			"Inhale slowly through your nose for 5–6 seconds.",
 			"Exhale smoothly through your mouth for 5–6 seconds.",
-			"Repeat for 5 minutes during stressful moments or before bed."
+			"Repeat for 5 minutes during stressful moments or before sleep."
 		],
-		safetyRule: "Return to normal breathing immediately if feeling dizzy.",
+		safetyRule: "Return to natural breathing immediately if you feel lightheaded.",
 		source: "Harvard Medical School Mind/Body Institute"
+	},
+	{
+		id: "tip-env-1",
+		title: "Indoor Air Circulation & Freshness",
+		category: "Environment",
+		categoryLabel: "Clean Living Environment",
+		shortSummary: "Opening windows for 15 minutes twice daily replaces indoor dust, trapped moisture, and carbon dioxide with fresh outdoor air.",
+		whyItMatters: "Enclosed living spaces accumulate airborne dust, humidity, and volatile compounds that irritate lung linings and trigger fatigue.",
+		actionableSteps: [
+			"Open cross-ventilating windows every morning and late afternoon.",
+			"Damp-wipe surfaces instead of dry sweeping to avoid raising dust.",
+			"Ensure laundry and damp towels dry outdoors in sunlight.",
+			"Keep fan blades and window sills clean."
+		],
+		safetyRule: "Avoid burning garbage or plastic near living spaces to protect lung health.",
+		source: "Centers for Disease Control and Prevention (CDC)"
 	}
 ];
 
@@ -131,7 +115,7 @@ const Tests = () => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [expandedTipId, setExpandedTipId] = useState<string | null>(null);
 	
-	// Custom AI Tip Generation State
+	// AI Tip Generation State
 	const [aiTips, setAiTips] = useState<AiLifestyleTipResult[]>(CURATED_LIFESTYLE_TIPS);
 	const [isGenerating, setIsGenerating] = useState(false);
 	const [customPrompt, setCustomPrompt] = useState("");
@@ -160,12 +144,12 @@ const Tests = () => {
 	const handleGenerateAiTip = useCallback(async (cat: LifestyleCategory, topic?: string) => {
 		setIsGenerating(true);
 		try {
-			const newTip = await generateAiLifestyleTip(cat === "All" ? "Hygiene" : cat, topic || customPrompt);
+			const newTip = await generateAiLifestyleTip(cat === "All" ? "Fitness" : cat, topic || customPrompt);
 			setAiTips((prev) => [newTip, ...prev]);
 			setExpandedTipId(newTip.id);
 			setCustomPrompt("");
 			setShowGenerator(false);
-			toast.success("Fresh AI lifestyle tip generated by model!", { autoClose: 3500 });
+			toast.success("Fresh AI healthy lifestyle tip suggested by model!", { autoClose: 3500 });
 		} catch (e) {
 			console.error("Failed to generate AI tip", e);
 			toast.error("Could not generate tip. Please try again.");
@@ -201,13 +185,13 @@ const Tests = () => {
 					<div className={styles.heroTitleGroup}>
 						<span className={styles.eyebrowTag}>
 							<Sparkles size={12} />
-							Bio-Lifestyle & Health Hub
+							Healthy Lifestyle & Wellness Hub
 						</span>
 						<h1 className={styles.heroTitle}>
-							Healthy Living <span className={styles.accentText}>& Sanitation</span>
+							General Healthy Living <span className={styles.accentText}>& Bio-Habits</span>
 						</h1>
 						<p className={styles.heroSubtitle}>
-							Evidence-based hygiene practices, clean environmental sanitation, Ghanaian bio-nutrition, and real-time AI Model lifestyle recommendations.
+							Comprehensive guidance for daily fitness, balanced nutrition, restorative sleep, mental clarity, personal hygiene, and clean living — suggested by the AI Model.
 						</p>
 					</div>
 
@@ -259,39 +243,46 @@ const Tests = () => {
 							<span>All Pillars</span>
 						</button>
 						<button
-							className={`${styles.catBtn} ${activeCategory === "Hygiene" ? styles.active : ""}`}
-							onClick={() => setActiveCategory("Hygiene")}
+							className={`${styles.catBtn} ${activeCategory === "Fitness" ? styles.active : ""}`}
+							onClick={() => setActiveCategory("Fitness")}
 						>
-							<Sparkles size={13} />
-							<span>Hygiene & Care</span>
-						</button>
-						<button
-							className={`${styles.catBtn} ${activeCategory === "Environment" ? styles.active : ""}`}
-							onClick={() => setActiveCategory("Environment")}
-						>
-							<Home size={13} />
-							<span>Neat Environment</span>
+							<Activity size={13} />
+							<span>Fitness & Movement</span>
 						</button>
 						<button
 							className={`${styles.catBtn} ${activeCategory === "Nutrition" ? styles.active : ""}`}
 							onClick={() => setActiveCategory("Nutrition")}
 						>
-							<Flame size={13} />
-							<span>Bio-Nutrition</span>
+							<Utensils size={13} />
+							<span>Nutrition & Bio-Foods</span>
+						</button>
+						<button
+							className={`${styles.catBtn} ${activeCategory === "Hygiene" ? styles.active : ""}`}
+							onClick={() => setActiveCategory("Hygiene")}
+						>
+							<Sparkles size={13} />
+							<span>Personal Hygiene</span>
 						</button>
 						<button
 							className={`${styles.catBtn} ${activeCategory === "Sleep" ? styles.active : ""}`}
 							onClick={() => setActiveCategory("Sleep")}
 						>
 							<Sun size={13} />
-							<span>Sleep & Rest</span>
+							<span>Sleep & Recovery</span>
 						</button>
 						<button
 							className={`${styles.catBtn} ${activeCategory === "Mind" ? styles.active : ""}`}
 							onClick={() => setActiveCategory("Mind")}
 						>
 							<Smile size={13} />
-							<span>Mind & Resilience</span>
+							<span>Mind & Calm</span>
+						</button>
+						<button
+							className={`${styles.catBtn} ${activeCategory === "Environment" ? styles.active : ""}`}
+							onClick={() => setActiveCategory("Environment")}
+						>
+							<Home size={13} />
+							<span>Clean Environment</span>
 						</button>
 					</div>
 
@@ -301,7 +292,7 @@ const Tests = () => {
 							<Search size={14} className={styles.searchIcon} />
 							<input
 								type="text"
-								placeholder="Search hygiene, water, air, moringa, sleep..."
+								placeholder="Search exercise, posture, water, moringa, sleep, hygiene..."
 								value={searchQuery}
 								onChange={(e) => setSearchQuery(e.target.value)}
 							/>
@@ -329,16 +320,16 @@ const Tests = () => {
 							>
 								<div className={styles.drawerTitleRow}>
 									<Sparkles size={16} className={styles.drawerSparkle} />
-									<h3>Ask Gemma AI Model for Custom Lifestyle Guidance</h3>
+									<h3>Ask Gemma AI Model for Custom Healthy Lifestyle Advice</h3>
 								</div>
 								<p className={styles.drawerDesc}>
-									Type any topic (e.g. "How to clean water storage tanks", "Preventing mold in damp rooms", "Hand hygiene for kids") and let the model build a custom science guide.
+									Type any healthy lifestyle topic (e.g. "30-minute workout routine for home", "Healthy snacks for blood sugar control", "Stretches for back posture", "Deep sleep routine") and let the model generate customized science advice.
 								</p>
 
 								<div className={styles.drawerForm}>
 									<input
 										type="text"
-										placeholder="e.g. Natural ways to disinfect kitchen surfaces and food"
+										placeholder="e.g. Daily habits for high morning energy and mental focus"
 										value={customPrompt}
 										onChange={(e) => setCustomPrompt(e.target.value)}
 									/>
@@ -393,7 +384,7 @@ const Tests = () => {
 												onClick={() => toggleSaveHabit(tip.id)}
 												title={isSaved ? "Remove from saved habits" : "Save to my habits list"}
 											>
-												<Bookmark size={14} />
+												<Bookmark size={15} strokeWidth={2.5} />
 											</button>
 										</div>
 
@@ -420,12 +411,15 @@ const Tests = () => {
 													<div className={styles.panelBlock}>
 														<h4>📋 Practical Step-by-Step Actions</h4>
 														<ul>
-															{tip.actionableSteps.map((step, sIdx) => (
-																<li key={sIdx}>
-																	<Check size={13} className={styles.stepCheckIcon} />
-																	<span>{step}</span>
-																</li>
-															))}
+															{tip.actionableSteps
+																.map((step) => step.replace(/^[\{\}\[\]"'\s,]+|[\{\}\[\]"'\s,]+$/g, "").replace(/^safety\s*rule:\s*/i, "").trim())
+																.filter((step) => step.length > 0 && step !== "[" && step !== "]")
+																.map((step, sIdx) => (
+																	<li key={sIdx}>
+																		<Check size={13} className={styles.stepCheckIcon} />
+																		<span>{step}</span>
+																	</li>
+																))}
 														</ul>
 													</div>
 
@@ -463,28 +457,32 @@ const Tests = () => {
 
 				{/* Right Sidebar Column */}
 				<aside className={styles.sidebarColumn}>
-					{/* Sanitation & Hygiene Essentials Card */}
+					{/* Daily Health & Vitality Checklist */}
 					<div className={styles.sidebarCard}>
 						<div className={styles.cardHeaderRow}>
 							<Shield size={16} className={styles.iconShield} />
-							<h3>Hygiene & Sanitation Rules</h3>
+							<h3>Daily Health & Vitality Rules</h3>
 						</div>
 						<ul className={styles.essentialChecklist}>
 							<li>
-								<Droplets size={13} />
-								<span>Wash hands with soap for 20s before eating</span>
+								<Activity size={13} />
+								<span>30 mins brisk movement or walking daily</span>
 							</li>
 							<li>
-								<Wind size={13} />
-								<span>Open windows twice daily for air circulation</span>
+								<Droplets size={13} />
+								<span>Drink at least 2 liters of clean water</span>
 							</li>
 							<li>
 								<Utensils size={13} />
-								<span>Boil drinking water & clean storage tanks</span>
+								<span>Eat nutrient-dense local foods & fiber</span>
 							</li>
 							<li>
 								<Sun size={13} />
-								<span>Sun-dry damp clothes to eliminate mold spores</span>
+								<span>Aim for 7–8 hours of uninterrupted sleep</span>
+							</li>
+							<li>
+								<Wind size={13} />
+								<span>Maintain personal hygiene & clean air flow</span>
 							</li>
 						</ul>
 					</div>

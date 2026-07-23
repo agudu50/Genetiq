@@ -429,28 +429,47 @@
 }
 
 .bookmarkBtn {
-	background: rgba(255, 255, 255, 0.05);
-	border: 1px solid rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.08);
+	border: 1px solid rgba(255, 255, 255, 0.16);
 	color: var(--text-secondary, #94a3b8);
-	width: 30px;
-	height: 30px;
+	width: 32px;
+	height: 32px;
 	border-radius: 8px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
+	flex-shrink: 0;
 	transition: all 0.2s ease;
+
+	svg {
+		stroke: var(--text-secondary, #94a3b8);
+		stroke-width: 2.5px;
+		width: 15px;
+		height: 15px;
+		flex-shrink: 0;
+		transition: all 0.2s ease;
+	}
 
 	&:hover {
 		color: #f59e0b;
 		background: rgba(245, 158, 11, 0.15);
-		border-color: rgba(245, 158, 11, 0.3);
+		border-color: rgba(245, 158, 11, 0.4);
+
+		svg {
+			stroke: #f59e0b;
+		}
 	}
 
 	&.saved {
 		color: #f59e0b;
-		background: rgba(245, 158, 11, 0.15);
+		background: rgba(245, 158, 11, 0.2);
 		border-color: #f59e0b;
+
+		svg {
+			stroke: #f59e0b;
+			fill: #f59e0b;
+		}
 	}
 }
 

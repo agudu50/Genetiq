@@ -1951,31 +1951,101 @@ const AI_LIFESTYLE_POOL: AiLifestyleTipResult[] = [
 	}
 ];
 
+function cleanAiLifestyleText(str: string): string {
+	if (!str) return "";
+	return str
+		.replace(/^[\{\}\[\]"'\s,]+|[\{\}\[\]"'\s,]+$/g, "")
+		.replace(/^(title|summary|whyitmatters|steps|safetyrule|safety\s*rule|source|actionablesteps):\s*/i, "")
+		.replace(/^[#*-\d.]+\s*/, "")
+		.replace(/^["']+|["']+$/g, "")
+		.replace(/^[\{\}\[\]]+|[\{\}\[\]]+$/g, "")
+		.trim();
+}
+
 export async function generateAiLifestyleTip(category: string, topic?: string): Promise<AiLifestyleTipResult> {
 	// Check if backend AI is available
 	const health = await checkGemmaHealth();
 	if (health.modelLoaded) {
 		try {
-			const prompt = `Provide a concise, practical, science-based health and lifestyle tip for category '${category}' (Topic: ${topic || 'daily wellness and sanitation'}). Include:
-Title: short title
-Summary: 1-2 sentence overview
-WhyItMatters: 1-2 sentences on biological reason
-Steps: 3 bullet points
-SafetyRule: 1 important safety rule
-Source: official guideline source.`;
+			const prompt = `Return a JSON object only (no conversation, no markdown code block) for category '${category}' (Topic: ${topic || 'daily wellness and vitality'}). Use exact structure:
+{
+  "title": "Short catchy title",
+  "summary": "1-2 sentence overview",
+  "whyItMatters": "1-2 sentences on biological reason",
+  "steps": ["Action step 1", "Action step 2", "Action step 3"],
+  "safetyRule": "1 safety rule",
+  "source": "Official guideline source"
+}`;
 
 			const chatRes = await chatWithGemma({ message: prompt, language: "english" });
 			if (chatRes && chatRes.message) {
-				const lines = chatRes.message.split("\n").filter((l) => l.trim().length > 0);
+				const raw = chatRes.message.trim();
+				const jsonMatch = raw.match(/\{[\s\S]*\}/);
+				if (jsonMatch) {
+					try {
+						const parsed = JSON.parse(jsonMatch[0]);
+						const title = cleanAiLifestyleText(parsed.title || parsed.Title || `${category} AI Guidance`);
+						const summary = cleanAiLifestyleText(parsed.summary || parsed.Summary || `AI recommended guidance for ${category.toLowerCase()}.`);
+						const why = cleanAiLifestyleText(parsed.whyItMatters || parsed.WhyItMatters || "Supports long-term health and cellular vitality.");
+						
+						const stepsRaw = parsed.steps || parsed.Steps || parsed.actionableSteps;
+						let extractedSafety = cleanAiLifestyleText(parsed.safetyRule || parsed.SafetyRule || "");
+						let stepsArr: string[] = [];
+
+						if (Array.isArray(stepsRaw)) {
+							stepsRaw.forEach((item: any) => {
+								const strItem = String(item);
+								if (/^safety\s*rule:/i.test(strItem.trim())) {
+									if (!extractedSafety) {
+										extractedSafety = cleanAiLifestyleText(strItem.replace(/^safety\s*rule:\s*/i, ""));
+									}
+								} else {
+									const cleaned = cleanAiLifestyleText(strItem);
+									if (cleaned && !cleaned.startsWith("[") && !cleaned.endsWith("]")) {
+										stepsArr.push(cleaned);
+									}
+								}
+							});
+						}
+
+						if (stepsArr.length === 0) {
+							stepsArr = ["Eat balanced whole foods.", "Stay hydrated with clean water.", "Maintain daily physical movement."];
+						}
+
+						const source = cleanAiLifestyleText(parsed.source || parsed.Source || "Gemma 4 AI & Health Guidelines");
+
+						return {
+							id: `ai-gen-${Date.now()}`,
+							title: title || "Healthy Bio-Lifestyle Tip",
+							category: (category as any) || "Fitness",
+							categoryLabel: `${category} & Daily Wellness`,
+							shortSummary: summary,
+							whyItMatters: why,
+							actionableSteps: stepsArr,
+							safetyRule: extractedSafety || "Follow official health guidelines and consult a medical professional.",
+							source: source || "Gemma 4 AI & Health Guidelines"
+						};
+					} catch (jsonErr) {
+						console.warn("JSON parse failed, falling back to text cleaner", jsonErr);
+					}
+				}
+
+				// Fallback text cleaner if JSON parse fails
+				const cleanLines = raw
+					.replace(/[\{\}\"]/g, "")
+					.split("\n")
+					.map((l) => cleanAiLifestyleText(l))
+					.filter((l) => l.length > 0 && l !== "[" && l !== "]");
+
 				return {
 					id: `ai-gen-${Date.now()}`,
-					title: lines[0]?.replace(/^[#*-\d.]+\s*/, "") || `${category} AI Guidance`,
-					category: (category as any) || "Hygiene",
+					title: cleanLines[0] || `${category} AI Guidance`,
+					category: (category as any) || "Fitness",
 					categoryLabel: `${category} & Daily Wellness`,
-					shortSummary: lines[1] || `AI recommended guidance for ${category.toLowerCase()}.`,
-					whyItMatters: lines[2] || "Supports long-term health, immunity, and clean living environments.",
-					actionableSteps: lines.slice(3, 7).map((s) => s.replace(/^[#*-\d.]+\s*/, "")) || ["Keep a clean routine.", "Stay hydrated."],
-					safetyRule: "Follow official health guidelines and consult a medical professional for personal concerns.",
+					shortSummary: cleanLines[1] || `AI recommended guidance for ${category.toLowerCase()}.`,
+					whyItMatters: cleanLines[2] || "Supports long-term health and vitality.",
+					actionableSteps: cleanLines.slice(3, 7).length > 0 ? cleanLines.slice(3, 7) : ["Maintain daily activity.", "Stay hydrated."],
+					safetyRule: cleanLines[7] || "Follow official health guidelines and consult a clinician.",
 					source: "Gemma 4 AI & Health Guidelines"
 				};
 			}
