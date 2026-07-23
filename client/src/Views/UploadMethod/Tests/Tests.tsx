@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
 	Sparkles, Home, Flame, Shield, RefreshCw, 
 	Globe, BookOpen, Search, Bookmark, Check, ArrowRight,
-	Sun, Wind, Droplets, Utensils, Smile, Activity, Moon, Coffee
+	Sun, Wind, Droplets, Utensils, Smile, Activity, Moon, Coffee, Dna
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { 
@@ -115,6 +115,26 @@ const CURATED_LIFESTYLE_TIPS: AiLifestyleTipResult[] = [
 		source: "Centers for Disease Control and Prevention (CDC)"
 	}
 ];
+
+const getFoodEmoji = (food: string): string => {
+	const f = food.toLowerCase().trim();
+	if (f.includes("egg")) return "🥚";
+	if (f.includes("avocado")) return "🥑";
+	if (f.includes("oat") || f.includes("koko") || f.includes("millet") || f.includes("porridge")) return "🥣";
+	if (f.includes("moringa") || f.includes("kontomire") || f.includes("cabbage") || f.includes("leaf") || f.includes("green")) return "🥬";
+	if (f.includes("okra")) return "🌿";
+	if (f.includes("fish") || f.includes("tilapia")) return "🐟";
+	if (f.includes("plantain") || f.includes("banana")) return "🍌";
+	if (f.includes("yam") || f.includes("cassava")) return "🍠";
+	if (f.includes("bean") || f.includes("cowpea") || f.includes("waakye") || f.includes("red red")) return "🫘";
+	if (f.includes("rice") || f.includes("sorghum")) return "🌾";
+	if (f.includes("pepper") || f.includes("chili") || f.includes("tomato")) return "🌶️";
+	if (f.includes("onion") || f.includes("garlic") || f.includes("ginger")) return "🧅";
+	if (f.includes("cinnamon") || f.includes("spice")) return "🫚";
+	if (f.includes("milk") || f.includes("cheese")) return "🥛";
+	if (f.includes("corn") || f.includes("maize")) return "🌽";
+	return "🥗";
+};
 
 const Tests = () => {
 	const [activeCategory, setActiveCategory] = useState<LifestyleCategory>("All");
@@ -318,9 +338,14 @@ const Tests = () => {
 					{(activeCategory === "Nutrition" || activeCategory === "All") && dailyMealPlan && (
 						<div className={styles.humanMealSection}>
 							<div className={styles.humanMealHeader}>
-								<div>
-									<h3 className={styles.humanMealTitle}>Daily Bio-Nutritional Meal Guide</h3>
-									<p className={styles.humanMealSubtitle}>Model-suggested Ghanaian meals designed for energy, digestion, and daily health.</p>
+								<div className={styles.humanHeaderTitleGroup}>
+									<div className={styles.humanHeaderIconBadge}>
+										<Utensils size={18} />
+									</div>
+									<div>
+										<span className={styles.humanMealEyebrow}>DAILY BIO-NUTRITION</span>
+										<h3 className={styles.humanMealTitle}>Ghanaian Meal Guide</h3>
+									</div>
 								</div>
 								<button
 									type="button"
@@ -337,22 +362,35 @@ const Tests = () => {
 								{/* Breakfast */}
 								<div className={styles.humanMealCard}>
 									<div className={styles.humanTimeRow}>
-										<Coffee size={14} className={styles.humanIcon} />
+										<div className={`${styles.humanTimeIconBadge} ${styles.bfIcon}`}>
+											<Coffee size={14} />
+										</div>
 										<span className={styles.humanTimeLabel}>Breakfast (Morning)</span>
 									</div>
 									<h4 className={styles.humanDishTitle}>{dailyMealPlan.breakfast.title}</h4>
 									<p className={styles.humanDishDesc}>{dailyMealPlan.breakfast.description}</p>
 									
 									<div className={styles.humanBioBox}>
-										<span className={styles.humanBioLabel}>🧬 Biological Benefit:</span>
-										<p>{dailyMealPlan.breakfast.benefits}</p>
+										<div className={styles.humanBioBadge}>
+											<Dna size={13} />
+										</div>
+										<div className={styles.humanBioContent}>
+											<span className={styles.humanBioLabel}>Biological Mechanism</span>
+											<p className={styles.humanBioText}>{dailyMealPlan.breakfast.benefits}</p>
+										</div>
 									</div>
 
 									<div className={styles.humanIngBox}>
-										<span className={styles.humanIngLabel}>🇬🇭 Local Ingredients:</span>
+										<div className={styles.humanIngHeader}>
+											<span className={styles.humanIngFlag}>🇬🇭</span>
+											<span className={styles.humanIngLabel}>Local Ingredients</span>
+										</div>
 										<div className={styles.humanPillRow}>
 											{dailyMealPlan.breakfast.localFoods.split(",").map((food, fIdx) => (
-												<span key={fIdx} className={styles.humanPill}>{food.trim()}</span>
+												<span key={fIdx} className={styles.humanPill}>
+													<span className={styles.pillEmoji}>{getFoodEmoji(food)}</span>
+													{food.trim()}
+												</span>
 											))}
 										</div>
 									</div>
@@ -361,22 +399,35 @@ const Tests = () => {
 								{/* Lunch */}
 								<div className={styles.humanMealCard}>
 									<div className={styles.humanTimeRow}>
-										<Sun size={14} className={styles.humanIcon} />
+										<div className={`${styles.humanTimeIconBadge} ${styles.lhIcon}`}>
+											<Sun size={14} />
+										</div>
 										<span className={styles.humanTimeLabel}>Lunch (Midday)</span>
 									</div>
 									<h4 className={styles.humanDishTitle}>{dailyMealPlan.lunch.title}</h4>
 									<p className={styles.humanDishDesc}>{dailyMealPlan.lunch.description}</p>
 									
 									<div className={styles.humanBioBox}>
-										<span className={styles.humanBioLabel}>🧬 Biological Benefit:</span>
-										<p>{dailyMealPlan.lunch.benefits}</p>
+										<div className={styles.humanBioBadge}>
+											<Dna size={13} />
+										</div>
+										<div className={styles.humanBioContent}>
+											<span className={styles.humanBioLabel}>Biological Mechanism</span>
+											<p className={styles.humanBioText}>{dailyMealPlan.lunch.benefits}</p>
+										</div>
 									</div>
 
 									<div className={styles.humanIngBox}>
-										<span className={styles.humanIngLabel}>🇬🇭 Local Ingredients:</span>
+										<div className={styles.humanIngHeader}>
+											<span className={styles.humanIngFlag}>🇬🇭</span>
+											<span className={styles.humanIngLabel}>Local Ingredients</span>
+										</div>
 										<div className={styles.humanPillRow}>
 											{dailyMealPlan.lunch.localFoods.split(",").map((food, fIdx) => (
-												<span key={fIdx} className={styles.humanPill}>{food.trim()}</span>
+												<span key={fIdx} className={styles.humanPill}>
+													<span className={styles.pillEmoji}>{getFoodEmoji(food)}</span>
+													{food.trim()}
+												</span>
 											))}
 										</div>
 									</div>
@@ -385,22 +436,35 @@ const Tests = () => {
 								{/* Supper */}
 								<div className={styles.humanMealCard}>
 									<div className={styles.humanTimeRow}>
-										<Moon size={14} className={styles.humanIcon} />
+										<div className={`${styles.humanTimeIconBadge} ${styles.spIcon}`}>
+											<Moon size={14} />
+										</div>
 										<span className={styles.humanTimeLabel}>Supper / Dinner (Evening)</span>
 									</div>
 									<h4 className={styles.humanDishTitle}>{dailyMealPlan.supper.title}</h4>
 									<p className={styles.humanDishDesc}>{dailyMealPlan.supper.description}</p>
 									
 									<div className={styles.humanBioBox}>
-										<span className={styles.humanBioLabel}>🧬 Biological Benefit:</span>
-										<p>{dailyMealPlan.supper.benefits}</p>
+										<div className={styles.humanBioBadge}>
+											<Dna size={13} />
+										</div>
+										<div className={styles.humanBioContent}>
+											<span className={styles.humanBioLabel}>Biological Mechanism</span>
+											<p className={styles.humanBioText}>{dailyMealPlan.supper.benefits}</p>
+										</div>
 									</div>
 
 									<div className={styles.humanIngBox}>
-										<span className={styles.humanIngLabel}>🇬🇭 Local Ingredients:</span>
+										<div className={styles.humanIngHeader}>
+											<span className={styles.humanIngFlag}>🇬🇭</span>
+											<span className={styles.humanIngLabel}>Local Ingredients</span>
+										</div>
 										<div className={styles.humanPillRow}>
 											{dailyMealPlan.supper.localFoods.split(",").map((food, fIdx) => (
-												<span key={fIdx} className={styles.humanPill}>{food.trim()}</span>
+												<span key={fIdx} className={styles.humanPill}>
+													<span className={styles.pillEmoji}>{getFoodEmoji(food)}</span>
+													{food.trim()}
+												</span>
 											))}
 										</div>
 									</div>

@@ -782,74 +782,109 @@
 }
 
 .humanMealSection {
-	background: rgba(255, 255, 255, 0.02);
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	border-radius: 16px;
+	background: rgba(18, 24, 38, 0.7);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 20px;
 	padding: 24px;
 	margin-bottom: 28px;
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
+	backdrop-filter: blur(12px);
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
 
 .humanMealHeader {
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
 	justify-content: space-between;
 	flex-wrap: wrap;
-	gap: 14px;
+	gap: 16px;
+	padding-bottom: 14px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.humanHeaderTitleGroup {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.humanHeaderIconBadge {
+	width: 38px;
+	height: 38px;
+	border-radius: 10px;
+	background: rgba(16, 185, 129, 0.12);
+	border: 1px solid rgba(16, 185, 129, 0.28);
+	color: #10b981;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.humanMealEyebrow {
+	display: block;
+	font-size: 10px;
+	font-weight: 800;
+	letter-spacing: 0.06em;
+	color: #10b981;
+	text-transform: uppercase;
 }
 
 .humanMealTitle {
-	font-size: 18px;
+	font-size: 19px;
 	font-weight: 700;
 	color: #ffffff;
-	margin: 0;
-}
-
-.humanMealSubtitle {
-	font-size: 13px;
-	color: var(--text-secondary, #94a3b8);
-	margin: 4px 0 0 0;
+	margin: 2px 0 0 0;
+	letter-spacing: -0.01em;
 }
 
 .humanRefreshBtn {
 	display: inline-flex;
 	align-items: center;
-	gap: 6px;
-	padding: 7px 14px;
-	border-radius: 8px;
+	gap: 8px;
+	padding: 8px 16px;
+	border-radius: 10px;
 	font-size: 12px;
 	font-weight: 600;
 	color: var(--text-secondary, #cbd5e1);
-	background: rgba(255, 255, 255, 0.05);
-	border: 1px solid rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.14);
 	cursor: pointer;
 	transition: all 0.2s ease;
 
-	&:hover {
-		background: rgba(255, 255, 255, 0.1);
-		color: #ffffff;
+	&:hover:not(:disabled) {
+		background: rgba(16, 185, 129, 0.15);
+		border-color: rgba(16, 185, 129, 0.35);
+		color: #34d399;
+	}
+
+	&:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
 	}
 }
 
 .humanMealGrid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-	gap: 16px;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: 18px;
 }
 
 .humanMealCard {
 	background: rgba(255, 255, 255, 0.03);
 	border: 1px solid rgba(255, 255, 255, 0.08);
-	border-radius: 12px;
+	border-radius: 16px;
 	padding: 20px;
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: 14px;
+	transition: all 0.25s ease;
 
 	&:hover {
-		border-color: rgba(255, 255, 255, 0.16);
+		border-color: rgba(16, 185, 129, 0.3);
+		transform: translateY(-2px);
+		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 	}
 }
 
@@ -857,18 +892,36 @@
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	color: var(--accent, #10b981);
 }
 
-.humanIcon {
-	color: var(--accent, #10b981);
+.humanTimeIconBadge {
+	width: 28px;
+	height: 28px;
+	border-radius: 8px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	&.bfIcon {
+		background: rgba(245, 158, 11, 0.15);
+		color: #f59e0b;
+	}
+
+	&.lhIcon {
+		background: rgba(16, 185, 129, 0.15);
+		color: #10b981;
+	}
+
+	&.spIcon {
+		background: rgba(139, 92, 246, 0.15);
+		color: #a78bfa;
+	}
 }
 
 .humanTimeLabel {
 	font-size: 12px;
 	font-weight: 700;
-	letter-spacing: 0.02em;
-	color: var(--accent, #10b981);
+	color: #ffffff;
 }
 
 .humanDishTitle {
@@ -887,52 +940,104 @@
 }
 
 .humanBioBox {
-	background: rgba(255, 255, 255, 0.03);
-	border-radius: 8px;
-	padding: 10px 12px;
 	display: flex;
-	flex-direction: column;
-	gap: 4px;
+	align-items: flex-start;
+	gap: 10px;
+	background: rgba(0, 0, 0, 0.25);
+	border: none;
+	border-radius: 10px;
+	padding: 12px 14px;
 
-	.humanBioLabel {
-		font-size: 11px;
-		font-weight: 700;
+	.humanBioBadge {
+		width: 26px;
+		height: 26px;
+		border-radius: 8px;
+		background: rgba(16, 185, 129, 0.15);
 		color: #10b981;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		margin-top: 2px;
 	}
 
-	p {
+	.humanBioContent {
+		display: flex;
+		flex-direction: column;
+		gap: 3px;
+	}
+
+	.humanBioLabel {
+		font-size: 10px;
+		font-weight: 700;
+		letter-spacing: 0.05em;
+		color: #10b981;
+		text-transform: uppercase;
+	}
+
+	.humanBioText {
 		font-size: 12px;
-		color: rgba(255, 255, 255, 0.85);
+		color: rgba(241, 245, 249, 0.8);
 		margin: 0;
-		line-height: 1.45;
+		line-height: 1.55;
+		font-weight: 400;
 	}
 }
 
 .humanIngBox {
 	display: flex;
 	flex-direction: column;
-	gap: 6px;
+	gap: 8px;
 	margin-top: auto;
+	padding-top: 4px;
+}
+
+.humanIngHeader {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.humanIngFlag {
+	font-size: 13px;
+	line-height: 1;
 }
 
 .humanIngLabel {
-	font-size: 11px;
+	font-size: 10px;
 	font-weight: 700;
-	color: var(--text-secondary, #94a3b8);
+	color: rgba(255, 255, 255, 0.4);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
 }
 
 .humanPillRow {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 6px;
+	align-items: center;
 }
 
 .humanPill {
-	font-size: 11px;
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 12px;
 	font-weight: 500;
-	color: rgba(255, 255, 255, 0.8);
+	color: rgba(255, 255, 255, 0.75);
 	background: rgba(255, 255, 255, 0.05);
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	padding: 3px 8px;
 	border-radius: 6px;
+	padding: 4px 10px;
+	transition: all 0.2s ease;
+	cursor: default;
+
+	.pillEmoji {
+		font-size: 13px;
+		line-height: 1;
+	}
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.1);
+		color: rgba(255, 255, 255, 0.95);
+	}
 }

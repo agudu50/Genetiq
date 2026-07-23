@@ -2088,60 +2088,60 @@ const GHANAIAN_MEAL_PLANS: DailyMealPlan[] = [
 	{
 		breakfast: {
 			title: "Hausa Koko & Koose with Moringa Tea",
-			description: "Warm fermented millet porridge served with protein-rich cowpea fritters and fresh moringa tea.",
-			benefits: "Probiotics for gut fermentation, stable morning blood sugar, and high iron.",
+			description: "Warm fermented millet porridge served with cowpea fritters and fresh moringa tea.",
+			benefits: "Good bacteria for your gut, keeps your energy steady in the morning, and is rich in iron.",
 			localFoods: "Millet, Cowpeas, Moringa leaves, Ginger"
 		},
 		lunch: {
 			title: "Kontomire Stew with Boiled Plantain & Fresh Citrus",
-			description: "Iron-dense cocoyam leaf stew with palm fruit oil, served with boiled green plantain and orange slices.",
-			benefits: "Non-heme iron and folates paired with Vitamin C for 300% higher blood iron absorption.",
+			description: "Leafy cocoyam stew with palm oil, served with boiled green plantain and orange slices.",
+			benefits: "The citrus helps your body absorb the iron in the greens much better. Great for your blood.",
 			localFoods: "Kontomire, Green Plantain, Palm Oil, Lime/Orange"
 		},
 		supper: {
 			title: "Light Garden Egg Soup with Grilled Tilapia & Small Agbelima",
-			description: "Nutrient-dense eggplant soup with fresh tilapia fish and a small light portion of cassava/corn swallow.",
-			benefits: "Low-glycemic evening protein with Omega-3 fatty acids for overnight cellular repair.",
+			description: "Light eggplant soup with fresh grilled tilapia and a small portion of cassava swallow.",
+			benefits: "Easy for your stomach at night, fish helps your body rest and repair while you sleep.",
 			localFoods: "Garden eggs, Tilapia, Tomato, Ginger, Garlic"
 		}
 	},
 	{
 		breakfast: {
 			title: "Boiled Eggs, Local Avocado & Oats Koko",
-			description: "Two boiled eggs paired with fresh avocado slices and fiber-rich oat porridge.",
-			benefits: "High choline for brain neurotransmitters, healthy monounsaturated fats, and sustained satiety.",
+			description: "Two boiled eggs with fresh avocado slices and a warm bowl of oat porridge.",
+			benefits: "Eggs are great for brain health, avocado gives you healthy fats, and oats keep you full longer.",
 			localFoods: "Local Eggs, Avocado, Oats, Cinnamon"
 		},
 		lunch: {
 			title: "Waakye with Beans, Fish & Fresh Cabbage Salad",
-			description: "Fiber-rich rice and cowpeas cooked with sorghum leaves, served with grilled fish and cabbage.",
-			benefits: "Antioxidant polyphenols from sorghum leaves with complete protein and digestive fiber.",
+			description: "Rice and beans cooked together, served with grilled fish and crunchy fresh cabbage.",
+			benefits: "A filling and balanced meal. Beans give you protein, fish helps your muscles, and cabbage aids digestion.",
 			localFoods: "Cowpeas, Brown Rice, Sorghum leaves, Cabbage, Tilapia"
 		},
 		supper: {
 			title: "Okra Stew with Smoked Fish & Light Cornmeal",
-			description: "Soluble mucilage okra stew loaded with smoked fish, garden spices, and a small cornmeal swallow.",
-			benefits: "Mucilage fiber coats stomach lining, supporting gut mucus integrity and low evening glucose.",
+			description: "Soft okra stew with smoked fish and spices, served with a small portion of cornmeal.",
+			benefits: "Okra is soothing for your stomach and helps control blood sugar levels in the evening.",
 			localFoods: "Okra, Smoked Fish, Pepper, Onion, Garlic"
 		}
 	},
 	{
 		breakfast: {
 			title: "Atadwe (Tiger Nut) Milk with Papaya & Roasted Groundnuts",
-			description: "Chilled natural tiger nut extract with fresh papaya slices and roasted peanuts.",
-			benefits: "Prebiotic resistant starch, digestive papain enzymes, and high natural magnesium.",
+			description: "Chilled tiger nut drink with fresh papaya slices and roasted peanuts on the side.",
+			benefits: "Tiger nuts feed good gut bacteria, papaya helps digestion, and groundnuts give you energy.",
 			localFoods: "Tiger nuts, Papaya, Groundnuts"
 		},
 		lunch: {
 			title: "Red Red (Black-Eyed Beans Stew) with Ripe Plantain",
-			description: "Slow-cooked black-eyed pea stew in red palm oil served with roasted or lightly fried plantain.",
-			benefits: "High protein, zinc, and carotenoids (Vitamin A precursor) for tissue repair.",
+			description: "Cooked black-eyed pea stew in palm oil, served with sweet ripe plantain.",
+			benefits: "Beans are high in protein and keep you full. Palm oil gives vitamins that support your eyes and skin.",
 			localFoods: "Black-eyed beans, Red Palm Oil, Ripe Plantain"
 		},
 		supper: {
 			title: "Aromatic Smoked Fish Light Soup with Boiled Yam",
-			description: "Clear tomato, pepper, and ginger fish broth served with small boiled yam portions.",
-			benefits: "Hydrating, easy on the digestive tract before bed, and low in evening fat.",
+			description: "Clear tomato, pepper, and ginger fish broth with small boiled yam on the side.",
+			benefits: "Light and easy to digest before bed. Keeps you hydrated and does not make you feel heavy.",
 			localFoods: "Smoked Fish, Yam, Tomatoes, Habanero, Ginger"
 		}
 	}
@@ -2151,11 +2151,12 @@ export async function generateDailyMealPlan(seed?: number): Promise<DailyMealPla
 	const health = await checkGemmaHealth();
 	if (health.modelLoaded) {
 		try {
-			const prompt = `Return a JSON object only for a daily Ghanaian healthy meal plan with Breakfast, Lunch, and Supper. Format:
+			const prompt = `Return a JSON object only for a daily Ghanaian healthy meal plan with Breakfast, Lunch, and Supper.
+IMPORTANT: Write ALL text in very simple, everyday language that anyone can understand. No big scientific words, no medical jargon. Explain benefits the way you would tell a friend — short, clear, and friendly. Format:
 {
-  "breakfast": { "title": "...", "description": "...", "benefits": "...", "localFoods": "..." },
-  "lunch": { "title": "...", "description": "...", "benefits": "...", "localFoods": "..." },
-  "supper": { "title": "...", "description": "...", "benefits": "...", "localFoods": "..." }
+  "breakfast": { "title": "...", "description": "...", "benefits": "one simple sentence explaining why this meal is good for the body", "localFoods": "Ingredient1, Ingredient2, Ingredient3" },
+  "lunch": { "title": "...", "description": "...", "benefits": "one simple sentence explaining why this meal is good for the body", "localFoods": "Ingredient1, Ingredient2, Ingredient3" },
+  "supper": { "title": "...", "description": "...", "benefits": "one simple sentence explaining why this meal is good for the body", "localFoods": "Ingredient1, Ingredient2, Ingredient3" }
 }`;
 			const chatRes = await chatWithGemma({ message: prompt, language: "english" });
 			if (chatRes && chatRes.message) {
