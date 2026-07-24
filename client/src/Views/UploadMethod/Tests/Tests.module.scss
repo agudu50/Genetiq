@@ -1,5 +1,12 @@
 /* ─── Bio-Lifestyle & Health Hub SCSS Design System ───────────────────────── */
 
+/* ─── Page Wrapper (full-width background) ─────────────────────────────────── */
+.pageWrapper {
+	width: 100%;
+	min-height: 100vh;
+}
+
+/* ─── Inner Content Container ───────────────────────────────────────────────── */
 .testsContainer {
 	display: flex;
 	flex-direction: column;
@@ -1179,11 +1186,16 @@
 /* ─── Light Mode Overrides ─────────────────────────────────────────────────── */
 :global(html[data-theme="light"]) {
 
-	/* Page Background */
-	.testsContainer {
+	/* Page Background — full viewport */
+	.pageWrapper {
 		background: linear-gradient(180deg, #f0fdf9 0%, #eef6f5 50%, #f1f5f9 100%);
 		min-height: 100vh;
 	}
+
+	.testsContainer {
+		background: transparent;
+	}
+
 
 	/* ── Hero Section ─────────────────────────────────────────── */
 	.heroSection {

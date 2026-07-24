@@ -238,6 +238,7 @@ const Tests = () => {
 	const spotlightTip = useMemo(() => aiTips[0] || CURATED_LIFESTYLE_TIPS[0], [aiTips]);
 
 	return (
+		<div className={styles.pageWrapper}>
 		<div className={styles.testsContainer}>
 			{/* Hero Header */}
 			<section className={styles.heroSection}>
@@ -739,6 +740,7 @@ const Tests = () => {
 					</div>
 				</aside>
 			</div>
+		</div>
 		</div>
 	);
 };
