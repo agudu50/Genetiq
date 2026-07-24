@@ -258,17 +258,28 @@ const Tests = () => {
 
 					{/* AI Model Spotlight Card */}
 					<div className={styles.spotlightCard}>
-						<div className={styles.spotlightHeader}>
-							<span className={styles.spotlightBadge}>
-								<BrainCircuit size={11} /> AI Suggested Daily Habit
-							</span>
-							<span className={styles.spotlightCategory}>{spotlightTip.categoryLabel}</span>
+						{/* Top header band */}
+						<div className={styles.spotlightTopBand}>
+							<div className={styles.spotlightIconRing}>
+								<BrainCircuit size={18} />
+							</div>
+							<div className={styles.spotlightBadgeGroup}>
+								<span className={styles.spotlightBadge}>
+									<BrainCircuit size={10} /> AI Suggested Habit
+								</span>
+								<span className={styles.spotlightCategory}>{spotlightTip.categoryLabel}</span>
+							</div>
 						</div>
+
+						{/* Body */}
 						<div className={styles.spotlightBody}>
 							<h3 className={styles.spotlightTitle}>{spotlightTip.title}</h3>
 							<p className={styles.spotlightSummary}>{spotlightTip.shortSummary}</p>
 						</div>
+
+						{/* Footer */}
 						<div className={styles.spotlightFooter}>
+							<span className={styles.spotlightSourceLabel}>{spotlightTip.source}</span>
 							<button
 								type="button"
 								className={styles.spotlightActionBtn}
@@ -278,12 +289,12 @@ const Tests = () => {
 								{isGenerating ? (
 									<>
 										<RefreshCw size={13} className={styles.spinIcon} />
-										<span>Generating AI Tip...</span>
+										<span>Generating...</span>
 									</>
 								) : (
 									<>
 										<Zap size={13} />
-										<span>Generate Fresh AI Tip</span>
+										<span>New AI Tip</span>
 									</>
 								)}
 							</button>
