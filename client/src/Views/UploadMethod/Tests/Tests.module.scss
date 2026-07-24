@@ -1187,14 +1187,14 @@
 
 	/* ── Hero Section ─────────────────────────────────────────── */
 	.heroSection {
-		background: linear-gradient(135deg, #00796b 0%, #00897b 40%, #0277bd 100%);
+		background: #00897b;
 		border: none;
-		box-shadow: 0 8px 32px rgba(0, 121, 107, 0.28);
+		box-shadow: 0 8px 32px rgba(0, 121, 107, 0.22);
 		backdrop-filter: none;
 	}
 
 	.heroGlowBg {
-		background: radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.06) 50%, transparent 70%);
+		display: none;
 	}
 
 	.eyebrowTag {
@@ -1208,15 +1208,16 @@
 		color: #ffffff;
 
 		.accentText {
-			background: linear-gradient(135deg, #b2dfdb 0%, #e0f2f1 100%);
-			background-clip: text;
-			-webkit-background-clip: text;
-			-webkit-text-fill-color: transparent;
+			background: none;
+			background-clip: unset;
+			-webkit-background-clip: unset;
+			-webkit-text-fill-color: #ffd54f;
+			color: #ffd54f;
 		}
 	}
 
 	.heroSubtitle {
-		color: rgba(255, 255, 255, 0.78);
+		color: rgba(255, 255, 255, 0.85);
 	}
 
 	/* Spotlight Card */
