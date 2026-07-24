@@ -137,6 +137,18 @@ const getFoodEmoji = (food: string): string => {
 	return "🥗";
 };
 
+const getCategoryClass = (category: string): string => {
+	switch (category) {
+		case "Fitness":      return styles.catFitness;
+		case "Nutrition":    return styles.catNutrition;
+		case "Hygiene":      return styles.catHygiene;
+		case "Sleep":        return styles.catSleep;
+		case "Mind":         return styles.catMind;
+		case "Environment":  return styles.catEnvironment;
+		default:             return styles.catFitness;
+	}
+};
+
 const Tests = () => {
 	const [activeCategory, setActiveCategory] = useState<LifestyleCategory>("All");
 	const [searchQuery, setSearchQuery] = useState("");
@@ -559,6 +571,7 @@ const Tests = () => {
 								const isExpanded = expandedTipId === tip.id;
 								const isSaved = savedHabitIds.includes(tip.id);
 
+								const catClass = getCategoryClass(tip.category);
 								return (
 									<motion.div
 										key={tip.id}
@@ -567,11 +580,11 @@ const Tests = () => {
 										animate={{ opacity: 1, y: 0 }}
 										exit={{ opacity: 0, scale: 0.95 }}
 										transition={{ duration: 0.25, delay: index * 0.03 }}
-										className={styles.tipCard}
+										className={`${styles.tipCard} ${catClass}`}
 									>
 										<div className={styles.tipCardTop}>
 											<div className={styles.tipCategoryBadgeGroup}>
-												<span className={styles.tipCatTag}>{tip.categoryLabel}</span>
+												<span className={`${styles.tipCatTag} ${catClass}`}>{tip.categoryLabel}</span>
 												<span className={styles.tipSourceTag}>{tip.source}</span>
 											</div>
 											<button

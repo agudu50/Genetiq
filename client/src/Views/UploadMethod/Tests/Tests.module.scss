@@ -420,7 +420,7 @@
 
 .tipCard {
 	background: rgba(15, 23, 42, 0.6);
-	border: 1px solid rgba(255, 255, 255, 0.08);
+	border: 1px solid rgba(255, 255, 255, 0.07);
 	border-radius: 16px;
 	padding: 20px;
 	display: flex;
@@ -428,10 +428,52 @@
 	gap: 10px;
 	backdrop-filter: blur(10px);
 	transition: all 0.2s ease;
+	position: relative;
+	overflow: hidden;
+
+	/* Subtle background glow orb — top-right corner, category tinted */
+	&::after {
+		content: '';
+		position: absolute;
+		top: -40px;
+		right: -40px;
+		width: 110px;
+		height: 110px;
+		border-radius: 50%;
+		opacity: 0.08;
+		pointer-events: none;
+		background: rgba(255, 255, 255, 0.3);
+		transition: opacity 0.2s ease;
+	}
 
 	&:hover {
-		border-color: rgba(255, 255, 255, 0.16);
+		transform: translateY(-2px);
+		&::after { opacity: 0.14; }
 	}
+
+	/* ── Fitness — emerald ─────────────────────────────── */
+	&.catFitness::after  { background: #10b981; }
+	&.catFitness:hover   { box-shadow: 0 8px 28px rgba(16, 185, 129, 0.1); }
+
+	/* ── Nutrition — amber ─────────────────────────────── */
+	&.catNutrition::after  { background: #f59e0b; }
+	&.catNutrition:hover   { box-shadow: 0 8px 28px rgba(245, 158, 11, 0.1); }
+
+	/* ── Hygiene — cyan ────────────────────────────────── */
+	&.catHygiene::after  { background: #06b6d4; }
+	&.catHygiene:hover   { box-shadow: 0 8px 28px rgba(6, 182, 212, 0.1); }
+
+	/* ── Sleep — purple ────────────────────────────────── */
+	&.catSleep::after  { background: #8b5cf6; }
+	&.catSleep:hover   { box-shadow: 0 8px 28px rgba(139, 92, 246, 0.1); }
+
+	/* ── Mind — rose ───────────────────────────────────── */
+	&.catMind::after  { background: #f43f5e; }
+	&.catMind:hover   { box-shadow: 0 8px 28px rgba(244, 63, 94, 0.1); }
+
+	/* ── Environment — lime ────────────────────────────── */
+	&.catEnvironment::after  { background: #84cc16; }
+	&.catEnvironment:hover   { box-shadow: 0 8px 28px rgba(132, 204, 22, 0.1); }
 }
 
 .tipCardTop {
@@ -449,11 +491,21 @@
 .tipCatTag {
 	font-size: 11px;
 	font-weight: 700;
-	color: var(--accent, #10b981);
-	background: rgba(16, 185, 129, 0.12);
-	padding: 3px 8px;
-	border-radius: 6px;
+	padding: 3px 9px;
+	border-radius: 20px;
 	text-transform: uppercase;
+	letter-spacing: 0.04em;
+
+	/* Default */
+	color: #10b981;
+	background: rgba(16, 185, 129, 0.12);
+
+	&.catFitness    { color: #10b981; background: rgba(16, 185, 129, 0.12); }
+	&.catNutrition  { color: #f59e0b; background: rgba(245, 158, 11, 0.12); }
+	&.catHygiene    { color: #06b6d4; background: rgba(6, 182, 212, 0.12); }
+	&.catSleep      { color: #a78bfa; background: rgba(139, 92, 246, 0.12); }
+	&.catMind       { color: #fb7185; background: rgba(244, 63, 94, 0.12); }
+	&.catEnvironment{ color: #a3e635; background: rgba(132, 204, 22, 0.12); }
 }
 
 .tipSourceTag {
@@ -1083,5 +1135,366 @@
 	&:hover {
 		background: rgba(255, 255, 255, 0.1);
 		color: rgba(255, 255, 255, 0.95);
+	}
+}
+
+/* ─── Light Mode Overrides ─────────────────────────────────────────────────── */
+:global(html[data-theme="light"]) {
+
+	/* Page Background */
+	.testsContainer {
+		background: linear-gradient(180deg, #f0fdf9 0%, #eef6f5 50%, #f1f5f9 100%);
+		min-height: 100vh;
+	}
+
+	/* ── Hero Section ─────────────────────────────────────────── */
+	.heroSection {
+		background: linear-gradient(135deg, #00796b 0%, #00897b 40%, #0277bd 100%);
+		border: none;
+		box-shadow: 0 8px 32px rgba(0, 121, 107, 0.28);
+		backdrop-filter: none;
+	}
+
+	.heroGlowBg {
+		background: radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.06) 50%, transparent 70%);
+	}
+
+	.eyebrowTag {
+		background: rgba(255, 255, 255, 0.2);
+		border-color: rgba(255, 255, 255, 0.35);
+		color: #ffffff;
+		backdrop-filter: blur(6px);
+	}
+
+	.heroTitle {
+		color: #ffffff;
+
+		.accentText {
+			background: linear-gradient(135deg, #b2dfdb 0%, #e0f2f1 100%);
+			background-clip: text;
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+		}
+	}
+
+	.heroSubtitle {
+		color: rgba(255, 255, 255, 0.78);
+	}
+
+	/* Spotlight Card */
+	.spotlightCard {
+		background: rgba(255, 255, 255, 0.22);
+		border: 1px solid rgba(255, 255, 255, 0.35);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+		backdrop-filter: blur(12px);
+
+		&::after {
+			background: rgba(255, 255, 255, 0.1);
+		}
+	}
+
+	.spotlightBadge {
+		background: rgba(255, 255, 255, 0.2);
+		color: #ffffff;
+		border-color: rgba(255, 255, 255, 0.3);
+	}
+
+	.spotlightCategory {
+		color: rgba(255, 255, 255, 0.65);
+	}
+
+	.spotlightBody {
+		border-top-color: rgba(255, 255, 255, 0.2);
+		border-bottom-color: rgba(255, 255, 255, 0.2);
+	}
+
+	.spotlightTitle {
+		color: #ffffff;
+	}
+
+	.spotlightSummary {
+		color: rgba(255, 255, 255, 0.8);
+	}
+
+	.spotlightActionBtn {
+		background: rgba(255, 255, 255, 0.2);
+		border: 1px solid rgba(255, 255, 255, 0.4);
+		color: #ffffff;
+
+		&:hover:not(:disabled) {
+			background: rgba(255, 255, 255, 0.3);
+			border-color: rgba(255, 255, 255, 0.6);
+		}
+	}
+
+	/* ── Category Bar ─────────────────────────────────────────── */
+	.categoryBar {
+		background: #ffffff;
+		border-color: #e2e8f0;
+		box-shadow: 0 1px 6px rgba(15, 23, 42, 0.06);
+	}
+
+	.catBtn {
+		color: #475569;
+		background: transparent;
+
+		&:hover {
+			background: #f0fdf9;
+			color: #00796b;
+		}
+
+		&.active {
+			background: rgba(0, 166, 157, 0.12);
+			color: #00796b;
+			border-color: rgba(0, 166, 157, 0.3);
+		}
+	}
+
+	/* ── Search Bar ───────────────────────────────────────────── */
+	.searchBox {
+		background: #ffffff;
+		border-color: #e2e8f0;
+		box-shadow: 0 1px 4px rgba(15, 23, 42, 0.05);
+
+		input {
+			color: #0f172a;
+
+			&::placeholder {
+				color: #94a3b8;
+			}
+		}
+	}
+
+	.searchIcon {
+		color: #94a3b8;
+	}
+
+	.openGenBtn {
+		background: #00796b;
+		border-color: transparent;
+		color: #ffffff;
+
+		&:hover {
+			background: #00695c;
+		}
+	}
+
+	/* ── Tip Cards ────────────────────────────────────────────── */
+	.tipCard {
+		background: #ffffff;
+		border-color: #e8f5e9;
+		box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+
+		&:hover {
+			border-color: rgba(0, 166, 157, 0.4);
+			box-shadow: 0 6px 20px rgba(0, 121, 107, 0.12);
+			transform: translateY(-2px);
+		}
+	}
+
+	.tipCategory {
+		background: #e8f5e9;
+		color: #2e7d32;
+	}
+
+	.tipTitle {
+		color: #0f172a;
+	}
+
+	.tipSummary {
+		color: #475569;
+	}
+
+	.tipExpandBtn {
+		color: #00796b;
+
+		&:hover {
+			background: #f0fdf9;
+		}
+	}
+
+	.bookmarkBtn {
+		color: #b0bec5;
+
+		&:hover {
+			color: #00796b;
+			background: #f0fdf9;
+		}
+
+		&.saved {
+			color: #00796b;
+		}
+	}
+
+	/* Expanded Tip Body */
+	.expandedSection {
+		border-top-color: #f0fdf9;
+		background: #fafffe;
+	}
+
+	.stepItem {
+		color: #334155;
+	}
+
+	.stepNumber {
+		background: #e8f5e9;
+		color: #2e7d32;
+	}
+
+	.safetyBox {
+		background: #fffde7;
+		border-color: rgba(245, 158, 11, 0.3);
+	}
+
+	.safetyLabel {
+		color: #b45309;
+	}
+
+	.safetyText {
+		color: #475569;
+	}
+
+	.sourceRow {
+		color: #64748b;
+	}
+
+	/* ── Meal Section ─────────────────────────────────────────── */
+	.humanMealSection {
+		background: #ffffff;
+		border-color: #e2f0ef;
+		box-shadow: 0 2px 16px rgba(0, 121, 107, 0.08);
+	}
+
+	.humanMealHeader {
+		border-bottom-color: #f0fdf9;
+	}
+
+	.humanMealEyebrow {
+		color: #00796b;
+	}
+
+	.humanMealTitle {
+		color: #0f172a;
+	}
+
+	.humanHeaderIconBadge {
+		background: #e8f5e9;
+		color: #2e7d32;
+	}
+
+	.humanRefreshBtn {
+		background: #f0fdf9;
+		border-color: rgba(0, 166, 157, 0.3);
+		color: #00796b;
+
+		&:hover:not(:disabled) {
+			background: #e0f2f0;
+		}
+	}
+
+	/* Meal Cards */
+	.humanMealCard {
+		background: #fafffe;
+		border-color: #e2f0ef;
+		box-shadow: 0 1px 6px rgba(0, 121, 107, 0.05);
+	}
+
+	.humanTimeLabel {
+		color: #0f172a;
+	}
+
+	.humanDishBody {
+		border-top-color: #e8f5e9;
+		border-bottom-color: #e8f5e9;
+	}
+
+	.humanDishTitle {
+		color: #0f172a;
+	}
+
+	.humanDishDesc {
+		color: #546e7a;
+	}
+
+	/* Bio Box */
+	.humanBioBox {
+		background: rgba(0, 121, 107, 0.05);
+	}
+
+	.humanBioBadge {
+		background: #e8f5e9;
+		color: #2e7d32;
+	}
+
+	.humanBioLabel {
+		color: #2e7d32;
+	}
+
+	.humanBioText {
+		color: #334155;
+	}
+
+	/* Ingredient Pills */
+	.humanIngLabel {
+		color: rgba(15, 23, 42, 0.38);
+	}
+
+	.humanPill {
+		background: #e8f5e9;
+		color: #2e7d32;
+
+		&:hover {
+			background: #c8e6c9;
+			color: #1b5e20;
+		}
+	}
+
+	/* ── Sidebar ──────────────────────────────────────────────── */
+	.sidebarCard {
+		background: #ffffff;
+		border-color: #e2f0ef;
+		box-shadow: 0 2px 10px rgba(0, 121, 107, 0.07);
+	}
+
+	.sidebarTitle {
+		color: #0f172a;
+	}
+
+	.remedyItem {
+		background: #f0fdf9;
+	}
+
+	.remedyName {
+		color: #0f172a;
+	}
+
+	.remedyBenefits {
+		color: #546e7a;
+	}
+
+	/* ── AI Drawer ────────────────────────────────────────────── */
+	.generatorDrawer {
+		background: #ffffff;
+		border-color: #e2f0ef;
+		box-shadow: 0 4px 20px rgba(0, 121, 107, 0.1);
+	}
+
+	.drawerTitle {
+		color: #0f172a;
+	}
+
+	.drawerForm input {
+		background: #f8fffe;
+		border-color: #b2dfdb;
+		color: #0f172a;
+
+		&::placeholder {
+			color: #90a4ae;
+		}
+
+		&:focus {
+			border-color: #00A69D;
+			box-shadow: 0 0 0 3px rgba(0, 166, 157, 0.12);
+		}
 	}
 }
