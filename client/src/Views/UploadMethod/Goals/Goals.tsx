@@ -419,7 +419,8 @@ const Goals = () => {
 	const dailyProgressPercent = totalGoalsCount > 0 ? Math.round((completedGoalsCount / totalGoalsCount) * 100) : 0;
 
 	return (
-		<div className={styles.goalsContainer}>
+		<div className={styles.pageWrapper}>
+			<div className={styles.goalsContainer}>
 			{/* Hero Header Section */}
 			<section className={styles.heroSection}>
 				<div className={styles.heroGlowBg} aria-hidden />
@@ -836,6 +837,7 @@ const Goals = () => {
 					</div>
 				</aside>
 			</div>
+		</div>
 		</div>
 	);
 };

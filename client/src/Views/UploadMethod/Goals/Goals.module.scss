@@ -1,3 +1,8 @@
+.pageWrapper {
+	width: 100%;
+	min-height: 100vh;
+}
+
 .goalsContainer {
 	display: flex;
 	flex-direction: column;
@@ -1183,3 +1188,484 @@
 		padding: 10px;
 	}
 }
+
+/* ─── Light Mode Overrides for Action Plan / Goals Page ───────────────────── */
+:global(html[data-theme="light"]) {
+
+	/* Page Background — full width wash */
+	.pageWrapper {
+		background: linear-gradient(180deg, #f0fdf9 0%, #eef6f5 50%, #f1f5f9 100%);
+		min-height: 100vh;
+	}
+
+	.goalsContainer {
+		background: transparent;
+	}
+
+	/* ── Hero Section — Solid Green, NO GRADIENTS ──────────────── */
+	.heroSection {
+		background: #00897b;
+		border: none;
+		box-shadow: 0 8px 32px rgba(0, 121, 107, 0.22);
+		backdrop-filter: none;
+	}
+
+	.heroGlowBg {
+		display: none;
+	}
+
+	.eyebrowTag {
+		background: rgba(255, 255, 255, 0.2);
+		border: 1px solid rgba(255, 255, 255, 0.35);
+		color: #ffffff;
+		backdrop-filter: blur(6px);
+	}
+
+	.heroTitle {
+		color: #ffffff;
+
+		.accentText {
+			background: none;
+			background-clip: unset;
+			-webkit-background-clip: unset;
+			-webkit-text-fill-color: #ffd54f;
+			color: #ffd54f;
+		}
+	}
+
+	.heroSubtitle {
+		color: rgba(255, 255, 255, 0.85);
+	}
+
+	/* Hero Metric Widgets (Over green hero card) */
+	.metricWidget {
+		background: rgba(255, 255, 255, 0.18);
+		border: 1px solid rgba(255, 255, 255, 0.3);
+		backdrop-filter: blur(12px);
+	}
+
+	.ringWrapper {
+		.circularChart {
+			.circleBg {
+				stroke: rgba(255, 255, 255, 0.25);
+			}
+
+			.circleProgress {
+				stroke: #ffffff;
+			}
+		}
+
+		.ringText {
+			color: #ffffff;
+		}
+	}
+
+	.iconCircle {
+		background: rgba(255, 255, 255, 0.2);
+
+		.flameIcon {
+			color: #ffe082;
+		}
+
+		.zapIcon {
+			color: #ffd54f;
+		}
+	}
+
+	.metricLabel {
+		color: rgba(255, 255, 255, 0.78);
+	}
+
+	.metricVal {
+		color: #ffffff;
+	}
+
+	/* ── Workspace Header / Toolbar ────────────────────────────── */
+	.sessionPills {
+		background: #ffffff;
+		border: 1px solid #e2e8f0;
+		box-shadow: 0 1px 6px rgba(15, 23, 42, 0.05);
+	}
+
+	.sessionBtn {
+		color: #475569;
+
+		&:hover {
+			background: #f0fdf9;
+			color: #00796b;
+		}
+
+		&.active {
+			background: #00796b;
+			color: #ffffff;
+			box-shadow: 0 4px 12px rgba(0, 121, 107, 0.25);
+
+			.liveTag {
+				background: rgba(255, 255, 255, 0.3);
+				color: #ffffff;
+			}
+		}
+
+		.liveTag {
+			background: rgba(0, 121, 107, 0.12);
+			color: #00796b;
+		}
+	}
+
+	.addHabitBtn {
+		background: #00796b;
+		border-color: transparent;
+		color: #ffffff;
+
+		&:hover {
+			background: #00695c;
+			box-shadow: 0 4px 14px rgba(0, 121, 107, 0.3);
+		}
+	}
+
+	/* ── Category Filter Buttons ───────────────────────────────── */
+	.catBtn {
+		background: #ffffff;
+		border: 1px solid #e2e8f0;
+		color: #475569;
+		box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+
+		&:hover {
+			background: #f0fdf9;
+			color: #00796b;
+			border-color: rgba(0, 166, 157, 0.3);
+		}
+
+		&.active {
+			background: #00796b;
+			color: #ffffff;
+			border-color: #00796b;
+			box-shadow: 0 4px 12px rgba(0, 121, 107, 0.22);
+		}
+	}
+
+	/* ── Custom Habit Inline Form / Drawer ─────────────────────── */
+	.customHabitCard {
+		background: #ffffff;
+		border: 1px solid #e2f0ef;
+		box-shadow: 0 4px 20px rgba(0, 121, 107, 0.08);
+	}
+
+	.customFormHeader {
+		h3 {
+			color: #0f172a;
+		}
+		.sparkleIcon {
+			color: #00796b;
+		}
+	}
+
+	.inputBox {
+		label {
+			color: #475569;
+		}
+
+		input, select {
+			background: #f8fffe;
+			border: 1px solid #b2dfdb;
+			color: #0f172a;
+
+			&::placeholder {
+				color: #90a4ae;
+			}
+
+			&:focus {
+				border-color: #00A69D;
+				box-shadow: 0 0 0 3px rgba(0, 166, 157, 0.12);
+			}
+		}
+	}
+
+	.submitHabitBtn {
+		background: #00796b;
+		color: #ffffff;
+
+		&:hover {
+			background: #00695c;
+		}
+	}
+
+	/* ── Habits Grid & Cards ───────────────────────────────────── */
+	.emptyFeed {
+		background: #ffffff;
+		border: 1px solid #e2f0ef;
+		color: #546e7a;
+
+		svg {
+			color: #90a4ae;
+		}
+
+		h3 {
+			color: #0f172a;
+		}
+	}
+
+	.habitCard {
+		background: #ffffff;
+		border: 1px solid #e2f0ef;
+		box-shadow: 0 2px 10px rgba(0, 121, 107, 0.06);
+
+		&:hover {
+			border-color: rgba(0, 166, 157, 0.4);
+			box-shadow: 0 6px 20px rgba(0, 121, 107, 0.12);
+		}
+
+		&.completed {
+			background: #f0fdf9;
+			border-color: #b2dfdb;
+
+			.habitTitle {
+				color: #00796b;
+			}
+		}
+	}
+
+	.categoryIconBadge {
+		background: #e8f5e9;
+		color: #2e7d32;
+		border: 1px solid rgba(46, 125, 50, 0.2);
+	}
+
+	.habitTitle {
+		color: #0f172a;
+	}
+
+	.habitDesc {
+		color: #546e7a;
+	}
+
+	.checkBtn {
+		background: #ffffff;
+		border: 2px solid #b2dfdb;
+		color: #00796b;
+
+		&:hover {
+			border-color: #00796b;
+			background: #f0fdf9;
+		}
+
+		&.checked {
+			background: #00796b;
+			border-color: #00796b;
+			color: #ffffff;
+		}
+
+		.checkDot {
+			background: #b2dfdb;
+		}
+	}
+
+	/* Progress Section */
+	.cardBody {
+		border-top: 1px solid #f0fdf9;
+		border-bottom: 1px solid #f0fdf9;
+	}
+
+	.progressValue {
+		color: #546e7a;
+
+		strong {
+			color: #0f172a;
+		}
+	}
+
+	.progressPct {
+		color: #00796b;
+		font-weight: 700;
+	}
+
+	.progressBarTrack {
+		background: #e8f5e9;
+	}
+
+	.progressBarFill {
+		background: #00796b;
+	}
+
+	.stepperLabel {
+		color: #78909c;
+	}
+
+	.stepBtn {
+		background: #f0fdf9;
+		border: 1px solid #b2dfdb;
+		color: #00796b;
+
+		&:hover:not(:disabled) {
+			background: #e0f2f0;
+			border-color: #00796b;
+			color: #004d40;
+		}
+
+		&:disabled {
+			background: #f1f5f9;
+			border-color: #e2e8f0;
+			color: #cbd5e1;
+		}
+	}
+
+	/* Tags */
+	.categoryTag {
+		background: #e8f5e9;
+		color: #2e7d32;
+	}
+
+	.sessionTag {
+		background: #e3f2fd;
+		color: #1565c0;
+	}
+
+	.pointsTag {
+		background: #fff8e1;
+		color: #f57f17;
+
+		svg {
+			color: #f57f17;
+		}
+	}
+
+	/* ── Sidebar Column Cards ──────────────────────────────────── */
+	.sidebarCard {
+		background: #ffffff;
+		border: 1px solid #e2f0ef;
+		box-shadow: 0 2px 10px rgba(0, 121, 107, 0.07);
+	}
+
+	.cardTitleRow {
+		h3 {
+			color: #0f172a;
+		}
+	}
+
+	.cardIcon {
+		color: #2e7d32;
+	}
+
+	.cardIconAlert {
+		color: #e65100;
+	}
+
+	.cardIconGold {
+		color: #f57f17;
+	}
+
+	/* Weight Toggle Grid */
+	.weightToggleGrid {
+		background: #f0fdf9;
+		border: 1px solid #e2f0ef;
+	}
+
+	.weightOption {
+		color: #546e7a;
+
+		&:hover {
+			color: #0f172a;
+			background: rgba(0, 121, 107, 0.08);
+		}
+
+		&.active {
+			background: #00796b;
+			color: #ffffff;
+			box-shadow: 0 2px 8px rgba(0, 121, 107, 0.25);
+		}
+	}
+
+	.dietPlanSummary {
+		background: #f8fffe;
+		border-left: 3px solid #00796b;
+
+		h4 {
+			color: #0f172a;
+		}
+
+		p {
+			color: #546e7a;
+		}
+	}
+
+	.macroDistribution {
+		background: #f0fdf9;
+	}
+
+	.macroLegend {
+		color: #475569;
+	}
+
+	.addDietHabitsBtn {
+		background: #00796b;
+		border: none;
+		color: #ffffff;
+
+		&:hover:not(:disabled) {
+			background: #00695c;
+			box-shadow: 0 4px 14px rgba(0, 121, 107, 0.3);
+		}
+
+		&:disabled {
+			background: #e8f5e9;
+			color: #2e7d32;
+			border: 1px solid #b2dfdb;
+		}
+	}
+
+	/* Suggested Habits */
+	.suggestedItem {
+		background: #f0fdf9;
+		border: 1px solid #e2f0ef;
+	}
+
+	.suggestedText {
+		h4 {
+			color: #0f172a;
+		}
+
+		p {
+			color: #546e7a;
+		}
+	}
+
+	.addSuggestedBtn {
+		background: #ffffff;
+		border: 1px solid #b2dfdb;
+		color: #00796b;
+
+		&:hover {
+			background: #00796b;
+			color: #ffffff;
+			border-color: #00796b;
+		}
+	}
+
+	/* Health Score & Device Vault Security Card */
+	.scoreDisplay {
+		background: #f0fdf9;
+	}
+
+	.scoreBigNum {
+		color: #00796b;
+
+		small {
+			color: #004d40;
+		}
+	}
+
+	.scoreSubtext {
+		color: #546e7a;
+	}
+
+	.privacyBanner {
+		background: #e8f5e9;
+		border: 1px solid #b2dfdb;
+		color: #2e7d32;
+
+		svg {
+			color: #2e7d32;
+		}
+	}
+}
+
