@@ -1545,10 +1545,47 @@
 		box-shadow: 0 2px 10px rgba(0, 121, 107, 0.07);
 	}
 
+	/* Card header h3 titles (Saved Lifestyle Habits, Daily Health, Ghanaian Bio-Foods) */
+	.cardHeaderRow {
+		h3 {
+			color: #0f172a;
+		}
+	}
+
 	.sidebarTitle {
 		color: #0f172a;
 	}
 
+	/* Icon colors in sidebar headers */
+	.iconShield  { color: #1976d2; }
+	.iconBookmark { color: #e65100; }
+	.iconFlame   { color: #c62828; }
+
+	/* Checklist items */
+	.essentialChecklist {
+		li {
+			color: #334155;
+
+			svg {
+				color: #00796b;
+			}
+		}
+	}
+
+	/* Saved habits stat row */
+	.savedStatRow {
+		background: #f0fdf9;
+	}
+
+	.savedCountNum {
+		color: #e65100;
+	}
+
+	.savedCountText {
+		color: #546e7a;
+	}
+
+	/* Remedy items */
 	.remedyItem {
 		background: #f0fdf9;
 	}
@@ -1560,6 +1597,7 @@
 	.remedyBenefits {
 		color: #546e7a;
 	}
+
 
 	/* ── AI Drawer ────────────────────────────────────────────── */
 	.generatorDrawer {
