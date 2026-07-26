@@ -63,10 +63,10 @@ export const TriageWidget: React.FC<TriageWidgetProps> = ({ onClose }) => {
 
 	// Ghana-focused quick symptom suggestions
 	const quickSymptoms = [
-		{ label: "🦟 Malaria symptoms", text: "I have fever, chills, headache, and body pain — I think it might be malaria" },
-		{ label: "🤒 Typhoid fever", text: "I have stomach pain, high fever, and diarrhea for several days" },
-		{ label: "😮‍💨 Breathing trouble", text: "I have difficulty breathing and persistent cough" },
-		{ label: "🩸 Feeling weak", text: "I feel very weak, tired, and dizzy — my skin looks pale" },
+		{ label: "Malaria symptoms", text: "I have fever, chills, headache, and body pain — I think it might be malaria" },
+		{ label: "Typhoid fever", text: "I have stomach pain, high fever, and diarrhea for several days" },
+		{ label: "Breathing trouble", text: "I have difficulty breathing and persistent cough" },
+		{ label: "Feeling weak", text: "I feel very weak, tired, and dizzy — my skin looks pale" },
 	];
 
 	const handleAnalyze = async (overrideText?: string) => {

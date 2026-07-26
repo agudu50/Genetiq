@@ -4,6 +4,7 @@ import { FilterBar } from "@/Features/Onboarding/ConnectAppDevice/FilterBar/Filt
 import { SyncPowerGauge } from "@/Features/Onboarding/ConnectAppDevice/SyncPowerGauge/SyncPowerGauge";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link2, Shield } from "lucide-react";
 
 const ConnectAppDevice = () => {
 	const [syncedDevices, setSyncedDevices] = useState<Set<string>>(new Set());
@@ -29,8 +30,8 @@ const ConnectAppDevice = () => {
 						</span>
 					</div>
 					<h1 className={styles["header-title"]}>
-						<span className='text-gradient-muted'>Connect Your</span>
-						<span className='text-gradient-primary'> Devices</span>
+						<span className="text-gradient-muted">Connect Your</span>
+						<span className="text-gradient-primary"> Devices</span>
 					</h1>
 					<p className={styles["header-subtitle"]}>
 						Sync your wearables and health apps to get real-time insights. All
@@ -51,7 +52,7 @@ const ConnectAppDevice = () => {
 
 				<div className={styles["coming-soon-overlay"]}>
 					<div className={styles["overlay-content"]}>
-						<div className={styles["lock-icon"]}>🧬</div>
+						<div className={styles["lock-icon"]}><Shield size={24} /></div>
 						<h2 className={styles["overlay-title"]}>Precision Data Sync</h2>
 						<p className={styles["overlay-text"]}>
 							We are currently finalizing the encrypted Sui blockchain
@@ -67,7 +68,7 @@ const ConnectAppDevice = () => {
 
 			<div className={styles["connect-footer"]}>
 				<div className={styles["footer-info-glass"]}>
-					<span className={styles["footer-icon"]}>🔗</span>
+					<span className={styles["footer-icon"]}><Link2 size={16} /></span>
 					<div className={styles["footer-text-group"]}>
 						<div className={styles["footer-title"]}>Don't see your device?</div>
 						<div className={styles["footer-text"]}>
@@ -80,7 +81,7 @@ const ConnectAppDevice = () => {
 				<div className={styles["emergency-access-wrapper"]}>
 					<div className={styles["emergency-content"]}>
 						<div className={styles["emergency-info"]}>
-							<div className={styles["emergency-icon"]}>🛡️</div>
+							<div className={styles["emergency-icon"]}><Shield size={20} /></div>
 							<div className={styles["emergency-text"]}>
 								<div className={styles["label"]}>Emergency QR Access</div>
 								<div className={styles["subtext"]}>

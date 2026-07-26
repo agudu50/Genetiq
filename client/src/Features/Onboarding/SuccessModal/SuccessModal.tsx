@@ -3,6 +3,7 @@ import ArrowRightIcon from "@assets/General/ArrowRight.svg?react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { paths } from "@/App/Routes/Paths";
+import { Sparkles, Dna, Activity } from "lucide-react";
 
 interface SuccessModalProps {
 	onClose: () => void;
@@ -27,7 +28,7 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({ onClose }) => {
 					</div>
 				</div>
 				<div className={styles["content-section"]}>
-					<div className={styles["badge"]}>✨ Analysis complete</div>
+					<div className={styles["badge"]}><Sparkles size={12} /> Analysis complete</div>
 					<h2 className={styles["title"]}>
 						Your Digital Twin is{" "}
 						<span className={styles["highlight"]}>Ready</span>
@@ -40,11 +41,11 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({ onClose }) => {
 
 					<div className={styles["features-grid"]}>
 						<div className={styles["feature-item"]}>
-							<span className={styles["feature-icon"]}>🧬</span>
+							<span className={styles["feature-icon"]}><Dna size={14} /></span>
 							<span>Genetic Insights</span>
 						</div>
 						<div className={styles["feature-item"]}>
-							<span className={styles["feature-icon"]}>📊</span>
+							<span className={styles["feature-icon"]}><Activity size={14} /></span>
 							<span>Biomarker Trends</span>
 						</div>
 					</div>

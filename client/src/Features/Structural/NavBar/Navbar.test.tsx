@@ -54,7 +54,7 @@ describe("Navbar Component (Mobile)", () => {
 		fireEvent.click(screen.getByText("history_nav"));
 		expect(mockNavigate).toHaveBeenCalledWith(paths.clinicalHistory);
 
-		fireEvent.click(screen.getByText("tests_nav"));
+		fireEvent.click(screen.getByText("tests_nav_mobile"));
 		expect(mockNavigate).toHaveBeenCalledWith(paths.config.tests);
 	});
 });

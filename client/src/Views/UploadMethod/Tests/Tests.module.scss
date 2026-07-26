@@ -837,8 +837,35 @@
 	border-radius: 10px;
 }
 
-.remedyEmoji {
-	font-size: 18px;
+.remedyIconBadge {
+	width: 28px;
+	height: 28px;
+	border-radius: 8px;
+	background: rgba(16, 185, 129, 0.12);
+	color: #10b981;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.pillIcon {
+	color: inherit;
+	opacity: 0.8;
+	flex-shrink: 0;
+}
+
+.panelHeaderIcon {
+	color: #10b981;
+	flex-shrink: 0;
+	margin-right: 6px;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.humanIngHeaderIcon {
+	color: #10b981;
+	flex-shrink: 0;
 }
 
 .remedyInfo {

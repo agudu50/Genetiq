@@ -1,5 +1,6 @@
 import styles from "./ChatMessageContent.module.scss";
 import { sanitizeAiText } from "@/App/Utils/sanitizeAiText";
+import { AlertTriangle } from "lucide-react";
 
 type Block =
 	| { type: "paragraph"; text: string }
@@ -99,7 +100,8 @@ export function ChatMessageContent({ text, className, compact }: ChatMessageCont
 					case "warning":
 						return (
 							<div key={index} className={styles.warning}>
-								{block.text}
+								<AlertTriangle size={15} className={styles.warningIcon} />
+								<span>{block.text.replace(/^⚠️\s*/, "")}</span>
 							</div>
 						);
 					default:

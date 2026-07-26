@@ -4,7 +4,7 @@ import {
 	Sparkles, Home, Flame, Shield, RefreshCw, 
 	Globe, BookOpen, Search, Bookmark, Check, ArrowRight,
 	Sun, Wind, Droplets, Utensils, Smile, Activity, Moon, Coffee, Dna,
-	BrainCircuit, Zap, HeartPulse
+	BrainCircuit, Zap, HeartPulse, Leaf
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { 
@@ -117,25 +117,7 @@ const CURATED_LIFESTYLE_TIPS: AiLifestyleTipResult[] = [
 	}
 ];
 
-const getFoodEmoji = (food: string): string => {
-	const f = food.toLowerCase().trim();
-	if (f.includes("egg")) return "🥚";
-	if (f.includes("avocado")) return "🥑";
-	if (f.includes("oat") || f.includes("koko") || f.includes("millet") || f.includes("porridge")) return "🥣";
-	if (f.includes("moringa") || f.includes("kontomire") || f.includes("cabbage") || f.includes("leaf") || f.includes("green")) return "🥬";
-	if (f.includes("okra")) return "🌿";
-	if (f.includes("fish") || f.includes("tilapia")) return "🐟";
-	if (f.includes("plantain") || f.includes("banana")) return "🍌";
-	if (f.includes("yam") || f.includes("cassava")) return "🍠";
-	if (f.includes("bean") || f.includes("cowpea") || f.includes("waakye") || f.includes("red red")) return "🫘";
-	if (f.includes("rice") || f.includes("sorghum")) return "🌾";
-	if (f.includes("pepper") || f.includes("chili") || f.includes("tomato")) return "🌶️";
-	if (f.includes("onion") || f.includes("garlic") || f.includes("ginger")) return "🧅";
-	if (f.includes("cinnamon") || f.includes("spice")) return "🫚";
-	if (f.includes("milk") || f.includes("cheese")) return "🥛";
-	if (f.includes("corn") || f.includes("maize")) return "🌽";
-	return "🥗";
-};
+
 
 const getCategoryClass = (category: string): string => {
 	switch (category) {
@@ -411,13 +393,13 @@ const Tests = () => {
 
 									<div className={styles.humanIngBox}>
 										<div className={styles.humanIngHeader}>
-											<span className={styles.humanIngFlag}>🇬🇭</span>
+											<Globe size={13} className={styles.humanIngHeaderIcon} />
 											<span className={styles.humanIngLabel}>Local Ingredients</span>
 										</div>
 										<div className={styles.humanPillRow}>
 											{dailyMealPlan.breakfast.localFoods.split(",").map((food, fIdx) => (
 												<span key={fIdx} className={styles.humanPill}>
-													<span className={styles.pillEmoji}>{getFoodEmoji(food)}</span>
+													<Utensils size={10} className={styles.pillIcon} />
 													{food.trim()}
 												</span>
 											))}
@@ -450,13 +432,13 @@ const Tests = () => {
 
 									<div className={styles.humanIngBox}>
 										<div className={styles.humanIngHeader}>
-											<span className={styles.humanIngFlag}>🇬🇭</span>
+											<Globe size={13} className={styles.humanIngHeaderIcon} />
 											<span className={styles.humanIngLabel}>Local Ingredients</span>
 										</div>
 										<div className={styles.humanPillRow}>
 											{dailyMealPlan.lunch.localFoods.split(",").map((food, fIdx) => (
 												<span key={fIdx} className={styles.humanPill}>
-													<span className={styles.pillEmoji}>{getFoodEmoji(food)}</span>
+													<Utensils size={10} className={styles.pillIcon} />
 													{food.trim()}
 												</span>
 											))}
@@ -489,13 +471,13 @@ const Tests = () => {
 
 									<div className={styles.humanIngBox}>
 										<div className={styles.humanIngHeader}>
-											<span className={styles.humanIngFlag}>🇬🇭</span>
+											<Globe size={13} className={styles.humanIngHeaderIcon} />
 											<span className={styles.humanIngLabel}>Local Ingredients</span>
 										</div>
 										<div className={styles.humanPillRow}>
 											{dailyMealPlan.supper.localFoods.split(",").map((food, fIdx) => (
 												<span key={fIdx} className={styles.humanPill}>
-													<span className={styles.pillEmoji}>{getFoodEmoji(food)}</span>
+													<Utensils size={10} className={styles.pillIcon} />
 													{food.trim()}
 												</span>
 											))}
@@ -625,12 +607,18 @@ const Tests = () => {
 													<div className={styles.panelDivider} />
 													
 													<div className={styles.panelBlock}>
-														<h4>🧬 Why It Matters (Biological Reason)</h4>
+														<h4>
+															<Dna size={14} className={styles.panelHeaderIcon} />
+															Why It Matters (Biological Reason)
+														</h4>
 														<p>{tip.whyItMatters}</p>
 													</div>
 
 													<div className={styles.panelBlock}>
-														<h4>📋 Practical Step-by-Step Actions</h4>
+														<h4>
+															<BookOpen size={14} className={styles.panelHeaderIcon} />
+															Practical Step-by-Step Actions
+														</h4>
 														<ul>
 															{tip.actionableSteps
 																.map((step) => step.replace(/^[\{\}\[\]"'\s,]+|[\{\}\[\]"'\s,]+$/g, "").replace(/^safety\s*rule:\s*/i, "").trim())
@@ -729,7 +717,9 @@ const Tests = () => {
 						<div className={styles.remedyList}>
 							{GHANAIAN_REMEDIES.slice(0, 4).map((remedy, idx) => (
 								<div key={idx} className={styles.remedyItem}>
-									<span className={styles.remedyEmoji}>{remedy.emoji}</span>
+									<div className={styles.remedyIconBadge}>
+										<Leaf size={13} />
+									</div>
 									<div className={styles.remedyInfo}>
 										<strong className={styles.remedyName}>{remedy.name}</strong>
 										<span className={styles.remedyBenefits}>{remedy.benefits}</span>

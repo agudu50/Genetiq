@@ -819,10 +819,16 @@
 }
 
 .tab-label {
-	font-size: 10px;
+	font-size: 10.5px;
 	font-weight: 600;
-	line-height: 1;
-	letter-spacing: 0.02em;
+	line-height: 1.1;
+	letter-spacing: 0.01em;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 100%;
+	text-align: center;
+	padding: 0 2px;
 	transition: color 0.2s ease;
 }
 

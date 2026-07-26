@@ -132,20 +132,20 @@ const Navbar = () => {
 							{t("goals_nav") || "Goals"}
 						</button>
 						<button
+							className={`${styles["nav-item"]} ${activeTab === "tests_nav" ? styles["nav-active"] : ""}`}
+							onClick={() => goTo(paths.config.tests)}
+							onMouseEnter={prefetchOnIntent(paths.config.tests)}
+							onFocus={prefetchOnIntent(paths.config.tests)}
+						>
+							{t("tests_nav") || "Lifestyle & Wellness"}
+						</button>
+						<button
 							className={`${styles["nav-item"]} ${activeTab === "history_nav" ? styles["nav-active"] : ""}`}
 							onClick={() => goTo(paths.clinicalHistory)}
 							onMouseEnter={prefetchOnIntent(paths.clinicalHistory)}
 							onFocus={prefetchOnIntent(paths.clinicalHistory)}
 						>
 							{t("history_nav") || "History"}
-						</button>
-						<button
-							className={`${styles["nav-item"]} ${activeTab === "tests_nav" ? styles["nav-active"] : ""}`}
-							onClick={() => goTo(paths.config.tests)}
-							onMouseEnter={prefetchOnIntent(paths.config.tests)}
-							onFocus={prefetchOnIntent(paths.config.tests)}
-						>
-							{t("tests_nav") || "Tests"}
 						</button>
 					</nav>
 				)}
@@ -279,6 +279,18 @@ const Navbar = () => {
 							</span>
 						</button>
 						<button
+							className={`${styles["tab-item"]} ${activeTab === "tests_nav" ? styles["tab-active"] : ""}`}
+							onClick={() => goTo(paths.config.tests)}
+							onTouchStart={prefetchOnIntent(paths.config.tests)}
+						>
+							<span className={styles["tab-icon"]}>
+								<TestIcon />
+							</span>
+							<span className={styles["tab-label"]}>
+								{t("tests_nav_mobile") || "Lifestyle"}
+							</span>
+						</button>
+						<button
 							className={`${styles["tab-item"]} ${activeTab === "history_nav" ? styles["tab-active"] : ""}`}
 							onClick={() => goTo(paths.clinicalHistory)}
 							onTouchStart={prefetchOnIntent(paths.clinicalHistory)}
@@ -288,18 +300,6 @@ const Navbar = () => {
 							</span>
 							<span className={styles["tab-label"]}>
 								{t("history_nav") || "History"}
-							</span>
-						</button>
-						<button
-							className={`${styles["tab-item"]} ${activeTab === "tests_nav" ? styles["tab-active"] : ""}`}
-							onClick={() => goTo(paths.config.tests)}
-							onTouchStart={prefetchOnIntent(paths.config.tests)}
-						>
-							<span className={styles["tab-icon"]}>
-								<TestIcon />
-							</span>
-							<span className={styles["tab-label"]}>
-								{t("tests_nav") || "Tests"}
 							</span>
 						</button>
 					</nav>

@@ -82,6 +82,9 @@
 }
 
 .warning {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
 	margin: 2px 0 0;
 	padding: 10px 12px;
 	border-radius: 10px;
@@ -98,6 +101,12 @@
 		font-size: 0.875rem;
 		padding: 12px 14px;
 	}
+}
+
+.warningIcon {
+	flex-shrink: 0;
+	margin-top: 2px;
+	color: inherit;
 }
 
 html[data-theme="dark"] {
