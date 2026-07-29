@@ -710,10 +710,10 @@ async def chat_with_gemma(req: ChatRequest):
 
     try:
         raw_response = await generate_response_async(messages, max_tokens=max_tokens)
-        result = parse_json_response(raw_response)
+        result: dict[str, Any] = parse_json_response(raw_response)
 
         if result.get("error") and result.get("raw"):
-            result = {
+            result: dict[str, Any] = {
                 "message": sanitize_chat_text(raw_response),
                 "bodySystem": "total",
                 "urgency": "Yellow",
