@@ -89,6 +89,7 @@ export const ConcernsCard: React.FC<ConcernsCardProps> = ({
 				<div className={styles.factorChips}>
 					{visibleFactors.map((factor) => (
 						<span key={factor} className={styles.factorChip}>
+							<span className={styles.bulletDot} aria-hidden />
 							{t(factor)}
 						</span>
 					))}
@@ -131,6 +132,7 @@ export const ConcernsCard: React.FC<ConcernsCardProps> = ({
 				<div className={styles.factorChips}>
 					{visibleFactors.map((factor) => (
 						<span key={factor} className={styles.factorChip}>
+							<span className={styles.bulletDot} aria-hidden />
 							{t(factor)}
 						</span>
 					))}
