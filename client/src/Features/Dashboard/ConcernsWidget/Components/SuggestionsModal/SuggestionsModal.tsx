@@ -15,6 +15,10 @@ import { PlanItemIcon } from "../../../PlanWidget/helpers/planItemIcons";
 import dashboardData from "@/App/Data/dashboard_data.json";
 import styles from "./SuggestionsModal.module.scss";
 
+import { useSelector } from "react-redux";
+import { RootState } from "@/App/Redux/store";
+import { categorizeAction } from "../../../PlanWidget/helpers/buildActionPlanFromHealth";
+
 interface SuggestionsModalProps {
 	concern: Concern | null;
 	onClose: () => void;
@@ -78,11 +82,52 @@ export const SuggestionsModal: React.FC<SuggestionsModalProps> = ({
 	onClose,
 }) => {
 	const { t } = useLanguage();
+	const uploadRecords = useSelector((state: RootState) => state.uploadHistory.records);
 
-	const planSections = useMemo(
-		() => (concern ? getPlanSectionsForConcern(concern) : []),
-		[concern],
-	);
+	const planSections = useMemo(() => {
+		if (!concern) return [];
+
+		if (uploadRecords && uploadRecords.length > 0) {
+			const latestRecord = uploadRecords[0];
+			if (latestRecord.recommendations && latestRecord.recommendations.length > 0) {
+				const titleKeywords = concern.title.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+				const factorKeywords = (concern.factors || []).flatMap(f => f.toLowerCase().split(/\s+/)).filter(w => w.length > 2);
+				const keywords = [...titleKeywords, ...factorKeywords];
+
+				const relevantRecs = latestRecord.recommendations.filter((r) => {
+					const text = `${r.title} ${r.body}`.toLowerCase();
+					return keywords.some(kw => text.includes(kw));
+				});
+
+				const recsToUse = relevantRecs.length > 0 ? relevantRecs : latestRecord.recommendations;
+
+				const buckets = {
+					"Follow-up Care": [] as any[],
+					"Supplements": [] as any[],
+					"Lifestyle": [] as any[]
+				};
+
+				recsToUse.forEach((r) => {
+					const cat = categorizeAction(r.title, r.body);
+					buckets[cat].push({
+						name: r.title,
+						description: r.body,
+						icon: "pill",
+						group: cat
+					});
+				});
+
+				return [
+					{ title: "Action Plan", type: "aggregated", data: [] },
+					{ title: "Follow-up Care", data: buckets["Follow-up Care"] },
+					{ title: "Supplements", data: buckets["Supplements"] },
+					{ title: "Lifestyle", data: buckets["Lifestyle"] }
+				].filter(sec => sec.title === "Action Plan" || sec.data.length > 0) as PlanSection[];
+			}
+		}
+
+		return getPlanSectionsForConcern(concern);
+	}, [concern, uploadRecords]);
 
 	const allItems = useMemo(
 		() =>
