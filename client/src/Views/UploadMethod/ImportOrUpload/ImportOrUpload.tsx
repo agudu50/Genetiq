@@ -6,7 +6,7 @@ import { updateUserInfo } from "@/App/Redux/userSlice";
 import { addUploadRecord } from "@/App/Redux/uploadHistorySlice";
 import type { LabFinding, Recommendation } from "@/App/Redux/uploadHistorySlice";
 import { paths } from "@/App/Routes/Paths";
-import { Upload, FileText, ShieldCheck, Zap, ChevronRight, X, CheckCircle, ArrowLeft, Loader2, Wifi, WifiOff, Brain, Stethoscope, User, Droplets, Ruler, Scale, Activity, Clock, Check, Lock, ChevronDown } from "lucide-react";
+import { Upload, FileText, ShieldCheck, Zap, ChevronRight, X, CheckCircle, ArrowLeft, Loader2, Wifi, WifiOff, Brain, Stethoscope, User, Droplets, Ruler, Scale, Activity, Clock, Check, Lock, ChevronDown, Bug, Microscope, FlaskConical, Dna, Candy, ScanSearch, Waves } from "lucide-react";
 import {
 	analyzeLabResults,
 	getTranslation,
@@ -47,14 +47,14 @@ const LANGUAGES: { id: GemmaLanguage; label: string; flag: string; code: string 
 ];
 
 const PRESETS = [
-	{ id: "malaria_rdt", emoji: "🦟", title: "Malaria RDT Strip", desc: "Positive for P. falciparum malaria" },
-	{ id: "cbc_anemia", emoji: "🩸", title: "Full Blood Count", desc: "Severe anemia & likely infection" },
-	{ id: "typhoid", emoji: "🦠", title: "Typhoid Test (Widal)", desc: "Positive for Salmonella typhi" },
-	{ id: "hep_b", emoji: "🧬", title: "Hepatitis B Profile", desc: "Reactive HBsAg screening" },
-	{ id: "fbs_diabetes", emoji: "🍬", title: "Fasting Blood Sugar", desc: "Elevated glucose levels (Diabetes)" },
-	{ id: "sickle_cell", emoji: "🔬", title: "Sickle Cell Screening", desc: "Hb electrophoresis (Sickle Trait)" },
-	{ id: "urinalysis", emoji: "🧪", title: "Urinalysis Report", desc: "Dehydration & urinary tract infection" },
-	{ id: "cholera", emoji: "💧", title: "Stool Analysis", desc: "Suspicion of acute watery diarrhea" },
+	{ id: "malaria_rdt", icon: <Bug size={18} />, title: "Malaria RDT Strip", desc: "Positive for P. falciparum malaria" },
+	{ id: "cbc_anemia", icon: <Activity size={18} />, title: "Full Blood Count", desc: "Severe anemia & likely infection" },
+	{ id: "typhoid", icon: <Microscope size={18} />, title: "Typhoid Test (Widal)", desc: "Positive for Salmonella typhi" },
+	{ id: "hep_b", icon: <Dna size={18} />, title: "Hepatitis B Profile", desc: "Reactive HBsAg screening" },
+	{ id: "fbs_diabetes", icon: <Candy size={18} />, title: "Fasting Blood Sugar", desc: "Elevated glucose levels (Diabetes)" },
+	{ id: "sickle_cell", icon: <ScanSearch size={18} />, title: "Sickle Cell Screening", desc: "Hb electrophoresis (Sickle Trait)" },
+	{ id: "urinalysis", icon: <FlaskConical size={18} />, title: "Urinalysis Report", desc: "Dehydration & urinary tract infection" },
+	{ id: "cholera", icon: <Waves size={18} />, title: "Stool Analysis", desc: "Suspicion of acute watery diarrhea" },
 ];
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -1142,7 +1142,7 @@ const ImportOrUpload = () => {
 											className={`${styles.uploadPresetCard} ${selectedPreset === preset.id ? styles.uploadPresetCardActive : ""}`}
 											onClick={() => handlePresetClick(preset.id)}
 										>
-											<span className={styles.uploadPresetEmoji}>{preset.emoji}</span>
+											<span className={styles.uploadPresetEmoji}>{preset.icon}</span>
 											<div className={styles.uploadPresetText}>
 												<span className={styles.uploadPresetTitle}>{preset.title}</span>
 												<span className={styles.uploadPresetDesc}>{preset.desc}</span>
