@@ -8,8 +8,9 @@
 const { GoogleGenAI } = require("@google/genai");
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-// Hardcoding to gemini-2.5-flash to bypass npm run dev process.env caching which is stuck on the broken gemma-4 endpoint.
-const MODEL_ID = "gemini-2.5-flash"; // process.env.GEMMA_MODEL || "gemini-2.5-flash";
+// Gemma 4 Edge 4B — lightweight instruction-tuned model hosted on Google AI Studio.
+// Available models: gemma-4-E2B-it (lightest), gemma-4-E4B-it (light), gemma-4-12b-it, gemma-4-26b-a4b-it, gemma-4-31b-it
+const MODEL_ID = process.env.GEMMA_MODEL || "gemma-4-E4B-it";
 
 if (!GEMINI_API_KEY) {
 	console.warn(
