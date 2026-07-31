@@ -8,9 +8,10 @@
 const { GoogleGenAI } = require("@google/genai");
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-// Gemma 4 Edge 4B — lightweight instruction-tuned model hosted on Google AI Studio.
-// Available models: gemma-4-E2B-it (lightest), gemma-4-E4B-it (light), gemma-4-12b-it, gemma-4-26b-a4b-it, gemma-4-31b-it
-const MODEL_ID = process.env.GEMMA_MODEL || "gemma-4-E4B-it";
+// Gemma 4 lightweight model hosted on Google AI Studio (26B MoE with 4B active parameters).
+// Google AI Studio API requires the 'models/' prefix format.
+const rawModel = process.env.GEMMA_MODEL || "gemma-4-26b-a4b-it";
+const MODEL_ID = rawModel.startsWith("models/") ? rawModel : `models/${rawModel}`;
 
 if (!GEMINI_API_KEY) {
 	console.warn(
