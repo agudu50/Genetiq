@@ -34,6 +34,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "@/App/Redux/store";
 import type { UploadRecord, FindingStatus } from "@/App/Redux/uploadHistorySlice";
 import { paths } from "@/App/Routes/Paths";
+import { renderRecommendationIcon } from "@/App/Utils/renderRecommendationIcon";
 import styles from "./HealthHistory.module.scss";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -561,7 +562,9 @@ const RecordCard = ({ record, index }: { record: UploadRecord; index: number }) 
 						<div className={styles.recsList}>
 							{record.recommendations.map((r) => (
 								<div key={r.title} className={styles.recCard}>
-									<span className={styles.recIcon}>{r.icon}</span>
+									<span className={styles.recIcon}>
+										{renderRecommendationIcon(r.icon, 20)}
+									</span>
 									<div>
 										<div className={styles.recTitle}>{r.title}</div>
 										<div className={styles.recBody}>{r.body}</div>

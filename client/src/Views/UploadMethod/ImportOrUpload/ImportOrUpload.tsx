@@ -16,6 +16,7 @@ import type { GemmaLanguage, GemmaAnalysisResult, AnalyzeProgressPhase } from "@
 import { useGemmaConnection } from "@/App/Hooks/useGemmaConnection";
 import { enrichFindingsWithPlainNotes } from "@/App/Utils/buildResultsSummary";
 import { extractPdfContent, readTextFile } from "@/App/Utils/extractFileText";
+import { renderRecommendationIcon } from "@/App/Utils/renderRecommendationIcon";
 import styles from "./ImportOrUpload.module.scss";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -1336,7 +1337,7 @@ function SingleResultView({
 								onClick={onRetry}
 							>
 								<div className={styles.unavailableActionIcon} data-color="teal">
-									<span>{rec.icon}</span>
+									{renderRecommendationIcon(rec.icon, 20)}
 								</div>
 								<div className={styles.unavailableActionText}>
 									<h3>{rec.title}</h3>
@@ -1508,7 +1509,9 @@ function SingleResultView({
 					{analysisResult.recommendations.map((r, idx) => (
 						<div key={r.title} className={styles.recCard}>
 							<span className={styles.recStep}>{idx + 1}</span>
-							<span className={styles.recIcon} data-step={idx + 1}>{r.icon}</span>
+							<span className={styles.recIcon} data-step={idx + 1}>
+								{renderRecommendationIcon(r.icon, 20)}
+							</span>
 							<div className={styles.recContent}>
 								<div className={styles.recTitle}>{t(r.title) || r.title}</div>
 								<div className={styles.recBody}>{t(r.body) || r.body}</div>

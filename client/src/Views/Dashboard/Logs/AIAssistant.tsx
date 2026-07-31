@@ -11,6 +11,7 @@ import type { GemmaLanguage, GemmaAnalysisResult } from "@/App/Services/GemmaSer
 import { useGemmaConnection } from "@/App/Hooks/useGemmaConnection";
 import { ChatMessageContent } from "@/Features/Dashboard/ChatMessageContent/ChatMessageContent";
 import styles from "./AIAssistant.module.scss";
+import { renderRecommendationIcon } from "@/App/Utils/renderRecommendationIcon";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -683,7 +684,9 @@ function ScannerSection({ language, gemmaOnline }: { language: GemmaLanguage; ge
 							<h4 className={styles.scanRecsTitle}>Recommendations</h4>
 							{displayResult.recommendations.map((r) => (
 								<div key={r.title} className={styles.scanRec}>
-									<span className={styles.scanRecIcon}>{r.icon}</span>
+									<span className={styles.scanRecIcon}>
+										{renderRecommendationIcon(r.icon, 20)}
+									</span>
 									<div>
 										<strong>{r.title}</strong>
 										<p>{r.body}</p>
