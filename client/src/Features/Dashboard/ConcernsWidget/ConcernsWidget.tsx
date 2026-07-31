@@ -66,60 +66,78 @@ export const ConcernsWidget: React.FC<ConcernsWidgetProps> = ({ category }) => {
 			const abnormalFindings = latestRecord.findings.filter((f) => f.status !== "normal");
 
 			if (abnormalFindings.length > 0) {
-				const hasHighCholesterol = abnormalFindings.some(f => f.marker.toLowerCase().includes("cholesterol"));
-				const hasHighGlucose = abnormalFindings.some(f => f.marker.toLowerCase().includes("glucose") || f.marker.toLowerCase().includes("sugar"));
-				const hasLowFerritin = abnormalFindings.some(f => f.marker.toLowerCase().includes("ferritin") || f.marker.toLowerCase().includes("iron"));
+				const hasHighCholesterol = abnormalFindings.some(f => f.marker.toLowerCase().includes("cholesterol") || f.marker.toLowerCase().includes("ldl") || f.marker.toLowerCase().includes("lipid") || f.marker.toLowerCase().includes("vldl") || f.marker.toLowerCase().includes("hdl"));
+				const hasHighGlucose = abnormalFindings.some(f => f.marker.toLowerCase().includes("glucose") || f.marker.toLowerCase().includes("sugar") || f.marker.toLowerCase().includes("fbs") || f.marker.toLowerCase().includes("diabetes") || f.marker.toLowerCase().includes("hba1c"));
+				const hasLowFerritin = abnormalFindings.some(f => f.marker.toLowerCase().includes("ferritin") || f.marker.toLowerCase().includes("iron") || f.marker.toLowerCase().includes("hemoglobin") || f.marker.toLowerCase().includes("haemoglobin") || f.marker.toLowerCase().includes("mcv") || f.marker.toLowerCase().includes("mch") || f.marker.toLowerCase().includes("anemia") || f.marker.toLowerCase().includes("anaemia") || f.marker.toLowerCase().includes("blood cell") || f.marker.toLowerCase().includes("rbc"));
+				const hasHighHeartRate = abnormalFindings.some(f => 
+					f.marker.toLowerCase().includes("heart rate") || 
+					f.marker.toLowerCase().includes("pulse") || 
+					f.marker.toLowerCase().includes("bpm") || 
+					f.marker.toLowerCase().includes("temp") || 
+					f.marker.toLowerCase().includes("wbc") || 
+					f.marker.toLowerCase().includes("fever") || 
+					f.marker.toLowerCase().includes("malaria") || 
+					f.marker.toLowerCase().includes("typhoid") || 
+					f.marker.toLowerCase().includes("salmonella") ||
+					f.marker.toLowerCase().includes("widal") ||
+					f.marker.toLowerCase().includes("esr") ||
+					f.marker.toLowerCase().includes("urine") ||
+					f.marker.toLowerCase().includes("stool") ||
+					f.marker.toLowerCase().includes("diarrhea") ||
+					f.marker.toLowerCase().includes("cholera")
+				);
+				const hasHighBP = abnormalFindings.some(f => f.marker.toLowerCase().includes("blood pressure") || f.marker.toLowerCase().includes("bp") || f.marker.toLowerCase().includes("systolic") || f.marker.toLowerCase().includes("diastolic") || f.marker.toLowerCase().includes("hypertension"));
 
 				return [
 					{
 						id: 1,
 						title: "Atrial Fibrillation",
 						factors: [
-							hasHighCholesterol ? "High Cholesterol level" : "Normal Cholesterol level",
+							hasHighCholesterol ? "High Cholesterol level" : hasHighHeartRate ? "High heart rate level" : "Normal Cholesterol level",
 							"Other influencing factors"
 						],
 						icon: "Heart",
-						status: hasHighCholesterol ? "High" : "Low",
+						status: hasHighCholesterol || hasHighHeartRate || hasHighBP ? "High" : "Low",
 						link: "cardiovascular"
 					},
 					{
 						id: 2,
 						title: "Stroke",
 						factors: [
-							hasHighGlucose ? "High Glucose level" : "High heart rate level",
+							hasHighHeartRate ? "High heart rate level" : hasHighGlucose ? "High Glucose level" : "High heart rate level",
 							"Other influencing factors"
 						],
 						icon: "Heart",
-						status: "High",
+						status: hasHighHeartRate || hasHighGlucose || hasHighBP ? "High" : "Medium",
 						link: "cardiovascular"
 					},
 					{
 						id: 3,
 						title: "Coronary Artery Disease",
 						factors: [
-							hasHighCholesterol ? "High Cholesterol level" : "High heart rate level",
+							hasHighHeartRate ? "High heart rate level" : hasHighCholesterol ? "High Cholesterol level" : "High heart rate level",
 							"Other influencing factors"
 						],
 						icon: "Heart",
-						status: "Medium",
+						status: hasHighCholesterol || hasHighHeartRate || hasHighBP ? "Medium" : "Low",
 						link: "cardiovascular"
 					},
 					{
 						id: 4,
 						title: "Hypertension",
 						factors: [
-							hasHighCholesterol ? "High Cholesterol level" : "Normal Cholesterol level",
+							hasHighCholesterol ? "High Cholesterol level" : hasHighBP ? "High blood pressure" : "Normal Cholesterol level",
 							"Other influencing factors"
 						],
 						icon: "Heart",
-						status: hasHighCholesterol ? "High" : "Medium",
+						status: hasHighBP || hasHighCholesterol ? "High" : "Medium",
 						link: "cardiovascular"
 					},
 					{
 						id: 5,
 						title: "Heart Failure",
 						factors: [
-							hasLowFerritin ? "Low Ferritin level" : "High heart rate level",
+							hasHighHeartRate ? "High heart rate level" : hasLowFerritin ? "Low Ferritin level" : "High heart rate level",
 							"Other influencing factors"
 						],
 						icon: "Heart",
