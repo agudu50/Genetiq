@@ -300,9 +300,7 @@ export const TriageWidget: React.FC<TriageWidgetProps> = ({ onClose }) => {
 								<p className={styles.waitHint}>
 								{cpuFastMode || !gemmaOnline
 									? "Analyzing your symptoms…"
-									: waitSecs < 8
-										? "Gemma is analyzing…"
-										: `Gemma is analyzing… ${waitSecs}s (local CPU — can take 1–3 min)`}
+									: `Gemma 4 AI is analyzing… (${waitSecs}s)`}
 							</p>
 							</div>
 						</div>

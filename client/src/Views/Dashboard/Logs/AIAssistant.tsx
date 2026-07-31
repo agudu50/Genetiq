@@ -542,9 +542,7 @@ function ChatSection({ language, gemmaOnline }: { language: GemmaLanguage; gemma
 							</div>
 							<p className={styles.waitHint}>
 								{gemmaOnline
-									? waitSecs < 8
-										? "Gemma is thinking…"
-										: `Gemma is thinking… ${waitSecs}s (local CPU — symptom questions can take 1–3 min)`
+									? `Gemma 4 AI is thinking… (${waitSecs}s)`
 									: "Thinking…"}
 							</p>
 						</div>

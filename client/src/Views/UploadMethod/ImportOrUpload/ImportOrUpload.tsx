@@ -98,7 +98,7 @@ function AiThinkingStatus({ phase, gemmaOnline }: { phase: string | null; gemmaO
 				gap: 6
 			}}>
 				<Clock size={12} />
-				<span>Estimated time: ~60s (Elapsed: {elapsed}s)</span>
+				<span>Estimated time: ~5s (Elapsed: {elapsed}s)</span>
 			</div>
 		</div>
 	);
