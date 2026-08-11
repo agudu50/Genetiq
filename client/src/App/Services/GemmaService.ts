@@ -1256,6 +1256,50 @@ const TEMPLATE_TRANSLATIONS: Record<string, Array<[RegExp, string]>> = {
 			/^Please consult a doctor to discuss these findings\.$/i,
 			"Yɛsrɛ wo, kasa kyerɛ dɔkota pa bi na monkasa fa nhwehwɛmu yi ho.",
 		],
+		[
+			/^Seek Medical Consultation Immediately$/i,
+			"Kɔ bɛhwɛ dɔkota ntɛmpɛ pa ara",
+		],
+		[
+			/^Ensure Proper Hydration$/i,
+			"Nom nsuo fiideɛ a ɛdɔɔso",
+		],
+		[
+			/^Gentle, Light Nutrition$/i,
+			"Di aduane a ɛnyɛ den a emu yɛ mmerɛ",
+		],
+		[
+			/^Monitor for Warning Signs$/i,
+			"Hwɛ nsɛnkyerɛnneɛ a ɛyɛ hu ho yiye",
+		],
+		[
+			/^Because the Creatinine (.*?) and ALT (.*?) are high.*/i,
+			"Esiane sɛ Creatinine (akokoɔduo fĩĩ) ne ALT (liver enzyme) akɔ soro nti, yɛsrɛ wo kɔ ayaresabea anaa dɔkota pa bi nkyɛn ntɛmpɛ pa ara. Mma wode afie ayaresa nko ara nsa yei kosi sɛ dɔkota bɛhwɛ akokoɔduo ne liver ansa.",
+		],
+		[
+			/^Keep (.*?) well-hydrated.*/i,
+			"Nom nsuo fiideɛ a ɛdɔɔso anaa coconut water (nsuo a ɛfiri abɔden mu) daa na ɛboa akokoɔduo (kidneys) ma ɛyi fĩĩ ne yadeɛ mmoawa firi mogya mu yiye.",
+		],
+		[
+			/^While waiting for medical advice.*/i,
+			"Berɛ a woretwɛn dɔkota afotuo no, di aduane a ɛnyɛ den a emu yɛ mmerɛ te sɛ kooko, emutuo, anaa emo nsuo. Kwea aduane a ngo, kyew, anaa nkyene dɔɔso wɔ mu ma liver ne akokoɔduo no nnya ahome.",
+		],
+		[
+			/^Watch closely for any yellowing.*/i,
+			"Hwɛ yiye sɛ aniwa anaa honam bɛyɛ akokɔsradeɛ (Jaundice), nan anaa anim bɛhon, anaa dwonsɔ sesa a. Sɛ wohunu yeinom a, kɔ ayaresabea emergency ntɛm pa ara.",
+		],
+		[
+			/^ALT — Alanine Aminotransferase.*/i,
+			"ALT (liver enzyme; high levels can mean the liver is under stress) akɔ soro. Yei kyerɛ sɛ liver no wɔ ɔhaw anaa mfeɛmoa kakra mu.",
+		],
+		[
+			/^Creatinine \(a waste product.*/i,
+			"Creatinine (akokoɔduo fĩĩ) akɔ soro. Yei kyerɛ sɛ akokoɔduo (kidneys) no rebre wɔ fĩĩ yifee mu.",
+		],
+		[
+			/^The results show that both the Creatinine.*/i,
+			"Nhwehwɛmu no kyerɛ sɛ Creatinine (akokoɔduo fĩĩ) ne ALT (liver enzyme) nyinaa akɔ soro sen deɛ ɛsɛ sɛ ɛyɛ. Ɛwom sɛ Bilirubin yɛ papa deɛ, nanso akokoɔduo ne liver nhwehwɛmu a akɔ soro no hia dɔkota nhwehwɛmu ntɛmpɛ pa ara.",
+		],
 	],
 	ga: [
 		[
@@ -1290,6 +1334,50 @@ const TEMPLATE_TRANSLATIONS: Record<string, Array<[RegExp, string]>> = {
 		[
 			/^Please consult a doctor to discuss these findings\.$/i,
 			"Wiemɔ kɛ dɔkita koni owie yɛ results nɛɛ ahe.",
+		],
+		[
+			/^Seek Medical Consultation Immediately$/i,
+			"Yaa dɔkita he ntɛm pa ara",
+		],
+		[
+			/^Ensure Proper Hydration$/i,
+			"Kwɛmɔ akɛ nu nu pii daa",
+		],
+		[
+			/^Gentle, Light Nutrition$/i,
+			"Ye niyenii ni yɔɔ mlɛo",
+		],
+		[
+			/^Monitor for Warning Signs$/i,
+			"Kwɛmɔ okadii ni yɔɔ gbeyei ahe",
+		],
+		[
+			/^Because the Creatinine (.*?) and ALT (.*?) are high.*/i,
+			"Akɛ Creatinine kɛ ALT yi kɛ nɔ nti, yaa dɔkita he anaa hospital ntɛm pa ara. Kaabɔ mɔdɛŋ akɛ okɛ shĩa tsofa pɛ baatsa.",
+		],
+		[
+			/^Keep (.*?) well-hydrated.*/i,
+			"Nu nu pii anaa coconut water daa koni eye ebua kidneys koni ejie fĩĩ kɛjɛ la mli.",
+		],
+		[
+			/^While waiting for medical advice.*/i,
+			"Ye niyenii ni yɔɔ mlɛo tamɔ koko anaa mo nu. Kwa niyenii ni yɔɔ mɔ anaa nku pii.",
+		],
+		[
+			/^Watch closely for any yellowing.*/i,
+			"Kwɛmɔ jogbaŋŋ kɛji hiŋmɛii anaa gbɔmɔtso lɛ bafe yellow (Jaundice), anaa nane hon. Yaa hospital emergency ntɛm.",
+		],
+		[
+			/^ALT — Alanine Aminotransferase.*/i,
+			"ALT (liver enzyme) yi kɛ nɔ. Etsɔɔ akɛ liver lɛ eyeɔ hewalɛ fioo.",
+		],
+		[
+			/^Creatinine \(a waste product.*/i,
+			"Creatinine (kidneys fĩĩ) yi kɛ nɔ. Etsɔɔ akɛ kidneys lɛ mli yɛ feemɔ.",
+		],
+		[
+			/^The results show that both the Creatinine.*/i,
+			"Results lɛ tsɔɔ akɛ Creatinine kɛ ALT nyiɛ nɔ fe bɔ ni efɔɔ mli. Shi Bilirubin lɛ eyeɔ jogbaŋŋ, kidneys kɛ liver indicators lɛ hiaa dɔkita. Wiemɔ kɛ dɔkita ntɛm.",
 		],
 	],
 	ewe: [
@@ -1326,6 +1414,50 @@ const TEMPLATE_TRANSLATIONS: Record<string, Array<[RegExp, string]>> = {
 			/^Please consult a doctor to discuss these findings\.$/i,
 			"Meɖe kuku, ɖo nu kple dɔnɔkɔdola tso ŋkuɖoɖo siawo ŋu.",
 		],
+		[
+			/^Seek Medical Consultation Immediately$/i,
+			"Yi dɔnɔkɔdola gbɔ kaba",
+		],
+		[
+			/^Ensure Proper Hydration$/i,
+			"Ɖo ŋku dzi be nànɔ tsi nyuie",
+		],
+		[
+			/^Gentle, Light Nutrition$/i,
+			"Ɖu nuɖuɖu bɔbɔewo",
+		],
+		[
+			/^Monitor for Warning Signs$/i,
+			"Lé ŋku ɖe dzesi veviwo ŋu",
+		],
+		[
+			/^Because the Creatinine (.*?) and ALT (.*?) are high.*/i,
+			"Elabena Creatinine kple ALT kɔkɔ wu nti, meɖe kuku yi dɔnɔkɔdola anaa kɔpitikɔm gbɔ kaba.",
+		],
+		[
+			/^Keep (.*?) well-hydrated.*/i,
+			"No tsi geɖe anaa coconut water daa be wòakpe ɖe kidneys ŋu.",
+		],
+		[
+			/^While waiting for medical advice.*/i,
+			"Ɖu nuɖuɖu bɔbɔewo abe koko ene. Ɖe fu kpo tso nuɖuɖu siwo me ami anaa dze geɖe le ŋu.",
+		],
+		[
+			/^Watch closely for any yellowing.*/i,
+			"Lé ŋku ɖe eme nyuie ne ŋkuwo anaa ŋutigbalẽ atrɔ abe yellow (Jaundice) ene. Yi kɔpitikɔm gbɔ kaba.",
+		],
+		[
+			/^ALT — Alanine Aminotransferase.*/i,
+			"ALT (liver enzyme) kɔkɔ wu. Esia fia be liver la le fu kpem viɖe.",
+		],
+		[
+			/^Creatinine \(a waste product.*/i,
+			"Creatinine (kidneys fĩĩ) kɔkɔ wu. Esia fia be kidneys la le dɔ wɔm le fu me.",
+		],
+		[
+			/^The results show that both the Creatinine.*/i,
+			"Ŋkuɖoɖoawo fia be Creatinine kple ALT kɔkɔ wu. Togbɔ be Bilirubin le nyuie hã la, kidneys kple liver dzesiwo hiã dɔnɔkɔdola. Yi dɔnɔkɔdola gbɔ kaba.",
+		],
 	],
 	fante: [
 		[
@@ -1360,6 +1492,50 @@ const TEMPLATE_TRANSLATIONS: Record<string, Array<[RegExp, string]>> = {
 		[
 			/^Please consult a doctor to discuss these findings\.$/i,
 			"Mesrɛ wo, kasa kyerɛ datser pa bi na monkasa fa nhwehwɛmu yi ho.",
+		],
+		[
+			/^Seek Medical Consultation Immediately$/i,
+			"Kɔ bɛhwɛ datser ntɛmpɛ pa ara",
+		],
+		[
+			/^Ensure Proper Hydration$/i,
+			"Nom nsu pa a ɔdɔɔso",
+		],
+		[
+			/^Gentle, Light Nutrition$/i,
+			"Dzi aduane a ɔnnyɛ dzen",
+		],
+		[
+			/^Monitor for Warning Signs$/i,
+			"Hwɛ nsɛnkyerɛdze a ɔyɛ hu ho yie",
+		],
+		[
+			/^Because the Creatinine (.*?) and ALT (.*?) are high.*/i,
+			"Esiane dɛ Creatinine ne ALT akɔ soro nti, mesrɛ wo kɔ ayaresabea anaa datser pa bi nkyɛn ntɛmpɛ pa ara.",
+		],
+		[
+			/^Keep (.*?) well-hydrated.*/i,
+			"Nom nsu pa a ɔdɔɔso anaa coconut water daa na ɔboa akokoɔduo (kidneys) ma ɔyi fĩĩ fii mogya mu yie.",
+		],
+		[
+			/^While waiting for medical advice.*/i,
+			"Ber a eworetwɛn datser afotu no, dzi aduane a ɔnnyɛ dzen te sɛ koko, emutuo, anaa emo nsu. Kwa aduane a ngo, kyew, anaa nkyen dɔɔso wɔ mu.",
+		],
+		[
+			/^Watch closely for any yellowing.*/i,
+			"Hwɛ yie dɛ aniwa anaa honam bɛyɛ akokɔsrade (Jaundice), nan anaa anim bɛhon, anaa dwonsɔ sesa a. Kɔ ayaresabea emergency ntɛm pa ara.",
+		],
+		[
+			/^ALT — Alanine Aminotransferase.*/i,
+			"ALT (liver enzyme) akɔ soro. Yei kyerɛ dɛ liver no wɔ ɔhaw mu.",
+		],
+		[
+			/^Creatinine \(a waste product.*/i,
+			"Creatinine (akokoɔduo fĩĩ) akɔ soro. Yei kyerɛ dɛ akokoɔduo no rebre.",
+		],
+		[
+			/^The results show that both the Creatinine.*/i,
+			"Nhwehwɛmu no kyerɛ dɛ Creatinine ne ALT nyinaa akɔ soro sen dɛ ɔsɛ dɛ ɔyɛ. Mesrɛ wo, kasa kyerɛ datser ntɛmpɛ pa ara.",
 		],
 	],
 };
@@ -1511,22 +1687,98 @@ const PHRASE_TRANSLATIONS: Record<string, Record<string, string>> = {
 	},
 };
 
+const REVERSE_ENGLISH_TRANSLATIONS: Record<string, string> = {
+	"Saa nhoma yi kyerɛ sɛ ɔbaba no akokoɔduo (kidneys) ne ne liver (akokoɔduo) mu nnyɛ yie. Ne Creatinine (waste product) ne ALT (liver enzyme) ayɛ kɛse. Ɛsɛ sɛ wode saa nhoma yi kɔ akɔhwɛ ɔdokofo (doctor) hɔ ntɛm.":
+		"The results show that kidney and liver markers fall outside standard reference ranges. Creatinine (a waste product) and ALT (a liver enzyme) are elevated. Please consult a doctor for a follow-up review.",
+
+	"Creatinine (Kreatini)": "Creatinine",
+	"ALT/GPT (Liver Enzyme)": "ALT / GPT (Liver Enzyme)",
+	"ALT/GPT": "ALT / GPT",
+
+	"Ɛyɛ kɛse (High)": "High",
+	"Ɛyɛ kɛse": "High",
+	"Aba fam (Low)": "Low",
+	"Aba fam": "Low",
+	"Ɛyɛ papa (Normal)": "Normal ✓",
+	"Ɛyɛ papa": "Normal ✓",
+
+	"Kɔ bɛhwɛ ɔhaw mu (See a doctor immediately)": "See a doctor immediately",
+	"Nom nsuo pii (Drink plenty of water)": "Drink plenty of water",
+	"Di aduane a ɛyɛ mmerɛ (Eat light meals)": "Eat light meals",
+
+	"Ɛsɛ sɛ wode saa nhoma yi kɔ akɔhwɛ ɔdokofo (doctor) hɔ ntɛm, ɛfiri sɛ w'akokoɔduo (kidneys) ne w'akokoɔduo (liver) mu nnyɛ yie. Ɔdokofo no bɛtumi aka nea ɛsɛ sɛ woyɛ.":
+		"You should bring your original report to a qualified clinician immediately for a professional evaluation of your kidney and liver markers.",
+
+	"Ma ɔbaba no nom nsuo pii anaa coconut water (nsuo a ɛfiri abɔden mu) na ɛbɛboa w'akokoɔduo (kidneys) ma ɛntumi afi madi (waste) fi mu yie.":
+		"Drink plenty of clean water or coconut water to support kidney function and help clear metabolic waste.",
+
+	"Ma no di aduane a ɛnyɛ den koraa, te sɛ kooko (porridge) anaa aduane a ɛyɛ mmerɛ, na ɛnyɛ aduane a ɛwɔ nnuane (oil) pii anaa nnuane a ɛyɛ den ma ne liver (akokoɔduo) nnyɛ adwuma den.":
+		"Eat light, easily digestible meals like porridge or soft foods, and avoid heavy or greasy foods to prevent extra liver stress.",
+};
+
+function sanitizeToEnglish(text: string): string {
+	if (!text) return text;
+	const trimmed = text.trim();
+	if (REVERSE_ENGLISH_TRANSLATIONS[trimmed]) {
+		return REVERSE_ENGLISH_TRANSLATIONS[trimmed];
+	}
+
+	let output = trimmed;
+	for (const [twi, eng] of Object.entries(REVERSE_ENGLISH_TRANSLATIONS)) {
+		if (output.includes(twi)) {
+			output = output.split(twi).join(eng);
+		}
+	}
+
+	output = output.replace(/[^\x00-\x7F\s\(\)\.\,\-]+?\s*\(([A-Za-z0-9\s\/\-\,\.\+]+)\)/g, "$1");
+
+	return output
+		.replace(/\bthe child's\b/gi, "your")
+		.replace(/\bthe baby's\b/gi, "your")
+		.replace(/\bthe man's\b/gi, "your")
+		.replace(/\bthe woman's\b/gi, "your")
+		.replace(/\bfor a 3-year-old patient\b/gi, "for this patient")
+		.replace(/\bfor a baby\b/gi, "for this patient");
+}
+
+function sanitizeIdentityPrivacy(text: string): string {
+	if (!text) return text;
+	return text
+		.replace(/for a \d+[\-\s]year[\-\s]old (child|baby|man|woman|male|female) (patient|child)/gi, "for this report")
+		.replace(/for a \d+[\-\s]year[\-\s]old (child|baby|man|woman|male|female)/gi, "for this report")
+		.replace(/for a (small child|baby|man|woman)/gi, "for this patient")
+		.replace(/\bthe child's\b/gi, "the patient's")
+		.replace(/\bthe baby's\b/gi, "the patient's")
+		.replace(/\bthe man's\b/gi, "the patient's")
+		.replace(/\bthe woman's\b/gi, "the patient's")
+		.replace(/\btake him to\b/gi, "consult")
+		.replace(/\btake her to\b/gi, "consult")
+		.replace(/\bchecked his\b/gi, "evaluated the")
+		.replace(/\bchecked her\b/gi, "evaluated the")
+		.replace(/\bfeed him\b/gi, "consume")
+		.replace(/\bfeed her\b/gi, "consume")
+		.replace(/\bɔbaba no\b/gi, "wo")
+		.replace(/\bma ɔbaba no\b/gi, "nom")
+		.replace(/\bma no di\b/gi, "di");
+}
+
 export function getTranslation(text: string, language: GemmaLanguage): string {
-	if (!text || language === "english") return text;
+	if (!text) return text;
+	if (language === "english") return sanitizeIdentityPrivacy(sanitizeToEnglish(text));
 
 	const trimmed = text.trim();
 	const exact = OFFLINE_TRANSLATIONS[language]?.[trimmed] || OFFLINE_TRANSLATIONS[language]?.[text];
-	if (exact) return exact;
+	if (exact) return sanitizeIdentityPrivacy(exact);
 
 	for (const [pattern, replacement] of TEMPLATE_TRANSLATIONS[language] ?? []) {
-		if (pattern.test(trimmed)) return trimmed.replace(pattern, replacement);
+		if (pattern.test(trimmed)) return sanitizeIdentityPrivacy(trimmed.replace(pattern, replacement));
 	}
 
 	// For multiline text blocks, translate line by line
 	if (text.includes("\n")) {
 		const lines = text.split("\n");
 		const translatedLines = lines.map((line) => getTranslation(line, language));
-		return translatedLines.join("\n");
+		return sanitizeIdentityPrivacy(translatedLines.join("\n"));
 	}
 
 	// For multi-sentence text blocks (separated by ". "), translate sentence by sentence
@@ -1534,7 +1786,7 @@ export function getTranslation(text: string, language: GemmaLanguage): string {
 		const sentences = text.split(/(?<=\.\s+)/);
 		if (sentences.length > 1) {
 			const translated = sentences.map((s) => getTranslation(s.trim(), language));
-			return translated.join(" ");
+			return sanitizeIdentityPrivacy(translated.join(" "));
 		}
 	}
 
@@ -1549,14 +1801,36 @@ export function getTranslation(text: string, language: GemmaLanguage): string {
 		}
 	}
 
-	return output;
+	return sanitizeIdentityPrivacy(output);
 }
 
 export function translateAnalysisResult(
 	result: GemmaAnalysisResult,
 	language: GemmaLanguage,
 ): GemmaAnalysisResult {
-	if (!result || language === "english") return result;
+	if (!result) return result;
+	if (language === "english") {
+		return {
+			...result,
+			summary: sanitizeIdentityPrivacy(sanitizeToEnglish(result.summary)),
+			summarySections: result.summarySections?.map((sec) => ({
+				...sec,
+				title: sanitizeIdentityPrivacy(sanitizeToEnglish(sec.title)),
+				body: sanitizeIdentityPrivacy(sanitizeToEnglish(sec.body)),
+			})),
+			findings: result.findings?.map((f) => ({
+				...f,
+				name: sanitizeIdentityPrivacy(sanitizeToEnglish(f.name)),
+				statusLabel: sanitizeIdentityPrivacy(sanitizeToEnglish(f.statusLabel)),
+				note: sanitizeIdentityPrivacy(sanitizeToEnglish(f.note)),
+			})) ?? [],
+			recommendations: result.recommendations?.map((r) => ({
+				...r,
+				title: sanitizeIdentityPrivacy(sanitizeToEnglish(r.title)),
+				body: sanitizeIdentityPrivacy(sanitizeToEnglish(r.body)),
+			})) ?? [],
+		};
+	}
 
 	const summary = getTranslation(result.summary, language);
 
@@ -1583,7 +1857,7 @@ export function translateAnalysisResult(
 
 	return {
 		...result,
-		summary,
+		summary: sanitizeIdentityPrivacy(summary),
 		summarySections,
 		findings,
 		recommendations,
