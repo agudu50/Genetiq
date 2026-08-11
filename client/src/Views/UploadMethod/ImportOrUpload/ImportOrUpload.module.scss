@@ -4911,9 +4911,17 @@ html[data-theme="dark"] .resultStatusText-good { color: #30D158; }
   border-radius: 8px;
   background: #00a69d;
   color: #ffffff;
+  border: none;
   font-size: 13px;
   font-weight: 600;
+  cursor: pointer;
   box-shadow: 0 2px 6px rgba(0, 166, 157, 0.2);
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #008f87;
+    transform: translateY(-1px);
+  }
 }
 
 .uploadHubCameraBtn {
@@ -4927,6 +4935,15 @@ html[data-theme="dark"] .resultStatusText-good { color: #30D158; }
   color: var(--iou-heading);
   font-size: 13px;
   font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: var(--iou-surface-hover);
+    border-color: #00a69d;
+    color: #00a69d;
+    transform: translateY(-1px);
+  }
 }
 
 .uploadHubTipCard {
@@ -5021,6 +5038,196 @@ html[data-theme="dark"] .resultStatusText-good { color: #30D158; }
 
 .uploadHubTrustItem svg {
   color: #00a69d;
+}
+
+.privacyFullText { display: inline; }
+.privacyMobileText { display: none; }
+.heroSubFull { display: block; }
+.heroSubMobile { display: none; }
+
+/* --- Human-Centered Mobile Responsiveness (< 640px and < 400px) --- */
+@media (max-width: 640px) {
+  .header {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 12px 14px 0 !important;
+    gap: 8px !important;
+  }
+
+  .stepText {
+    display: none !important;
+  }
+
+  .privacyFullText { display: none !important; }
+  .privacyMobileText { display: inline !important; }
+  .heroSubFull { display: none !important; }
+  .heroSubMobile { display: block !important; }
+
+  .uploadHubStatusBadge {
+    display: none !important;
+  }
+
+  .uploadHubHeaderActions {
+    justify-content: flex-end !important;
+    margin-bottom: 8px !important;
+  }
+
+  .uploadHubContainer {
+    padding: 4px 4px 24px 4px;
+  }
+
+  .uploadHubHeaderActions {
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .uploadHubStatusBadge {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  .uploadHubPrivacyChip {
+    font-size: 11px;
+    padding: 3px 10px;
+    text-align: center;
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+
+  .uploadHubHero {
+    margin-bottom: 16px;
+  }
+
+  .uploadHubHero h1 {
+    font-size: 21px;
+    margin-bottom: 6px;
+  }
+
+  .uploadHubHero p {
+    font-size: 13px;
+    padding: 0 6px;
+    line-height: 1.45;
+  }
+
+  .uploadHubCard {
+    border-radius: 18px;
+  }
+
+  .uploadHubTabs {
+    flex-direction: row;
+    gap: 0;
+  }
+
+  .uploadHubTab {
+    padding: 12px 4px;
+    font-size: 12px;
+    gap: 5px;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  .uploadHubContent {
+    padding: 18px 14px;
+  }
+
+  .uploadHubDropzone {
+    padding: 24px 12px;
+    border-radius: 14px;
+  }
+
+  .uploadHubDropIcon {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 10px;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .uploadHubDropzone h3 {
+    font-size: 15px;
+  }
+
+  .uploadHubDropzone p {
+    font-size: 12px;
+    margin-bottom: 14px;
+  }
+
+  .uploadHubDropzoneBtns {
+    flex-direction: row;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .uploadHubBrowseBtn,
+  .uploadHubCameraBtn {
+    flex: 1;
+    justify-content: center;
+    padding: 10px 8px;
+    font-size: 12px;
+
+    svg {
+      width: 13px;
+      height: 13px;
+    }
+  }
+
+  .uploadHubTipCard {
+    padding: 10px 12px;
+    font-size: 12px;
+    margin-top: 14px;
+  }
+
+  .uploadHubActions {
+    padding: 16px 16px;
+  }
+
+  .uploadHubBtnPrimary {
+    padding: 14px;
+    font-size: 15px;
+  }
+
+  .uploadHubBtnGhost {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .uploadHubTrustFooter {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px 12px;
+    margin-top: 20px;
+  }
+
+  .uploadHubTrustItem {
+    justify-content: center;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 400px) {
+  .uploadHubTab {
+    font-size: 11px;
+    padding: 10px 2px;
+    gap: 3px;
+  }
+
+  .uploadHubDropzoneBtns {
+    flex-direction: column;
+  }
+
+  .uploadHubBrowseBtn,
+  .uploadHubCameraBtn {
+    width: 100%;
+  }
 }
 
 .multiResultContainer {

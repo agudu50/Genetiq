@@ -107,6 +107,7 @@ const ImportOrUpload = () => {
 	const [files, setFiles] = useState<UploadedFile[]>([]);
 	const [dragging, setDragging] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
+	const cameraInputRef = useRef<HTMLInputElement>(null);
 	const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
 	const [uploadTab, setUploadTab] = useState<"file" | "text" | "preset">("file");
 	const [langDropdownOpen, setLangDropdownOpen] = useState(false);
@@ -576,7 +577,7 @@ const ImportOrUpload = () => {
 					{/* Header row — Back (left) + Steps (right) */}
 				<div className={styles.header}>
 					<button className={styles.backBtn} onClick={() => step === "upload" ? setStep("personal") : navigate(paths.config.root)}>
-						<ArrowLeft size={16} /> Back
+						<ArrowLeft size={16} /> <span className={styles.backBtnText}>Back</span>
 					</button>
 
 					<div className={`${styles.steps} ${styles.stepsMobile}`}>
@@ -584,12 +585,12 @@ const ImportOrUpload = () => {
 							<span className={styles.stepNum}>
 								{step === "upload" ? <CheckCircle size={13} /> : "1"}
 							</span>
-							<span>About You</span>
+							<span className={styles.stepText}>About You</span>
 						</div>
 						<div className={`${styles.stepLine} ${step === "upload" ? styles.stepLineDone : ""}`} />
 						<div className={`${styles.step} ${step === "upload" ? styles.stepActive : styles.stepIdle}`}>
 							<span className={styles.stepNum}>2</span>
-							<span>Upload Results</span>
+							<span className={styles.stepText}>Upload Results</span>
 						</div>
 					</div>
 				</div>
@@ -973,10 +974,11 @@ const ImportOrUpload = () => {
 					{/* Hero text with Human-Centered privacy badge */}
 					<div className={styles.uploadHubHero}>
 						<div className={styles.uploadHubPrivacyChip}>
-							<ShieldCheck size={13} /> {t("Private & Confidential")} · {t("Processed locally on your device")}
+							<ShieldCheck size={13} /> <span className={styles.privacyFullText}>{t("Private & Confidential")} · {t("Processed locally on your device")}</span><span className={styles.privacyMobileText}>{t("Private & Local AI")}</span>
 						</div>
 						<h1>{t("Analyze your lab results")}</h1>
-						<p>{t("Get plain-English insights from any medical report in seconds.")}</p>
+						<p className={styles.heroSubFull}>{t("Get plain-English insights from any medical report in seconds.")}</p>
+						<p className={styles.heroSubMobile}>{t("Get plain-English insights in seconds.")}</p>
 					</div>
 
 					{/* Main Card */}
@@ -1023,17 +1025,39 @@ const ImportOrUpload = () => {
 											style={{ display: "none" }}
 											onChange={(e) => addFiles(e.target.files)}
 										/>
+										<input
+											ref={cameraInputRef}
+											type="file"
+											accept="image/*"
+											capture="environment"
+											style={{ display: "none" }}
+											onChange={(e) => addFiles(e.target.files)}
+										/>
 										<div className={styles.uploadHubDropIcon}><Upload size={24} /></div>
 										<h3>{t("Drop files here or browse")}</h3>
 										<p>{t("PDF, JPG, PNG, or CSV up to 25MB")}</p>
 
 										<div className={styles.uploadHubDropzoneBtns}>
-											<span className={styles.uploadHubBrowseBtn}>
+											<button
+												type="button"
+												className={styles.uploadHubBrowseBtn}
+												onClick={(e) => {
+													e.stopPropagation();
+													fileInputRef.current?.click();
+												}}
+											>
 												<FileText size={14} /> {t("Browse Files")}
-											</span>
-											<span className={styles.uploadHubCameraBtn}>
+											</button>
+											<button
+												type="button"
+												className={styles.uploadHubCameraBtn}
+												onClick={(e) => {
+													e.stopPropagation();
+													cameraInputRef.current?.click();
+												}}
+											>
 												<Camera size={14} /> {t("Snap Photo")}
-											</span>
+											</button>
 										</div>
 									</div>
 
@@ -1208,7 +1232,7 @@ const ImportOrUpload = () => {
 							<Zap size={14} /> {t("Instant Analysis")}
 						</div>
 						<div className={styles.uploadHubTrustItem}>
-							<Brain size={14} /> {t("Local Gemma AI")}
+							<Brain size={14} /> {t("Local Genetiq AI")}
 						</div>
 						<div className={styles.uploadHubTrustItem}>
 							<Globe size={14} /> {t("Ghanaian Languages")}
