@@ -6,7 +6,7 @@ import { updateUserInfo } from "@/App/Redux/userSlice";
 import { addUploadRecord } from "@/App/Redux/uploadHistorySlice";
 import type { LabFinding, Recommendation } from "@/App/Redux/uploadHistorySlice";
 import { paths } from "@/App/Routes/Paths";
-import { Upload, FileText, ShieldCheck, Zap, ChevronRight, X, CheckCircle, ArrowLeft, Loader2, Wifi, WifiOff, Brain, Stethoscope, User, Droplets, Ruler, Scale, Activity, Clock, Check, Lock, ChevronDown, Bug, Microscope, FlaskConical, Dna, Candy, ScanSearch, Waves, Info, Sparkles } from "lucide-react";
+import { Upload, FileText, ShieldCheck, Zap, ChevronRight, X, CheckCircle, ArrowLeft, Loader2, Wifi, WifiOff, Brain, Stethoscope, User, Droplets, Ruler, Scale, Activity, Clock, Check, Lock, ChevronDown, Bug, Microscope, FlaskConical, Dna, Candy, ScanSearch, Waves, Info, Sparkles, Camera, Globe } from "lucide-react";
 import {
 	analyzeLabResults,
 	getTranslation,
@@ -970,34 +970,37 @@ const ImportOrUpload = () => {
 						</div>
 					</div>
 
-					{/* Hero text */}
+					{/* Hero text with Human-Centered privacy badge */}
 					<div className={styles.uploadHubHero}>
-						<h1>Analyze your lab results</h1>
-						<p>Get plain-English insights from any medical report in seconds.</p>
+						<div className={styles.uploadHubPrivacyChip}>
+							<ShieldCheck size={13} /> {t("Private & Confidential")} · {t("Processed locally on your device")}
+						</div>
+						<h1>{t("Analyze your lab results")}</h1>
+						<p>{t("Get plain-English insights from any medical report in seconds.")}</p>
 					</div>
 
 					{/* Main Card */}
 					<div className={styles.uploadHubCard}>
 						
-						{/* Tabs */}
+						{/* HCD Segmented Tabs */}
 						<div className={styles.uploadHubTabs}>
 							<button 
 								className={`${styles.uploadHubTab} ${uploadTab === "file" ? styles.uploadHubTabActive : ""}`}
 								onClick={() => setUploadTab("file")}
 							>
-								Upload File
+								<Upload size={16} /> {t("Upload File")}
 							</button>
 							<button 
 								className={`${styles.uploadHubTab} ${uploadTab === "text" ? styles.uploadHubTabActive : ""}`}
 								onClick={() => setUploadTab("text")}
 							>
-								Paste Text
+								<FileText size={16} /> {t("Paste Text")}
 							</button>
 							<button 
 								className={`${styles.uploadHubTab} ${uploadTab === "preset" ? styles.uploadHubTabActive : ""}`}
 								onClick={() => setUploadTab("preset")}
 							>
-								Try a Sample
+								<FlaskConical size={16} /> {t("Try a Sample")}
 							</button>
 						</div>
 
@@ -1021,8 +1024,24 @@ const ImportOrUpload = () => {
 											onChange={(e) => addFiles(e.target.files)}
 										/>
 										<div className={styles.uploadHubDropIcon}><Upload size={24} /></div>
-										<h3>Drop files here or browse</h3>
-										<p>PDF, JPG, PNG, or CSV up to 25MB</p>
+										<h3>{t("Drop files here or browse")}</h3>
+										<p>{t("PDF, JPG, PNG, or CSV up to 25MB")}</p>
+
+										<div className={styles.uploadHubDropzoneBtns}>
+											<span className={styles.uploadHubBrowseBtn}>
+												<FileText size={14} /> {t("Browse Files")}
+											</span>
+											<span className={styles.uploadHubCameraBtn}>
+												<Camera size={14} /> {t("Snap Photo")}
+											</span>
+										</div>
+									</div>
+
+									<div className={styles.uploadHubTipCard}>
+										<Info size={15} className={styles.uploadHubTipIcon} />
+										<span>
+											<strong>{t("Human-Centered Privacy Guarantee")}:</strong> {t("Your lab documents are processed locally. We never share or sell your personal medical data.")}
+										</span>
 									</div>
 
 									{files.length > 0 && (
@@ -1109,10 +1128,10 @@ const ImportOrUpload = () => {
 										</div>
 										<div className={styles.uploadLabTextTitleGroup}>
 											<label htmlFor="iou-lab-text" className={styles.uploadLabTextTitle}>
-												Paste lab results 
+												{t("Paste lab results")} 
 											</label>
 											<p className={styles.uploadLabTextSubtitle}>
-												Use this if your photo is unclear or if you only have text.
+												{t("Use this if your photo is unclear or if you only have text.")}
 											</p>
 										</div>
 									</div>
@@ -1143,8 +1162,8 @@ const ImportOrUpload = () => {
 										>
 											<span className={styles.uploadPresetEmoji}>{preset.icon}</span>
 											<div className={styles.uploadPresetText}>
-												<span className={styles.uploadPresetTitle}>{preset.title}</span>
-												<span className={styles.uploadPresetDesc}>{preset.desc}</span>
+												<span className={styles.uploadPresetTitle}>{t(preset.title)}</span>
+												<span className={styles.uploadPresetDesc}>{t(preset.desc)}</span>
 											</div>
 											{selectedPreset === preset.id && (
 												<CheckCircle size={16} className={styles.uploadPresetCheck} />
@@ -1162,20 +1181,20 @@ const ImportOrUpload = () => {
 								disabled={!canAnalyze}
 								onClick={handleAnalyze}
 							>
-								<Brain size={16} />
+								<Brain size={18} />
 								{canAnalyze
 									? hasLabText && !allDone && !selectedPreset
-										? "Analyse pasted results"
-										: `Analyse with ${gemmaOnline ? "Gemma AI" : "AI"}`
+										? t("Analyse pasted results")
+										: t(`Analyse with ${gemmaOnline ? "Gemma AI" : "AI"}`)
 									: allDone
-										? "Analyse my results"
+										? t("Analyse my results")
 										: files.length > 0
-											? "Uploading…"
-											: "Add results to analyse"
+											? t("Uploading…")
+											: t("Add results to analyse")
 								}
 							</button>
 							<button className={styles.uploadHubBtnGhost} onClick={() => navigate(paths.dashboard.root)}>
-								Skip for now
+								{t("Skip for now")}
 							</button>
 						</div>
 					</div>
@@ -1183,13 +1202,16 @@ const ImportOrUpload = () => {
 					{/* Trust Footer */}
 					<div className={styles.uploadHubTrustFooter}>
 						<div className={styles.uploadHubTrustItem}>
-							<ShieldCheck size={14} /> Encrypted
+							<ShieldCheck size={14} /> {t("Encrypted & Private")}
 						</div>
 						<div className={styles.uploadHubTrustItem}>
-							<Zap size={14} /> Instant
+							<Zap size={14} /> {t("Instant Analysis")}
 						</div>
 						<div className={styles.uploadHubTrustItem}>
-							<Brain size={14} /> Medical AI
+							<Brain size={14} /> {t("Local Gemma AI")}
+						</div>
+						<div className={styles.uploadHubTrustItem}>
+							<Globe size={14} /> {t("Ghanaian Languages")}
 						</div>
 					</div>
 				</div>
