@@ -1333,6 +1333,372 @@ $teal2: #008f87;
 	border-radius: 12px;
 }
 
+/* --- Human-Centered File Preview Card --- */
+.filePreviewCard {
+	display: flex;
+	flex-direction: column;
+	background: var(--iou-card);
+	border: 1px solid var(--iou-border);
+	border-radius: 16px;
+	overflow: hidden;
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+	transition: all 0.2s ease;
+
+	&:hover {
+		border-color: rgba(0, 166, 157, 0.4);
+		box-shadow: 0 6px 20px rgba(0, 166, 157, 0.08);
+	}
+}
+
+.filePreviewHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 16px;
+	border-bottom: 1px solid var(--iou-border);
+	background: var(--iou-surface);
+}
+
+.filePreviewTitleGroup {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-width: 0;
+}
+
+.filePreviewBadge {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 3px 9px;
+	border-radius: 6px;
+	background: rgba(0, 166, 157, 0.1);
+	color: #00a69d;
+	font-size: 11.5px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.3px;
+}
+
+.filePreviewFileName {
+	font-size: 13.5px;
+	font-weight: 600;
+	color: var(--iou-heading);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 220px;
+
+	@media (max-width: 480px) {
+		max-width: 140px;
+	}
+}
+
+.filePreviewHeaderActions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.fileReadyChip {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 3px 9px;
+	border-radius: 12px;
+	background: rgba(16, 185, 129, 0.1);
+	color: #10b981;
+	font-size: 11.5px;
+	font-weight: 600;
+}
+
+.fileUploadingChip {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 3px 9px;
+	border-radius: 12px;
+	background: rgba(0, 166, 157, 0.1);
+	color: #00a69d;
+	font-size: 11.5px;
+	font-weight: 600;
+}
+
+.fileActionBtn {
+	width: 32px !important;
+	height: 32px !important;
+	border-radius: 50% !important;
+	background: rgba(239, 68, 68, 0.12) !important;
+	border: 1px solid rgba(239, 68, 68, 0.3) !important;
+	color: #ef4444 !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	cursor: pointer !important;
+	transition: all 0.15s ease !important;
+	flex-shrink: 0 !important;
+	opacity: 1 !important;
+	visibility: visible !important;
+	padding: 0 !important;
+
+	svg {
+		width: 14px !important;
+		height: 14px !important;
+		stroke: #ef4444 !important;
+		stroke-width: 2.5px !important;
+		color: #ef4444 !important;
+		display: block !important;
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		line, path {
+			stroke: #ef4444 !important;
+			stroke-width: 2.5px !important;
+		}
+	}
+
+	&:hover {
+		background: #ef4444 !important;
+		border-color: #ef4444 !important;
+		color: #ffffff !important;
+		transform: scale(1.08) !important;
+
+		svg {
+			stroke: #ffffff !important;
+			color: #ffffff !important;
+
+			line, path {
+				stroke: #ffffff !important;
+			}
+		}
+	}
+}
+
+.previewImageFrame {
+	position: relative;
+	width: 100%;
+	height: 200px;
+	background: var(--iou-surface);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+
+	@media (max-width: 640px) {
+		height: 160px;
+	}
+}
+
+.previewImg {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	padding: 8px;
+	box-sizing: border-box;
+}
+
+.previewFloatingToolbar {
+	position: absolute;
+	bottom: 12px;
+	right: 12px;
+	display: flex;
+	gap: 8px;
+	z-index: 10;
+}
+
+.previewToolbarBtn {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 6px 12px;
+	border-radius: 8px;
+	background: rgba(15, 23, 42, 0.75);
+	backdrop-filter: blur(8px);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	color: #ffffff;
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.15s ease;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+	&:hover {
+		background: rgba(0, 166, 157, 0.9);
+		border-color: #00a69d;
+		transform: translateY(-1px);
+	}
+}
+
+.previewHiddenNotice {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 14px 16px;
+	background: var(--iou-surface);
+	font-size: 13px;
+	color: var(--iou-muted);
+
+	span {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+}
+
+.showPreviewLinkBtn {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	background: transparent;
+	border: none;
+	color: #00a69d;
+	font-size: 12.5px;
+	font-weight: 600;
+	cursor: pointer;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+.filePreviewFooter {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px 16px;
+	background: var(--iou-card);
+	border-top: 1px solid var(--iou-border);
+}
+
+.fileMetaDetails {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 12px;
+	color: var(--iou-muted);
+}
+
+.fileSizeText {
+	font-weight: 500;
+}
+
+.fileMetaDot {
+	opacity: 0.5;
+}
+
+.fileQualityBadge {
+	font-weight: 600;
+	color: #00a69d;
+}
+
+.fileProgressWrapper {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-width: 100px;
+}
+
+.fileProgressBar {
+	flex: 1;
+	height: 4px;
+	border-radius: 99px;
+	background: var(--iou-border);
+	overflow: hidden;
+}
+
+.fileProgressFill {
+	height: 100%;
+	background: #00a69d;
+	transition: width 0.2s ease;
+}
+
+.fileProgressPct {
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--iou-muted);
+}
+
+/* --- Zoom Lightbox Modal --- */
+.zoomModalOverlay {
+	position: fixed;
+	inset: 0;
+	z-index: 9999;
+	background: rgba(10, 15, 25, 0.85);
+	backdrop-filter: blur(12px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 24px;
+}
+
+.zoomModalContent {
+	position: relative;
+	max-width: 90vw;
+	max-height: 85vh;
+	background: var(--iou-card);
+	border: 1px solid var(--iou-border);
+	border-radius: 20px;
+	overflow: hidden;
+	box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.zoomModalCloseBtn {
+	position: absolute;
+	top: 16px;
+	right: 16px;
+	width: 40px !important;
+	height: 40px !important;
+	border-radius: 50% !important;
+	background: rgba(15, 23, 42, 0.85) !important;
+	border: 1px solid rgba(255, 255, 255, 0.3) !important;
+	color: #ffffff !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	cursor: pointer !important;
+	z-index: 10 !important;
+	transition: all 0.2s ease !important;
+	padding: 0 !important;
+	opacity: 1 !important;
+	visibility: visible !important;
+
+	svg {
+		width: 18px !important;
+		height: 18px !important;
+		stroke: #ffffff !important;
+		stroke-width: 2.5px !important;
+		color: #ffffff !important;
+		display: block !important;
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		line, path {
+			stroke: #ffffff !important;
+			stroke-width: 2.5px !important;
+		}
+	}
+
+	&:hover {
+		background: #ef4444 !important;
+		border-color: #ef4444 !important;
+		transform: scale(1.08) !important;
+
+		svg line, svg path {
+			stroke: #ffffff !important;
+		}
+	}
+}
+
+.zoomModalImg {
+	max-width: 100%;
+	max-height: 80vh;
+	object-fit: contain;
+	display: block;
+}
+
 .fileIcon {
 	width: 36px;
 	height: 36px;
@@ -1383,16 +1749,33 @@ $teal2: #008f87;
 }
 
 .removeBtn {
-	background: none;
-	border: none;
-	color: var(--iou-muted);
+	background: rgba(239, 68, 68, 0.12);
+	border: 1px solid rgba(239, 68, 68, 0.3);
+	color: #ef4444;
 	cursor: pointer;
-	padding: 4px;
-	border-radius: 6px;
-	transition: color 0.2s, background 0.2s;
+	padding: 6px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.2s ease;
 	flex-shrink: 0;
 
-	&:hover { color: #ff6b6b; background: rgba(255,107,107,0.08); }
+	svg {
+		stroke: #ef4444;
+		stroke-width: 2.2;
+		display: block;
+	}
+
+	&:hover {
+		color: #ffffff;
+		background: #ef4444;
+		border-color: #ef4444;
+
+		svg {
+			stroke: #ffffff;
+		}
+	}
 }
 
 .spinner {

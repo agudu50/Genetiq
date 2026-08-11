@@ -6,7 +6,7 @@ import { updateUserInfo } from "@/App/Redux/userSlice";
 import { addUploadRecord } from "@/App/Redux/uploadHistorySlice";
 import type { LabFinding, Recommendation } from "@/App/Redux/uploadHistorySlice";
 import { paths } from "@/App/Routes/Paths";
-import { Upload, FileText, ShieldCheck, Zap, ChevronRight, X, CheckCircle, ArrowLeft, Loader2, Wifi, WifiOff, Brain, Stethoscope, User, Droplets, Ruler, Scale, Activity, Clock, Check, Lock, ChevronDown, Bug, Microscope, FlaskConical, Dna, Candy, ScanSearch, Waves, Info, Sparkles, Camera, Globe } from "lucide-react";
+import { Upload, FileText, ShieldCheck, Zap, ChevronRight, CheckCircle, ArrowLeft, Loader2, Wifi, WifiOff, Brain, Stethoscope, User, Droplets, Ruler, Scale, Activity, Clock, Check, Lock, ChevronDown, Bug, Microscope, FlaskConical, Dna, Candy, ScanSearch, Waves, Info, Sparkles, Camera, Globe, Eye, EyeOff, ZoomIn } from "lucide-react";
 import {
 	analyzeLabResults,
 	getTranslation,
@@ -65,7 +65,7 @@ function AiThinkingStatus({ phase, gemmaOnline, t }: { phase: string | null; gem
 	const [msgIndex, setMsgIndex] = useState(0);
 
 	const messages = [
-		"Gemma AI is interpreting your lab values...",
+		"Genetiq AI is interpreting your lab values...",
 		"Cross-referencing with medical reference ranges...",
 		"Reasoning through your health profile...",
 		"Formulating localized care recommendations...",
@@ -108,6 +108,7 @@ const ImportOrUpload = () => {
 	const [dragging, setDragging] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const cameraInputRef = useRef<HTMLInputElement>(null);
+	const [zoomModalUrl, setZoomModalUrl] = useState<string | null>(null);
 	const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
 	const [uploadTab, setUploadTab] = useState<"file" | "text" | "preset">("file");
 	const [langDropdownOpen, setLangDropdownOpen] = useState(false);
@@ -1071,71 +1072,103 @@ const ImportOrUpload = () => {
 									{files.length > 0 && (
 										<div className={styles.uploadFileList} style={{ marginTop: '24px' }}>
 											{files.map(({ file, progress, done, previewUrl, hidePreview }) => (
-												<div 
-													key={file.name} 
-													className={`${styles.fileRow} ${done ? styles.fileRowDone : ""}`}
-													style={previewUrl && !hidePreview ? { flexDirection: 'column', alignItems: 'stretch', padding: 0, overflow: 'hidden' } : {}}
-												>
-													{previewUrl && !hidePreview && (
-														<div style={{ width: '100%', height: 180, background: 'var(--iou-surface)', position: 'relative' }}>
-															<img src={previewUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-															<button
-																onClick={(e) => togglePreview(file, e)}
-																style={{ 
-																	position: 'absolute', top: 12, right: 12, 
-																	background: 'rgba(0,0,0,0.7)', 
-																	color: '#ffffff', 
-																	border: '2px solid rgba(255,255,255,0.4)', 
-																	borderRadius: '50%', 
-																	width: 32, height: 32, 
-																	display: 'flex', alignItems: 'center', justifyContent: 'center', 
-																	cursor: 'pointer',
-																	zIndex: 999,
-																	boxShadow: '0 4px 12px rgba(0,0,0,0.4)'
-																}}
-																title="Hide preview"
+												<div key={file.name} className={`${styles.filePreviewCard} ${done ? styles.filePreviewCardDone : ""}`}>
+													{/* Card Header */}
+													<div className={styles.filePreviewHeader}>
+														<div className={styles.filePreviewTitleGroup}>
+															<span className={styles.filePreviewBadge}>
+																<ScanSearch size={13} color="#00a69d" strokeWidth={2.2} /> {t("Preview")}
+															</span>
+															<span className={styles.filePreviewFileName}>{file.name}</span>
+														</div>
+														<div className={styles.filePreviewHeaderActions}>
+															{done ? (
+																<span className={styles.fileReadyChip}>
+																	<CheckCircle size={12} color="#10b981" strokeWidth={2.2} /> {t("Ready")}
+																</span>
+															) : (
+																<span className={styles.fileUploadingChip}>
+																	<Loader2 size={12} className={styles.spinner} color="#00a69d" /> {t("Uploading")}
+																</span>
+															)}
+															<button 
+																type="button" 
+																className={styles.fileActionBtn} 
+																onClick={(e) => { e.stopPropagation(); removeFile(file); }}
+																title="Remove document"
+																aria-label="Remove document"
 															>
-																<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ overflow: 'visible' }}>
-																	<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" style={{ stroke: 'white', strokeWidth: 2, fill: 'none' }} />
-																	<path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" style={{ stroke: 'white', strokeWidth: 2, fill: 'none' }} />
-																	<path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" style={{ stroke: 'white', strokeWidth: 2, fill: 'none' }} />
-																	<line x1="2" x2="22" y1="2" y2="22" style={{ stroke: 'white', strokeWidth: 2 }} />
+																<svg 
+																	width="14" 
+																	height="14" 
+																	viewBox="0 0 24 24" 
+																	fill="none" 
+																	stroke="#ef4444" 
+																	strokeWidth="2.5" 
+																	strokeLinecap="round" 
+																	strokeLinejoin="round"
+																	style={{ display: 'block', width: 14, height: 14, stroke: '#ef4444' }}
+																>
+																	<line x1="18" y1="6" x2="6" y2="18" style={{ stroke: '#ef4444', strokeWidth: 2.5 }} />
+																	<line x1="6" y1="6" x2="18" y2="18" style={{ stroke: '#ef4444', strokeWidth: 2.5 }} />
 																</svg>
 															</button>
 														</div>
-													)}
-													<div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: previewUrl && !hidePreview ? '12px 16px' : 0 }}>
-														<div className={styles.fileIcon}>
-															{done ? <CheckCircle size={16} /> : <FileText size={16} />}
-														</div>
-														<div className={styles.fileMeta}>
-															<span className={styles.fileName}>{file.name}</span>
-															<span className={styles.fileSize}>
-																{(file.size / 1024).toFixed(0)} KB
-																{done && " · Ready"}
-															</span>
-															{!done && (
-																<div className={styles.progressBar}>
-																	<div className={styles.progressFill} style={{ width: `${progress}%` }} />
-																</div>
-															)}
-														</div>
-														{done && (
-															<div style={{ display: 'flex', gap: 8 }}>
-																{previewUrl && hidePreview && (
-																	<button className={styles.removeBtn} onClick={(e) => togglePreview(file, e)} title="Show preview">
-																		<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-																			<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-																			<circle cx="12" cy="12" r="3" />
-																		</svg>
-																	</button>
-																)}
-																<button className={styles.removeBtn} onClick={(e) => { e.stopPropagation(); removeFile(file); }} title="Remove file">
-																	<X size={14} />
+													</div>
+
+													{/* Image Frame with Floating Toolbar */}
+													{previewUrl && !hidePreview ? (
+														<div className={styles.previewImageFrame}>
+															<img src={previewUrl} alt="Lab Report Preview" className={styles.previewImg} />
+															
+															{/* Floating Hover Controls */}
+															<div className={styles.previewFloatingToolbar}>
+																<button 
+																	type="button" 
+																	className={styles.previewToolbarBtn}
+																	onClick={() => setZoomModalUrl(previewUrl)}
+																	title="Zoom image"
+																>
+																	<ZoomIn size={14} color="#ffffff" strokeWidth={2.2} /> {t("Zoom")}
+																</button>
+																<button 
+																	type="button" 
+																	className={styles.previewToolbarBtn}
+																	onClick={(e) => togglePreview(file, e)}
+																	title="Hide preview"
+																>
+																	<EyeOff size={14} color="#ffffff" strokeWidth={2.2} /> {t("Hide")}
 																</button>
 															</div>
+														</div>
+													) : (
+														<div className={styles.previewHiddenNotice}>
+															<span><FileText size={15} color="var(--iou-muted)" /> {t("Document attached")}</span>
+															{previewUrl && (
+																<button 
+																	type="button" 
+																	className={styles.showPreviewLinkBtn}
+																	onClick={(e) => togglePreview(file, e)}
+																>
+																	<Eye size={13} color="#00a69d" strokeWidth={2.2} /> {t("Show preview")}
+																</button>
+															)}
+														</div>
+													)}
+
+													{/* Footer Details Row */}
+													<div className={styles.filePreviewFooter}>
+														<div className={styles.fileMetaDetails}>
+															<span className={styles.fileSizeText}>{(file.size / 1024).toFixed(0)} KB</span>
+														</div>
+														{!done && (
+															<div className={styles.fileProgressWrapper}>
+																<div className={styles.fileProgressBar}>
+																	<div className={styles.fileProgressFill} style={{ width: `${progress}%` }} />
+																</div>
+																<span className={styles.fileProgressPct}>{progress}%</span>
+															</div>
 														)}
-														{!done && <Loader2 size={15} className={styles.spinner} />}
 													</div>
 												</div>
 											))}
@@ -1209,7 +1242,7 @@ const ImportOrUpload = () => {
 								{canAnalyze
 									? hasLabText && !allDone && !selectedPreset
 										? t("Analyse pasted results")
-										: t(`Analyse with ${gemmaOnline ? "Gemma AI" : "AI"}`)
+										: t(`Analyse with ${gemmaOnline ? "Genetiq AI" : "AI"}`)
 									: allDone
 										? t("Analyse my results")
 										: files.length > 0
@@ -1241,6 +1274,31 @@ const ImportOrUpload = () => {
 				</div>
 			)}
 			</>
+			)}
+
+			{/* ── Zoom Lightbox Modal ─────────────────── */}
+			{zoomModalUrl && (
+				<div className={styles.zoomModalOverlay} onClick={() => setZoomModalUrl(null)}>
+					<div className={styles.zoomModalContent} onClick={(e) => e.stopPropagation()}>
+						<button className={styles.zoomModalCloseBtn} onClick={() => setZoomModalUrl(null)} aria-label="Close zoomed report">
+							<svg 
+								width="18" 
+								height="18" 
+								viewBox="0 0 24 24" 
+								fill="none" 
+								stroke="#ffffff" 
+								strokeWidth="2.5" 
+								strokeLinecap="round" 
+								strokeLinejoin="round"
+								style={{ display: 'block', width: 18, height: 18, stroke: '#ffffff' }}
+							>
+								<line x1="18" y1="6" x2="6" y2="18" style={{ stroke: '#ffffff', strokeWidth: 2.5 }} />
+								<line x1="6" y1="6" x2="18" y2="18" style={{ stroke: '#ffffff', strokeWidth: 2.5 }} />
+							</svg>
+						</button>
+						<img src={zoomModalUrl} alt="Zoomed Lab Report" className={styles.zoomModalImg} />
+					</div>
+				</div>
 			)}
 		</div>
 	);
