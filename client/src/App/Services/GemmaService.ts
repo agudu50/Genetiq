@@ -230,7 +230,7 @@ export async function analyzeLabResults(opts: {
 
 	if (!result && health.available && health.modelLoaded) {
 		try {
-			opts.onProgress?.("ai", "Analysing your results with Gemma AI…");
+			opts.onProgress?.("ai", "Analysing your results with Genetiq AI…");
 			const res = await fetch(`${GEMMA_BASE_URL}/api/gemma/analyze`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },

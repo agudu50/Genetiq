@@ -533,20 +533,6 @@ const ImportOrUpload = () => {
 						</div>
 					))}
 
-					{/* ── Global Disclaimer & CTAs ───────────────────────────────────────── */}
-					<div className={styles.disclaimer} style={{ marginTop: 32 }}>
-						<div className={styles.disclaimerIcon}>
-							<ShieldCheck size={18} />
-						</div>
-						<div className={styles.disclaimerText}>
-							<strong>{t("This analysis is for information only") || "This analysis is for information only"}</strong>
-							<span>
-								{t("Always speak to a qualified doctor about your health.")}{" "}
-								{t("Visit your nearest CHPS compound") || ""}
-							</span>
-						</div>
-					</div>
-
 					<div className={styles.resultsCtasWrap}>
 						<div className={styles.resultsCtas}>
 							<button className={styles.primaryBtn} onClick={() => navigate(paths.dashboard.root)}>
@@ -1702,7 +1688,7 @@ function SingleResultView({
 					<span>{t("This analysis is for information only")}</span>
 				</div>
 				<p className={styles.hcdDisclaimerText}>
-					{t("Always speak to a qualified doctor or pediatrician about your health. Visit your nearest CHPS compound or health center for clinical evaluation.")}
+					{t("Always speak to a qualified doctor about your health. Visit your nearest CHPS compound or health center for clinical evaluation.")}
 				</p>
 			</div>
 		</>
