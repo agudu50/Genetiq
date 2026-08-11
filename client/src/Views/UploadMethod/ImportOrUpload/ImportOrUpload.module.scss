@@ -4300,6 +4300,35 @@ $teal2: #008f87;
   transition: left 0.4s ease;
 }
 
+.scoreExplanationBox {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--iou-border);
+  border-radius: 12px;
+}
+
+.scoreExplanationHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--iou-text-muted);
+  margin-bottom: 4px;
+
+  svg {
+    color: #00a69d;
+  }
+}
+
+.scoreExplanationText {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--iou-text);
+  margin: 0;
+}
+
 .langSectionNative {
   display: flex;
   flex-wrap: wrap;

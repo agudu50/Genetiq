@@ -6,7 +6,7 @@ import { updateUserInfo } from "@/App/Redux/userSlice";
 import { addUploadRecord } from "@/App/Redux/uploadHistorySlice";
 import type { LabFinding, Recommendation } from "@/App/Redux/uploadHistorySlice";
 import { paths } from "@/App/Routes/Paths";
-import { Upload, FileText, ShieldCheck, Zap, ChevronRight, X, CheckCircle, ArrowLeft, Loader2, Wifi, WifiOff, Brain, Stethoscope, User, Droplets, Ruler, Scale, Activity, Clock, Check, Lock, ChevronDown, Bug, Microscope, FlaskConical, Dna, Candy, ScanSearch, Waves } from "lucide-react";
+import { Upload, FileText, ShieldCheck, Zap, ChevronRight, X, CheckCircle, ArrowLeft, Loader2, Wifi, WifiOff, Brain, Stethoscope, User, Droplets, Ruler, Scale, Activity, Clock, Check, Lock, ChevronDown, Bug, Microscope, FlaskConical, Dna, Candy, ScanSearch, Waves, Info } from "lucide-react";
 import {
 	analyzeLabResults,
 	getTranslation,
@@ -1227,31 +1227,35 @@ function SingleResultView({
 			return {
 				key: "attention" as const,
 				label: "Needs attention",
-				plain: "Some results look off. Discuss these with your doctor soon.",
 				range: "0 – 50",
+				plain: "Some test markers fall outside standard reference ranges.",
+				explanation: "A score in the 0–50 range means 1 or more lab markers are outside normal limits. This is a prompt for a routine medical review—not a cause for panic. Everyday factors like hydration, minor infections, or sample timing can affect lab numbers.",
 			};
 		}
 		if (score <= 74) {
 			return {
 				key: "improve" as const,
 				label: "Room to improve",
-				plain: "A few values need follow-up. Ask your doctor what to watch.",
 				range: "51 – 74",
+				plain: "Most values are stable, but a few markers show minor variations.",
+				explanation: "A score in the 51–74 range indicates mostly steady health with a couple of values to monitor over time.",
 			};
 		}
 		if (score <= 89) {
 			return {
 				key: "good" as const,
 				label: "Looking good",
-				plain: "Most results look fine. Keep healthy habits and check-ups.",
 				range: "75 – 89",
+				plain: "Your lab results fall mostly within standard healthy reference ranges.",
+				explanation: "A score in the 75–89 range reflects healthy baseline values. Maintain your routine wellness habits.",
 			};
 		}
 		return {
 			key: "excellent" as const,
-			label: "Excellent",
-			plain: "Your results look strong overall. Stay consistent.",
+			label: "Optimal",
 			range: "90 – 100",
+			plain: "All extracted lab values fall cleanly within expected healthy reference ranges.",
+			explanation: "A score in the 90–100 range means all analyzed test markers are within standard optimal limits.",
 		};
 	}, [analysisResult?.healthScore]);
 
@@ -1261,28 +1265,28 @@ function SingleResultView({
 				key: "attention" as const,
 				range: "0 – 50",
 				label: "Needs attention",
-				hint: "Discuss with your doctor",
+				hint: "1 or more markers outside reference range",
 				active: (analysisResult?.healthScore ?? 0) <= 50,
 			},
 			{
 				key: "improve" as const,
 				range: "51 – 74",
 				label: "Room to improve",
-				hint: "Follow up on a few values",
+				hint: "Minor variations from baseline",
 				active: (analysisResult?.healthScore ?? 0) > 50 && (analysisResult?.healthScore ?? 0) <= 74,
 			},
 			{
 				key: "good" as const,
 				range: "75 – 89",
 				label: "Looking good",
-				hint: "Mostly in a healthy range",
+				hint: "Mostly within healthy limits",
 				active: (analysisResult?.healthScore ?? 0) > 74 && (analysisResult?.healthScore ?? 0) <= 89,
 			},
 			{
 				key: "excellent" as const,
 				range: "90 – 100",
-				label: "Excellent",
-				hint: "Strong overall results",
+				label: "Optimal",
+				hint: "All markers in standard optimal range",
 				active: (analysisResult?.healthScore ?? 0) > 89,
 			},
 		],
@@ -1375,6 +1379,17 @@ function SingleResultView({
 					<div className={`${styles.miniScaleSeg} ${styles.seg3}`}></div>
 					<div className={`${styles.miniScaleSeg} ${styles.seg4}`}></div>
 					<div className={styles.miniScaleMarker} style={{ left: `${Math.min(100, Math.max(0, analysisResult.healthScore))}%` }}></div>
+				</div>
+
+				{/* Score explanation box */}
+				<div className={styles.scoreExplanationBox}>
+					<div className={styles.scoreExplanationHeader}>
+						<Info size={14} />
+						<span>{t("What this score range means")} ({scoreTier.range})</span>
+					</div>
+					<p className={styles.scoreExplanationText}>
+						{t(scoreTier.explanation)}
+					</p>
 				</div>
 
 				{/* Lang selection inside the card for compactness */}
