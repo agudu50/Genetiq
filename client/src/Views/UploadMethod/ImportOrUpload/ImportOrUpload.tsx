@@ -6,7 +6,7 @@ import { updateUserInfo } from "@/App/Redux/userSlice";
 import { addUploadRecord } from "@/App/Redux/uploadHistorySlice";
 import type { LabFinding, Recommendation } from "@/App/Redux/uploadHistorySlice";
 import { paths } from "@/App/Routes/Paths";
-import { Upload, FileText, ShieldCheck, Zap, ChevronRight, CheckCircle, ArrowLeft, Loader2, Wifi, WifiOff, Brain, Stethoscope, User, Droplets, Ruler, Scale, Activity, Clock, Check, Lock, ChevronDown, Bug, Microscope, FlaskConical, Dna, Candy, ScanSearch, Waves, Info, Sparkles, Camera, Globe, Eye, EyeOff, ZoomIn } from "lucide-react";
+import { Upload, FileText, ShieldCheck, Zap, ChevronRight, CheckCircle, ArrowLeft, Loader2, Wifi, WifiOff, Brain, Stethoscope, User, Droplets, Ruler, Scale, Activity, Clock, Check, Lock, ChevronDown, Bug, Microscope, FlaskConical, Dna, Candy, ScanSearch, Waves, Info, Sparkles, Camera, Globe, Eye, EyeOff, ZoomIn, Volume2, Pause, Play, Square } from "lucide-react";
 import {
 	analyzeLabResults,
 	getTranslation,
@@ -1310,6 +1310,80 @@ function SingleResultView({
 	const [expandedFindingId, setExpandedFindingId] = useState<string | null>(null);
 	const [findingFilter, setFindingFilter] = useState<"all" | "attention" | "normal">("all");
 
+	// ── Audio Speech Synthesis Hook for Read-Aloud ─────────────────
+	const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+	const [isPausedAudio, setIsPausedAudio] = useState(false);
+
+	useEffect(() => {
+		return () => {
+			if (typeof window !== "undefined" && "speechSynthesis" in window) {
+				window.speechSynthesis.cancel();
+			}
+		};
+	}, [selectedLanguage]);
+
+	const handleToggleAudio = () => {
+		if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+			alert(t("Audio speech synthesis is not supported on this browser."));
+			return;
+		}
+
+		if (isPlayingAudio && !isPausedAudio) {
+			window.speechSynthesis.pause();
+			setIsPausedAudio(true);
+			return;
+		}
+
+		if (isPlayingAudio && isPausedAudio) {
+			window.speechSynthesis.resume();
+			setIsPausedAudio(false);
+			return;
+		}
+
+		window.speechSynthesis.cancel();
+
+		const overviewText = analysisResult?.summary ? `${t("Report Overview")}. ${analysisResult.summary}` : "";
+		const recsText = analysisResult?.recommendations?.length
+			? `${t("What to do next")}. ` + analysisResult.recommendations.map((r, i) => `${i + 1}. ${r.title}. ${r.body}`).join(". ")
+			: "";
+
+		const textToRead = [overviewText, recsText].filter(Boolean).join(". ");
+		if (!textToRead) return;
+
+		const utterance = new SpeechSynthesisUtterance(textToRead);
+		utterance.rate = 0.95;
+		utterance.pitch = 1.0;
+
+		const voices = window.speechSynthesis.getVoices();
+		if (voices.length > 0) {
+			const enVoice = voices.find(v => v.lang.startsWith("en-GB") || v.lang.startsWith("en"));
+			if (enVoice) utterance.voice = enVoice;
+		}
+
+		utterance.onend = () => {
+			setIsPlayingAudio(false);
+			setIsPausedAudio(false);
+		};
+
+		utterance.onerror = () => {
+			setIsPlayingAudio(false);
+			setIsPausedAudio(false);
+		};
+
+		window.speechSynthesis.speak(utterance);
+		setIsPlayingAudio(true);
+		setIsPausedAudio(false);
+	};
+
+	const handleStopAudio = (e: React.MouseEvent) => {
+		e.stopPropagation();
+		if (typeof window !== "undefined" && "speechSynthesis" in window) {
+			window.speechSynthesis.cancel();
+		}
+		setIsPlayingAudio(false);
+		setIsPausedAudio(false);
+	};
+
 	const scoreTier = useMemo(() => {
 		const score = analysisResult?.healthScore ?? 0;
 		if (score <= 50) {
@@ -1544,11 +1618,55 @@ function SingleResultView({
 				</div>
 			</div>
 
-			{/* ── Plain-English summary (re-styled) ──────────────────────── */}
+			{/* ── Plain-English summary with Audio Read-Aloud ───────────────── */}
 			{summarySections.length > 0 && (
-				<div className={styles.sectionHeaderNative}>
-					<h2>{t("What this means for you")}</h2>
-					<p>{t("Brief insights from your data.")}</p>
+				<div className={styles.sectionHeaderNativeWithAudio}>
+					<div className={styles.sectionHeaderTitleGroup}>
+						<h2>{t("What this means for you")}</h2>
+						<p>{t("Brief insights from your data.")}</p>
+					</div>
+
+					{/* Human-Centered Audio Read-Aloud Controller */}
+					<div className={styles.audioPlayerControl}>
+						<button
+							type="button"
+							className={`${styles.audioPlayBtn} ${isPlayingAudio ? styles.audioPlayBtnActive : ""}`}
+							onClick={handleToggleAudio}
+							title={isPlayingAudio ? (isPausedAudio ? t("Resume reading") : t("Pause reading")) : t("Listen to report")}
+						>
+							{isPlayingAudio ? (
+								isPausedAudio ? (
+									<>
+										<Play size={14} color="#ffffff" fill="#ffffff" /> {t("Resume")}
+									</>
+								) : (
+									<>
+										<Pause size={14} color="#ffffff" fill="#ffffff" /> {t("Pause")}
+										<span className={styles.audioWaveVisualizer}>
+											<span className={styles.waveBar} />
+											<span className={styles.waveBar} />
+											<span className={styles.waveBar} />
+										</span>
+									</>
+								)
+							) : (
+								<>
+									<Volume2 size={15} color="#00a69d" /> {t("Listen to report")}
+								</>
+							)}
+						</button>
+						{isPlayingAudio && (
+							<button
+								type="button"
+								className={styles.audioStopBtn}
+								onClick={handleStopAudio}
+								title={t("Stop reading")}
+								aria-label="Stop reading report"
+							>
+								<Square size={13} color="#ef4444" fill="#ef4444" />
+							</button>
+						)}
+					</div>
 				</div>
 			)}
 			<div className={styles.resultsBriefNative}>

@@ -356,7 +356,7 @@ const SMALL_TALK_RESPONSES: Record<
 	},
 	twi: {
 		greeting:
-			"Maakye/Maaha/Maadi! Me ne wo Gemma Ahoɔden Boafo. Kyerɛ me wo yare anaa kɔfa nhwɛsoɔ a ɛwɔ ase ha — ɛbɛma me ama wo ntɛm.",
+			"Maakye/Maaha/Maadi! Me ne wo Genetiq Ahoɔden Boafo. Kyerɛ me wo yare anaa kɔfa nhwɛsoɔ a ɛwɔ ase ha — ɛbɛma me ama wo ntɛm.",
 		wellbeingReply:
 			"Ɛyɛ anigyeɛ sɛ wote yie! Me nso mete yie — meda wo ase. Sɛ wobɛyɛ a, kyerɛ me sɛnea wote anaa deɛ ɛhaw wo, anaa paw nhwɛsoɔ bi wɔ ase ha.",
 		wellbeingQuestion:
@@ -367,7 +367,7 @@ const SMALL_TALK_RESPONSES: Record<
 	},
 	ga: {
 		greeting:
-			"Ojekoo! Mi ji Gemma Hewale Yelikɛlɔ. Kɛɛ mi bo ni hewale shishi aloo fĩi nhwɛsoɔ ko wɔ shishi nɛɛ.",
+			"Ojekoo! Mi ji Genetiq Hewale Yelikɛlɔ. Kɛɛ mi bo ni hewale shishi aloo fĩi nhwɛsoɔ ko wɔ shishi nɛɛ.",
 		wellbeingReply:
 			"Ehi kpakpa! Mi nɔ yɛɛ ehi tamɔ — akpe. Kɛji wobɛyɛ a, kɛɛ mi bo ni hewale shishi aloo fĩi nhwɛsoɔ ko.",
 		wellbeingQuestion:
@@ -378,7 +378,7 @@ const SMALL_TALK_RESPONSES: Record<
 	},
 	ewe: {
 		greeting:
-			"Woezɔ! Nye nye Gemma Lãmesẽ Boafo. Kpɔ wò lãmesẽ ŋu alo tia nɔnɔme bubu le ete.",
+			"Woezɔ! Nye nye Genetiq Lãmesẽ Boafo. Kpɔ wò lãmesẽ ŋu alo tia nɔnɔme bubu le ete.",
 		wellbeingReply:
 			"Enyo ŋutɔ! Nye hã le dɔwɔwɔ me. Ne èdi be yee la, kpɔ wò lãmesẽ ŋu alo tia nɔnɔme bubu le ete.",
 		wellbeingQuestion:
@@ -389,7 +389,7 @@ const SMALL_TALK_RESPONSES: Record<
 	},
 	fante: {
 		greeting:
-			"Maakye/Maaha! Me ne wo Gemma Ahoɔden Boafo. Kyerɛ me wo yare anaa paw nhwɛsoɔ bi wɔ ase ha.",
+			"Maakye/Maaha! Me ne wo Genetiq Ahoɔden Boafo. Kyerɛ me wo yare anaa paw nhwɛsoɔ bi wɔ ase ha.",
 		wellbeingReply:
 			"Ɛyɛ anigye sɛ wote yie! Me nso mete yie. Sɛ wobɛyɛ a, kyerɛ me sɛnea wote anaa paw nhwɛsoɔ bi wɔ ase ha.",
 		wellbeingQuestion:

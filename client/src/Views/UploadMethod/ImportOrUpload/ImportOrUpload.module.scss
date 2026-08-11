@@ -5857,3 +5857,140 @@ html[data-theme="dark"] .resultStatusText-good { color: #30D158; }
 .gemmaStatusSpinner {
   animation: spin 1s linear infinite;
 }
+
+/* --- Human-Centered Audio Read-Aloud Player --- */
+.sectionHeaderNativeWithAudio {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+	margin-top: 32px;
+	margin-bottom: 16px;
+
+	@media (max-width: 640px) {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 12px;
+	}
+}
+
+.sectionHeaderTitleGroup {
+	h2 {
+		font-size: 18px;
+		font-weight: 700;
+		color: var(--iou-heading);
+		margin: 0 0 4px 0;
+	}
+
+	p {
+		font-size: 13px;
+		color: var(--iou-muted);
+		margin: 0;
+	}
+}
+
+.audioPlayerControl {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-shrink: 0;
+}
+
+.audioPlayBtn {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 16px;
+	border-radius: 20px;
+	background: var(--iou-card);
+	border: 1px solid rgba(0, 166, 157, 0.3);
+	color: #00a69d;
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	box-shadow: 0 2px 8px rgba(0, 166, 157, 0.08);
+
+	&:hover {
+		background: rgba(0, 166, 157, 0.08);
+		border-color: #00a69d;
+		transform: translateY(-1px);
+	}
+
+	@media (max-width: 640px) {
+		width: 100%;
+		justify-content: center;
+		padding: 10px 16px;
+	}
+}
+
+.audioPlayBtnActive {
+	background: #00a69d !important;
+	border-color: #00a69d !important;
+	color: #ffffff !important;
+	box-shadow: 0 4px 12px rgba(0, 166, 157, 0.3) !important;
+}
+
+.audioStopBtn {
+	width: 34px;
+	height: 34px;
+	border-radius: 50%;
+	background: rgba(239, 68, 68, 0.1);
+	border: 1px solid rgba(239, 68, 68, 0.25);
+	color: #ef4444;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: all 0.15s ease;
+	flex-shrink: 0;
+
+	&:hover {
+		background: #ef4444;
+		border-color: #ef4444;
+		color: #ffffff;
+
+		svg {
+			fill: #ffffff !important;
+			stroke: #ffffff !important;
+		}
+	}
+}
+
+.audioWaveVisualizer {
+	display: inline-flex;
+	align-items: flex-end;
+	gap: 3px;
+	height: 12px;
+	margin-left: 2px;
+}
+
+.waveBar {
+	width: 2.5px;
+	height: 100%;
+	background: #ffffff;
+	border-radius: 2px;
+	animation: soundWave 0.8s ease-in-out infinite alternate;
+
+	&:nth-child(1) {
+		animation-delay: 0.1s;
+		height: 80%;
+	}
+	&:nth-child(2) {
+		animation-delay: 0.3s;
+		height: 100%;
+	}
+	&:nth-child(3) {
+		animation-delay: 0.2s;
+		height: 60%;
+	}
+}
+
+@keyframes soundWave {
+	0% {
+		transform: scaleY(0.4);
+	}
+	100% {
+		transform: scaleY(1);
+	}
+}
