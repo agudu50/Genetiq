@@ -16,36 +16,20 @@ export interface SummarySection {
 	tone: SummaryTone;
 }
 
-function formatPatientContext(age?: string, gender?: string): string {
-	const ageTrim = age?.trim();
-	const g = gender?.trim().toLowerCase() ?? "";
-	const hasGender =
-		g &&
-		g !== "unknown" &&
-		!g.includes("prefer not");
-
-	let genderWord = "";
-	if (hasGender && gender) {
-		if (g === "male") genderWord = "male";
-		else if (g === "female") genderWord = "female";
-		else genderWord = gender.trim();
-	}
-
-	if (ageTrim && genderWord) return `for a ${ageTrim}-year-old ${genderWord} patient`;
-	if (ageTrim) return `for a ${ageTrim}-year-old patient`;
-	if (genderWord) return `for a ${genderWord} patient`;
+function formatPatientContext(_age?: string, _gender?: string): string {
+	// Privacy requirement: do not state age, gender, or patient identity categories in generated text summaries
 	return "";
 }
 
 function hasSpepFinding(result: GemmaAnalysisResult): boolean {
 	return result.findings.some((f) =>
-		/globulin|albumin|protein|m-spike|spep/i.test(`${f.name} ${f.marker}`),
+		f.status !== "normal" && /globulin|albumin|protein|m-spike|spep/i.test(`${f.name} ${f.marker}`),
 	);
 }
 
 function hasLiverFinding(result: GemmaAnalysisResult): boolean {
 	return result.findings.some((f) =>
-		/alt|ast|bilirubin|alk/i.test(`${f.name} ${f.marker}`),
+		f.status !== "normal" && /alt|ast|bilirubin|alk/i.test(`${f.name} ${f.marker}`),
 	);
 }
 
@@ -90,6 +74,8 @@ export function buildResultsSummarySections(
 	const patientCtx = formatPatientContext(patientAge, patientGender);
 	const spep = hasSpepFinding(result);
 	const liver = hasLiverFinding(result);
+	const parsedAge = parseInt(patientAge || "", 10);
+	const isPediatric = !isNaN(parsedAge) && parsedAge < 18;
 
 	const hasUnreliableOcr = result.findings.some((f) => {
 		const num = parseNumericValue(f.value);
@@ -104,6 +90,8 @@ export function buildResultsSummarySections(
 			hasSpep: spep,
 			hasLiver: liver,
 			hasUnreliableOcr,
+			abnormalFindings: abnormal.map((f) => ({ name: f.name, value: f.value, status: f.status })),
+			isPediatric,
 		});
 	}
 

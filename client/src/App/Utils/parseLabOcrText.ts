@@ -32,24 +32,7 @@ interface FallbackAnalysisResult {
 	bodySystem: string;
 }
 
-function formatPatientContext(age: string, gender: string): string {
-	const ageTrim = age?.trim();
-	const g = gender?.trim().toLowerCase() ?? "";
-	const hasGender =
-		g &&
-		g !== "unknown" &&
-		!g.includes("prefer not");
-
-	let genderWord = "";
-	if (hasGender) {
-		if (g === "male") genderWord = "male";
-		else if (g === "female") genderWord = "female";
-		else genderWord = gender.trim();
-	}
-
-	if (ageTrim && genderWord) return `for a ${ageTrim}-year-old ${genderWord} patient`;
-	if (ageTrim) return `for a ${ageTrim}-year-old patient`;
-	if (genderWord) return `for a ${genderWord} patient`;
+function formatPatientContext(_age: string, _gender: string): string {
 	return "";
 }
 

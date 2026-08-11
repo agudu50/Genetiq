@@ -207,20 +207,24 @@ function plainName(name: string): string {
 export function buildSummarySectionsCopy(opts: {
 	total: number;
 	abnormalCount: number;
-	patientCtx: string;
+	patientCtx?: string;
 	hasSpep: boolean;
 	hasLiver: boolean;
 	hasUnreliableOcr?: boolean;
+	abnormalFindings?: Array<{ name: string; value: string; status: string }>;
+	isPediatric?: boolean;
 }): Array<{ id: string; title: string; body: string; tone: "info" | "caution" | "neutral" }> {
-	const { total, abnormalCount, patientCtx, hasSpep, hasLiver, hasUnreliableOcr } = opts;
+	const { total, abnormalCount, hasSpep, hasLiver, hasUnreliableOcr, abnormalFindings } = opts;
+
+	const findingsListText = abnormalFindings && abnormalFindings.length > 0
+		? abnormalFindings.map((f) => `${f.name} (${f.value})`).join(", ")
+		: "";
 
 	const sections: Array<{ id: string; title: string; body: string; tone: "info" | "caution" | "neutral" }> = [
 		{
 			id: "analyzed",
 			title: "What we looked at",
-			body: patientCtx
-				? `We picked out ${total} result${total !== 1 ? "s" : ""} from your lab report ${patientCtx} and explained each one in everyday language.`
-				: `We picked out ${total} result${total !== 1 ? "s" : ""} from your lab report and explained each in everyday language.`,
+			body: `We reviewed ${total} result${total !== 1 ? "s" : ""} from the lab report and explained each one in clear everyday language.`,
 			tone: "info",
 		},
 	];
@@ -239,20 +243,26 @@ export function buildSummarySectionsCopy(opts: {
 		sections.push({
 			id: "results",
 			title: "Good news at a glance",
-			body: "Every value we could read looks within the normal ranges printed on your report. Keep your healthy habits and routine check-ups.",
+			body: "The results show that every value we could read is within the normal reference ranges printed on the report. Continue maintaining healthy routine check-ups.",
 			tone: "info",
 		});
 	} else {
+		let bodyText = "";
+		if (abnormalCount === 1) {
+			const markerDetail = findingsListText ? ` (${findingsListText})` : "";
+			bodyText = `The results show that one test${markerDetail} is outside the standard reference range on the report. This is a signal for clinical follow-up — not a final diagnosis. Factors like temporary infections, hydration levels, or sample timing can affect lab values. A doctor or local health worker is the best person to put this in context.`;
+		} else {
+			const markerDetail = findingsListText ? `: ${findingsListText}` : "";
+			bodyText = `The results show that ${abnormalCount} tests are outside the standard reference ranges on the report${markerDetail}. This indicates a need for follow-up with a doctor or CHPS compound. Bring your original paper report so your clinician can evaluate these values together.`;
+		}
+
 		sections.push({
 			id: "results",
 			title:
 				abnormalCount === 1
 					? "One result stood out"
 					: `${abnormalCount} results stood out`,
-			body:
-				abnormalCount === 1
-					? "One test is outside the usual range on your report. That is a signal to follow up — not a diagnosis. Dehydration, a recent infection, or even a blurry photo can affect results. A doctor who knows you is the best person to say what it means."
-					: `${abnormalCount} tests are outside the usual ranges on your report. That is a signal to follow up — not a diagnosis. Several everyday factors can shift lab numbers. Book a visit and bring your original report so your doctor can put these in context.`,
+			body: bodyText,
 			tone: "caution",
 		});
 	}
@@ -262,17 +272,19 @@ export function buildSummarySectionsCopy(opts: {
 			id: "protein",
 			title: "About the protein tests",
 			body:
-				"Your report includes blood protein tests (such as total protein or an M-spike on SPEP). These show the mix of proteins in your blood. Unusual patterns are a common reason for follow-up blood work — they are not usually an emergency on their own. Visit your clinic or hospital, bring the original lab slip, and ask whether you need a test called immunofixation.",
+				"Your report includes blood protein tests (such as total protein or an M-spike on SPEP). These show the mix of proteins in the blood. Unusual patterns are a common reason for follow-up blood work — they are not usually an emergency on their own. Visit your clinic or hospital, bring the original lab slip, and ask whether you need a test called immunofixation.",
 			tone: "caution",
 		});
 	}
 
 	if (hasLiver) {
+		const liverAdvice =
+			"Some liver markers on the report are outside the standard reference range. This can reflect dietary factors, medications, or underlying conditions. Stay well hydrated, avoid unnecessary unprescribed medicines or herbal mixtures, and consult a doctor to review these results.";
+
 		sections.push({
 			id: "liver",
 			title: "About the liver-related tests",
-			body:
-				"Some liver markers on your report are outside the usual range. That can reflect diet, alcohol, medicines, or infection. Avoid alcohol until your doctor reviews the results, stay hydrated, and mention any stomach pain, yellow skin, or dark urine.",
+			body: liverAdvice,
 			tone: "caution",
 		});
 	}
