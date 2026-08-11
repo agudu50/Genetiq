@@ -1240,6 +1240,22 @@ const TEMPLATE_TRANSLATIONS: Record<string, Array<[RegExp, string]>> = {
 			/^(.*?) \((.*?)\) is (higher|lower) than the usual range.*/i,
 			"$1 ($2) mfa deɛ ɛtaa yɛ mu.",
 		],
+		[
+			/^(.*?) is within the normal range\.$/i,
+			"$1 wɔ deɛ ɛtaa yɛ mu.",
+		],
+		[
+			/^(.*?) is slightly low\.(.*)$/i,
+			"$1 aba fam kakra. $2",
+		],
+		[
+			/^(.*?) is a bit high\.(.*)$/i,
+			"$1 wɔ soro kakra. $2",
+		],
+		[
+			/^Please consult a doctor to discuss these findings\.$/i,
+			"Yɛsrɛ wo, kasa kyerɛ dɔkota pa bi na monkasa fa nhwehwɛmu yi ho.",
+		],
 	],
 	ga: [
 		[
@@ -1258,6 +1274,22 @@ const TEMPLATE_TRANSLATIONS: Record<string, Array<[RegExp, string]>> = {
 		[
 			/^Total protein is below the usual range \((.*?)\).*/i,
 			"Total protein ba shi fe fe ni efɔɔ baa ($1).",
+		],
+		[
+			/^(.*?) is within the normal range\.$/i,
+			"$1 eyeɔ jogbaŋŋ yɛ hewalɛ mli.",
+		],
+		[
+			/^(.*?) is slightly low\.(.*)$/i,
+			"$1 ba shi fioo. $2",
+		],
+		[
+			/^(.*?) is a bit high\.(.*)$/i,
+			"$1 yi kɛ nɔ fioo. $2",
+		],
+		[
+			/^Please consult a doctor to discuss these findings\.$/i,
+			"Wiemɔ kɛ dɔkita koni owie yɛ results nɛɛ ahe.",
 		],
 	],
 	ewe: [
@@ -1278,6 +1310,22 @@ const TEMPLATE_TRANSLATIONS: Record<string, Array<[RegExp, string]>> = {
 			/^Total protein is below the usual range \((.*?)\).*/i,
 			"Total protein ge ɖe anyi wu ale si wònɔna ($1).",
 		],
+		[
+			/^(.*?) is within the normal range\.$/i,
+			"$1 le nyuie.",
+		],
+		[
+			/^(.*?) is slightly low\.(.*)$/i,
+			"$1 ge ɖe anyi viɖe. $2",
+		],
+		[
+			/^(.*?) is a bit high\.(.*)$/i,
+			"$1 kɔkɔ wu viɖe. $2",
+		],
+		[
+			/^Please consult a doctor to discuss these findings\.$/i,
+			"Meɖe kuku, ɖo nu kple dɔnɔkɔdola tso ŋkuɖoɖo siawo ŋu.",
+		],
 	],
 	fante: [
 		[
@@ -1296,6 +1344,22 @@ const TEMPLATE_TRANSLATIONS: Record<string, Array<[RegExp, string]>> = {
 		[
 			/^Total protein is below the usual range \((.*?)\).*/i,
 			"Total protein baa fam sen dɛ ɔtaa yɛ ($1).",
+		],
+		[
+			/^(.*?) is within the normal range\.$/i,
+			"$1 wɔ dɛ ɔtaa yɛ mu.",
+		],
+		[
+			/^(.*?) is slightly low\.(.*)$/i,
+			"$1 aba fam kakra. $2",
+		],
+		[
+			/^(.*?) is a bit high\.(.*)$/i,
+			"$1 wɔ soro kakra. $2",
+		],
+		[
+			/^Please consult a doctor to discuss these findings\.$/i,
+			"Mesrɛ wo, kasa kyerɛ datser pa bi na monkasa fa nhwehwɛmu yi ho.",
 		],
 	],
 };
@@ -1360,6 +1424,18 @@ const PHRASE_TRANSLATIONS: Record<string, Record<string, string>> = {
 		"Consult Your Doctor Immediately": "Kɔ wo dɔkota nkyɛn ntɛm pa ara",
 		"Maintain a Balanced Ghanaian Diet": "Di Ghana aduane pa a ahoɔden wɔ mu daa",
 		"Stay Well Hydrated": "Nom nsuo pa pii daa",
+		"white blood cells that help fight viruses and produce antibodies": "mmoawa kofoɔ a wɔboa ko yareɛ mmoawa na wɔyɛ banbɔ",
+		"the cells in your blood that fight off infections and germs": "mmoawa a wɔwɔ wo mogya mu a wɔko yareɛ mmoawa",
+		"is within the normal range.": "wɔ deɛ ɛtaa yɛ mu.",
+		"is slightly low.": "aba fam kakra.",
+		"is a bit high.": "wɔ soro kakra.",
+		"The results show that": "Nhwehwɛmu no kyerɛ sɛ",
+		"hemoglobin and platelet levels are healthy": "hemoglobin ne platelet dodoɔ yɛ papa wɔ ahoɔden mu",
+		"and the Hepatitis C test is negative.": "na Hepatitis C nhwehwɛmu no enni mu.",
+		"However, the White Blood Cell Count (WBC) is slightly low": "Nanso, White Blood Cell Count (WBC) aba fam kakra",
+		"and the Basophils (allergy-related cells) are a bit high.": "na Basophils (allergy mmoawa) wɔ soro kakra.",
+		"There is also a slight decrease in the PCV (red blood cell volume).": "Afei nso PCV (mogya dodoɔ) aba fam kakra.",
+		"Please consult a doctor to discuss these findings.": "Yɛsrɛ wo, kasa kyerɛ dɔkota pa bi na monkasa fa nhwehwɛmu yi ho.",
 	},
 	ga: {
 		"Your lab report indicates": "O lab report lɛ tsɔɔ",
@@ -1372,6 +1448,18 @@ const PHRASE_TRANSLATIONS: Record<string, Record<string, string>> = {
 		"Maintain a Balanced Ghanaian Diet": "Ye Ghana niyenii kpakpa ni yɔɔ hewalɛ daa",
 		"Stay Well Hydrated": "Nu nu pii daa",
 		"Manage Stress and Get Rest": "Jɔɔ ohe ni ojɔɔ ohe yiye",
+		"white blood cells that help fight viruses and produce antibodies": "la mli tsɔji ni yeɔ bua kɛtuɔ mmoawa",
+		"the cells in your blood that fight off infections and germs": "la mli tsɔji ni tuɔ mmoawa",
+		"is within the normal range.": "eyeɔ jogbaŋŋ yɛ hewalɛ mli.",
+		"is slightly low.": "ba shi fioo.",
+		"is a bit high.": "yi kɛ nɔ fioo.",
+		"The results show that": "Results lɛ tsɔɔ akɛ",
+		"hemoglobin and platelet levels are healthy": "hemoglobin kɛ platelet eyeɔ jogbaŋŋ",
+		"and the Hepatitis C test is negative.": "ni Hepatitis C bɛɛ mli.",
+		"However, the White Blood Cell Count (WBC) is slightly low": "Shi, White Blood Cell Count (WBC) ba shi fioo",
+		"and the Basophils (allergy-related cells) are a bit high.": "ni Basophils (allergy mmoawa) yi kɛ nɔ fioo.",
+		"There is also a slight decrease in the PCV (red blood cell volume).": "Hu PCV ba shi fioo.",
+		"Please consult a doctor to discuss these findings.": "Wiemɔ kɛ dɔkita koni owie yɛ results nɛɛ ahe.",
 	},
 	ewe: {
 		"Your lab report indicates": "Wò lab agbalẽ la fia",
@@ -1384,6 +1472,18 @@ const PHRASE_TRANSLATIONS: Record<string, Record<string, string>> = {
 		"Maintain a Balanced Ghanaian Diet": "Ɖu Ghana nuɖuɖu nyui siwo me lãmesẽ le daa",
 		"Stay Well Hydrated": "No tsi geɖe daa",
 		"Manage Stress and Get Rest": "Ɖe fu kpo eye nàgbɔ ɖe eme",
+		"white blood cells that help fight viruses and produce antibodies": "ʋu me lānugbo siwo avawɔ aʋa kple dɔlévuiwo",
+		"the cells in your blood that fight off infections and germs": "ʋu me lānugbo siwo avawɔ aʋa kple dɔlévuiwo",
+		"is within the normal range.": "le nyuie.",
+		"is slightly low.": "ge ɖe anyi viɖe.",
+		"is a bit high.": "kɔkɔ wu viɖe.",
+		"The results show that": "Ŋkuɖoɖoawo fia be",
+		"hemoglobin and platelet levels are healthy": "hemoglobin kple platelet le nyuie",
+		"and the Hepatitis C test is negative.": "eye Hepatitis C mele eme o.",
+		"However, the White Blood Cell Count (WBC) is slightly low": "Gake, White Blood Cell Count (WBC) ge ɖe anyi viɖe",
+		"and the Basophils (allergy-related cells) are a bit high.": "eye Basophils (allergy mmoawa) kɔkɔ wu viɖe.",
+		"There is also a slight decrease in the PCV (red blood cell volume).": "Esia kpee PCV ge ɖe anyi viɖe.",
+		"Please consult a doctor to discuss these findings.": "Meɖe kuku, ɖo nu kple dɔnɔkɔdola tso ŋkuɖoɖo siawo ŋu.",
 	},
 	fante: {
 		"Your lab report indicates": "Wo lab krataa no kyerɛ",
@@ -1396,6 +1496,18 @@ const PHRASE_TRANSLATIONS: Record<string, Record<string, string>> = {
 		"Maintain a Balanced Ghanaian Diet": "Dzi Ghana aduane pa a ahoɔden wɔ mu daa",
 		"Stay Well Hydrated": "Nom nsuo pa pii daa",
 		"Manage Stress and Get Rest": "Gye wo ho na home yie",
+		"white blood cells that help fight viruses and produce antibodies": "mmoawa kofo a wɔboa ko yarba mmoawa na wɔyɛ banbɔ",
+		"the cells in your blood that fight off infections and germs": "mmoawa a wɔwɔ wo mogya mu a wɔko yarba mmoawa",
+		"is within the normal range.": "wɔ dɛ ɔtaa yɛ mu.",
+		"is slightly low.": "aba fam kakra.",
+		"is a bit high.": "wɔ soro kakra.",
+		"The results show that": "Nhwehwɛmu no kyerɛ dɛ",
+		"hemoglobin and platelet levels are healthy": "hemoglobin ne platelet dodow yɛ papa wɔ ahoɔden mu",
+		"and the Hepatitis C test is negative.": "na Hepatitis C nhwehwɛmu no nni mu.",
+		"However, the White Blood Cell Count (WBC) is slightly low": "Nanso, White Blood Cell Count (WBC) aba fam kakra",
+		"and the Basophils (allergy-related cells) are a bit high.": "na Basophils (allergy mmoawa) wɔ soro kakra.",
+		"There is also a slight decrease in the PCV (red blood cell volume).": "Afei nso PCV aba fam kakra.",
+		"Please consult a doctor to discuss these findings.": "Mesrɛ wo, kasa kyerɛ datser pa bi na monkasa fa nhwehwɛmu yi ho.",
 	},
 };
 

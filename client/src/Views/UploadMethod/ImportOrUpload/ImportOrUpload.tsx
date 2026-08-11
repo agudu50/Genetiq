@@ -6,7 +6,7 @@ import { updateUserInfo } from "@/App/Redux/userSlice";
 import { addUploadRecord } from "@/App/Redux/uploadHistorySlice";
 import type { LabFinding, Recommendation } from "@/App/Redux/uploadHistorySlice";
 import { paths } from "@/App/Routes/Paths";
-import { Upload, FileText, ShieldCheck, Zap, ChevronRight, X, CheckCircle, ArrowLeft, Loader2, Wifi, WifiOff, Brain, Stethoscope, User, Droplets, Ruler, Scale, Activity, Clock, Check, Lock, ChevronDown, Bug, Microscope, FlaskConical, Dna, Candy, ScanSearch, Waves, Info } from "lucide-react";
+import { Upload, FileText, ShieldCheck, Zap, ChevronRight, X, CheckCircle, ArrowLeft, Loader2, Wifi, WifiOff, Brain, Stethoscope, User, Droplets, Ruler, Scale, Activity, Clock, Check, Lock, ChevronDown, Bug, Microscope, FlaskConical, Dna, Candy, ScanSearch, Waves, Info, Sparkles } from "lucide-react";
 import {
 	analyzeLabResults,
 	getTranslation,
@@ -60,45 +60,36 @@ const PRESETS = [
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-function AiThinkingStatus({ phase, gemmaOnline }: { phase: string | null; gemmaOnline: boolean }) {
+function AiThinkingStatus({ phase, gemmaOnline, t }: { phase: string | null; gemmaOnline: boolean; t: (s: string) => string }) {
 	const [elapsed, setElapsed] = useState(0);
 	const [msgIndex, setMsgIndex] = useState(0);
 
 	const messages = [
 		"Gemma AI is interpreting your lab values...",
-		"Cross-referencing with medical databases...",
+		"Cross-referencing with medical reference ranges...",
 		"Reasoning through your health profile...",
-		"Formulating localized recommendations...",
-		"Finalizing your personalized plan..."
+		"Formulating localized care recommendations...",
+		"Finalizing your personalized health plan..."
 	];
 
 	useEffect(() => {
 		if (phase !== "ai" || !gemmaOnline) return;
 		const timer = setInterval(() => setElapsed(e => e + 1), 1000);
-		const msgTimer = setInterval(() => setMsgIndex(i => Math.min(i + 1, messages.length - 1)), 8500);
+		const msgTimer = setInterval(() => setMsgIndex(i => (i + 1) % messages.length), 3000);
 		return () => { clearInterval(timer); clearInterval(msgTimer); };
 	}, [phase, gemmaOnline]);
 
 	if (phase !== "ai" || !gemmaOnline) return null;
 
 	return (
-		<div style={{ marginTop: 24, display: "flex", flexDirection: "column", gap: 8, alignItems: "center" }}>
-			<p style={{ fontWeight: 600, color: "var(--iou-heading)", margin: 0, fontSize: "1rem" }}>
-				{messages[msgIndex]}
+		<div className={styles.aiThinkingStatusWrapper}>
+			<p className={styles.aiThinkingMessage}>
+				<Sparkles size={16} className={styles.aiThinkingSparkleIcon} />
+				{t(messages[msgIndex])}
 			</p>
-			<div style={{ 
-				background: "var(--iou-surface)", 
-				border: "1px solid var(--iou-border)", 
-				padding: "4px 12px", 
-				borderRadius: 99, 
-				fontSize: "0.8rem", 
-				color: "var(--iou-muted)",
-				display: "flex",
-				alignItems: "center",
-				gap: 6
-			}}>
-				<Clock size={12} />
-				<span>Estimated time: ~5s (Elapsed: {elapsed}s)</span>
+			<div className={styles.aiThinkingTimerPill}>
+				<Clock size={13} />
+				<span>{t("Estimated time")}: ~5s ({t("Elapsed")}: {elapsed}s)</span>
 			</div>
 		</div>
 	);
@@ -462,31 +453,38 @@ const ImportOrUpload = () => {
 						<div className={styles.aiThinkingGraphic}>
 							<div className={styles.aiOrbit1} />
 							<div className={styles.aiOrbit2} />
-							<div className={styles.aiCore} />
+							<div className={styles.aiOrbit3} />
+							<div className={styles.aiCore}>
+								<Brain size={28} />
+							</div>
 						</div>
-						<h2>{analyzeStatus.message || "Analysing your results…"}</h2>
+						
+						<h2 className={styles.overlayTitle}>
+							{t(analyzeStatus.message) || t("Analysing your results with Gemma AI…")}
+						</h2>
+
 						{analyzePhase === "ai" && gemmaOnline && !cpuFastMode ? (
-							<AiThinkingStatus phase={analyzePhase} gemmaOnline={gemmaOnline} />
+							<AiThinkingStatus phase={analyzePhase} gemmaOnline={gemmaOnline} t={t} />
 						) : (
-							<p>
+							<p className={styles.overlaySubtitle}>
 								{analyzePhase === "ocr"
-									? "Extracting values from your photo on this device, then AI will interpret them."
+									? t("Extracting values from your photo on this device, then AI will interpret them.")
 									: gemmaOnline && cpuFastMode
-										? "Reading your lab text and building your personalised report — this is fast on CPU."
+										? t("Reading your lab text and building your personalised report — this is fast on CPU.")
 										: gemmaAvailable || mode === "starting"
-											? "Waiting for the AI model to finish loading, then your results will be ready."
-											: "Building your personalised health insights with smart offline analysis."
+											? t("Waiting for the AI model to finish loading, then your results will be ready.")
+											: t("Building your personalised health insights with smart offline analysis.")
 								}
 							</p>
 						)}
-						{(analyzePhase === "ocr" || analyzeStatus.message.includes("Reading text")) && analyzeStatus.pct > 0 && (
-							<div className={styles.analyzeProgressTrack}>
-								<div
-									className={styles.analyzeProgressFill}
-									style={{ width: `${analyzeStatus.pct}%` }}
-								/>
-							</div>
-						)}
+
+						<div className={styles.analyzeProgressTrack}>
+							<div
+								className={styles.analyzeProgressFill}
+								style={{ width: `${Math.max(15, analyzeStatus.pct || 45)}%` }}
+							/>
+						</div>
+
 						<div
 							className={`${styles.gemmaStatusBadge} ${styles[`gemmaStatusBadge-${analyzeConnBadge.tone}`]}`}
 						>
@@ -496,7 +494,7 @@ const ImportOrUpload = () => {
 							)}
 							{analyzeConnBadge.icon === "offline" && <Brain size={12} />}
 							{analyzeConnBadge.icon === "scan" && <FileText size={12} />}
-							{analyzeConnBadge.label}
+							{t(analyzeConnBadge.label)}
 						</div>
 					</div>
 				</div>
