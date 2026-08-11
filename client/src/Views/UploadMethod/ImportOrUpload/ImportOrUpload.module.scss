@@ -5932,25 +5932,44 @@ html[data-theme="dark"] .resultStatusText-good { color: #30D158; }
 }
 
 .audioStopBtn {
-	width: 34px;
-	height: 34px;
-	border-radius: 50%;
-	background: rgba(239, 68, 68, 0.1);
-	border: 1px solid rgba(239, 68, 68, 0.25);
-	color: #ef4444;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	cursor: pointer;
-	transition: all 0.15s ease;
-	flex-shrink: 0;
+	width: 34px !important;
+	height: 34px !important;
+	border-radius: 50% !important;
+	background: rgba(239, 68, 68, 0.12) !important;
+	border: 1px solid rgba(239, 68, 68, 0.3) !important;
+	color: #ef4444 !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	cursor: pointer !important;
+	transition: all 0.15s ease !important;
+	flex-shrink: 0 !important;
+	opacity: 1 !important;
+	visibility: visible !important;
+	padding: 0 !important;
+
+	svg {
+		width: 12px !important;
+		height: 12px !important;
+		fill: #ef4444 !important;
+		stroke: #ef4444 !important;
+		display: block !important;
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		rect, path {
+			fill: #ef4444 !important;
+			stroke: #ef4444 !important;
+		}
+	}
 
 	&:hover {
-		background: #ef4444;
-		border-color: #ef4444;
-		color: #ffffff;
+		background: #ef4444 !important;
+		border-color: #ef4444 !important;
+		color: #ffffff !important;
+		transform: scale(1.08) !important;
 
-		svg {
+		svg rect, svg path {
 			fill: #ffffff !important;
 			stroke: #ffffff !important;
 		}
@@ -5993,4 +6012,38 @@ html[data-theme="dark"] .resultStatusText-good { color: #30D158; }
 	100% {
 		transform: scaleY(1);
 	}
+}
+
+.audioVoiceSelectorWrap {
+	display: inline-flex;
+	align-items: center;
+	padding: 2px;
+	border-radius: 20px;
+	background: var(--iou-surface);
+	border: 1px solid var(--iou-border);
+}
+
+.audioVoiceToggleBtn {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 5px 11px;
+	border-radius: 16px;
+	background: transparent;
+	border: none;
+	color: var(--iou-muted);
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.15s ease;
+
+	&:hover {
+		color: var(--iou-heading);
+	}
+}
+
+.audioVoiceActive {
+	background: var(--iou-card) !important;
+	color: #00a69d !important;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06) !important;
 }

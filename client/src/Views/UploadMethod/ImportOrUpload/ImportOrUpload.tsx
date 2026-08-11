@@ -6,7 +6,7 @@ import { updateUserInfo } from "@/App/Redux/userSlice";
 import { addUploadRecord } from "@/App/Redux/uploadHistorySlice";
 import type { LabFinding, Recommendation } from "@/App/Redux/uploadHistorySlice";
 import { paths } from "@/App/Routes/Paths";
-import { Upload, FileText, ShieldCheck, Zap, ChevronRight, CheckCircle, ArrowLeft, Loader2, Wifi, WifiOff, Brain, Stethoscope, User, Droplets, Ruler, Scale, Activity, Clock, Check, Lock, ChevronDown, Bug, Microscope, FlaskConical, Dna, Candy, ScanSearch, Waves, Info, Sparkles, Camera, Globe, Eye, EyeOff, ZoomIn, Volume2, Pause, Play, Square } from "lucide-react";
+import { Upload, FileText, ShieldCheck, Zap, ChevronRight, CheckCircle, ArrowLeft, Loader2, Wifi, WifiOff, Brain, Stethoscope, User, Droplets, Ruler, Scale, Activity, Clock, Check, Lock, ChevronDown, Bug, Microscope, FlaskConical, Dna, Candy, ScanSearch, Waves, Info, Sparkles, Camera, Globe, Eye, EyeOff, ZoomIn, Volume2, Pause, Play } from "lucide-react";
 import {
 	analyzeLabResults,
 	getTranslation,
@@ -1313,6 +1313,21 @@ function SingleResultView({
 	// ── Audio Speech Synthesis Hook for Read-Aloud ─────────────────
 	const [isPlayingAudio, setIsPlayingAudio] = useState(false);
 	const [isPausedAudio, setIsPausedAudio] = useState(false);
+	const [voiceType, setVoiceType] = useState<"female" | "male">("female");
+	const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
+
+	useEffect(() => {
+		if (typeof window !== "undefined" && "speechSynthesis" in window) {
+			const loadVoices = () => {
+				const vs = window.speechSynthesis.getVoices();
+				setAvailableVoices(vs);
+			};
+			loadVoices();
+			if (window.speechSynthesis.onvoiceschanged !== undefined) {
+				window.speechSynthesis.onvoiceschanged = loadVoices;
+			}
+		}
+	}, []);
 
 	useEffect(() => {
 		return () => {
@@ -1321,6 +1336,35 @@ function SingleResultView({
 			}
 		};
 	}, [selectedLanguage]);
+
+	const selectBestVoice = useCallback((type: "female" | "male") => {
+		if (!availableVoices.length) {
+			return { voice: null, pitch: type === "female" ? 1.18 : 0.95 };
+		}
+
+		const langVoices = availableVoices.filter(v => 
+			v.lang.toLowerCase().startsWith("en") || 
+			v.lang.toLowerCase().includes("gb") || 
+			v.lang.toLowerCase().includes("us")
+		);
+		const searchPool = langVoices.length > 0 ? langVoices : availableVoices;
+
+		if (type === "female") {
+			const femaleKeywords = ["female", "zira", "samantha", "victoria", "karen", "fiona", "catherine", "jenny", "aria", "sonia", "hazel", "natural", "online"];
+			const match = searchPool.find(v => femaleKeywords.some(k => v.name.toLowerCase().includes(k)));
+			return { 
+				voice: match || searchPool[0] || null, 
+				pitch: 1.18 
+			};
+		} else {
+			const maleKeywords = ["male", "david", "george", "guy", "james", "ryan", "mark", "daniel"];
+			const match = searchPool.find(v => maleKeywords.some(k => v.name.toLowerCase().includes(k)));
+			return { 
+				voice: match || searchPool[0] || null, 
+				pitch: 0.92 
+			};
+		}
+	}, [availableVoices]);
 
 	const handleToggleAudio = () => {
 		if (typeof window === "undefined" || !("speechSynthesis" in window)) {
@@ -1352,13 +1396,10 @@ function SingleResultView({
 
 		const utterance = new SpeechSynthesisUtterance(textToRead);
 		utterance.rate = 0.95;
-		utterance.pitch = 1.0;
 
-		const voices = window.speechSynthesis.getVoices();
-		if (voices.length > 0) {
-			const enVoice = voices.find(v => v.lang.startsWith("en-GB") || v.lang.startsWith("en"));
-			if (enVoice) utterance.voice = enVoice;
-		}
+		const { voice, pitch } = selectBestVoice(voiceType);
+		utterance.pitch = pitch;
+		if (voice) utterance.voice = voice;
 
 		utterance.onend = () => {
 			setIsPlayingAudio(false);
@@ -1628,6 +1669,44 @@ function SingleResultView({
 
 					{/* Human-Centered Audio Read-Aloud Controller */}
 					<div className={styles.audioPlayerControl}>
+						{/* Voice Preference Selector */}
+						<div className={styles.audioVoiceSelectorWrap}>
+							<button
+								type="button"
+								className={`${styles.audioVoiceToggleBtn} ${voiceType === "female" ? styles.audioVoiceActive : ""}`}
+								onClick={() => {
+									setVoiceType("female");
+									if (isPlayingAudio) {
+										if (typeof window !== "undefined" && "speechSynthesis" in window) {
+											window.speechSynthesis.cancel();
+										}
+										setIsPlayingAudio(false);
+										setIsPausedAudio(false);
+									}
+								}}
+								title={t("Soft Gentle Voice")}
+							>
+								{t("Soft Voice")}
+							</button>
+							<button
+								type="button"
+								className={`${styles.audioVoiceToggleBtn} ${voiceType === "male" ? styles.audioVoiceActive : ""}`}
+								onClick={() => {
+									setVoiceType("male");
+									if (isPlayingAudio) {
+										if (typeof window !== "undefined" && "speechSynthesis" in window) {
+											window.speechSynthesis.cancel();
+										}
+										setIsPlayingAudio(false);
+										setIsPausedAudio(false);
+									}
+								}}
+								title={t("Deep Voice")}
+							>
+								{t("Deep Voice")}
+							</button>
+						</div>
+
 						<button
 							type="button"
 							className={`${styles.audioPlayBtn} ${isPlayingAudio ? styles.audioPlayBtnActive : ""}`}
@@ -1663,7 +1742,17 @@ function SingleResultView({
 								title={t("Stop reading")}
 								aria-label="Stop reading report"
 							>
-								<Square size={13} color="#ef4444" fill="#ef4444" />
+								<svg 
+									width="12" 
+									height="12" 
+									viewBox="0 0 24 24" 
+									fill="#ef4444" 
+									stroke="#ef4444" 
+									strokeWidth="2" 
+									style={{ display: 'block', width: 12, height: 12, fill: '#ef4444', stroke: '#ef4444' }}
+								>
+									<rect x="3" y="3" width="18" height="18" rx="2" ry="2" style={{ fill: '#ef4444', stroke: '#ef4444' }} />
+								</svg>
 							</button>
 						)}
 					</div>
