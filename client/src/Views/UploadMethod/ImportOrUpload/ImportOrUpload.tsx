@@ -462,7 +462,7 @@ const ImportOrUpload = () => {
 						</div>
 						
 						<h2 className={styles.overlayTitle}>
-							{t(analyzeStatus.message) || t("Analysing your results with Gemma AI…")}
+							{t(analyzeStatus.message) || t("Analysing your results with Genetiq AI…")}
 						</h2>
 
 						{analyzePhase === "ai" && gemmaOnline && !cpuFastMode ? (
