@@ -1220,6 +1220,7 @@ function SingleResultView({
 	}, [rawAnalysisResult, selectedLanguage]);
 
 	const [expandedFindingId, setExpandedFindingId] = useState<string | null>(null);
+	const [findingFilter, setFindingFilter] = useState<"all" | "attention" | "normal">("all");
 
 	const scoreTier = useMemo(() => {
 		const score = analysisResult?.healthScore ?? 0;
@@ -1258,6 +1259,25 @@ function SingleResultView({
 			explanation: "A score in the 90–100 range means all analyzed test markers are within standard optimal limits.",
 		};
 	}, [analysisResult?.healthScore]);
+
+	const normalCount = useMemo(() => {
+		return (analysisResult?.findings || []).filter((f) => f.status === "normal").length;
+	}, [analysisResult?.findings]);
+
+	const attentionCount = useMemo(() => {
+		return (analysisResult?.findings || []).filter((f) => f.status !== "normal").length;
+	}, [analysisResult?.findings]);
+
+	const filteredFindings = useMemo(() => {
+		const findings = analysisResult?.findings || [];
+		if (findingFilter === "attention") {
+			return findings.filter((f) => f.status !== "normal");
+		}
+		if (findingFilter === "normal") {
+			return findings.filter((f) => f.status === "normal");
+		}
+		return findings;
+	}, [analysisResult?.findings, findingFilter]);
 
 	const scoreBands = useMemo(
 		() => [
@@ -1372,6 +1392,18 @@ function SingleResultView({
 				</div>
 				
 				<p className={styles.scoreDescNative}>{t(scoreTier.plain)}</p>
+
+				{/* Quick snapshot chips */}
+				<div className={styles.scoreSnapshotBar}>
+					<span className={styles.scoreSnapshotChipGood}>
+						<CheckCircle size={12} /> {normalCount} {t("Normal")}
+					</span>
+					{attentionCount > 0 && (
+						<span className={styles.scoreSnapshotChipAttention}>
+							<Info size={12} /> {attentionCount} {t("Need Attention")}
+						</span>
+					)}
+				</div>
 				
 				<div className={styles.miniScale}>
 					<div className={`${styles.miniScaleSeg} ${styles.seg1}`}></div>
@@ -1456,8 +1488,33 @@ function SingleResultView({
 					<p>{t("Each result explained in plain English — no medical jargon.")}</p>
 				</div>
 
+				{/* HCD Finding Filter Tabs */}
+				<div className={styles.findingFilterBar}>
+					<button
+						type="button"
+						className={`${styles.findingFilterTab} ${findingFilter === "all" ? styles.findingFilterTabActive : ""}`}
+						onClick={() => setFindingFilter("all")}
+					>
+						{t("All Results")} ({analysisResult.findings.length})
+					</button>
+					<button
+						type="button"
+						className={`${styles.findingFilterTab} ${findingFilter === "attention" ? styles.findingFilterTabActive : ""}`}
+						onClick={() => setFindingFilter("attention")}
+					>
+						{t("Needs Attention")} ({attentionCount})
+					</button>
+					<button
+						type="button"
+						className={`${styles.findingFilterTab} ${findingFilter === "normal" ? styles.findingFilterTabActive : ""}`}
+						onClick={() => setFindingFilter("normal")}
+					>
+						{t("Normal")} ({normalCount})
+					</button>
+				</div>
+
 				<div className={styles.findingsListNative}>
-					{analysisResult.findings.map((f) => {
+					{filteredFindings.map((f) => {
 						const statusClass = f.status === "normal" ? "good"
 							: f.status === "action" ? "critical"
 							: "warning";
@@ -1528,12 +1585,23 @@ function SingleResultView({
 								{renderRecommendationIcon(r.icon, 20)}
 							</span>
 							<div className={styles.recContent}>
-								<div className={styles.recTitle}>{t(r.title) || r.title}</div>
+								<div className={styles.recTitle}>{t(r.title) || r.body ? t(r.title) : r.title}</div>
 								<div className={styles.recBody}>{t(r.body) || r.body}</div>
 							</div>
 						</div>
 					))}
 				</div>
+			</div>
+
+			{/* ── Empathetic HCD Disclaimer Footer ──────────────── */}
+			<div className={styles.hcdDisclaimerCard}>
+				<div className={styles.hcdDisclaimerHeader}>
+					<ShieldCheck size={18} />
+					<span>{t("This analysis is for information only")}</span>
+				</div>
+				<p className={styles.hcdDisclaimerText}>
+					{t("Always speak to a qualified doctor or pediatrician about your health. Visit your nearest CHPS compound or health center for clinical evaluation.")}
+				</p>
 			</div>
 		</>
 	);

@@ -4329,6 +4329,100 @@ $teal2: #008f87;
   margin: 0;
 }
 
+/* --- HCD Snapshot Chips --- */
+.scoreSnapshotBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.scoreSnapshotChipGood {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(52, 199, 89, 0.12);
+  color: #34C759;
+  border: 1px solid rgba(52, 199, 89, 0.25);
+}
+
+.scoreSnapshotChipAttention {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(255, 149, 0, 0.12);
+  color: #FF9500;
+  border: 1px solid rgba(255, 149, 0, 0.25);
+}
+
+/* --- HCD Finding Filter Bar --- */
+.findingFilterBar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.findingFilterTab {
+  background: var(--iou-surface);
+  border: 1px solid var(--iou-border);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--iou-text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: var(--iou-heading);
+    border-color: var(--iou-text-muted);
+  }
+}
+
+.findingFilterTabActive {
+  background: rgba(0, 166, 157, 0.12);
+  border-color: rgba(0, 166, 157, 0.4);
+  color: #00a69d;
+  font-weight: 700;
+}
+
+/* --- HCD Empathetic Disclaimer Footer --- */
+.hcdDisclaimerCard {
+  margin-top: 32px;
+  padding: 16px 20px;
+  border-radius: 16px;
+  background: rgba(0, 166, 157, 0.05);
+  border: 1px solid rgba(0, 166, 157, 0.18);
+}
+
+.hcdDisclaimerHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #00a69d;
+  margin-bottom: 6px;
+}
+
+.hcdDisclaimerText {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--iou-text-muted);
+  margin: 0;
+}
+
 .langSectionNative {
   display: flex;
   flex-wrap: wrap;
