@@ -29,17 +29,7 @@ interface TriageState {
 
 const initialState: TriageState = {
 	symptomsInput: "",
-	activeAlerts: [
-		{
-			id: "alert-1",
-			system: "Respiratory",
-			condition: "Mild Wheezing Detected",
-			description:
-				"AI detected a potential respiratory restriction based on uploaded sound data.",
-			urgency: "Yellow",
-			requiresAction: true,
-		},
-	],
+	activeAlerts: [],
 	messages: [
 		{
 			id: "msg-initial",

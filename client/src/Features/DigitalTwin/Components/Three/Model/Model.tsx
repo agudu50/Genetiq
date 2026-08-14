@@ -19,6 +19,7 @@ import {
 	createGlowingMaterial,
 	painAreaMaterial,
 } from "./Utils/painAreaMaterial";
+import { mapLabFindingsToBodyHighlights } from "./Utils/labBodyMapping";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/App/Redux/store";
 import { setSymptomsInput } from "@/App/Redux/triageSlice";
@@ -168,6 +169,28 @@ function Model({
 		(state: RootState) => state.triage.activeAlerts,
 	);
 
+	// ─── Lab-result body highlights ──────────────────────────────────────
+	const uploadStatus = useSelector((state: RootState) => state.user.uploadStatus);
+	const uploadRecords = useSelector(
+		(state: RootState) => state.uploadHistory.records,
+	);
+
+	const labHighlights = useMemo(() => {
+		// Strictly only highlight when the user has uploaded and processed a lab file
+		if (uploadStatus !== "completed") return new Map();
+		if (!uploadRecords || uploadRecords.length === 0) return new Map();
+		const userUploads = uploadRecords.filter(
+			(r) =>
+				r.id !== "default-seed-record" &&
+				!r.id.startsWith("seed") &&
+				r.fileName !== "blood_panel_report.pdf",
+		);
+		if (userUploads.length === 0) return new Map();
+		const latestFindings = userUploads[0].findings;
+		if (!latestFindings || latestFindings.length === 0) return new Map();
+		return mapLabFindingsToBodyHighlights(latestFindings);
+	}, [uploadStatus, uploadRecords]);
+
 	const [opacity, setOpacity] = useState(isNew ? 0 : 1);
 	const [shouldRender, setShouldRender] = useState(!isNew);
 	const [hasFadedOut, setHasFadedOut] = useState(false);
@@ -198,6 +221,7 @@ function Model({
 
 	const materials: Record<string, THREE.ShaderMaterial> = useMemo(() => {
 		const getColor = (system: string, standard: [number, number, number]) => {
+			// 1. Check triage alerts (highest priority)
 			const alert = activeAlerts.find(
 				(a) => system.includes(a.system) || a.system.includes(system),
 			);
@@ -215,6 +239,31 @@ function Model({
 						new THREE.Color(0xaa3300),
 					] as [THREE.Color, THREE.Color, THREE.Color];
 			}
+
+			// 2. Check lab-result highlights (second priority)
+			for (const [, highlight] of labHighlights) {
+				// Match lab systemKey → material system name
+				const labSystemMap: Record<string, string> = {
+					Endocrinology: "Endocrine",
+					Gastroenterolgy: "Digestive",
+					Pulmonology: "Respiratory",
+					Pulmonology1: "Renal",
+					Urology: "Urological",
+					StressManagement: "Neurological",
+					UlnaRadiusAlt: "Musculoskeletal",
+					Hematology: "Hematology",
+					cardiovascular: "Cardiovascular",
+				};
+				const mappedName = labSystemMap[highlight.systemKey] || highlight.systemKey;
+				if (mappedName === system || system.includes(mappedName) || mappedName.includes(system)) {
+					return [
+						highlight.coreColor,
+						highlight.midColor,
+						highlight.outerColor,
+					] as [THREE.Color, THREE.Color, THREE.Color];
+				}
+			}
+
 			return [
 				new THREE.Color(standard[0]),
 				new THREE.Color(standard[1]),
@@ -222,7 +271,7 @@ function Model({
 			] as [THREE.Color, THREE.Color, THREE.Color];
 		};
 
-		return {
+		const baseMaterials: Record<string, THREE.ShaderMaterial> = {
 			Respiratory: createGlowingMaterial(
 				...getColor("Respiratory", [0x00ffff, 0x0088ff, 0x002288]),
 			),
@@ -246,7 +295,21 @@ function Model({
 			),
 			General: painAreaMaterial,
 		};
-	}, [activeAlerts]);
+
+		// Add lab-derived materials for systems not already covered
+		for (const [systemKey, highlight] of labHighlights) {
+			const matKey = `Lab_${systemKey}`;
+			if (!baseMaterials[matKey]) {
+				baseMaterials[matKey] = createGlowingMaterial(
+					highlight.coreColor,
+					highlight.midColor,
+					highlight.outerColor,
+				);
+			}
+		}
+
+		return baseMaterials;
+	}, [activeAlerts, labHighlights]);
 
 	const systemFeatures: Record<
 		string,
@@ -256,8 +319,16 @@ function Model({
 			scale: number;
 			material: THREE.ShaderMaterial;
 		}[]
-	> = useMemo(
-		() => ({
+	> = useMemo(() => {
+		const base: Record<
+			string,
+			{
+				position: [number, number, number];
+				rotation: [number, number, number];
+				scale: number;
+				material: THREE.ShaderMaterial;
+			}[]
+		> = {
 			Pulmonology: [
 				{
 					position: [-1.8, 15, 1.8],
@@ -335,9 +406,52 @@ function Model({
 					material: materials.Musculoskeletal,
 				}, // Right Arm/Shoulder
 			],
-		}),
-		[materials],
-	);
+		};
+
+		// ─── Inject lab-result highlights as additional overlay features ─────
+		// Position configs for lab system keys that aren't already in the base map
+		const LAB_SYSTEM_POSITIONS: Record<
+			string,
+			{ position: [number, number, number]; rotation: [number, number, number]; scale: number }[]
+		> = {
+			// Hematology → full-body circulatory glow (torso center)
+			Hematology: [
+				{ position: [0, 15, 1.5], rotation: [0, 0, 0], scale: 12 },
+			],
+			// Cardiovascular → heart region
+			cardiovascular: [
+				{ position: [1, 18, 2], rotation: [0, 0, 0], scale: 7 }, // Heart
+			],
+		};
+
+		for (const [systemKey, highlight] of labHighlights) {
+			const matKey = `Lab_${systemKey}`;
+			const labMat = materials[matKey];
+			if (!labMat) continue;
+
+			// If the system already has base features, merge lab color in
+			if (base[systemKey]) {
+				// Override material colors on existing features
+				for (const feature of base[systemKey]) {
+					feature.material = labMat;
+				}
+			} else {
+				// Create new overlay entries for this lab system
+				const positions = LAB_SYSTEM_POSITIONS[systemKey];
+				if (positions) {
+					base[systemKey] = positions.map((pos) => ({
+						...pos,
+						material: labMat,
+					}));
+				}
+			}
+
+			// Suppress the "not used" TS warning for highlight
+			void highlight;
+		}
+
+		return base;
+	}, [materials, labHighlights]);
 
 	const handlePointerDown = () => {
 		setPointerDownTime(Date.now());
@@ -465,8 +579,12 @@ function Model({
 		return null;
 	}
 
+	// Show pain/lab overlays when body model is visible, OR when lab highlights exist
+	const hasLabHighlights = labHighlights.size > 0;
 	const shouldShowPainArea =
 		modelType === "body" && shouldRender && !isHidden && opacity > 0;
+	const shouldShowLabOverlays =
+		modelType === "body" && shouldRender && !isHidden && opacity > 0 && hasLabHighlights;
 
 	return (
 		<group onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}>
@@ -497,30 +615,49 @@ function Model({
 					groupRef={groupRef}
 				/>
 			)}
+			{/* Category-based pain areas — only when a specific system has an active alert or lab finding */}
 			{shouldShowPainArea &&
-				(systemFeatures[selectedCategory || ""] ? (
-					systemFeatures[selectedCategory || ""].map((feature, idx) => (
+				selectedCategory &&
+				selectedCategory !== "total" &&
+				selectedCategory !== "ClinicalNotes" &&
+				(activeAlerts.some(
+					(a) =>
+						selectedCategory.includes(a.system) ||
+						a.system.includes(selectedCategory),
+				) ||
+					labHighlights.has(selectedCategory)) &&
+				systemFeatures[selectedCategory] &&
+				systemFeatures[selectedCategory].map((feature, idx) => (
+					<mesh
+						key={`cat-${idx}`}
+						position={feature.position}
+						rotation={feature.rotation}
+						onClick={(e) => handleMeshClick(e, selectedCategory || "")}
+					>
+						<planeGeometry args={[feature.scale, feature.scale, 32, 32]} />
+						<primitive attach='material' object={feature.material} />
+					</mesh>
+				))}
+
+			{/* Lab-result-driven body highlights */}
+			{shouldShowLabOverlays &&
+				Array.from(labHighlights.entries()).map(([systemKey]) => {
+					// Don't double-render if this system is already shown by the selected category
+					if (systemKey === selectedCategory) return null;
+					const features = systemFeatures[systemKey];
+					if (!features) return null;
+					return features.map((feature, idx) => (
 						<mesh
-							key={idx}
+							key={`lab-${systemKey}-${idx}`}
 							position={feature.position}
 							rotation={feature.rotation}
-							onClick={(e) => handleMeshClick(e, selectedCategory || "")}
+							onClick={(e) => handleMeshClick(e, systemKey)}
 						>
 							<planeGeometry args={[feature.scale, feature.scale, 32, 32]} />
 							<primitive attach='material' object={feature.material} />
 						</mesh>
-					))
-				) : selectedCategory === "ClinicalNotes" ||
-				  selectedCategory === "total" ? (
-					<mesh
-						position={[1, 15, 1.5]}
-						rotation={[0, 0, 0]}
-						onClick={(e) => handleMeshClick(e, "Chest")}
-					>
-						<planeGeometry args={[15, 15, 32, 32]} />
-						<primitive attach='material' object={materials.General} />
-					</mesh>
-				) : null)}
+					));
+				})}
 			<ambientLight intensity={0.5} />
 			<directionalLight
 				position={[2, 10, 5]}

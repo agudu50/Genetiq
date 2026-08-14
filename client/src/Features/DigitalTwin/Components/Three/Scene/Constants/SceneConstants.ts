@@ -38,7 +38,7 @@ export const ZOOM_CONFIGS: Record<
 	Urology: { position: [0, -10, 200], zoom: 35 },
 	UlnaRadiusAlt: { position: [0, 0, 200], zoom: 10 },
 	Gynecology: { position: [0, -15, 200], zoom: 40 },
-	Hematology: { position: [0, 0, 200], zoom: 8 },
+	Hematology: { position: [0, 5, 200], zoom: 7 },
 	Nephrology: { position: [0, 0, 200], zoom: 12 },
 	Alergy: { position: [10, 25, 200], zoom: 30 },
 	OxygenSaturation: { position: [0, 0, 200], zoom: 10 },
