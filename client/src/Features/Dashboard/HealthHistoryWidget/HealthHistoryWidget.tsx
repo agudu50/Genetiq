@@ -87,15 +87,6 @@ const now = new Date();
 
 const DEFAULT_MOCK_ITEMS: HistoryItem[] = [
 	{
-		id: "mock-1",
-		type: "Lab Results",
-		title: "Blood Panel Report",
-		date: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(),
-		status: "Verified",
-		icon: "beaker",
-		color: "#8b5cf6",
-	},
-	{
 		id: "mock-2",
 		type: "AI Insights",
 		title: "Inflammation Risk Alert",
@@ -105,13 +96,31 @@ const DEFAULT_MOCK_ITEMS: HistoryItem[] = [
 		color: "#f59e0b",
 	},
 	{
+		id: "mock-3",
+		type: "Lab Results",
+		title: "Lab 2",
+		date: new Date(now.getTime() - 72 * 60 * 60 * 1000).toISOString(),
+		status: "Verified",
+		icon: "beaker",
+		color: "#8b5cf6",
+	},
+	{
 		id: "mock-4",
-		type: "Wearables",
-		title: "Telehealth Vitals Sync",
-		date: new Date(now.getTime() - 96 * 60 * 60 * 1000).toISOString(),
-		status: "Stable",
-		icon: "wearable",
-		color: "#06b6d4",
+		type: "Lab Results",
+		title: "Lab 1",
+		date: new Date(now.getTime() - 72 * 60 * 60 * 1000).toISOString(),
+		status: "Verified",
+		icon: "beaker",
+		color: "#10b981",
+	},
+	{
+		id: "mock-5",
+		type: "Lab Results",
+		title: "Lab 1",
+		date: new Date(now.getTime() - 72 * 60 * 60 * 1000).toISOString(),
+		status: "Verified",
+		icon: "beaker",
+		color: "#3b82f6",
 	},
 ];
 
@@ -144,31 +153,16 @@ export const HealthHistoryWidget = () => {
 	}, [loadQuizHistory]);
 
 	const mappedUploads = useMemo<HistoryItem[]>(() => {
-		return uploadRecords.map((rec) => {
-			let displayTitle = "Blood Panel Report";
-			if (rec.fileName) {
-				const files = rec.fileName.split(",").map(f => f.trim());
-				if (files.length > 2) {
-					displayTitle = `${files.length} Lab Reports Uploaded`;
-				} else {
-					displayTitle = files.map(f => {
-						const lastDot = f.lastIndexOf(".");
-						const base = lastDot !== -1 ? f.substring(0, lastDot) : f;
-						return base.replace(/[_-]/g, " ")
-							.split(" ")
-							.map(w => w.charAt(0).toUpperCase() + w.slice(1))
-							.join(" ");
-					}).join(" & ");
-				}
-			}
+		return uploadRecords.map((rec, index) => {
+			const titleNum = uploadRecords.length > 1 ? uploadRecords.length - index : 1;
 			return {
 				id: rec.id,
 				type: "Lab Results",
-				title: displayTitle,
+				title: `Lab ${titleNum}`,
 				date: rec.uploadedAt,
 				status: "Verified",
 				icon: "beaker",
-				color: "#8b5cf6",
+				color: index % 2 === 0 ? "#8b5cf6" : "#10b981",
 			};
 		});
 	}, [uploadRecords]);
@@ -177,27 +171,24 @@ export const HealthHistoryWidget = () => {
 		const mappedQuizzes: HistoryItem[] = quizHistory.map((q) => ({
 			id: q.id,
 			type: "AI Insights",
-			title: q.title,
+			title: q.title || "Inflammation Risk Alert",
 			date: q.date,
-			status: q.status || "Completed",
+			status: q.status || "Review Needed",
 			icon: "brain",
 			color: q.color || "#f59e0b",
 		}));
 
-		const realItems = [...mappedUploads, ...mappedQuizzes];
-		realItems.sort(
-			(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-		);
+		const realItems = [...mappedQuizzes, ...mappedUploads];
 
-		const mockItems =
-			mappedUploads.length > 0
-				? DEFAULT_MOCK_ITEMS.filter((item) => item.id !== "mock-1")
-				: DEFAULT_MOCK_ITEMS;
+		// Combine real items and fill remaining slots up to 4 items from DEFAULT_MOCK_ITEMS
+		const allItems = [...realItems];
+		for (const mockItem of DEFAULT_MOCK_ITEMS) {
+			if (allItems.length >= 4) break;
+			if (!allItems.some(item => item.id === mockItem.id || item.title === mockItem.title)) {
+				allItems.push(mockItem);
+			}
+		}
 
-		const allItems = [...realItems, ...mockItems];
-		allItems.sort(
-			(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-		);
 		return allItems.slice(0, 4);
 	}, [mappedUploads, quizHistory]);
 
