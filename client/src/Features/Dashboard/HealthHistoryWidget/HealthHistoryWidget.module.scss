@@ -7,12 +7,12 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 .container {
 	display: flex;
 	flex-direction: column;
-	gap: 18px;
-	padding: 22px 22px 20px;
+	gap: 10px;
+	padding: 14px 16px;
 	height: 100%;
 	width: 100%;
 	box-sizing: border-box;
-	border-radius: 20px;
+	border-radius: 16px;
 	position: relative;
 	overflow: hidden;
 	color: var(--text, #ffffff);
@@ -77,21 +77,21 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	gap: 16px;
+	gap: 12px;
 	z-index: 2;
 }
 
 .titleBlock {
 	display: flex;
 	align-items: center;
-	gap: 14px;
+	gap: 10px;
 	min-width: 0;
 }
 
 .titleIconWrap {
-	width: 42px;
-	height: 42px;
-	border-radius: 14px;
+	width: 32px;
+	height: 32px;
+	border-radius: 10px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -99,19 +99,19 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 	color: #ffffff;
 	background: linear-gradient(135deg, $purple-vibrant 0%, #6366f1 100%);
 	box-shadow:
-		0 8px 20px rgba(139, 92, 246, 0.35),
+		0 4px 12px rgba(139, 92, 246, 0.35),
 		inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 .titleText {
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
+	gap: 1px;
 	min-width: 0;
 }
 
 .title {
-	font-size: 17px;
+	font-size: 14px;
 	font-weight: 750;
 	margin: 0;
 	letter-spacing: -0.02em;
@@ -126,7 +126,7 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 
 .subtitle {
 	margin: 0;
-	font-size: 12px;
+	font-size: 11px;
 	font-weight: 600;
 	color: var(--text-secondary, #94a3b8);
 	letter-spacing: 0.01em;
@@ -139,16 +139,16 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 .titleMeta {
 	display: flex;
 	align-items: center;
-	gap: 8px;
-	margin-top: 2px;
+	gap: 6px;
+	margin-top: 1px;
 }
 
 .recordsPill {
 	display: inline-flex;
 	align-items: center;
-	padding: 3px 10px;
+	padding: 2px 7px;
 	border-radius: 100px;
-	font-size: 11px;
+	font-size: 10px;
 	font-weight: 700;
 	letter-spacing: 0.02em;
 	color: var(--text-secondary, #94a3b8);
@@ -164,7 +164,7 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 
 .headerActions {
 	display: flex;
-	gap: 8px;
+	gap: 6px;
 	align-items: center;
 	flex-shrink: 0;
 }
@@ -278,9 +278,9 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 .historyItem {
 	display: flex;
 	align-items: stretch;
-	gap: 12px;
+	gap: 8px;
 	padding: 0;
-	margin: 0 0 8px;
+	margin: 0 0 5px;
 	background: transparent;
 	border: none;
 	cursor: pointer;
@@ -301,38 +301,38 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 
 .timelineNode {
 	position: relative;
-	width: 32px;
+	width: 24px;
 	flex-shrink: 0;
 	display: flex;
 	justify-content: center;
-	padding-top: 14px;
+	padding-top: 8px;
 	z-index: 1;
 }
 
 .iconContainer {
-	width: 30px;
-	height: 30px;
-	border-radius: 10px;
+	width: 24px;
+	height: 24px;
+	border-radius: 7px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	color: var(--accent-color);
 	background: color-mix(in srgb, var(--accent-color) 14%, transparent);
-	border: 1.5px solid color-mix(in srgb, var(--accent-color) 28%, transparent);
+	border: 1px solid color-mix(in srgb, var(--accent-color) 28%, transparent);
 	box-shadow:
-		0 0 0 3px var(--dash-card-bg, rgba(15, 23, 42, 0.9)),
-		0 2px 8px color-mix(in srgb, var(--accent-color) 18%, transparent);
+		0 0 0 2px var(--dash-card-bg, rgba(15, 23, 42, 0.9)),
+		0 2px 6px color-mix(in srgb, var(--accent-color) 18%, transparent);
 	transition: all 0.4s $ease-spring;
 
 	html[data-theme="light"] & {
 		box-shadow:
-			0 0 0 3px var(--dash-card-bg, #ffffff),
-			0 2px 8px color-mix(in srgb, var(--accent-color) 12%, transparent);
+			0 0 0 2px var(--dash-card-bg, #ffffff),
+			0 2px 6px color-mix(in srgb, var(--accent-color) 12%, transparent);
 	}
 	
 	svg {
-		width: 14px;
-		height: 14px;
+		width: 12px;
+		height: 12px;
 	}
 }
 
@@ -340,10 +340,10 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 	flex: 1;
 	display: flex;
 	align-items: center;
-	gap: 10px;
+	gap: 8px;
 	min-width: 0;
-	padding: 10px 12px;
-	border-radius: 12px;
+	padding: 6px 10px;
+	border-radius: 10px;
 	position: relative;
 	overflow: hidden;
 	background: rgba(255, 255, 255, 0.04);
