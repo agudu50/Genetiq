@@ -3,12 +3,12 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 .row {
 	display: flex;
 	align-items: center;
-	gap: 14px;
+	gap: 10px;
 	width: 100%;
 	min-width: 0;
-	padding: 14px 16px;
-	margin-bottom: 10px;
-	border-radius: 16px;
+	padding: 8px 12px;
+	margin-bottom: 6px;
+	border-radius: 12px;
 	box-sizing: border-box;
 	position: relative;
 	text-align: left;
@@ -21,7 +21,7 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 	border: 1px solid rgba(255, 255, 255, 0.05);
 	box-shadow: 
 		inset 0 1px 1px rgba(255, 255, 255, 0.05),
-		0 4px 12px rgba(0, 0, 0, 0.15);
+		0 2px 6px rgba(0, 0, 0, 0.12);
 	transition: all 0.35s $ease;
 	-webkit-tap-highlight-color: transparent;
 
@@ -30,31 +30,31 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 		border-color: rgba(15, 23, 42, 0.05);
 		box-shadow:
 			inset 0 1px 0 rgba(255, 255, 255, 1),
-			0 4px 12px rgba(15, 23, 42, 0.02);
+			0 2px 6px rgba(15, 23, 42, 0.02);
 	}
 
 	&:hover {
 		background: rgba(30, 41, 59, 0.65);
 		border-color: color-mix(in srgb, var(--concern-accent) 25%, rgba(255, 255, 255, 0.08));
-		transform: translateY(-2px);
+		transform: translateY(-1px);
 		box-shadow:
-			0 12px 32px color-mix(in srgb, var(--concern-accent) 18%, rgba(0, 0, 0, 0.25)),
+			0 8px 20px color-mix(in srgb, var(--concern-accent) 15%, rgba(0, 0, 0, 0.2)),
 			inset 0 1px 1px rgba(255, 255, 255, 0.08);
 
 		html[data-theme="light"] & {
 			background: #ffffff;
 			border-color: color-mix(in srgb, var(--concern-accent) 20%, rgba(15, 23, 42, 0.06));
 			box-shadow:
-				0 12px 32px color-mix(in srgb, var(--concern-accent) 12%, rgba(15, 23, 42, 0.03)),
+				0 8px 20px color-mix(in srgb, var(--concern-accent) 10%, rgba(15, 23, 42, 0.03)),
 				inset 0 1px 0 rgba(255, 255, 255, 1);
 		}
 
 		.iconBox {
-			transform: scale(1.1) rotate(-4deg);
+			transform: scale(1.05) rotate(-3deg);
 			background: var(--concern-accent);
 			color: #ffffff;
 			border-color: rgba(255, 255, 255, 0.2);
-			box-shadow: 0 0 14px color-mix(in srgb, var(--concern-accent) 45%, transparent);
+			box-shadow: 0 0 10px color-mix(in srgb, var(--concern-accent) 45%, transparent);
 		}
 
 		.chevron {
@@ -70,7 +70,7 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 	}
 
 	&:active {
-		transform: translateY(-1px) scale(0.99);
+		transform: translateY(0) scale(0.99);
 	}
 
 	&.rowLast {
@@ -89,10 +89,10 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 .severityRail {
 	position: absolute;
 	left: 0;
-	top: 14px;
-	bottom: 14px;
-	width: 4px;
-	border-radius: 0 4px 4px 0;
+	top: 8px;
+	bottom: 8px;
+	width: 3px;
+	border-radius: 0 3px 3px 0;
 	background: linear-gradient(180deg, var(--concern-accent), color-mix(in srgb, var(--concern-accent) 45%, transparent));
 	opacity: 0.95;
 }
@@ -102,9 +102,9 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
-	width: 44px;
-	height: 44px;
-	border-radius: 14px;
+	width: 32px;
+	height: 32px;
+	border-radius: 10px;
 	color: var(--concern-accent);
 	background: color-mix(in srgb, var(--concern-accent) 10%, rgba(255, 255, 255, 0.02));
 	border: 1px solid color-mix(in srgb, var(--concern-accent) 20%, rgba(255, 255, 255, 0.05));
@@ -116,9 +116,9 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 	}
 
 	@media (max-width: 768px) {
-		width: 38px;
-		height: 38px;
-		border-radius: 12px;
+		width: 28px;
+		height: 28px;
+		border-radius: 8px;
 	}
 }
 
@@ -127,7 +127,7 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
 	min-width: 0;
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	gap: 4px;
 }
 
 .titleRow {

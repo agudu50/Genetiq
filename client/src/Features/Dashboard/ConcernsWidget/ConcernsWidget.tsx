@@ -9,7 +9,6 @@ import { ReasonsTable } from "./Components/ReasonsTable/ReasonsTable";
 import { SymptomsList } from "./Components/SymptomsList/SymptomsList";
 import { PlanWidget } from "../PlanWidget/PlanWidget";
 import { useLanguage } from "@/App/i18n/LanguageContext";
-import dashboardData from "@/App/Data/dashboard_data.json";
 
 import { useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
@@ -42,15 +41,37 @@ const CARDIO_DETAIL_CATEGORIES = new Set(["cardiovascular", "CardioLoad"]);
 const isCardioDetailCategory = (category: string) =>
 	CARDIO_DETAIL_CATEGORIES.has(category);
 
+const DEFAULT_PATIENT_CONCERNS: Concern[] = [
+	{
+		id: 101,
+		title: "Basophils %",
+		factors: [
+			"Basophils % (14%) is higher than the usual range",
+			"Measured value: 14%"
+		],
+		icon: "Brain",
+		status: "Medium",
+		link: "cardiovascular"
+	},
+	{
+		id: 102,
+		title: "Packed Cell Volume (PCV)",
+		factors: [
+			"PCV (Packed Cell Volume) (percentage of red blood cells carrying oxygen)",
+			"Measured value: 37.7%"
+		],
+		icon: "Heart",
+		status: "Medium",
+		link: "cardiovascular"
+	}
+];
+
 export const ConcernsWidget: React.FC<ConcernsWidgetProps> = ({ category }) => {
 	const { t, lang } = useLanguage();
 	const isCardioDetailView = isCardioDetailCategory(category);
 	const [isShowMore, setIsShowMore] = useState(false);
 	const [detailIndex, setDetailIndex] = useState(1);
 	const [selectedConcernForModal, setSelectedConcernForModal] = useState<Concern | null>(null);
-	const user = useSelector((state: RootState) => state.user);
-
-	const { concerns } = dashboardData as unknown as { concerns: Concern[] };
 
 	const uploadRecords = useSelector((state: RootState) => state.uploadHistory.records);
 	const goals = useSelector((state: RootState) => state.goals.items);
@@ -166,21 +187,8 @@ export const ConcernsWidget: React.FC<ConcernsWidgetProps> = ({ category }) => {
 			}
 		}
 
-		if (user.symptoms.length === 0 && user.medicalConditions.length === 0) {
-			return concerns;
-		}
-
-		return concerns.filter((c) => {
-			const text = (c.title + " " + (c.factors || []).join(" ")).toLowerCase();
-			const matchesSymptom = user.symptoms.some((s) =>
-				text.includes(s.toLowerCase()),
-			);
-			const matchesCondition = user.medicalConditions.some((mc) =>
-				text.includes(mc.toLowerCase()),
-			);
-			return matchesSymptom || matchesCondition;
-		});
-	}, [uploadRecords, user.symptoms, user.medicalConditions, concerns, isCardioDetailView]);
+		return DEFAULT_PATIENT_CONCERNS;
+	}, [uploadRecords, isCardioDetailView]);
 
 	const visibleConcerns = useMemo(() => {
 		return filteredConcerns.filter((concern) => {

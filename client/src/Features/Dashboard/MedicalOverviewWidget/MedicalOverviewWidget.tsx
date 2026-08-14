@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import styles from "./MedicalOverviewWidget.module.scss";
 import { useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/App/i18n/LanguageContext";
+import { Activity, ShieldCheck, Pill, Stethoscope } from "lucide-react";
 
 type Tab = "conditions" | "medications" | "symptoms";
 
@@ -13,55 +14,102 @@ export const MedicalOverviewWidget = () => {
 	const user = useSelector((state: RootState) => state.user);
 	const [activeTab, setActiveTab] = useState<Tab>("conditions");
 
+	const conditionsCount = user.medicalConditions.length;
+	const activeMeds = user.medications.filter((m) => m.name);
+	const medicationsCount = activeMeds.length;
+	const symptomsCount = user.symptoms.length;
+
+	const bmiValue = useMemo(() => {
+		const h = Number(user.height);
+		const w = Number(user.weight);
+		if (!h || !w) return null;
+		return Number((w / ((h / 100) * (h / 100))).toFixed(1));
+	}, [user.height, user.weight]);
+
 	const tabs: { key: Tab; label: string; count: number }[] = [
 		{
 			key: "conditions",
 			label: t("conditions") || "Conditions",
-			count: user.medicalConditions.length,
+			count: conditionsCount,
 		},
 		{
 			key: "medications",
 			label: t("medications") || "Medications",
-			count: user.medications.filter((m) => m.name).length,
+			count: medicationsCount,
 		},
 		{
 			key: "symptoms",
 			label: t("symptoms") || "Symptoms",
-			count: user.symptoms.length,
+			count: symptomsCount,
 		},
 	];
 
 	const conditionColors: Record<string, string> = {
-		"Diabetes": "#f59e0b",
-		"Hypertension": "#ef4444",
-		"Asthma": "#3b82f6",
+		Diabetes: "#f59e0b",
+		Hypertension: "#ef4444",
+		Asthma: "#3b82f6",
 		"Heart Disease": "#ec4899",
-		"Other": "#8b5cf6",
+		Other: "#8b5cf6",
 	};
 
-	const hasAnyData =
-		user.medicalConditions.length > 0 ||
-		user.medications.some((m) => m.name) ||
-		user.symptoms.length > 0;
+	const hasAnyData = conditionsCount > 0 || medicationsCount > 0 || symptomsCount > 0;
 
 	return (
 		<div className={styles.medicalWidget}>
 			<div className={styles.header}>
 				<h3 className={styles.title}>
-					<svg
-						width='18'
-						height='18'
-						viewBox='0 0 24 24'
-						fill='none'
-						stroke='currentColor'
-						strokeWidth='2'
-						strokeLinecap='round'
-						strokeLinejoin='round'
-					>
-						<path d='M22 12h-4l-3 9L9 3l-3 9H2' />
-					</svg>
+					<Stethoscope size={18} strokeWidth={2.25} />
 					{t("medical_overview") || "Medical Overview"}
 				</h3>
+			</div>
+
+			{/* Onboarding Health Metrics Summary Row */}
+			<div className={styles.summaryGrid}>
+				{/* BMI */}
+				<div className={styles.summaryCard}>
+					<div className={styles.summaryCardHeader}>
+						<Activity size={13} className={styles.iconBmi} />
+						<span className={styles.summaryLabel}>BMI</span>
+					</div>
+					<span className={styles.summaryStatus}>
+						{bmiValue !== null ? `${bmiValue} kg/m²` : "No data"}
+					</span>
+					<strong className={styles.summaryCount}>
+						{bmiValue !== null ? bmiValue : 0}
+					</strong>
+				</div>
+
+				{/* Conditions */}
+				<div className={styles.summaryCard}>
+					<div className={styles.summaryCardHeader}>
+						<ShieldCheck size={13} className={styles.iconConditions} />
+						<span className={styles.summaryLabel}>{t("conditions") || "Conditions"}</span>
+					</div>
+					<span
+						className={`${styles.summaryStatus} ${
+							conditionsCount === 0 ? styles.statusClear : ""
+						}`}
+					>
+						{conditionsCount > 0 ? `${conditionsCount} Recorded` : "Clear"}
+					</span>
+					<strong className={styles.summaryCount}>{conditionsCount}</strong>
+				</div>
+
+				{/* Medications */}
+				<div className={styles.summaryCard}>
+					<div className={styles.summaryCardHeader}>
+						<Pill size={13} className={styles.iconMeds} />
+						<span className={styles.summaryLabel}>{t("medications") || "Medications"}</span>
+					</div>
+					<span
+						className={`${styles.summaryStatus} ${
+							medicationsCount === 0 ? styles.statusClear : ""
+						}`}
+					>
+						{medicationsCount > 0 ? `${medicationsCount} Active` : "Clear"}
+					</span>
+					<strong className={styles.summaryCount}>{medicationsCount}</strong>
+				</div>
 			</div>
 
 			<div className={styles.tabBar}>
@@ -99,7 +147,7 @@ export const MedicalOverviewWidget = () => {
 							))
 						) : (
 							<EmptyTabState
-								text={t("no_conditions") || "No conditions recorded"}
+								text={t("no_conditions") || "No medical conditions recorded"}
 								onImport={() => navigate("/config/import")}
 							/>
 						)}
@@ -108,35 +156,21 @@ export const MedicalOverviewWidget = () => {
 
 				{activeTab === "medications" && (
 					<div className={styles.medList}>
-						{user.medications.filter((m) => m.name).length > 0 ? (
-							user.medications
-								.filter((m) => m.name)
-								.map((med, i) => (
-									<div key={i} className={styles.medItem}>
-										<div className={styles.medIcon}>
-											<svg
-												width='16'
-												height='16'
-												viewBox='0 0 24 24'
-												fill='none'
-												stroke='currentColor'
-												strokeWidth='2'
-												strokeLinecap='round'
-												strokeLinejoin='round'
-											>
-												<path d='m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z' />
-												<path d='m8.5 8.5 7 7' />
-											</svg>
-										</div>
-										<div className={styles.medInfo}>
-											<span className={styles.medName}>{med.name}</span>
-											<span className={styles.medDetails}>
-												{med.dosage && `${med.dosage}`}
-												{med.frequency && ` · ${med.frequency}`}
-											</span>
-										</div>
+						{activeMeds.length > 0 ? (
+							activeMeds.map((med, i) => (
+								<div key={i} className={styles.medItem}>
+									<div className={styles.medIcon}>
+										<Pill size={16} />
 									</div>
-								))
+									<div className={styles.medInfo}>
+										<span className={styles.medName}>{med.name}</span>
+										<span className={styles.medDetails}>
+											{med.dosage && `${med.dosage}`}
+											{med.frequency && ` · ${med.frequency}`}
+										</span>
+									</div>
+								</div>
+							))
 						) : (
 							<EmptyTabState
 								text={t("no_medications") || "No medications recorded"}
@@ -151,19 +185,7 @@ export const MedicalOverviewWidget = () => {
 						{user.symptoms.length > 0 ? (
 							user.symptoms.map((sym) => (
 								<div key={sym} className={styles.symptomChip}>
-									<svg
-										width='14'
-										height='14'
-										viewBox='0 0 24 24'
-										fill='none'
-										stroke='currentColor'
-										strokeWidth='2'
-										strokeLinecap='round'
-										strokeLinejoin='round'
-									>
-										<circle cx='12' cy='12' r='10' />
-										<path d='M12 8v4M12 16h.01' />
-									</svg>
+									<Activity size={14} />
 									{sym}
 								</div>
 							))

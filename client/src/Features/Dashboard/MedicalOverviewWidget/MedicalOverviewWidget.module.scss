@@ -4,10 +4,10 @@
 	-webkit-backdrop-filter: blur(8px) saturate(180%);
 	border: 1px solid var(--glass-border);
 	border-radius: 16px;
-	padding: 20px;
+	padding: 16px 18px;
 	display: flex;
 	flex-direction: column;
-	gap: 14px;
+	gap: 12px;
 	transition:
 		transform 0.3s ease,
 		box-shadow 0.3s ease;
@@ -18,8 +18,8 @@
 	}
 
 	@media (max-width: 768px) {
-		padding: 16px;
-		gap: 12px;
+		padding: 14px;
+		gap: 10px;
 		border-radius: 14px;
 	}
 }
@@ -32,7 +32,7 @@
 }
 
 .title {
-	font-size: 15px;
+	font-size: 14.5px;
 	font-weight: 700;
 	color: var(--text);
 	margin: 0;
@@ -43,6 +43,81 @@
 	svg {
 		color: var(--accent);
 		flex-shrink: 0;
+	}
+}
+
+// ─── Onboarding Health Metrics Summary Row ─────────────────
+.summaryGrid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 8px;
+	width: 100%;
+}
+
+.summaryCard {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 4px;
+	padding: 8px 10px;
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.06);
+
+	html[data-theme="light"] & {
+		background: #f8fafc;
+		border-color: rgba(0, 0, 0, 0.06);
+	}
+}
+
+.summaryCardHeader {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.summaryLabel {
+	font-size: 0.68rem;
+	font-weight: 800;
+	letter-spacing: 0.04em;
+	color: var(--text-secondary, #94a3b8);
+	text-transform: uppercase;
+}
+
+.iconBmi {
+	color: #60a5fa;
+}
+
+.iconConditions {
+	color: #10b981;
+}
+
+.iconMeds {
+	color: #8b5cf6;
+}
+
+.summaryStatus {
+	font-size: 0.72rem;
+	font-weight: 700;
+	color: var(--text-secondary, #94a3b8);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	&.statusClear {
+		color: #10b981;
+	}
+}
+
+.summaryCount {
+	font-size: 1.2rem;
+	font-weight: 900;
+	line-height: 1;
+	color: var(--text, #ffffff);
+	margin-top: 2px;
+
+	html[data-theme="light"] & {
+		color: #0f172a;
 	}
 }
 
@@ -61,12 +136,12 @@
 	align-items: center;
 	justify-content: center;
 	gap: 5px;
-	padding: 8px 10px;
+	padding: 6px 8px;
 	border: none;
-	border-radius: 8px;
+	border-radius: 7px;
 	background: transparent;
 	color: var(--text-secondary);
-	font-size: 12px;
+	font-size: 11.5px;
 	font-weight: 600;
 	cursor: pointer;
 	transition: all 0.25s ease;
@@ -85,10 +160,10 @@
 }
 
 .tabCount {
-	font-size: 10px;
+	font-size: 9.5px;
 	font-weight: 700;
-	padding: 1px 6px;
-	border-radius: 6px;
+	padding: 1px 5px;
+	border-radius: 5px;
 	background: rgba(99, 102, 241, 0.2);
 	color: var(--accent);
 	line-height: 1.4;
@@ -96,7 +171,7 @@
 
 // ─── Tab Content ──────────────────────────────────
 .tabContent {
-	min-height: 80px;
+	min-height: 60px;
 	animation: fadeIn 0.25s ease;
 }
 
@@ -115,31 +190,30 @@
 .conditionsGrid {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 8px;
+	gap: 6px;
 }
 
 .conditionPill {
 	display: flex;
 	align-items: center;
-	gap: 6px;
-	padding: 7px 14px;
+	gap: 5px;
+	padding: 5px 10px;
 	border-radius: 20px;
 	background: color-mix(in srgb, var(--pill-color, #8b5cf6) 12%, transparent);
 	color: var(--pill-color, #8b5cf6);
-	font-size: 12px;
+	font-size: 11.5px;
 	font-weight: 600;
-	border: 1px solid
-		color-mix(in srgb, var(--pill-color, #8b5cf6) 20%, transparent);
+	border: 1px solid color-mix(in srgb, var(--pill-color, #8b5cf6) 20%, transparent);
 	transition: transform 0.2s ease;
 
 	&:hover {
-		transform: scale(1.04);
+		transform: scale(1.03);
 	}
 }
 
 .pillDot {
-	width: 6px;
-	height: 6px;
+	width: 5px;
+	height: 5px;
 	border-radius: 50%;
 	background: var(--pill-color, #8b5cf6);
 	flex-shrink: 0;
@@ -149,15 +223,15 @@
 .medList {
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	gap: 6px;
 }
 
 .medItem {
 	display: flex;
 	align-items: center;
-	gap: 12px;
-	padding: 10px 14px;
-	border-radius: 12px;
+	gap: 10px;
+	padding: 8px 12px;
+	border-radius: 10px;
 	background: rgba(255, 255, 255, 0.03);
 	border: 1px solid rgba(255, 255, 255, 0.06);
 	transition: background 0.2s ease;
@@ -168,9 +242,9 @@
 }
 
 .medIcon {
-	width: 32px;
-	height: 32px;
-	border-radius: 8px;
+	width: 28px;
+	height: 28px;
+	border-radius: 7px;
 	background: rgba(99, 102, 241, 0.12);
 	color: var(--accent);
 	display: flex;
@@ -182,18 +256,18 @@
 .medInfo {
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
+	gap: 1px;
 	min-width: 0;
 }
 
 .medName {
-	font-size: 13px;
+	font-size: 12.5px;
 	font-weight: 600;
 	color: var(--text);
 }
 
 .medDetails {
-	font-size: 11px;
+	font-size: 10.5px;
 	color: var(--text-secondary);
 }
 
@@ -201,18 +275,18 @@
 .symptomsGrid {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 8px;
+	gap: 6px;
 }
 
 .symptomChip {
 	display: flex;
 	align-items: center;
 	gap: 5px;
-	padding: 6px 12px;
+	padding: 5px 10px;
 	border-radius: 8px;
 	background: rgba(239, 68, 68, 0.08);
 	color: #fca5a5;
-	font-size: 12px;
+	font-size: 11.5px;
 	font-weight: 600;
 	border: 1px solid rgba(239, 68, 68, 0.15);
 	transition: transform 0.2s ease;
@@ -223,7 +297,7 @@
 	}
 
 	&:hover {
-		transform: scale(1.04);
+		transform: scale(1.03);
 	}
 }
 
@@ -232,12 +306,12 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 8px;
-	padding: 16px;
+	gap: 6px;
+	padding: 12px;
 	text-align: center;
 
 	p {
-		font-size: 13px;
+		font-size: 12px;
 		color: var(--text-secondary);
 		margin: 0;
 	}
@@ -247,9 +321,9 @@
 	background: rgba(99, 102, 241, 0.1);
 	color: var(--accent);
 	border: 1px solid rgba(99, 102, 241, 0.2);
-	padding: 6px 14px;
-	border-radius: 8px;
-	font-size: 12px;
+	padding: 4px 12px;
+	border-radius: 7px;
+	font-size: 11px;
 	font-weight: 600;
 	cursor: pointer;
 	transition: all 0.2s ease;
@@ -262,22 +336,22 @@
 .globalEmpty {
 	display: flex;
 	justify-content: center;
-	padding: 4px 0;
+	padding: 2px 0;
 }
 
 .importBtn {
 	background: linear-gradient(135deg, #6366f1, #8b5cf6);
 	color: white;
 	border: none;
-	padding: 10px 24px;
-	border-radius: 10px;
-	font-size: 13px;
+	padding: 8px 20px;
+	border-radius: 8px;
+	font-size: 12px;
 	font-weight: 600;
 	cursor: pointer;
 	transition: all 0.25s ease;
 
 	&:hover {
-		transform: scale(1.04);
+		transform: scale(1.03);
 		box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
 	}
 }

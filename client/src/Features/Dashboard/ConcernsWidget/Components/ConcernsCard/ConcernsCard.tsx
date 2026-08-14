@@ -30,6 +30,15 @@ const renderConcernIcon = (iconName: string, size = 18) => {
 	}
 };
 
+const simplifyMedicalText = (text: string): string => {
+	if (!text) return "";
+	return text
+		.replace(/Basophils\s*%/gi, "White Blood Cells (Basophils)")
+		.replace(/Basophils/gi, "White Blood Cells")
+		.replace(/Packed\s+Cell\s+Volume\s*\(PCV\)/gi, "Red Blood Cell Volume (PCV)")
+		.replace(/Packed\s+Cell\s+Volume/gi, "Red Blood Cell Volume");
+};
+
 export const ConcernsCard: React.FC<ConcernsCardProps> = ({
 	concern,
 	backgroundColor,
@@ -85,12 +94,12 @@ export const ConcernsCard: React.FC<ConcernsCardProps> = ({
 						{t(concern.status)}
 					</span>
 				</div>
-				<h4 className={styles.gridTitle}>{t(concern.title)}</h4>
+				<h4 className={styles.gridTitle}>{simplifyMedicalText(t(concern.title))}</h4>
 				<div className={styles.factorChips}>
 					{visibleFactors.map((factor) => (
 						<span key={factor} className={styles.factorChip}>
 							<span className={styles.bulletDot} aria-hidden />
-							{t(factor)}
+							{simplifyMedicalText(t(factor))}
 						</span>
 					))}
 					{hiddenFactorCount > 0 && (
@@ -123,7 +132,7 @@ export const ConcernsCard: React.FC<ConcernsCardProps> = ({
 
 			<div className={styles.content}>
 				<div className={styles.titleRow}>
-					<h4 className={styles.title}>{t(concern.title)}</h4>
+					<h4 className={styles.title}>{simplifyMedicalText(t(concern.title))}</h4>
 					<span className={`${styles.severityBadge} ${getStatusClass(concern.status)}`}>
 						{t(concern.status)}
 					</span>
@@ -133,7 +142,7 @@ export const ConcernsCard: React.FC<ConcernsCardProps> = ({
 					{visibleFactors.map((factor) => (
 						<span key={factor} className={styles.factorChip}>
 							<span className={styles.bulletDot} aria-hidden />
-							{t(factor)}
+							{simplifyMedicalText(t(factor))}
 						</span>
 					))}
 					{hiddenFactorCount > 0 && (
