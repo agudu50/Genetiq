@@ -64,9 +64,22 @@ export default defineConfig({
 		strictPort: false,
 		host: true,
 		proxy: {
-			"/api/gemma": {
+			"/api": {
 				target: "http://localhost:3000",
 				changeOrigin: true,
+				configure: (proxy) => {
+					proxy.on("error", (err, req, res) => {
+						console.warn(`[vite proxy error] ${req.url}: ${err.message}`);
+						if (res && !res.headersSent) {
+							res.writeHead(502, { "Content-Type": "application/json" });
+							res.end(
+								JSON.stringify({
+									error: "Backend server is currently restarting or unreachable. Please try again.",
+								})
+							);
+						}
+					});
+				},
 			},
 		},
 	},

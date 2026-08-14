@@ -4,9 +4,9 @@
 	"version": "0.0.0",
 	"type": "commonjs",
 	"scripts": {
-		"start": "concurrently \"node --watch=../server ../server/index.js\" \"vite\" --kill-others --kill-others-on-fail",
+		"start": "concurrently \"node --watch-path=../server/index.js --watch-path=../server/routes --watch-path=../server/controllers --watch-path=../server/services --watch-path=../server/config --watch-path=../server/models ../server/index.js\" \"vite\" --kill-others --kill-others-on-fail",
 		"dev": "npm run start",
-		"dev:ai": "concurrently -n api,web,gemma -c blue,green,magenta \"node --watch=../server ../server/index.js\" \"vite\" \"cd ../server/gemma && python server.py\" --kill-others --kill-others-on-fail",
+		"dev:ai": "concurrently -n api,web,gemma -c blue,green,magenta \"node --watch-path=../server/index.js --watch-path=../server/routes --watch-path=../server/controllers --watch-path=../server/services --watch-path=../server/config --watch-path=../server/models ../server/index.js\" \"vite\" \"cd ../server/gemma && python server.py\" --kill-others --kill-others-on-fail",
 		"gemma": "cd ../server/gemma && python server.py",
 		"build": "tsc -b && vite build",
 		"lint": "eslint .",
