@@ -1,91 +1,114 @@
-@use "@/App/Styles/_mixins" as mixins;
-
-$green: #10b981;
-$blue: #3b82f6;
-
-.metrics {
+.splitCardContainer {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
 	gap: 10px;
 	width: 100%;
 	min-width: 0;
+
+	@media (max-width: 480px) {
+		grid-template-columns: 1fr;
+		gap: 8px;
+	}
 }
 
-.ageCard {
+.compactCard {
 	display: flex;
 	align-items: center;
+	justify-content: space-between;
 	gap: 10px;
+	padding: 10px 14px;
+	border-radius: 12px;
 	min-width: 0;
-	padding: 12px 14px;
-	border-radius: 14px;
-	@include mixins.dashboard-nested-surface;
+	transition: border-color 0.2s ease;
 }
 
-.ageCardBio .ageCardIcon {
-	color: $green;
-	background: rgba($green, 0.12);
-	border-color: rgba($green, 0.18);
+.compactCardBio {
+	background: rgba(16, 185, 129, 0.06);
+	border: 1px solid rgba(16, 185, 129, 0.25);
+
+	&:hover {
+		border-color: #10b981;
+	}
 }
 
-.ageCardChrono .ageCardIcon {
-	color: $blue;
-	background: rgba($blue, 0.12);
-	border-color: rgba($blue, 0.18);
+.compactCardChrono {
+	background: rgba(56, 189, 248, 0.06);
+	border: 1px solid rgba(56, 189, 248, 0.25);
+
+	&:hover {
+		border-color: #38bdf8;
+	}
 }
 
-.ageCardIcon {
+.cardLeft {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-width: 0;
+}
+
+.iconBio {
+	width: 28px;
+	height: 28px;
+	border-radius: 8px;
+	background: rgba(16, 185, 129, 0.15);
+	border: 1px solid rgba(16, 185, 129, 0.3);
+	color: #10b981;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 34px;
-	height: 34px;
-	border-radius: 10px;
 	flex-shrink: 0;
-	border: 1px solid transparent;
 }
 
-.ageCardCopy {
+.iconChrono {
+	width: 28px;
+	height: 28px;
+	border-radius: 8px;
+	background: rgba(56, 189, 248, 0.15);
+	border: 1px solid rgba(56, 189, 248, 0.3);
+	color: #38bdf8;
 	display: flex;
-	flex-direction: column;
-	gap: 3px;
-	min-width: 0;
-	overflow: hidden;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
 }
 
-.ageCardLabel {
-	font-size: 0.65rem;
+.cardLabel {
+	font-size: 0.78rem;
 	font-weight: 700;
-	color: var(--text-secondary, #94a3b8);
-	line-height: 1.2;
+	color: #ffffff;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 
 	html[data-theme="light"] & {
-		color: #64748b;
+		color: #0f172a;
 	}
 }
 
-.ageCardValue {
+.valBio {
 	font-size: 1.35rem;
 	font-weight: 900;
 	line-height: 1;
-	letter-spacing: -0.03em;
-	color: var(--text, #fff);
+	color: #10b981;
+	letter-spacing: -0.02em;
 	white-space: nowrap;
-
-	html[data-theme="light"] & {
-		color: #0f172a;
-	}
-
-	@media (max-width: 480px) {
-		font-size: 1.2rem;
-	}
+	flex-shrink: 0;
 }
 
-.ageCardUnit {
-	margin-left: 3px;
-	font-size: 0.75rem;
-	font-weight: 600;
-	opacity: 0.55;
+.valChrono {
+	font-size: 1.35rem;
+	font-weight: 900;
+	line-height: 1;
+	color: #38bdf8;
+	letter-spacing: -0.02em;
+	white-space: nowrap;
+	flex-shrink: 0;
+}
+
+.unit {
+	font-size: 0.72rem;
+	font-weight: 700;
+	opacity: 0.85;
+	margin-left: 2px;
 }

@@ -1,6 +1,7 @@
+import React from "react";
 import styles from "./AgeMetrics.module.scss";
 import { useLanguage } from "@/App/i18n/LanguageContext";
-import { Activity, CalendarDays } from "lucide-react";
+import { Sparkles, Calendar } from "lucide-react";
 
 interface AgeMetricsProps {
 	ageData: {
@@ -14,31 +15,31 @@ export const AgeMetrics: React.FC<AgeMetricsProps> = ({ ageData }) => {
 	const { t } = useLanguage();
 
 	return (
-		<div className={styles.metrics}>
-			<div className={`${styles.ageCard} ${styles.ageCardBio}`}>
-				<span className={styles.ageCardIcon}>
-					<Activity size={15} strokeWidth={2.25} />
-				</span>
-				<div className={styles.ageCardCopy}>
-					<span className={styles.ageCardLabel}>{t("biological_age")}</span>
-					<strong className={styles.ageCardValue}>
-						{ageData.biologicalAge}
-						<span className={styles.ageCardUnit}>{t("years_short")}</span>
-					</strong>
+		<div className={styles.splitCardContainer}>
+			{/* Biological Age Metric Card */}
+			<div className={`${styles.compactCard} ${styles.compactCardBio}`}>
+				<div className={styles.cardLeft}>
+					<span className={styles.iconBio}>
+						<Sparkles size={14} />
+					</span>
+					<span className={styles.cardLabel}>{t("biological_age")}</span>
 				</div>
+				<strong className={styles.valBio}>
+					{ageData.biologicalAge} <small className={styles.unit}>{t("years_short")}</small>
+				</strong>
 			</div>
 
-			<div className={`${styles.ageCard} ${styles.ageCardChrono}`}>
-				<span className={styles.ageCardIcon}>
-					<CalendarDays size={15} strokeWidth={2.25} />
-				</span>
-				<div className={styles.ageCardCopy}>
-					<span className={styles.ageCardLabel}>{t("chronological_age")}</span>
-					<strong className={styles.ageCardValue}>
-						{ageData.chronoAge}
-						<span className={styles.ageCardUnit}>{t("years_short")}</span>
-					</strong>
+			{/* Chronological Age Metric Card */}
+			<div className={`${styles.compactCard} ${styles.compactCardChrono}`}>
+				<div className={styles.cardLeft}>
+					<span className={styles.iconChrono}>
+						<Calendar size={14} />
+					</span>
+					<span className={styles.cardLabel}>{t("chronological_age")}</span>
 				</div>
+				<strong className={styles.valChrono}>
+					{ageData.chronoAge} <small className={styles.unit}>{t("years_short")}</small>
+				</strong>
 			</div>
 		</div>
 	);

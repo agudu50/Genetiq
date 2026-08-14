@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import styles from "./AgeSlider.module.scss";
 import { useLanguage } from "@/App/i18n/LanguageContext";
 
@@ -21,8 +21,8 @@ export const AgeSlider: React.FC<AgeSliderProps> = ({ ageData }) => {
 	const bioPct = toPercent(ageData.biologicalAge, rangeStart, rangeEnd);
 	const chronoPct = toPercent(ageData.chronoAge, rangeStart, rangeEnd);
 	const spanLeft = Math.min(bioPct, chronoPct);
-	const spanWidth = Math.abs(chronoPct - bioPct);
-	const isYounger = ageData.chronoAge > ageData.biologicalAge;
+	const spanWidth = Math.max(1.5, Math.abs(chronoPct - bioPct));
+	const tooltipLeft = Math.min(88, Math.max(12, spanLeft + spanWidth / 2));
 
 	const axisLabels = useMemo(() => {
 		const labels: number[] = [];
@@ -33,56 +33,61 @@ export const AgeSlider: React.FC<AgeSliderProps> = ({ ageData }) => {
 	}, [rangeStart, rangeEnd]);
 
 	return (
-		<div className={styles.slider}>
-			<div className={styles.sliderHeader}>
-				<span className={styles.sliderTitle}>{t("age_timeline")}</span>
-				<div className={styles.legend}>
-					<span className={styles.legendItem}>
-						<span className={`${styles.legendDot} ${styles.legendDotBio}`} />
-						{t("age_bio_short")}
+		<div className={styles.gaugeContainer}>
+			<div className={styles.gaugeHeader}>
+				<span className={styles.gaugeTitle}>{t("age_timeline")}</span>
+				<div className={styles.legendGroup}>
+					<span className={styles.legendBio}>
+						<span className={styles.dotBio} /> Bio ({ageData.biologicalAge})
 					</span>
-					<span className={styles.legendItem}>
-						<span className={`${styles.legendDot} ${styles.legendDotChrono}`} />
-						{t("age_chrono_short")}
+					<span className={styles.legendChrono}>
+						<span className={styles.dotChrono} /> Chrono ({ageData.chronoAge})
 					</span>
 				</div>
 			</div>
 
-			<div className={styles.trackWrap}>
-				<div className={styles.track}>
-					<div className={styles.trackRail} />
+			<div className={styles.trackCard}>
+				{/* Unified Floating Floating Badge Callout */}
+				<div
+					className={styles.unifiedCallout}
+					style={{ left: `${tooltipLeft}%` }}
+				>
+					<span className={styles.calloutBio}>Bio {ageData.biologicalAge}</span>
+					<span className={styles.calloutSep}>•</span>
+					<span className={styles.calloutChrono}>Chrono {ageData.chronoAge}</span>
+				</div>
 
-					{spanWidth > 0.5 && (
-						<div
-							className={`${styles.trackSpan} ${isYounger ? styles.trackSpanGood : styles.trackSpanWarn}`}
-							style={{ left: `${spanLeft}%`, width: `${spanWidth}%` }}
-						/>
-					)}
+				<div className={styles.trackBar}>
+					<div className={styles.trackBackground} />
 
+					{/* Active Reversal Span */}
 					<div
-						className={`${styles.marker} ${styles.markerBio}`}
+						className={styles.activeSpan}
+						style={{ left: `${spanLeft}%`, width: `${spanWidth}%` }}
+					/>
+
+					{/* Bio Pointer Dot */}
+					<div
+						className={`${styles.pointer} ${styles.pointerBio}`}
 						style={{ left: `${bioPct}%` }}
-					>
-						<span className={styles.markerLabel}>{ageData.biologicalAge}</span>
-						<span className={styles.markerDot} />
-					</div>
+					/>
 
+					{/* Chrono Pointer Dot */}
 					<div
-						className={`${styles.marker} ${styles.markerChrono}`}
+						className={`${styles.pointer} ${styles.pointerChrono}`}
 						style={{ left: `${chronoPct}%` }}
-					>
-						<span className={styles.markerLabel}>{ageData.chronoAge}</span>
-						<span className={styles.markerDot} />
-					</div>
+					/>
 				</div>
-			</div>
 
-			<div className={styles.axis}>
-				{axisLabels.map((label) => (
-					<span key={label} className={styles.axisLabel}>
-						{label}
-					</span>
-				))}
+				{/* Axis Ticks & Labels */}
+				<div className={styles.axisContainer}>
+					{axisLabels.map((val) => (
+						<div key={val} className={styles.axisCol}>
+							<div className={styles.tick} />
+							<span className={styles.axisVal}>{val}</span>
+						</div>
+					))}
+				</div>
 			</div>
 		</div>
 	);
