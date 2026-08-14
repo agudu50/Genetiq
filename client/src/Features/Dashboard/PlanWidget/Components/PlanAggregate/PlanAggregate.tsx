@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Activity, ClipboardList, Pill, ChevronRight, Calendar, Brain } from "lucide-react";
 import { PlanItem, PlanSection } from "../../helpers/planMockData";
 import {
@@ -8,6 +9,7 @@ import styles from "./PlanAggregate.module.scss";
 import doctor from "@assets/PlanWidget/doctor.png";
 import { useLanguage } from "@/App/i18n/LanguageContext";
 import { PlanItemIcon } from "../../helpers/planItemIcons";
+import PhysicianConsultModal from "../PhysicianModal/PhysicianConsultModal";
 
 const PREVIEW_LIMIT = 3;
 
@@ -44,6 +46,8 @@ export const PlanAggregate = ({
 	onItemSelect,
 }: PlanAggregateProps) => {
 	const { t } = useLanguage();
+
+	const [isPhysicianModalOpen, setIsPhysicianModalOpen] = useState(false);
 
 	const groupedData = section.data.reduce(
 		(acc: { [key: string]: PlanItem[] }, item: PlanItem) => {
@@ -210,16 +214,25 @@ export const PlanAggregate = ({
 							<h4 className={styles.ctaTitle}>
 								{t("physician_checkin_title")}
 							</h4>
-							<span className={styles.ctaBadge}>{t("coming_soon")}</span>
+							<span className={styles.ctaBadge} style={{ background: "rgba(16, 185, 129, 0.2)", color: "#10b981" }}>Available Now</span>
 						</div>
 						<p className={styles.ctaDesc}>{t("physician_checkin_desc")}</p>
 					</div>
 				</div>
-				<button type="button" className={styles.ctaButton} disabled>
-					<span>{t("coming_soon")}</span>
+				<button
+					type="button"
+					className={styles.ctaButton}
+					onClick={() => setIsPhysicianModalOpen(true)}
+				>
+					<span>{t("schedule_call")}</span>
 					<Calendar size={16} strokeWidth={2.25} />
 				</button>
 			</div>
+
+			<PhysicianConsultModal
+				isOpen={isPhysicianModalOpen}
+				onClose={() => setIsPhysicianModalOpen(false)}
+			/>
 		</div>
 	);
 };

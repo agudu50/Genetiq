@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { PlanItem, PlanSection } from "../../helpers/planMockData";
 import styles from "./PlanAggregate.module.scss";
 import Arrow from "@assets/PlanWidget/Arrow.svg?react";
@@ -8,6 +9,7 @@ import Document from "@assets/PlanWidget/Document.svg?react";
 import doctor from "@assets/PlanWidget/doctor.png";
 import { useLanguage } from "@/App/i18n/LanguageContext";
 import { PlanItemIcon } from "@/Features/Dashboard/PlanWidget/helpers/planItemIcons";
+import PhysicianConsultModal from "@/Features/Dashboard/PlanWidget/Components/PhysicianModal/PhysicianConsultModal";
 
 type PlanAggregateProps = {
 	section: PlanSection;
@@ -19,6 +21,7 @@ export const PlanAggregate = ({
 	setActiveTab,
 }: PlanAggregateProps) => {
 	const { t } = useLanguage();
+	const [isPhysicianModalOpen, setIsPhysicianModalOpen] = useState(false);
 	const groupedData = section.data.reduce(
 		(acc: { [key: string]: PlanItem[] }, item: PlanItem) => {
 			const group = item.group || "default";
@@ -102,21 +105,29 @@ export const PlanAggregate = ({
 							{t("physician_checkin_title")}
 							<Shape className={styles["PlanAggregate-cta-shape"]} />
 						</div>
-						<span className={styles["PlanAggregate-cta-badge"]}>
-							{t("coming_soon")}
+						<span className={styles["PlanAggregate-cta-badge"]} style={{ background: "rgba(16, 185, 129, 0.2)", color: "#10b981" }}>
+							Available Now
 						</span>
 					</div>
 					<div className={styles["PlanAggregate-cta-desc"]}>
 						{t("physician_checkin_desc")}
 					</div>
 				</div>
-				<button className={`${styles["PlanAggregate-cta-button"]} ${styles["coming-soon"]}`} disabled>
-					<p className={styles["PlanAggregate-cta-schedule"]}>{t("coming_soon")}</p>
+				<button
+					className={styles["PlanAggregate-cta-button"]}
+					onClick={() => setIsPhysicianModalOpen(true)}
+				>
+					<p className={styles["PlanAggregate-cta-schedule"]}>{t("schedule_call")}</p>
 					<div className={styles["PlanAggregate-cta-schedule-icon"]}>
 						<Calendar />
 					</div>
 				</button>
 			</div>
+
+			<PhysicianConsultModal
+				isOpen={isPhysicianModalOpen}
+				onClose={() => setIsPhysicianModalOpen(false)}
+			/>
 		</div>
 	);
 };
