@@ -411,3 +411,136 @@
 	from { transform: scale(0); }
 	to { transform: scale(1); }
 }
+
+// ─── Mobile Enhancements ──────────────────────────────────────────────────────
+
+@media (max-width: 640px) {
+	.backdrop {
+		padding: 4.5rem 0.75rem 1rem;
+		align-items: flex-start;
+	}
+
+	.modal {
+		max-height: calc(92vh - 4.5rem);
+		border-radius: 16px;
+	}
+
+	.header {
+		padding: 1.15rem 1rem;
+	}
+
+	.headerIcon {
+		width: 38px;
+		height: 38px;
+		border-radius: 10px;
+
+		svg {
+			width: 18px;
+			height: 18px;
+		}
+	}
+
+	.title {
+		font-size: 1.05rem;
+	}
+
+	.subtitle {
+		font-size: 0.78rem;
+		line-height: 1.35;
+	}
+
+	.body {
+		padding: 1rem;
+		gap: 1.15rem;
+	}
+
+	.specialistGrid {
+		grid-template-columns: 1fr;
+		gap: 0.6rem;
+	}
+
+	.specialistCard {
+		padding: 0.75rem;
+		border-radius: 10px;
+	}
+
+	.specialistAvatar {
+		width: 36px;
+		height: 36px;
+		font-size: 0.85rem;
+	}
+
+	.specialistName {
+		font-size: 0.88rem;
+	}
+
+	.specialistRole {
+		font-size: 0.75rem;
+	}
+
+	.modeGrid {
+		gap: 0.5rem;
+	}
+
+	.modeCard {
+		padding: 0.65rem 0.25rem;
+		border-radius: 10px;
+
+		svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		span {
+			font-size: 0.75rem;
+		}
+	}
+
+	.slotGrid {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 0.5rem;
+	}
+
+	.slotCard {
+		padding: 0.6rem 0.35rem;
+		font-size: 0.8rem;
+	}
+
+	.textarea {
+		font-size: 0.85rem;
+		padding: 0.75rem;
+		min-height: 75px;
+	}
+
+	.footer {
+		padding: 1rem;
+		flex-direction: column-reverse;
+		gap: 0.75rem;
+		align-items: stretch;
+	}
+
+	.trustBadge {
+		justify-content: center;
+		font-size: 0.75rem;
+	}
+
+	.submitButton {
+		width: 100%;
+		justify-content: center;
+		padding: 0.85rem 1rem;
+		font-size: 0.92rem;
+		border-radius: 10px;
+	}
+
+	.successView {
+		padding: 1.75rem 1rem;
+	}
+
+	.successTitle {
+		font-size: 1.15rem;
+	}
+
+	.successDesc {
+		font-size: 0.85rem;
+	}
+}
