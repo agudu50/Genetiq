@@ -9,9 +9,12 @@ const gemmaRoutes = require("./routes/gemma");
 const app = express();
 const socket = require("socket.io");
 
-const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
-
-app.use(cors({ origin: CLIENT_URL, credentials: true }));
+app.use(cors({
+	origin: (origin, callback) => callback(null, true),
+	credentials: true,
+	methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+	allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"]
+}));
 app.use(express.json({ limit: "200mb" }));
 app.use(express.urlencoded({ limit: "200mb", extended: true }));
 
