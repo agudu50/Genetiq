@@ -9,6 +9,8 @@ const gemmaRoutes = require("./routes/gemma");
 const app = express();
 const socket = require("socket.io");
 
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5174";
+
 app.use(cors({
 	origin: (origin, callback) => callback(null, true),
 	credentials: true,
@@ -40,7 +42,7 @@ const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, "0.0.0.0", () => console.log(`Server is ready and running on port ${PORT}`));
 const io = socket(server, {
 	cors: {
-		origin: CLIENT_URL,
+		origin: (origin, callback) => callback(null, true),
 		credentials: true,
 	},
 });
