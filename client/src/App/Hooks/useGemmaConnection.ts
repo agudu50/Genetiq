@@ -60,9 +60,14 @@ function deriveMode(
 
 	if (health?.available && health.modelLoaded) {
 		const cpu = health.device === "cpu";
+		const modelCleanName = health.modelId.includes("gemini")
+			? "Gemini 3.5 Live"
+			: health.modelId.includes("gemma")
+			? "Gemma 4 Live"
+			: "Genetiq AI Live";
 		return {
 			mode: "live",
-			statusLabel: "Genetiq AI live",
+			statusLabel: modelCleanName,
 			gemmaOnline: true,
 			gemmaAvailable: true,
 			cpuFastMode: cpu,
