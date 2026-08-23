@@ -97,7 +97,6 @@ let _healthCache: {
 	checkedAt: number;
 } | null = null;
 const HEALTH_CHECK_INTERVAL = 15_000;
-const HEALTH_STALE_OK_MS = 90_000;
 
 export function invalidateGemmaHealthCache(): void {
 	_healthCache = null;
