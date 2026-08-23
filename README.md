@@ -129,17 +129,18 @@ Support for 17 languages including:
 | React Router      | Navigation       |
 | SCSS Modules      | Styling          |
 
-### Backend & Artificial Intelligence (AI) Engine
+### Backend, AI Engine & Cloud Infrastructure
 
-| Technology | Purpose                 |
-| ---------- | ----------------------- |
-| Express.js | Main Application Programming Interface (API) Server |
-| MongoDB    | Database                |
-| Mongoose   | Object Document Mapper (ODM) |
-| Python 3   | Artificial Intelligence (AI) Server Environment |
-| FastAPI    | Artificial Intelligence (AI) REST Application Programming Interface (API) Gateway |
-| PyTorch    | Machine Learning Engine |
-| Transformers | Large Language Model (LLM) Weights Loader     |
+| Technology | Purpose |
+| ---------- | ------- |
+| **Gemini 3.5 Flash** | Multimodal OCR, diagnostic analysis, and health triage |
+| **@google/genai** | Official Google GenAI SDK for model orchestration and structured outputs |
+| **Google Cloud Run** | Serverless containerized deployment and scaling |
+| **Google Cloud Storage (GCS)** | Secure medical lab report and scan storage |
+| **Express.js** | Main Application Programming Interface (API) Server |
+| **Supabase / PostgreSQL** | Persistent database & authentication |
+| **Python 3 / FastAPI** | Edge/Local Gemma Artificial Intelligence (AI) Gateway |
+| **PyTorch / Transformers** | Edge/Local Machine Learning Engine |
 
 ## 📁 Project Structure
 

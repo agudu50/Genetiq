@@ -32,16 +32,20 @@ const {
 	TRANSLATIONS,
 	getSmallTalkResponse,
 } = require("../services/prompts");
+const { checkGoogleCloudHealth, uploadLabReportToGCS } = require("../services/googleCloudService");
 
 // ─── Health Check ────────────────────────────────────────────────────────────
 
-router.get("/health", (_req, res) => {
+router.get("/health", async (_req, res) => {
+	const gcpHealth = await checkGoogleCloudHealth();
 	res.json({
 		status: "ok",
 		model_loaded: Boolean(GEMINI_API_KEY),
 		model_id: MODEL_ID,
+		sdk: "@google/genai",
 		device: "google-ai-studio",
 		supports_vision: true,
+		google_cloud: gcpHealth,
 	});
 });
 

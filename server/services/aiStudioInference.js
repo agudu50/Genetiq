@@ -8,18 +8,18 @@
 const { GoogleGenAI } = require("@google/genai");
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-// Gemma 4 lightweight model hosted on Google AI Studio (26B MoE with 4B active parameters).
-// Google AI Studio API requires the 'models/' prefix format.
-const rawModel = process.env.GEMMA_MODEL || "gemma-4-26b-a4b-it";
+// Uses Gemini 3.5 Flash / 2.5 Flash by default, or configurable via GEMINI_MODEL / GEMMA_MODEL env vars.
+// Google AI Studio / GenAI SDK requires the 'models/' prefix format.
+const rawModel = process.env.GEMINI_MODEL || process.env.GEMMA_MODEL || "gemini-3.5-flash";
 const MODEL_ID = rawModel.startsWith("models/") ? rawModel : `models/${rawModel}`;
 
 if (!GEMINI_API_KEY) {
 	console.warn(
-		" No GEMINI_API_KEY set — AI API calls will fail. Add GEMINI_API_KEY to your .env"
+		"⚠️ No GEMINI_API_KEY set — AI API calls will fail. Add GEMINI_API_KEY to your .env"
 	);
 }
 
-// Initialize the Google Gen AI SDK
+// Initialize the official Google Gen AI SDK
 const ai = GEMINI_API_KEY ? new GoogleGenAI({ apiKey: GEMINI_API_KEY }) : null;
 
 /**
@@ -142,8 +142,9 @@ async function extractTextFromImages(imagesBase64List) {
 		}
 		parts.push({ text: "Transcribe all the text from this medical lab report exactly as it appears. Include all numbers, units, and test names. Do not summarize or format it, just output the raw text." });
 
+		const visionModel = process.env.GEMINI_VISION_MODEL || "gemini-3.5-flash";
 		const response = await ai.models.generateContent({
-			model: "gemini-2.5-flash",
+			model: visionModel.startsWith("models/") ? visionModel : `models/${visionModel}`,
 			contents: [{ role: "user", parts }],
 			config: { temperature: 0.2 }
 		});

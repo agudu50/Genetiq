@@ -15,9 +15,13 @@ services:
         sync: false
       - key: CLIENT_URL
         sync: false
-      - key: GEMMA_MODEL
-        sync: false
-      - key: HF_TOKEN
-        sync: false
       - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-3.5-flash
+      - key: GEMINI_VISION_MODEL
+        value: gemini-3.5-flash
+      - key: GEMMA_MODEL
+        value: models/gemma-4-26b-a4b-it
+      - key: HF_TOKEN
         sync: false
