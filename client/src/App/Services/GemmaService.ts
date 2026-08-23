@@ -68,10 +68,11 @@ function finalizeChatResult(result: GemmaChatResult): GemmaChatResult {
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-/** In dev, use Vite proxy (same origin). Override with VITE_GEMMA_URL if needed. */
+/** In dev, use Vite proxy (same origin). In prod or when overridden, connect to Render server. */
 const GEMMA_BASE_URL =
 	import.meta.env.VITE_GEMMA_URL ??
-	(import.meta.env.DEV ? "" : "http://localhost:8000");
+	import.meta.env.VITE_API_URL ??
+	(import.meta.env.DEV ? "" : "https://genetiq-server.onrender.com");
 
 function fetchWithTimeout(url: string, ms = 15_000): Promise<Response> {
 	if (typeof AbortSignal !== "undefined" && "timeout" in AbortSignal) {

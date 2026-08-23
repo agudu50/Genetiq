@@ -15,7 +15,7 @@ const MODEL_ID = rawModel.startsWith("models/") ? rawModel : `models/${rawModel}
 
 if (!GEMINI_API_KEY) {
 	console.warn(
-		"⚠️ No GEMINI_API_KEY set — AI API calls will fail. Add GEMINI_API_KEY to your .env"
+		" No GEMINI_API_KEY set — AI API calls will fail. Add GEMINI_API_KEY to your .env"
 	);
 }
 

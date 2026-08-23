@@ -65,8 +65,9 @@ export default defineConfig({
 		host: true,
 		proxy: {
 			"/api": {
-				target: "http://localhost:3000",
+				target: process.env.VITE_API_URL || "https://genetiq-server.onrender.com",
 				changeOrigin: true,
+				secure: false,
 				configure: (proxy) => {
 					proxy.on("error", (err, req, res) => {
 						console.warn(`[vite proxy error] ${req.url}: ${err.message}`);
