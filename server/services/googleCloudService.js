@@ -7,7 +7,12 @@
  * 3. Google Cloud Firestore / Datastore - Triage session logging & risk assessment history.
  */
 
-const { Storage } = require("@google-cloud/storage");
+let Storage = null;
+try {
+	Storage = require("@google-cloud/storage").Storage;
+} catch (e) {
+	// Not installed or running in lightweight mode
+}
 
 const GCP_PROJECT_ID = process.env.GCP_PROJECT_ID || process.env.GOOGLE_CLOUD_PROJECT;
 const GCS_BUCKET_NAME = process.env.GCS_BUCKET_NAME || "genetiq-medical-records";
@@ -16,14 +21,16 @@ let storage = null;
 let bucket = null;
 
 try {
-	if (GCP_PROJECT_ID) {
-		storage = new Storage({ projectId: GCP_PROJECT_ID });
-		bucket = storage.bucket(GCS_BUCKET_NAME);
-		console.log(`☁️ Google Cloud Storage initialized for project: ${GCP_PROJECT_ID}, bucket: ${GCS_BUCKET_NAME}`);
-	} else {
-		// Attempt default credentials if available
-		storage = new Storage();
-		bucket = storage.bucket(GCS_BUCKET_NAME);
+	if (Storage) {
+		if (GCP_PROJECT_ID) {
+			storage = new Storage({ projectId: GCP_PROJECT_ID });
+			bucket = storage.bucket(GCS_BUCKET_NAME);
+			console.log(`☁️ Google Cloud Storage initialized for project: ${GCP_PROJECT_ID}, bucket: ${GCS_BUCKET_NAME}`);
+		} else {
+			// Attempt default credentials if available
+			storage = new Storage();
+			bucket = storage.bucket(GCS_BUCKET_NAME);
+		}
 	}
 } catch (err) {
 	console.warn("ℹ️ Google Cloud Storage running in local emulation/development mode:", err.message);
