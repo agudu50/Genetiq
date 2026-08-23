@@ -166,6 +166,10 @@ const ImportOrUpload = () => {
 		return { value: bmi, label: "Obese", cls: "obese" as const };
 	}, [info.height, info.weight]);
 
+	useEffect(() => {
+		void refresh();
+	}, [step, refresh]);
+
 	// ── Step 1: Personal info submit ──────────────────────────────────────────
 
 	const handlePersonalSubmit = (e: React.FormEvent) => {

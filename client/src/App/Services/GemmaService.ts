@@ -66,14 +66,16 @@ function finalizeChatResult(result: GemmaChatResult): GemmaChatResult {
 	return { ...result, message: sanitizeAiText(result.message) };
 }
 
-// ─── Constants ───────────────────────────────────────────────────────────────
-
-/** Base URL for AI and backend services */
-const GEMMA_BASE_URL = (
+/** Base URL for AI and backend services with dynamic fallback discovery */
+let _activeBaseUrl = (
 	import.meta.env.VITE_GEMMA_URL ||
 	import.meta.env.VITE_API_URL ||
 	"https://genetiq-server.onrender.com"
 ).replace(/\/$/, "");
+
+export function getActiveGemmaUrl(): string {
+	return _activeBaseUrl;
+}
 
 function fetchWithTimeout(url: string, ms = 15_000): Promise<Response> {
 	if (typeof AbortSignal !== "undefined" && "timeout" in AbortSignal) {
@@ -117,31 +119,34 @@ export async function checkGemmaHealth(force = false): Promise<GemmaHealthStatus
 		return _healthCache;
 	}
 
-	const previous = _healthCache;
+	const candidates = [
+		_activeBaseUrl,
+		"https://genetiq-server.onrender.com",
+		"http://localhost:3000",
+		window.location.origin
+	].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i);
 
-	try {
-		const res = await fetchWithTimeout(`${GEMMA_BASE_URL}/api/gemma/health`, 12_000);
-		if (res.ok) {
-			const data = await res.json();
-			_healthCache = {
-				available: true,
-				modelLoaded: Boolean(data.model_loaded),
-				modelId: data.model_id ?? "",
-				device: data.device ?? "none",
-				supportsVision: Boolean(data.supports_vision),
-				checkedAt: now,
-			};
-			return _healthCache;
+	for (const baseUrl of candidates) {
+		try {
+			const targetUrl = baseUrl.endsWith("/api/gemma/health") ? baseUrl : `${baseUrl}/api/gemma/health`;
+			const res = await fetchWithTimeout(targetUrl, 6_000);
+			if (res.ok) {
+				const data = await res.json();
+				_activeBaseUrl = baseUrl;
+				_healthCache = {
+					available: true,
+					modelLoaded: Boolean(data.model_loaded),
+					modelId: data.model_id ?? "gemini-3.5-flash",
+					device: data.device ?? "google-ai-studio",
+					supportsVision: Boolean(data.supports_vision),
+					checkedAt: now,
+				};
+				console.log(`[Genetiq AI] Connected to AI Engine via ${baseUrl}:`, _healthCache);
+				return _healthCache;
+			}
+		} catch {
+			// Try next candidate
 		}
-	} catch {
-		// Server busy or unreachable — keep last good status briefly
-		if (previous?.available && now - previous.checkedAt < HEALTH_STALE_OK_MS) {
-			return previous;
-		}
-	}
-
-	if (previous?.available && now - previous.checkedAt < HEALTH_STALE_OK_MS) {
-		return previous;
 	}
 
 	_healthCache = {
@@ -233,7 +238,7 @@ export async function analyzeLabResults(opts: {
 	if (!result && health.available && health.modelLoaded) {
 		try {
 			opts.onProgress?.("ai", "Analysing your results with Genetiq AI…");
-			const res = await fetch(`${GEMMA_BASE_URL}/api/gemma/analyze`, {
+			const res = await fetch(`${_activeBaseUrl}/api/gemma/analyze`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
@@ -491,7 +496,7 @@ export async function chatWithGemma(opts: {
 	// GPU: real Gemma inference. CPU: instant triage (Gemma takes minutes per reply).
 	if (health.available && health.modelLoaded && onGpu) {
 		try {
-			const res = await fetch(`${GEMMA_BASE_URL}/api/gemma/chat`, {
+			const res = await fetch(`${_activeBaseUrl}/api/gemma/chat`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
@@ -600,7 +605,7 @@ export async function generateActionPlan(opts: {
 	}
 
 	try {
-		const res = await fetch(`${GEMMA_BASE_URL}/api/gemma/action-plan`, {
+		const res = await fetch(`${_activeBaseUrl}/api/gemma/action-plan`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
