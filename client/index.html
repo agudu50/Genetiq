@@ -12,6 +12,12 @@
 			href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Manrope:wght@200..800&display=swap"
 			rel="stylesheet"
 		/>
+
+		<!-- Preload 3D model assets so they download in parallel with the JS bundle,
+		     eliminating the serial waterfall that causes the dashboard delay. -->
+		<link rel="preload" href="/assets/models/normal/normal.obj" as="fetch" crossorigin="anonymous" />
+		<link rel="preload" href="/assets/models/normal/Body_2_normal.png" as="image" />
+		<link rel="preload" href="/assets/models/normal/Body_2_baseColor.jpg" as="image" />
 	</head>
 	<body>
 		<div id="root"></div>

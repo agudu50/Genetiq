@@ -1,5 +1,6 @@
 import { useLoader } from "@react-three/fiber";
 import * as THREE from "three";
+import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import { ModelTextures, BodyModelTextures } from "../Types/modelTypes";
 
 // Cardio texture imports (diffuse maps are unused by createCardioMaterial)
@@ -13,6 +14,16 @@ import baseColorUrl from "@assets/models/normal/Body_2_baseColor.jpg?url";
 import metallicUrl from "@assets/models/normal/Body_2_metallic.jpg?url";
 import normalUrl from "@assets/models/normal/Body_2_normal.png?url";
 import roughnessUrl from "@assets/models/normal/Body_2_roughness.jpg?url";
+
+// ─── Module-level preloads ────────────────────────────────────────────────────
+// Kick off all asset fetches the moment this module is imported (as the
+// Dashboard lazy-chunk loads). By the time the Canvas mounts and components
+// call useLoader() they find resources already cached — no Suspense waterfall.
+useLoader.preload(OBJLoader, "/assets/models/normal/normal.obj");
+useLoader.preload(THREE.TextureLoader, baseColorUrl);
+useLoader.preload(THREE.TextureLoader, normalUrl);
+useLoader.preload(THREE.TextureLoader, metallicUrl);
+useLoader.preload(THREE.TextureLoader, roughnessUrl);
 
 export const useCardioTextures = (): ModelTextures => {
 	const arteriesNormal = useLoader(THREE.TextureLoader, arteriesNormalUrl);

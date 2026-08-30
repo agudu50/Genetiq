@@ -18,13 +18,18 @@ import { TriageWidget } from "@/Features/Dashboard/TriageWidget/TriageWidget";
 import { DeferredMount } from "./DeferredMount";
 import { ViewportMount } from "./ViewportMount";
 import { WidgetFallback } from "./WidgetFallback";
+import { ModelPlaceholder } from "./ModelPlaceholder";
 import { usePanelScrollPerf } from "./usePanelScrollPerf";
 import { useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
 
-const MainScene = lazy(
-	() => import("@/Features/DigitalTwin/Components/Three/Scene/MainScene"),
+// Eagerly kick off the lazy chunk download the moment this module is imported
+// by the router, not waiting for the component to mount. This gives the 3D
+// assets an extra ~200-400ms head-start on download before the Canvas mounts.
+const mainSceneImport = import(
+	"@/Features/DigitalTwin/Components/Three/Scene/MainScene",
 );
+const MainScene = lazy(() => mainSceneImport);
 const CtaModal = lazy(() => import("@/Features/Dashboard/CtaModal/CtaModal"));
 const ConcernsWidget = lazy(() =>
 	import("@/Features/Dashboard/ConcernsWidget/ConcernsWidget").then((m) => ({
@@ -285,7 +290,7 @@ const Dashboard = () => {
 					<div ref={leftColumnRef} className={styles["Dashboard-left"]}>
 						<div className={styles["Dashboard-dt-container"]}>
 							<div className={styles["Dashboard-model"]}>
-								<Suspense fallback={<WidgetFallback minHeight={400} />}>
+								<Suspense fallback={<ModelPlaceholder />}>
 									<MainScene
 										selectedCategory={selectedCategory || "total"}
 										sidebarCollapsed={isMobile ? !isSidebarOpen : undefined}

@@ -24,6 +24,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/App/Redux/store";
 import { setSymptomsInput } from "@/App/Redux/triageSlice";
 
+// ─── Module-level OBJ preloads ───────────────────────────────────────────────
+// These run once when the Dashboard lazy-chunk is first imported, so the
+// browser fetches both model files in parallel with JS parsing. When the Canvas
+// mounts and BodyModelContent/CardioModelContent call useLoader(), the cache
+// is already warm and they resolve without an extra network round-trip.
+useLoader.preload(OBJLoader, "/assets/models/normal/normal.obj");
+useLoader.preload(OBJLoader, "/assets/models/cardio/cardio.obj");
+
 interface ExtendedModelProps extends ModelProps {
 	isFading?: boolean;
 	isNew?: boolean;
