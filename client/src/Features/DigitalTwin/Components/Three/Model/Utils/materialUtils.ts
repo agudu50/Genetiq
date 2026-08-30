@@ -63,19 +63,50 @@ export const createCardioMaterial = (
 	});
 };
 
+// ─── Body material ────────────────────────────────────────────────────────────
+// Accepts Partial<BodyModelTextures> so it works before textures have loaded.
+// The model renders immediately with a warm skin tone; maps are patched in-place
+// as each texture resolves (see updateBodyMaterial below).
 export const createBodyMaterial = (
-	textures: BodyModelTextures,
-): THREE.Material => {
+	textures: Partial<BodyModelTextures>,
+): THREE.MeshStandardMaterial => {
 	return new THREE.MeshStandardMaterial({
-		map: textures.baseColor,
-		normalMap: textures.normal,
-		metalnessMap: textures.metallic,
-		roughnessMap: textures.roughness,
+		// Warm skin-toned baseline — looks presentable with zero textures
+		color: new THREE.Color(0xe8c4a0),
+		map: textures.baseColor ?? null,
+		normalMap: textures.normal ?? null,
+		metalnessMap: textures.metallic ?? null,
+		roughnessMap: textures.roughness ?? null,
 		roughness: 0.9,
 		metalness: 0.1,
 		side: THREE.DoubleSide,
 		transparent: true,
 		envMapIntensity: 0.8,
-		color: new THREE.Color(0xf0f0f0),
 	});
+};
+
+// Patch an existing body material in-place when a new texture arrives.
+// This avoids creating a new material (and recompiling shaders) on every update.
+export const updateBodyMaterial = (
+	mat: THREE.MeshStandardMaterial,
+	textures: Partial<BodyModelTextures>,
+): void => {
+	let changed = false;
+	if (textures.baseColor && mat.map !== textures.baseColor) {
+		mat.map = textures.baseColor;
+		changed = true;
+	}
+	if (textures.normal && mat.normalMap !== textures.normal) {
+		mat.normalMap = textures.normal;
+		changed = true;
+	}
+	if (textures.metallic && mat.metalnessMap !== textures.metallic) {
+		mat.metalnessMap = textures.metallic;
+		changed = true;
+	}
+	if (textures.roughness && mat.roughnessMap !== textures.roughness) {
+		mat.roughnessMap = textures.roughness;
+		changed = true;
+	}
+	if (changed) mat.needsUpdate = true;
 };

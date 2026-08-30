@@ -13,6 +13,7 @@ import { useCardioTextures, useBodyTextures } from "./Hooks/useModelTextures";
 import {
 	createCardioMaterial,
 	createBodyMaterial,
+	updateBodyMaterial,
 } from "./Utils/materialUtils";
 
 import {
@@ -49,7 +50,7 @@ interface ExtendedModelProps extends ModelProps {
 
 interface InternalModelProps {
 	modelType: "body" | "cardio";
-	textures: ModelTextures | BodyModelTextures;
+	textures: ModelTextures | Partial<BodyModelTextures>;
 	isHidden: boolean;
 	shouldRender: boolean;
 	position: [number, number, number];
@@ -69,25 +70,44 @@ const BodyModelContent = memo(function BodyModelContent({
 	handlePointerUp,
 	groupRef,
 }: InternalModelProps) {
-	const model = useLoader(OBJLoader, "/assets/models/normal/normal.obj");
+	// Non-suspending OBJ load — model renders instantly with placeholder geometry
+	const [model, setModel] = useState<THREE.Group | null>(null);
+	const matRef = useRef<THREE.MeshStandardMaterial | null>(null);
 
 	useEffect(() => {
-		if (!model) return;
-		model.traverse((child) => {
-			if (child instanceof THREE.Mesh) {
-				if (child.name === "Body_final") {
-					child.raycast = new THREE.Mesh().raycast;
-					child.userData.clickable = true;
+		let mounted = true;
+		const loader = new OBJLoader();
+		// loadAsync goes through THREE's DefaultLoadingManager which checks the
+		// fetch cache primed by useLoader.preload — resolves quickly if already cached
+		loader.loadAsync("/assets/models/normal/normal.obj").then((obj) => {
+			if (!mounted) return;
+			const mat = createBodyMaterial(textures as Partial<BodyModelTextures>);
+			mat.transparent = true;
+			mat.depthWrite = true;
+			matRef.current = mat;
+			obj.traverse((child) => {
+				if (child instanceof THREE.Mesh) {
+					if (child.name === "Body_final") {
+						child.raycast = new THREE.Mesh().raycast;
+						child.userData.clickable = true;
+					}
+					child.material = mat;
 				}
-				const material = createBodyMaterial(textures as BodyModelTextures);
-				child.material = material;
-				if (child.material) {
-					child.material.transparent = true;
-					child.material.depthWrite = true;
-				}
-			}
+			});
+			setModel(obj);
 		});
-	}, [model, textures]);
+		return () => {
+			mounted = false;
+		};
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	// Patch material in-place as textures arrive — no shader recompilation
+	useEffect(() => {
+		if (matRef.current) {
+			updateBodyMaterial(matRef.current, textures as Partial<BodyModelTextures>);
+		}
+	}, [textures]);
 
 	return (
 		<group
@@ -95,14 +115,27 @@ const BodyModelContent = memo(function BodyModelContent({
 			onPointerDown={handlePointerDown}
 			onPointerUp={handlePointerUp}
 		>
-			<Clone
-				object={model}
-				position={position}
-				rotation={rotation}
-				scale={scale}
-				castShadow
-				receiveShadow
-			/>
+			{model ? (
+				<Clone
+					object={model}
+					position={position}
+					rotation={rotation}
+					scale={scale}
+					castShadow
+					receiveShadow
+				/>
+			) : (
+				// Instant placeholder — visible while OBJ parses from cache
+				<mesh position={[position[0], position[1] + 15, position[2]]}>
+					<capsuleGeometry args={[4, 28, 6, 12]} />
+					<meshStandardMaterial
+						color={0xe8c4a0}
+						wireframe
+						transparent
+						opacity={0.18}
+					/>
+				</mesh>
+			)}
 		</group>
 	);
 });
