@@ -19,8 +19,6 @@ import {
 	ArrowUpDown,
 	ArrowRight,
 	Shield,
-	Zap,
-	Heart,
 	TrendingUp,
 	BarChart3,
 	Filter,
@@ -28,6 +26,9 @@ import {
 	SortDesc,
 	ChevronLeft,
 	ChevronRight,
+	Lock,
+	Sparkles,
+	Plus,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -724,184 +725,247 @@ export const HealthHistory: React.FC = () => {
 				initial="hidden"
 				animate="show"
 			>
-				{/* ── Page hero (matches Health Diagnostics) ─────────────── */}
+				{/* ── Page hero (Redesigned Ultra-Modern Clinical History Vault) ─────────────── */}
 				<motion.section className={styles.pageHero} variants={itemVariants}>
 					<div className={styles.pageHeroBg} aria-hidden />
 					<div className={styles.pageHeroMesh} aria-hidden />
-					<div className={styles.pageHeroGlow} aria-hidden />
+					<div className={styles.pageHeroGlowPrimary} aria-hidden />
+					<div className={styles.pageHeroGlowSecondary} aria-hidden />
 
 					<div className={styles.pageHeroInner}>
-						<div className={styles.heroTop}>
-							<div className={styles.heroCopy}>
-								<span className={styles.pageEyebrow}>
-									<UserRound size={12} strokeWidth={2.5} />
-									{formattedName}'s Record
-								</span>
+						{/* Top row: Left Identity & Right Featured Upload Card */}
+						<div className={styles.heroMainGrid}>
+							{/* Left: Identity & Information */}
+							<div className={styles.heroIdentityCol}>
+								<div className={styles.heroBadgeRow}>
+									<span className={styles.pageEyebrow}>
+										<span className={styles.livePulseDot} />
+										<Shield size={12} strokeWidth={2.5} />
+										{formattedName}'s Clinical Vault
+									</span>
+									<span className={styles.encryptionBadge}>
+										<Lock size={11} strokeWidth={2.5} />
+										On-Device Encrypted
+									</span>
+								</div>
+
 								<h1 className={styles.pageTitle}>
 									<span className={styles.titleMuted}>Clinical</span>{" "}
 									<span className={styles.titleAccent}>History</span>
 								</h1>
+
 								<p className={styles.pageSubtitle}>
-									Your personal health timeline lab uploads, AI-explained findings,
-									and scores secured privately on this device.
+									Your personal health timeline: lab uploads, AI-explained findings,
+									and biomarker scores secured privately on this device.
 								</p>
+
+								{/* Feature & Profile Pills */}
 								<div className={styles.heroFeaturePills}>
 									{age && (
-										<span className={styles.heroFeaturePill}>
+										<div className={styles.heroFeaturePill}>
 											<Calendar size={12} strokeWidth={2.5} />
-											{age} yrs
-										</span>
+											<span>{age} yrs</span>
+										</div>
 									)}
 									{gender && (
-										<span className={styles.heroFeaturePill}>
+										<div className={styles.heroFeaturePill}>
 											<UserRound size={12} strokeWidth={2.5} />
-											{gender}
-										</span>
+											<span>{titleCase(gender)}</span>
+										</div>
 									)}
 									{bloodType && (
-										<span className={styles.heroFeaturePill}>
+										<div className={`${styles.heroFeaturePill} ${styles.pillHighlight}`}>
 											<Droplets size={12} strokeWidth={2.5} />
-											{bloodType}
-										</span>
+											<span>{bloodType}</span>
+										</div>
 									)}
-									<span className={styles.heroFeaturePill}>
-										<Shield size={12} strokeWidth={2.5} />
-										Encrypted vault
-									</span>
-									<span className={styles.heroFeaturePill}>
-										<FileText size={12} strokeWidth={2.5} />
-										AI lab insights
-									</span>
-									<span className={styles.heroFeaturePill}>
+									<div className={styles.heroFeaturePill}>
+										<ShieldCheck size={12} strokeWidth={2.5} />
+										<span>Encrypted vault</span>
+									</div>
+									<div className={styles.heroFeaturePill}>
+										<Sparkles size={12} strokeWidth={2.5} />
+										<span>AI lab insights</span>
+									</div>
+									<div className={styles.heroFeaturePill}>
 										<Clock size={12} strokeWidth={2.5} />
-										Upload timeline
-									</span>
+										<span>Upload timeline</span>
+									</div>
 								</div>
 							</div>
 
-							<div className={styles.heroAside} aria-hidden>
-								<div className={styles.heroOrb}>
-									<div className={styles.heroOrbRing} />
-									<div className={`${styles.heroOrbIcon} ${styles.heroOrbFile}`}>
-										<FileText size={18} />
+							{/* Right: Featured Latest Upload Showcase Card */}
+							<div className={styles.latestUploadCard}>
+								<div className={styles.latestCardGlow} aria-hidden />
+								
+								<div className={styles.latestCardHeader}>
+									<div className={styles.latestCardBadge}>
+										<span className={styles.pulseDotAlt} />
+										<Activity size={12} strokeWidth={2.5} />
+										{records.length === 0 ? "Get Started" : "Latest Lab Upload"}
 									</div>
-									<div className={`${styles.heroOrbIcon} ${styles.heroOrbHeart}`}>
-										<Heart size={18} />
+
+									{records.length > 0 && latestScore != null && (
+										<div 
+											className={styles.miniScoreBadge}
+											style={{
+												borderColor: `color-mix(in srgb, ${healthScoreColour(latestScore)} 35%, transparent)`,
+												background: `color-mix(in srgb, ${healthScoreColour(latestScore)} 12%, var(--hh-card-2))`
+											}}
+										>
+											<span className={styles.miniScoreLabel}>Score</span>
+											<strong 
+												className={styles.miniScoreVal}
+												style={{ color: healthScoreColour(latestScore) }}
+											>
+												{latestScore}/100
+											</strong>
+											<span 
+												className={styles.miniScoreTag}
+												style={{ color: healthScoreColour(latestScore) }}
+											>
+												{healthScoreLabel(latestScore)}
+											</span>
+										</div>
+									)}
+								</div>
+
+								<div className={styles.latestCardBody}>
+									<div className={styles.latestFileIconBox}>
+										<FileText size={22} strokeWidth={2} />
 									</div>
-									<div className={`${styles.heroOrbIcon} ${styles.heroOrbDrop}`}>
-										<Droplets size={18} />
+
+									<div className={styles.latestFileInfo}>
+										<h3 className={styles.latestFileTitle}>
+											{records.length === 0
+												? "No Lab Reports Yet"
+												: latestRecord?.fileName || `Upload #${records.length}`}
+										</h3>
+										<p className={styles.latestFileDate}>
+											{records.length === 0 ? (
+												"Upload your medical reports to generate insights & scores"
+											) : (
+												<>
+													<span>Uploaded {formatDate(latestRecord!.uploadedAt)}</span>
+													<span className={styles.bulletSep}>•</span>
+													<span>{formatTime(latestRecord!.uploadedAt)}</span>
+												</>
+											)}
+										</p>
 									</div>
-									<div className={`${styles.heroOrbIcon} ${styles.heroOrbActivity}`}>
-										<Activity size={18} />
-									</div>
-									<div className={styles.heroOrbCore}>
-										<Zap size={20} strokeWidth={2.25} />
-									</div>
+								</div>
+
+								{/* Action Buttons */}
+								<div className={styles.latestCardActions}>
+									{records.length === 0 ? (
+										<button
+											type="button"
+											className={styles.latestPrimaryBtn}
+											onClick={() => navigate(paths.config.importOrUpload)}
+										>
+											<Upload size={15} strokeWidth={2.5} />
+											Upload first report
+											<ArrowRight size={15} />
+										</button>
+									) : (
+										<>
+											<button
+												type="button"
+												className={styles.latestSecondaryBtn}
+												onClick={scrollToHistory}
+											>
+												<Clock size={14} strokeWidth={2} />
+												View timeline
+											</button>
+											<button
+												type="button"
+												className={styles.latestPrimaryBtn}
+												onClick={() =>
+													navigate(paths.config.importOrUpload, {
+														state: { skipToUpload: true },
+													})
+												}
+											>
+												<Plus size={15} strokeWidth={2.5} />
+												New upload
+											</button>
+										</>
+									)}
 								</div>
 							</div>
 						</div>
 
-						<div
-							className={`${styles.latestRecordBanner} ${
-								records.length === 0 ? styles.latestRecordEmpty : ""
-							}`}
-						>
-							<div className={styles.latestRecordCopy}>
-								<span className={styles.latestRecordEyebrow}>
-									{records.length === 0 ? "Get started" : "Latest upload"}
-								</span>
-								<strong className={styles.latestRecordTitle}>
-									{records.length === 0
-										? "No records yet"
-										: latestRecord?.fileName || `Upload #${records.length}`}
-								</strong>
-								<p className={styles.latestRecordDesc}>
-									{records.length === 0
-										? "Upload lab results to build your clinical timeline and health score."
-										: `Uploaded ${formatDate(latestRecord!.uploadedAt)} at ${formatTime(latestRecord!.uploadedAt)}${
-												latestScore != null
-													? ` · Health score ${latestScore}/100 (${healthScoreLabel(latestScore)})`
-													: ""
-											}`}
-								</p>
-							</div>
-							{records.length === 0 ? (
-								<button
-									type="button"
-									className={styles.latestRecordBtn}
-									onClick={() => navigate(paths.config.importOrUpload)}
-								>
-									Upload results
-									<ArrowRight size={16} />
-								</button>
-							) : (
-								<div className={styles.latestRecordActions}>
-									<button
-										type="button"
-										className={styles.latestRecordBtnSecondary}
-										onClick={scrollToHistory}
-									>
-										View timeline
-									</button>
-									<button
-										type="button"
-										className={styles.latestRecordBtn}
-										onClick={() =>
-											navigate(paths.config.importOrUpload, {
-												state: { skipToUpload: true },
-											})
-										}
-									>
-										New upload
-										<Upload size={15} />
-									</button>
+						{/* Bottom KPI Metrics Strip */}
+						<div className={styles.heroStatsGrid}>
+							{/* Stat 1: Total Uploads */}
+							<div className={`${styles.heroStatCard} ${styles.statTeal}`}>
+								<div className={styles.statCardContent}>
+									<div className={`${styles.heroStatIcon} ${styles.heroStatIconTeal}`}>
+										<Files size={18} strokeWidth={2.2} />
+									</div>
+									<div className={styles.heroStatCopy}>
+										<span className={styles.heroStatLabel}>Total Uploads</span>
+										<strong className={styles.heroStatValue}>
+											{records.length} <span className={styles.statUnit}>record{records.length !== 1 ? "s" : ""}</span>
+										</strong>
+										<span className={styles.heroStatSub}>Archived & analyzed</span>
+									</div>
 								</div>
-							)}
-						</div>
+							</div>
 
-						<div className={styles.heroStatsStrip}>
-							<div className={styles.heroStat}>
-								<span className={`${styles.heroStatIcon} ${styles.heroStatIconTeal}`}>
-									<Files size={15} />
-								</span>
-								<div className={styles.heroStatCopy}>
-									<span className={styles.heroStatLabel}>Uploads</span>
-									<strong className={styles.heroStatValue}>
-										{records.length} record{records.length !== 1 ? "s" : ""}
-									</strong>
+							{/* Stat 2: Needs Review */}
+							<div className={`${styles.heroStatCard} ${styles.statAmber}`}>
+								<div className={styles.statCardContent}>
+									<div className={`${styles.heroStatIcon} ${styles.heroStatIconAmber}`}>
+										<AlertTriangle size={18} strokeWidth={2.2} />
+									</div>
+									<div className={styles.heroStatCopy}>
+										<span className={styles.heroStatLabel}>Needs Review</span>
+										<strong className={styles.heroStatValue}>
+											{attentionFindings} <span className={styles.statUnit}>finding{attentionFindings !== 1 ? "s" : ""}</span>
+										</strong>
+										<span className={styles.heroStatSub}>Out of standard range</span>
+									</div>
 								</div>
 							</div>
-							<div className={styles.heroStat}>
-								<span className={`${styles.heroStatIcon} ${styles.heroStatIconAmber}`}>
-									<AlertTriangle size={15} />
-								</span>
-								<div className={styles.heroStatCopy}>
-									<span className={styles.heroStatLabel}>Needs review</span>
-									<strong className={styles.heroStatValue}>
-										{attentionFindings} finding{attentionFindings !== 1 ? "s" : ""}
-									</strong>
+
+							{/* Stat 3: Normal Markers */}
+							<div className={`${styles.heroStatCard} ${styles.statGreen}`}>
+								<div className={styles.statCardContent}>
+									<div className={`${styles.heroStatIcon} ${styles.heroStatIconGreen}`}>
+										<CheckCircle2 size={18} strokeWidth={2.2} />
+									</div>
+									<div className={styles.heroStatCopy}>
+										<span className={styles.heroStatLabel}>Normal Markers</span>
+										<strong className={styles.heroStatValue}>
+											{normalFindings} <span className={styles.statUnit}>in range</span>
+										</strong>
+										<span className={styles.heroStatSub}>Optimal parameters</span>
+									</div>
 								</div>
 							</div>
-							<div className={styles.heroStat}>
-								<span className={`${styles.heroStatIcon} ${styles.heroStatIconGreen}`}>
-									<CheckCircle2 size={15} />
-								</span>
-								<div className={styles.heroStatCopy}>
-									<span className={styles.heroStatLabel}>Normal markers</span>
-									<strong className={styles.heroStatValue}>
-										{normalFindings} in range
-									</strong>
-								</div>
-							</div>
-							<div className={styles.heroStat}>
-								<span className={`${styles.heroStatIcon} ${styles.heroStatIconPurple}`}>
-									<ShieldCheck size={15} />
-								</span>
-								<div className={styles.heroStatCopy}>
-									<span className={styles.heroStatLabel}>Health score</span>
-									<strong className={styles.heroStatValue}>
-										{latestScore != null ? `${latestScore}/100` : "—"}
-									</strong>
+
+							{/* Stat 4: Health Score */}
+							<div className={`${styles.heroStatCard} ${styles.statPurple}`}>
+								<div className={styles.statCardContent}>
+									<div className={`${styles.heroStatIcon} ${styles.heroStatIconPurple}`}>
+										<ShieldCheck size={18} strokeWidth={2.2} />
+									</div>
+									<div className={styles.heroStatCopy}>
+										<span className={styles.heroStatLabel}>Health Score</span>
+										<strong className={styles.heroStatValue}>
+											{latestScore != null ? (
+												<>
+													{latestScore}<span className={styles.statUnit}>/100</span>
+												</>
+											) : (
+												"—"
+											)}
+										</strong>
+										<span className={styles.heroStatSub}>
+											{latestScore != null ? `${healthScoreLabel(latestScore)} condition` : "No data yet"}
+										</span>
+									</div>
 								</div>
 							</div>
 						</div>
