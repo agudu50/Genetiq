@@ -10,41 +10,81 @@ import { RootState } from "@/App/Redux/store";
 
 const simplifyMarkerTerm = (term: string): string => {
 	if (!term) return "Cholesterol";
-	const lower = term.toLowerCase();
+	const lower = term.toLowerCase().trim();
 
+	// Lymphocytes
+	if (lower === "l sy" || lower === "lsy" || lower.includes("lymph")) {
+		return "Immune Cells";
+	}
+	// Monocytes
+	if (lower.includes("monocyte") || lower === "mono") {
+		return "Immune Cells";
+	}
+	// Neutrophils, Eosinophils, Basophils, WBC
 	if (lower.includes("basophil") || lower.includes("eosinophil") || lower.includes("neutrophil") || lower.includes("leukocyte") || lower.includes("wbc")) {
 		return "White Blood Cells";
 	}
+	// Hemoglobin, RBC
 	if (lower.includes("hemoglobin") || lower.includes("haemoglobin") || lower.includes("rbc") || lower.includes("erythrocyte") || lower.includes("hematocrit")) {
 		return "Red Blood Cells";
 	}
+	// Platelets
 	if (lower.includes("platelet") || lower.includes("plt")) {
-		return "Blood Clotting (Platelets)";
+		return "Blood Clotting";
 	}
+	// Blood sugar
 	if (lower.includes("glucose") || lower.includes("sugar") || lower.includes("hba1c")) {
 		return "Blood Sugar";
 	}
+	// Cholesterol / Lipids
 	if (lower.includes("ldl") || lower.includes("hdl") || lower.includes("triglyceride") || lower.includes("lipid") || lower.includes("cholesterol")) {
 		return "Cholesterol";
 	}
+	// Iron
 	if (lower.includes("ferritin") || lower.includes("iron")) {
-		return "Iron Stores";
+		return "Iron Levels";
 	}
+	// Thyroid
 	if (lower.includes("tsh") || lower.includes("thyroid") || lower.includes("t3") || lower.includes("t4")) {
 		return "Thyroid";
 	}
+	// Vitamin D
 	if (lower.includes("vitamin d") || lower.includes("25-oh")) {
 		return "Vitamin D";
 	}
+	// Liver
 	if (lower.includes("alt") || lower.includes("ast") || lower.includes("bilirubin") || lower.includes("liver")) {
-		return "Liver Function";
+		return "Liver Health";
 	}
+	// Kidney
 	if (lower.includes("creatinine") || lower.includes("egfr") || lower.includes("urea") || lower.includes("kidney")) {
 		return "Kidney Health";
 	}
+	// Vitamin B12
+	if (lower.includes("b12") || lower.includes("cobalamin")) {
+		return "Vitamin B12";
+	}
+	// Blood pressure markers
+	if (lower.includes("sodium") || lower.includes("potassium") || lower.includes("electrolyte")) {
+		return "Electrolytes";
+	}
+	// Protein / Albumin
+	if (lower.includes("albumin") || lower.includes("protein")) {
+		return "Protein Levels";
+	}
 
-	return term.replace(/[%()]/g, "").replace(/\b(absolute|count|ratio|level|panel|index)\b/gi, "").trim() || "Cholesterol";
+	// Clean up remaining raw lab abbreviations
+	const cleaned = term
+		.replace(/[%()]/g, "")
+		.replace(/\b(absolute|count|ratio|level|panel|index)\b/gi, "")
+		.trim();
+
+	// If what's left is still very short or looks like a raw code, show a safe label
+	if (!cleaned || cleaned.length <= 4) return "Health Markers";
+	return cleaned || "Health Markers";
 };
+
+
 
 export const TrackerWidget = () => {
 	const { t } = useLanguage();

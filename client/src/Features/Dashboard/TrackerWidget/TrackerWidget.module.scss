@@ -37,9 +37,9 @@
 .TrackerWidget-Head {
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
+	align-items: flex-start;
 	width: 100%;
-	gap: 16px;
+	gap: 12px;
 	z-index: 1;
 
 	@media (max-width: 480px) {
@@ -51,10 +51,11 @@
 
 .TrackerWidget-info {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	gap: 14px;
 	flex: 1;
 	min-width: 0;
+	overflow: visible;
 }
 
 .TrackerWidget-icon-container {
@@ -105,10 +106,13 @@
 	font-size: 15px;
 	font-weight: 700;
 	color: var(--text-secondary, #94a3b8);
-	line-height: 1.4;
+	line-height: 1.5;
 	margin: 0;
 	letter-spacing: -0.015em;
 	min-width: 0;
+	word-break: break-word;
+	overflow-wrap: break-word;
+	white-space: normal;
 
 	html[data-theme="light"] & {
 		color: #000000;
@@ -122,12 +126,9 @@
 
 .TrackerWidget-target-badge {
 	display: inline-block;
-	background: linear-gradient(135deg, var(--accent, #00A69D) 0%, #38bdf8 100%);
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
+	color: var(--accent, #00A69D);
 	font-weight: 800;
 	letter-spacing: -0.01em;
-	filter: drop-shadow(0 2px 8px rgba(0, 166, 157, 0.12));
 }
 
 // ─── Status Capsule Tag ───
