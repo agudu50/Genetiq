@@ -71,8 +71,7 @@ export const createBodyMaterial = (
 	textures: Partial<BodyModelTextures>,
 ): THREE.MeshStandardMaterial => {
 	return new THREE.MeshStandardMaterial({
-		// Warm skin-toned baseline — looks presentable with zero textures
-		color: new THREE.Color(0xe8c4a0),
+		color: new THREE.Color(0xf0f0f0),
 		map: textures.baseColor ?? null,
 		normalMap: textures.normal ?? null,
 		metalnessMap: textures.metallic ?? null,
