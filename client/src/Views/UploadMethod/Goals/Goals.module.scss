@@ -1,47 +1,86 @@
+// ============================================================================
+//  Goals & Action Plan — Modern Human-Centered Design System
+//  Solid System Colors: Signature Teal (#00a69d), Neutral Surfaces, No Gradients
+// ============================================================================
+
+$teal:       #00a69d;
+$teal-hover: #008f87;
+$green:      #10b981;
+$amber:      #f59e0b;
+$red:        #ef4444;
+$blue:       #3b82f6;
+
+/* ─── Page Wrapper & Theme Tokens ─────────────────────────────────────────── */
 .pageWrapper {
 	width: 100%;
 	min-height: 100vh;
+	font-family: "Inter", "Outfit", system-ui, -apple-system, sans-serif;
+	color: var(--goal-text);
+	background: var(--goal-bg);
+	position: relative;
+	box-sizing: border-box;
+
+	// Light theme defaults
+	--goal-bg: #f8fafd;
+	--goal-card: #ffffff;
+	--goal-card-2: rgba(15, 23, 42, 0.035);
+	--goal-card-hover: #ffffff;
+	--goal-text: #0f172a;
+	--goal-text-2: #475569;
+	--goal-muted: #64748b;
+	--goal-border: rgba(15, 23, 42, 0.08);
+	--goal-border-soft: rgba(15, 23, 42, 0.05);
+	--goal-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+	--goal-shadow-hover: 0 12px 28px rgba(15, 23, 42, 0.09);
+
+	// Dark theme overrides
+	html[data-theme="dark"] & {
+		--goal-bg: #070b12;
+		--goal-card: rgba(20, 28, 45, 0.65);
+		--goal-card-2: rgba(255, 255, 255, 0.03);
+		--goal-card-hover: rgba(26, 36, 58, 0.85);
+		--goal-text: rgba(255, 255, 255, 0.95);
+		--goal-text-2: rgba(255, 255, 255, 0.72);
+		--goal-muted: rgba(255, 255, 255, 0.45);
+		--goal-border: rgba(255, 255, 255, 0.08);
+		--goal-border-soft: rgba(255, 255, 255, 0.05);
+		--goal-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+		--goal-shadow-hover: 0 16px 36px rgba(0, 0, 0, 0.45);
+	}
 }
 
+/* ─── Inner Container ───────────────────────────────────────────────────────── */
 .goalsContainer {
 	display: flex;
 	flex-direction: column;
 	gap: 24px;
-	padding: 24px;
-	max-width: 1440px;
-	margin: 0 auto;
 	width: 100%;
-	min-height: 100vh;
-	color: var(--text-primary);
+	max-width: 1560px;
+	margin: 0 auto;
+	padding: 24px 24px 80px;
 	box-sizing: border-box;
-	overflow-x: hidden;
 
-	* {
-		box-sizing: border-box;
+	@media (max-width: 768px) {
+		padding: 16px 14px 60px;
+		gap: 20px;
 	}
 }
 
-/* ─── Hero Section ─────────────────────────────────────────────────────────── */
-
+/* ─── Hero Section ───────────────────────────────────────────────────────── */
 .heroSection {
 	position: relative;
-	border-radius: 20px;
+	background: var(--goal-card);
+	border: 1px solid var(--goal-border);
+	border-radius: 24px;
 	padding: 28px 32px;
-	background: var(--bg-secondary, rgba(20, 24, 33, 0.75));
-	border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
-	backdrop-filter: blur(16px);
-	overflow: hidden;
-	box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
-}
+	box-shadow: var(--goal-shadow);
+	contain: paint;
+	transition: border-color 0.25s ease, box-shadow 0.25s ease;
 
-.heroGlowBg {
-	position: absolute;
-	top: -50%;
-	right: -20%;
-	width: 500px;
-	height: 500px;
-	background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(59, 130, 246, 0.05) 50%, transparent 70%);
-	pointer-events: none;
+	@media (max-width: 768px) {
+		padding: 22px 20px;
+		border-radius: 18px;
+	}
 }
 
 .heroInner {
@@ -50,58 +89,67 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 24px;
+	gap: 28px;
 	flex-wrap: wrap;
 }
 
 .heroTitleGroup {
-	max-width: 540px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	max-width: 580px;
+	min-width: 0;
 }
 
 .eyebrowTag {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
-	padding: 4px 10px;
-	border-radius: 20px;
-	background: rgba(16, 185, 129, 0.12);
-	color: var(--accent, #10b981);
+	padding: 5px 12px;
+	border-radius: 99px;
+	background: rgba($teal, 0.1);
+	border: 1px solid rgba($teal, 0.22);
+	color: $teal;
 	font-size: 11px;
-	font-weight: 700;
+	font-weight: 800;
 	text-transform: uppercase;
-	letter-spacing: 0.5px;
-	margin-bottom: 10px;
+	letter-spacing: 0.08em;
+	margin-bottom: 12px;
 }
 
 .heroTitle {
-	font-size: 32px;
-	font-weight: 800;
-	letter-spacing: -0.5px;
+	font-size: clamp(1.85rem, 3.5vw, 2.5rem);
+	font-weight: 900;
+	letter-spacing: -0.035em;
 	line-height: 1.15;
-	margin: 0 0 8px 0;
+	margin: 0 0 10px 0;
+	color: var(--goal-text);
 
 	.accentText {
-		background: linear-gradient(135deg, var(--accent, #10b981) 0%, #3b82f6 100%);
-		background-clip: text;
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
+		color: $teal;
+		display: inline-block;
 	}
 }
 
 .heroSubtitle {
 	font-size: 14px;
-	color: var(--text-secondary, #94a3b8);
+	color: var(--goal-text-2);
 	margin: 0;
-	line-height: 1.5;
+	line-height: 1.55;
 }
 
-/* ─── Hero Metrics Cards Grid ─────────────────────────────────────────────── */
-
+/* ─── Hero Metrics Analytics Cards ───────────────────────────────────────── */
 .heroMetricsGrid {
 	display: flex;
 	align-items: center;
-	gap: 16px;
+	gap: 14px;
 	flex-wrap: wrap;
+
+	@media (max-width: 640px) {
+		width: 100%;
+		display: grid;
+		grid-template-columns: 1fr;
+	}
 }
 
 .metricWidget {
@@ -109,11 +157,15 @@
 	align-items: center;
 	gap: 14px;
 	padding: 12px 18px;
-	border-radius: 14px;
-	background: rgba(255, 255, 255, 0.04);
-	border: 1px solid rgba(255, 255, 255, 0.06);
-	backdrop-filter: blur(8px);
+	border-radius: 16px;
+	background: var(--goal-card-2);
+	border: 1px solid var(--goal-border);
 	min-width: 170px;
+	transition: border-color 0.2s ease;
+
+	&:hover {
+		border-color: rgba($teal, 0.35);
+	}
 }
 
 .ringWrapper {
@@ -123,6 +175,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	flex-shrink: 0;
 
 	.circularChart {
 		width: 100%;
@@ -130,13 +183,13 @@
 
 		.circleBg {
 			fill: none;
-			stroke: rgba(255, 255, 255, 0.08);
+			stroke: var(--goal-border);
 			stroke-width: 3.5;
 		}
 
 		.circleProgress {
 			fill: none;
-			stroke: var(--accent, #10b981);
+			stroke: $teal;
 			stroke-width: 3.5;
 			stroke-linecap: round;
 			transition: stroke-dasharray 0.4s ease;
@@ -146,8 +199,8 @@
 	.ringText {
 		position: absolute;
 		font-size: 11px;
-		font-weight: 800;
-		color: var(--text-primary);
+		font-weight: 900;
+		color: var(--goal-text);
 	}
 }
 
@@ -155,47 +208,52 @@
 	width: 44px;
 	height: 44px;
 	border-radius: 12px;
-	background: rgba(255, 255, 255, 0.06);
+	background: var(--goal-card);
+	border: 1px solid var(--goal-border-soft);
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	flex-shrink: 0;
 
 	.flameIcon {
-		color: #f97316;
+		color: $amber;
 	}
 
 	.zapIcon {
-		color: #eab308;
+		color: $teal;
 	}
 }
 
 .metricText {
 	display: flex;
 	flex-direction: column;
+	gap: 2px;
 }
 
 .metricLabel {
 	font-size: 11px;
-	color: var(--text-secondary, #94a3b8);
-	font-weight: 600;
+	color: var(--goal-muted);
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
 }
 
 .metricVal {
-	font-size: 14px;
-	font-weight: 700;
-	color: var(--text-primary);
+	font-size: 13.5px;
+	font-weight: 800;
+	color: var(--goal-text);
 }
 
-/* ─── Main Two-Column Layout ────────────────────────────────────────────────── */
-
+/* ─── Main Two-Column Layout ─────────────────────────────────────────────── */
 .mainLayout {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) 360px;
+	grid-template-columns: minmax(0, 1fr) 350px;
 	gap: 24px;
-	align-items: start;
+	width: 100%;
 
-	@media (max-width: 1024px) {
+	@media (max-width: 1080px) {
 		grid-template-columns: 1fr;
+		gap: 20px;
 	}
 }
 
@@ -203,6 +261,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
+	min-width: 0;
 }
 
 .sidebarColumn {
@@ -212,7 +271,6 @@
 }
 
 /* ─── Workspace Toolbar Header ─────────────────────────────────────────────── */
-
 .workspaceHeader {
 	display: flex;
 	align-items: center;
@@ -224,47 +282,55 @@
 .sessionPills {
 	display: flex;
 	align-items: center;
-	gap: 6px;
-	background: rgba(255, 255, 255, 0.04);
+	gap: 4px;
+	background: var(--goal-card);
 	padding: 4px;
-	border-radius: 12px;
-	border: 1px solid rgba(255, 255, 255, 0.06);
+	border-radius: 14px;
+	border: 1px solid var(--goal-border);
+	overflow-x: auto;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
 }
 
 .sessionBtn {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
-	padding: 6px 14px;
-	border-radius: 8px;
+	padding: 7px 14px;
+	border-radius: 10px;
 	border: none;
 	background: transparent;
-	color: var(--text-secondary, #94a3b8);
+	color: var(--goal-text-2);
 	font-size: 12px;
-	font-weight: 600;
+	font-weight: 700;
+	font-family: inherit;
 	cursor: pointer;
+	white-space: nowrap;
 	transition: all 0.2s ease;
 
 	&:hover {
-		color: var(--text-primary);
-		background: rgba(255, 255, 255, 0.05);
+		color: var(--goal-text);
+		background: var(--goal-card-2);
 	}
 
 	&.active {
-		background: var(--accent, #10b981);
+		background: $teal;
 		color: #ffffff;
-		font-weight: 700;
-		box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+		font-weight: 800;
+		box-shadow: 0 4px 12px rgba($teal, 0.25);
 	}
 
 	.liveTag {
 		font-size: 9px;
 		background: rgba(255, 255, 255, 0.25);
 		color: #ffffff;
-		padding: 1px 5px;
+		padding: 1px 6px;
 		border-radius: 6px;
 		text-transform: uppercase;
 		font-weight: 800;
+		letter-spacing: 0.04em;
 	}
 }
 
@@ -273,30 +339,31 @@
 	align-items: center;
 	gap: 6px;
 	padding: 8px 16px;
-	border-radius: 10px;
-	border: 1px solid var(--accent, #10b981);
-	background: rgba(16, 185, 129, 0.1);
-	color: var(--accent, #10b981);
-	font-size: 13px;
-	font-weight: 700;
+	border-radius: 12px;
+	border: 1px solid rgba($teal, 0.3);
+	background: rgba($teal, 0.1);
+	color: $teal;
+	font-size: 12.5px;
+	font-weight: 800;
+	font-family: inherit;
 	cursor: pointer;
+	white-space: nowrap;
 	transition: all 0.2s ease;
 
 	&:hover {
-		background: var(--accent, #10b981);
+		background: $teal;
 		color: #ffffff;
-		box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+		border-color: $teal;
 	}
 }
 
-/* ─── Category Filters ────────────────────────────────────────────────────── */
-
+/* ─── Category Filter Pills ──────────────────────────────────────────────── */
 .categoryFilters {
 	display: flex;
 	align-items: center;
 	gap: 8px;
 	overflow-x: auto;
-	padding-bottom: 4px;
+	padding: 2px 0;
 
 	&::-webkit-scrollbar {
 		display: none;
@@ -308,40 +375,41 @@
 	align-items: center;
 	gap: 6px;
 	padding: 7px 14px;
-	border-radius: 20px;
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	background: rgba(255, 255, 255, 0.03);
-	color: var(--text-secondary, #94a3b8);
+	border-radius: 99px;
+	border: 1px solid var(--goal-border);
+	background: var(--goal-card);
+	color: var(--goal-text-2);
 	font-size: 12px;
-	font-weight: 600;
+	font-weight: 700;
+	font-family: inherit;
 	cursor: pointer;
 	white-space: nowrap;
 	transition: all 0.2s ease;
 
 	&:hover {
-		border-color: rgba(255, 255, 255, 0.15);
-		color: var(--text-primary);
+		border-color: rgba($teal, 0.3);
+		color: var(--goal-text);
+		background: var(--goal-card-2);
 	}
 
 	&.active {
-		border-color: var(--accent, #10b981);
-		background: rgba(16, 185, 129, 0.15);
-		color: var(--accent, #10b981);
-		font-weight: 700;
+		border-color: $teal;
+		background: rgba($teal, 0.12);
+		color: $teal;
+		font-weight: 800;
 	}
 }
 
-/* ─── Inline Custom Habit Card Form ───────────────────────────────────────── */
-
+/* ─── Inline Add Custom Habit Drawer ─────────────────────────────────────── */
 .customHabitCard {
-	border-radius: 16px;
-	background: var(--bg-secondary, rgba(20, 24, 33, 0.85));
-	border: 1px solid rgba(16, 185, 129, 0.3);
-	padding: 20px 24px;
+	border-radius: 18px;
+	background: var(--goal-card);
+	border: 1px solid rgba($teal, 0.3);
+	padding: 22px 24px;
 	display: flex;
 	flex-direction: column;
 	gap: 14px;
-	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+	box-shadow: var(--goal-shadow);
 	overflow: hidden;
 }
 
@@ -349,26 +417,38 @@
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	color: var(--accent, #10b981);
+	color: $teal;
 
 	h3 {
 		font-size: 15px;
-		font-weight: 700;
+		font-weight: 800;
 		margin: 0;
-		color: var(--text-primary);
+		color: var(--goal-text);
 	}
+}
+
+.sparkleIcon {
+	color: $teal;
 }
 
 .formRow {
 	display: grid;
 	grid-template-columns: 2fr 1fr;
 	gap: 12px;
+
+	@media (max-width: 600px) {
+		grid-template-columns: 1fr;
+	}
 }
 
 .formRow3 {
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
 	gap: 12px;
+
+	@media (max-width: 600px) {
+		grid-template-columns: 1fr;
+	}
 }
 
 .inputBox {
@@ -378,21 +458,24 @@
 
 	label {
 		font-size: 11px;
-		font-weight: 600;
-		color: var(--text-secondary, #94a3b8);
+		font-weight: 700;
+		color: var(--goal-muted);
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
 	}
 
 	input, select {
-		padding: 8px 12px;
-		border-radius: 8px;
-		border: 1px solid rgba(255, 255, 255, 0.12);
-		background: rgba(0, 0, 0, 0.25);
-		color: var(--text-primary);
+		padding: 9px 12px;
+		border-radius: 10px;
+		border: 1px solid var(--goal-border);
+		background: var(--goal-card-2);
+		color: var(--goal-text);
 		font-size: 13px;
+		font-family: inherit;
+		outline: none;
 
 		&:focus {
-			outline: none;
-			border-color: var(--accent, #10b981);
+			border-color: $teal;
 		}
 	}
 }
@@ -408,23 +491,23 @@
 	align-items: center;
 	gap: 6px;
 	padding: 9px 20px;
-	border-radius: 8px;
+	border-radius: 10px;
 	border: none;
-	background: var(--accent, #10b981);
+	background: $teal;
 	color: #ffffff;
 	font-size: 13px;
-	font-weight: 700;
+	font-weight: 800;
+	font-family: inherit;
 	cursor: pointer;
 	transition: all 0.2s ease;
 
 	&:hover {
-		box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
-		transform: translateY(-1px);
+		background: $teal-hover;
+		box-shadow: 0 4px 14px rgba($teal, 0.35);
 	}
 }
 
-/* ─── Active Habits Grid & Feed ───────────────────────────────────────────── */
-
+/* ─── Active Habits Grid & Cards ─────────────────────────────────────────── */
 .habitsFeed {
 	display: flex;
 	flex-direction: column;
@@ -437,51 +520,56 @@
 	align-items: center;
 	justify-content: center;
 	padding: 48px 24px;
-	border-radius: 16px;
-	background: rgba(255, 255, 255, 0.02);
-	border: 1px dashed rgba(255, 255, 255, 0.08);
+	border-radius: 18px;
+	background: var(--goal-card);
+	border: 1px dashed var(--goal-border);
 	text-align: center;
-	color: var(--text-secondary, #94a3b8);
+	color: var(--goal-muted);
 
 	h3 {
 		font-size: 16px;
-		font-weight: 700;
-		color: var(--text-primary);
+		font-weight: 800;
+		color: var(--goal-text);
 		margin: 12px 0 4px 0;
 	}
 
 	p {
 		font-size: 13px;
 		margin: 0;
+		color: var(--goal-text-2);
 	}
 }
 
 .habitsGrid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
 	gap: 16px;
+
+	@media (max-width: 640px) {
+		grid-template-columns: 1fr;
+	}
 }
 
 .habitCard {
-	position: relative;
-	border-radius: 16px;
-	background: var(--card-bg, rgba(20, 24, 33, 0.7));
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	padding: 18px;
+	background: var(--goal-card);
+	border: 1px solid var(--goal-border);
+	border-radius: 18px;
+	padding: 20px;
 	display: flex;
 	flex-direction: column;
 	gap: 14px;
-	transition: all 0.25 ease;
+	box-shadow: var(--goal-shadow);
+	transition: all 0.2s ease;
 
 	&:hover {
-		border-color: rgba(255, 255, 255, 0.16);
+		border-color: rgba($teal, 0.35);
 		transform: translateY(-2px);
-		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+		box-shadow: var(--goal-shadow-hover);
 	}
 
 	&.completed {
-		background: rgba(16, 185, 129, 0.05);
-		border-color: rgba(16, 185, 129, 0.3);
+		border-color: rgba($teal, 0.25);
+		background: var(--goal-card-2);
 	}
 }
 
@@ -492,11 +580,12 @@
 }
 
 .categoryIconBadge {
-	width: 32px;
-	height: 32px;
+	width: 36px;
+	height: 36px;
 	border-radius: 10px;
-	background: rgba(16, 185, 129, 0.12);
-	color: var(--accent, #10b981);
+	background: rgba($teal, 0.1);
+	border: 1px solid rgba($teal, 0.2);
+	color: $teal;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -509,76 +598,56 @@
 }
 
 .habitTitle {
-	font-size: 14.5px;
-	font-weight: 700;
-	color: var(--text-primary);
-	margin: 0 0 3px 0;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	font-size: 15px;
+	font-weight: 800;
+	color: var(--goal-text);
+	margin: 0 0 2px 0;
+	line-height: 1.3;
+	letter-spacing: -0.01em;
 }
 
 .habitDesc {
 	font-size: 12px;
-	color: var(--text-secondary, #94a3b8);
+	color: var(--goal-text-2);
 	margin: 0;
-	line-height: 1.4;
-	display: -webkit-box;
-	line-clamp: 2;
-	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
+	line-height: 1.45;
 }
 
 .checkBtn {
-	width: 28px;
-	height: 28px;
-	border-radius: 8px;
-	border: 1.5px solid rgba(255, 255, 255, 0.25);
-	background: rgba(255, 255, 255, 0.05);
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	border: 2px solid var(--goal-border);
+	background: var(--goal-card-2);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
-	color: #ffffff;
 	flex-shrink: 0;
 	transition: all 0.2s ease;
-
-	svg {
-		stroke: #ffffff;
-		stroke-width: 3px;
-		width: 15px;
-		height: 15px;
-		flex-shrink: 0;
-	}
+	padding: 0;
+	color: #ffffff;
 
 	&:hover {
-		border-color: var(--accent, #10b981);
-		background: rgba(16, 185, 129, 0.15);
-
-		.checkDot {
-			background: var(--accent, #10b981);
-		}
+		border-color: $teal;
+		background: rgba($teal, 0.1);
 	}
 
 	&.checked {
-		background: var(--accent, #10b981);
-		border-color: var(--accent, #10b981);
+		background: $teal;
+		border-color: $teal;
+		box-shadow: 0 4px 10px rgba($teal, 0.35);
+	}
 
-		svg {
-			stroke: #ffffff;
-		}
+	.checkDot {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background: transparent;
 	}
 }
 
-.checkDot {
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	background: rgba(255, 255, 255, 0.4);
-	transition: all 0.2s ease;
-}
-
+/* ─── Card Body Progress & Stepper ───────────────────────────────────────── */
 .cardBody {
 	display: flex;
 	flex-direction: column;
@@ -589,33 +658,40 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	font-size: 11px;
+	gap: 8px;
 }
 
 .progressValue {
-	color: var(--text-secondary, #94a3b8);
+	font-size: 12.5px;
+	color: var(--goal-text-2);
+
 	strong {
-		color: var(--text-primary);
-		font-size: 13px;
+		color: var(--goal-text);
+		font-weight: 800;
 	}
 }
 
 .progressPct {
-	font-weight: 700;
-	color: var(--accent, #10b981);
+	font-size: 11px;
+	font-weight: 800;
+	color: $teal;
+	background: rgba($teal, 0.1);
+	padding: 2px 8px;
+	border-radius: 99px;
 }
 
 .progressBarTrack {
+	width: 100%;
 	height: 6px;
-	border-radius: 3px;
-	background: rgba(255, 255, 255, 0.08);
+	border-radius: 99px;
+	background: var(--goal-border-soft);
 	overflow: hidden;
 }
 
 .progressBarFill {
 	height: 100%;
-	background: linear-gradient(90deg, var(--accent, #10b981) 0%, #3b82f6 100%);
-	border-radius: 3px;
+	border-radius: 99px;
+	background: $teal;
 	transition: width 0.3s ease;
 }
 
@@ -623,12 +699,16 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	margin-top: 2px;
+	gap: 10px;
+	padding-top: 4px;
 }
 
 .stepperLabel {
 	font-size: 11px;
-	color: var(--text-secondary, #94a3b8);
+	font-weight: 700;
+	color: var(--goal-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
 }
 
 .stepperControls {
@@ -638,81 +718,85 @@
 }
 
 .stepBtn {
-	width: 30px;
+	width: 28px;
 	height: 28px;
-	border-radius: 6px;
-	border: 1px solid rgba(255, 255, 255, 0.16);
-	background: rgba(255, 255, 255, 0.08);
-	color: var(--text-primary, #ffffff);
+	border-radius: 8px;
+	border: 1px solid var(--goal-border);
+	background: var(--goal-card-2);
+	color: var(--goal-text);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
-	flex-shrink: 0;
-
-	svg {
-		stroke: var(--text-primary, #ffffff);
-		stroke-width: 2.5px;
-		flex-shrink: 0;
-	}
+	transition: all 0.15s ease;
+	padding: 0;
 
 	&:hover:not(:disabled) {
-		background: rgba(255, 255, 255, 0.16);
-		border-color: var(--accent, #10b981);
-		color: var(--accent, #10b981);
-
-		svg {
-			stroke: var(--accent, #10b981);
-		}
+		border-color: $teal;
+		color: $teal;
+		background: rgba($teal, 0.08);
 	}
 
 	&:disabled {
-		opacity: 0.35;
-		cursor: not-allowed;
+		opacity: 0.4;
+		cursor: default;
 	}
 }
 
+/* ─── Card Footer Tags ───────────────────────────────────────────────────── */
 .cardFooter {
 	display: flex;
 	align-items: center;
 	gap: 6px;
-	margin-top: auto;
-	padding-top: 10px;
-	border-top: 1px solid rgba(255, 255, 255, 0.05);
+	flex-wrap: wrap;
+	padding-top: 8px;
+	border-top: 1px solid var(--goal-border-soft);
 }
 
-.categoryTag, .sessionTag {
-	font-size: 10px;
+.categoryTag {
+	font-size: 10.5px;
 	font-weight: 700;
-	padding: 2px 8px;
+	padding: 3px 8px;
 	border-radius: 6px;
-	background: rgba(255, 255, 255, 0.05);
-	color: var(--text-secondary, #94a3b8);
+	background: var(--goal-card-2);
+	border: 1px solid var(--goal-border-soft);
+	color: var(--goal-text-2);
+}
+
+.sessionTag {
+	font-size: 10.5px;
+	font-weight: 700;
+	padding: 3px 8px;
+	border-radius: 6px;
+	background: rgba($teal, 0.08);
+	border: 1px solid rgba($teal, 0.18);
+	color: $teal;
 }
 
 .pointsTag {
 	display: inline-flex;
 	align-items: center;
 	gap: 3px;
-	font-size: 10px;
+	font-size: 10.5px;
 	font-weight: 800;
-	padding: 2px 8px;
+	padding: 3px 8px;
 	border-radius: 6px;
-	background: rgba(234, 179, 8, 0.15);
-	color: #eab308;
+	background: rgba($amber, 0.1);
+	border: 1px solid rgba($amber, 0.22);
+	color: $amber;
 	margin-left: auto;
 }
 
-/* ─── Sidebar Cards ───────────────────────────────────────────────────────── */
-
+/* ─── Sidebar Cards ──────────────────────────────────────────────────────── */
 .sidebarCard {
-	border-radius: 16px;
-	background: var(--bg-secondary, rgba(20, 24, 33, 0.75));
-	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: var(--goal-card);
+	border: 1px solid var(--goal-border);
+	border-radius: 18px;
 	padding: 20px;
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	gap: 14px;
+	box-shadow: var(--goal-shadow);
 }
 
 .cardTitleRow {
@@ -721,73 +805,81 @@
 	gap: 8px;
 
 	h3 {
-		font-size: 15px;
-		font-weight: 700;
-		color: var(--text-primary);
+		font-size: 14.5px;
+		font-weight: 800;
+		color: var(--goal-text);
 		margin: 0;
-	}
-
-	.cardIcon {
-		color: var(--accent, #10b981);
-	}
-
-	.cardIconAlert {
-		color: #ef4444;
-	}
-
-	.cardIconGold {
-		color: #eab308;
 	}
 }
 
+.cardIcon {
+	color: $teal;
+}
+
+.cardIconAlert {
+	color: $red;
+}
+
+.cardIconGold {
+	color: $amber;
+}
+
+/* ─── Weight Goal Toggle ─────────────────────────────────────────────────── */
 .weightToggleGrid {
 	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
+	grid-template-columns: repeat(3, 1fr);
 	gap: 6px;
+	background: var(--goal-card-2);
+	padding: 4px;
+	border-radius: 12px;
+	border: 1px solid var(--goal-border-soft);
 }
 
 .weightOption {
 	display: flex;
-	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	gap: 4px;
-	padding: 8px 4px;
-	border-radius: 10px;
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	background: rgba(255, 255, 255, 0.03);
-	color: var(--text-secondary, #94a3b8);
-	font-size: 11px;
-	font-weight: 600;
+	gap: 6px;
+	padding: 8px 10px;
+	border-radius: 8px;
+	border: none;
+	background: transparent;
+	color: var(--goal-text-2);
+	font-size: 12px;
+	font-weight: 700;
+	font-family: inherit;
 	cursor: pointer;
 	transition: all 0.2s ease;
 
 	&:hover {
-		border-color: rgba(255, 255, 255, 0.15);
-		color: var(--text-primary);
+		color: var(--goal-text);
 	}
 
 	&.active {
-		border-color: var(--accent, #10b981);
-		background: rgba(16, 185, 129, 0.12);
-		color: var(--accent, #10b981);
-		font-weight: 700;
+		background: $teal;
+		color: #ffffff;
+		font-weight: 800;
+		box-shadow: 0 4px 10px rgba($teal, 0.25);
 	}
 }
 
 .dietPlanSummary {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+
 	h4 {
 		font-size: 13.5px;
-		font-weight: 700;
-		margin: 0 0 4px 0;
-		color: var(--text-primary);
+		font-weight: 800;
+		color: var(--goal-text);
+		margin: 0;
 	}
 
 	p {
 		font-size: 12px;
-		color: var(--text-secondary, #94a3b8);
+		color: var(--goal-text-2);
 		margin: 0;
-		line-height: 1.4;
+		line-height: 1.45;
 	}
 }
 
@@ -798,26 +890,25 @@
 }
 
 .macroBar {
-	display: flex;
+	width: 100%;
 	height: 8px;
-	border-radius: 4px;
+	border-radius: 99px;
+	display: flex;
 	overflow: hidden;
-	background: rgba(255, 255, 255, 0.08);
+	background: var(--goal-border-soft);
 }
 
 .macroSegment {
 	height: 100%;
 
 	&.carbs {
-		background: #3b82f6;
+		background: $amber;
 	}
-
 	&.protein {
-		background: #10b981;
+		background: $teal;
 	}
-
 	&.fat {
-		background: #f59e0b;
+		background: $blue;
 	}
 }
 
@@ -825,8 +916,9 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	font-size: 10.5px;
-	color: var(--text-secondary, #94a3b8);
+	font-size: 11px;
+	color: var(--goal-text-2);
+	font-weight: 600;
 
 	span {
 		display: flex;
@@ -839,17 +931,9 @@
 		height: 6px;
 		border-radius: 50%;
 
-		&.carbs {
-			background: #3b82f6;
-		}
-
-		&.protein {
-			background: #10b981;
-		}
-
-		&.fat {
-			background: #f59e0b;
-		}
+		&.carbs { background: $amber; }
+		&.protein { background: $teal; }
+		&.fat { background: $blue; }
 	}
 }
 
@@ -858,28 +942,31 @@
 	align-items: center;
 	justify-content: center;
 	gap: 6px;
-	width: 100%;
-	padding: 9px;
+	padding: 10px;
 	border-radius: 10px;
-	border: 1px solid var(--accent, #10b981);
-	background: rgba(16, 185, 129, 0.1);
-	color: var(--accent, #10b981);
+	background: $teal;
+	color: #ffffff;
 	font-size: 12.5px;
-	font-weight: 700;
+	font-weight: 800;
+	font-family: inherit;
+	border: none;
 	cursor: pointer;
 	transition: all 0.2s ease;
 
 	&:hover:not(:disabled) {
-		background: var(--accent, #10b981);
-		color: #ffffff;
+		background: $teal-hover;
 	}
 
 	&:disabled {
-		opacity: 0.5;
-		cursor: not-allowed;
+		opacity: 0.6;
+		cursor: default;
+		background: var(--goal-card-2);
+		color: var(--goal-muted);
+		border: 1px solid var(--goal-border);
 	}
 }
 
+/* ─── Suggested Habits ───────────────────────────────────────────────────── */
 .suggestedList {
 	display: flex;
 	flex-direction: column;
@@ -891,781 +978,119 @@
 	align-items: center;
 	justify-content: space-between;
 	gap: 10px;
+	background: var(--goal-card-2);
+	border: 1px solid var(--goal-border-soft);
 	padding: 10px 12px;
-	border-radius: 10px;
-	background: rgba(255, 255, 255, 0.03);
-	border: 1px solid rgba(255, 255, 255, 0.06);
+	border-radius: 12px;
+	transition: border-color 0.2s ease;
+
+	&:hover {
+		border-color: rgba($teal, 0.3);
+	}
 }
 
 .suggestedText {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+
 	h4 {
 		font-size: 12.5px;
-		font-weight: 700;
-		color: var(--text-primary);
-		margin: 0 0 2px 0;
+		font-weight: 800;
+		color: var(--goal-text);
+		margin: 0;
 	}
 
 	p {
-		font-size: 11px;
-		color: var(--text-secondary, #94a3b8);
+		font-size: 11.5px;
+		color: var(--goal-text-2);
 		margin: 0;
-		line-height: 1.3;
+		line-height: 1.35;
 	}
 }
 
 .addSuggestedBtn {
-	width: 26px;
-	height: 26px;
-	border-radius: 8px;
-	border: none;
-	background: var(--accent, #10b981);
-	color: #ffffff;
-	display: flex;
+	width: 32px;
+	height: 32px;
+	border-radius: 10px;
+	border: 1px solid rgba($teal, 0.3);
+	background: rgba($teal, 0.1);
+	color: $teal;
+	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
 	flex-shrink: 0;
+	transition: all 0.15s ease;
+	padding: 0;
+
+	svg {
+		width: 14px;
+		height: 14px;
+		stroke: $teal;
+		stroke-width: 2.5px;
+		display: block;
+		flex-shrink: 0;
+		transition: stroke 0.15s ease;
+	}
 
 	&:hover {
-		transform: scale(1.05);
+		background: $teal;
+		border-color: $teal;
+		color: #ffffff;
+
+		svg {
+			stroke: #ffffff;
+		}
 	}
 }
 
+/* ─── Health Grade & Privacy ─────────────────────────────────────────────── */
 .scoreDisplay {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	text-align: center;
-	padding: 12px;
+	gap: 6px;
+	padding: 12px 0;
 }
 
 .scoreBigNum {
-	font-size: 42px;
+	font-size: 38px;
 	font-weight: 900;
-	color: var(--accent, #10b981);
+	color: $teal;
 	line-height: 1;
-	display: flex;
-	align-items: baseline;
 
 	small {
-		font-size: 18px;
+		font-size: 20px;
+		font-weight: 800;
 		margin-left: 2px;
 	}
 }
 
 .scoreSubtext {
-	font-size: 11.5px;
-	color: var(--text-secondary, #94a3b8);
-	margin: 6px 0 0 0;
+	font-size: 12px;
+	color: var(--goal-text-2);
+	margin: 0;
+	max-width: 240px;
+	line-height: 1.4;
 }
 
 .privacyBanner {
 	display: flex;
 	align-items: center;
 	gap: 8px;
+	background: rgba($teal, 0.06);
+	border: 1px solid rgba($teal, 0.16);
 	padding: 10px 12px;
 	border-radius: 10px;
-	background: rgba(255, 255, 255, 0.03);
-	border: 1px solid rgba(255, 255, 255, 0.06);
-	font-size: 11px;
-	color: var(--text-secondary, #94a3b8);
+	color: var(--goal-text-2);
+	font-size: 11.5px;
 	line-height: 1.35;
-}
 
-/* ─── Mobile Responsiveness Enhancements ─────────────────────────────────── */
-
-@media (max-width: 768px) {
-	.goalsContainer {
-		padding: 12px 10px;
-		gap: 14px;
-		width: 100%;
-		max-width: 100vw;
-		overflow-x: hidden;
-	}
-
-	.heroSection {
-		padding: 18px 14px;
-		border-radius: 14px;
-		width: 100%;
-	}
-
-	.heroInner {
-		flex-direction: column;
-		align-items: stretch;
-		gap: 14px;
-		width: 100%;
-	}
-
-	.heroTitleGroup {
-		width: 100%;
-		max-width: 100%;
-	}
-
-	.heroTitle {
-		font-size: 22px;
-	}
-
-	.heroSubtitle {
-		font-size: 12.5px;
-	}
-
-	.heroMetricsGrid {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
-		width: 100%;
-	}
-
-	.metricWidget {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: flex-start;
-		text-align: left;
-		padding: 10px 12px;
-		width: 100%;
-		min-width: 0;
-		gap: 12px;
-		box-sizing: border-box;
-	}
-
-	.metricText {
-		align-items: flex-start;
-	}
-
-	.metricLabel {
-		font-size: 11px;
-	}
-
-	.metricVal {
-		font-size: 13px;
-		white-space: normal;
-		word-break: break-word;
-	}
-
-	.mainLayout {
-		grid-template-columns: 1fr;
-		width: 100%;
-		gap: 16px;
-	}
-
-	.primaryColumn, .sidebarColumn {
-		width: 100%;
-		min-width: 0;
-	}
-
-	.workspaceHeader {
-		flex-direction: column;
-		align-items: stretch;
-		gap: 10px;
-		width: 100%;
-	}
-
-	.sessionPills {
-		width: 100%;
-		display: flex;
-		overflow-x: auto;
-		-webkit-overflow-scrolling: touch;
-		justify-content: flex-start;
-		padding: 4px;
-
-		&::-webkit-scrollbar {
-			display: none;
-		}
-	}
-
-	.sessionBtn {
-		padding: 8px 12px;
-		font-size: 11.5px;
-		flex-shrink: 0;
-		white-space: nowrap;
-	}
-
-	.addHabitBtn {
-		width: 100%;
-		justify-content: center;
-		padding: 10px 16px;
-		min-height: 42px;
-	}
-
-	.categoryFilters {
-		width: 100%;
-		display: flex;
-		overflow-x: auto;
-		-webkit-overflow-scrolling: touch;
-		padding-bottom: 4px;
-
-		&::-webkit-scrollbar {
-			display: none;
-		}
-	}
-
-	.catBtn {
-		padding: 6px 12px;
-		font-size: 11.5px;
+	svg {
+		color: $teal;
 		flex-shrink: 0;
 	}
-
-	.customHabitCard {
-		padding: 14px;
-		width: 100%;
-	}
-
-	.formRow, .formRow3 {
-		grid-template-columns: 1fr;
-		gap: 10px;
-	}
-
-	.habitsFeed {
-		width: 100%;
-	}
-
-	.habitsGrid {
-		grid-template-columns: 1fr;
-		gap: 12px;
-		width: 100%;
-	}
-
-	.habitCard {
-		padding: 14px;
-		gap: 12px;
-		width: 100%;
-		min-width: 0;
-	}
-
-	.habitTitle {
-		white-space: normal;
-		word-break: break-word;
-	}
-
-	.checkBtn {
-		width: 32px;
-		height: 32px;
-	}
-
-	.stepBtn {
-		width: 34px;
-		height: 30px;
-	}
-
-	.sidebarColumn {
-		gap: 14px;
-		width: 100%;
-	}
-
-	.sidebarCard {
-		padding: 14px;
-		width: 100%;
-	}
-
-	.weightToggleGrid {
-		grid-template-columns: repeat(3, 1fr);
-		gap: 4px;
-		width: 100%;
-	}
-
-	.weightOption {
-		padding: 10px 2px;
-		font-size: 11px;
-	}
-
-	.macroLegend {
-		flex-wrap: wrap;
-		gap: 6px;
-	}
 }
-
-@media (max-width: 480px) {
-	.goalsContainer {
-		padding: 8px 6px;
-	}
-
-	.heroSection {
-		padding: 14px 12px;
-	}
-
-	.metricWidget {
-		padding: 10px;
-	}
-}
-
-/* ─── Light Mode Overrides for Action Plan / Goals Page ───────────────────── */
-:global(html[data-theme="light"]) {
-
-	/* Page Background — full width wash */
-	.pageWrapper {
-		background: linear-gradient(180deg, #f0fdf9 0%, #eef6f5 50%, #f1f5f9 100%);
-		min-height: 100vh;
-	}
-
-	.goalsContainer {
-		background: transparent;
-	}
-
-	/* ── Hero Section — Solid Green, NO GRADIENTS ──────────────── */
-	.heroSection {
-		background: #00897b;
-		border: none;
-		box-shadow: 0 8px 32px rgba(0, 121, 107, 0.22);
-		backdrop-filter: none;
-	}
-
-	.heroGlowBg {
-		display: none;
-	}
-
-	.eyebrowTag {
-		background: rgba(255, 255, 255, 0.2);
-		border: 1px solid rgba(255, 255, 255, 0.35);
-		color: #ffffff;
-		backdrop-filter: blur(6px);
-	}
-
-	.heroTitle {
-		color: #ffffff;
-
-		.accentText {
-			background: none;
-			background-clip: unset;
-			-webkit-background-clip: unset;
-			-webkit-text-fill-color: #ffd54f;
-			color: #ffd54f;
-		}
-	}
-
-	.heroSubtitle {
-		color: rgba(255, 255, 255, 0.85);
-	}
-
-	/* Hero Metric Widgets (Over green hero card) */
-	.metricWidget {
-		background: rgba(255, 255, 255, 0.18);
-		border: 1px solid rgba(255, 255, 255, 0.3);
-		backdrop-filter: blur(12px);
-	}
-
-	.ringWrapper {
-		.circularChart {
-			.circleBg {
-				stroke: rgba(255, 255, 255, 0.25);
-			}
-
-			.circleProgress {
-				stroke: #ffffff;
-			}
-		}
-
-		.ringText {
-			color: #ffffff;
-		}
-	}
-
-	.iconCircle {
-		background: rgba(255, 255, 255, 0.2);
-
-		.flameIcon {
-			color: #ffe082;
-		}
-
-		.zapIcon {
-			color: #ffd54f;
-		}
-	}
-
-	.metricLabel {
-		color: rgba(255, 255, 255, 0.78);
-	}
-
-	.metricVal {
-		color: #ffffff;
-	}
-
-	/* ── Workspace Header / Toolbar ────────────────────────────── */
-	.sessionPills {
-		background: #ffffff;
-		border: 1px solid #e2e8f0;
-		box-shadow: 0 1px 6px rgba(15, 23, 42, 0.05);
-	}
-
-	.sessionBtn {
-		color: #475569;
-
-		&:hover {
-			background: #f0fdf9;
-			color: #00796b;
-		}
-
-		&.active {
-			background: #00796b;
-			color: #ffffff;
-			box-shadow: 0 4px 12px rgba(0, 121, 107, 0.25);
-
-			.liveTag {
-				background: rgba(255, 255, 255, 0.3);
-				color: #ffffff;
-			}
-		}
-
-		.liveTag {
-			background: rgba(0, 121, 107, 0.12);
-			color: #00796b;
-		}
-	}
-
-	.addHabitBtn {
-		background: #00796b;
-		border-color: transparent;
-		color: #ffffff;
-
-		&:hover {
-			background: #00695c;
-			box-shadow: 0 4px 14px rgba(0, 121, 107, 0.3);
-		}
-	}
-
-	/* ── Category Filter Buttons ───────────────────────────────── */
-	.catBtn {
-		background: #ffffff;
-		border: 1px solid #e2e8f0;
-		color: #475569;
-		box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
-
-		&:hover {
-			background: #f0fdf9;
-			color: #00796b;
-			border-color: rgba(0, 166, 157, 0.3);
-		}
-
-		&.active {
-			background: #00796b;
-			color: #ffffff;
-			border-color: #00796b;
-			box-shadow: 0 4px 12px rgba(0, 121, 107, 0.22);
-		}
-	}
-
-	/* ── Custom Habit Inline Form / Drawer ─────────────────────── */
-	.customHabitCard {
-		background: #ffffff;
-		border: 1px solid #e2f0ef;
-		box-shadow: 0 4px 20px rgba(0, 121, 107, 0.08);
-	}
-
-	.customFormHeader {
-		h3 {
-			color: #0f172a;
-		}
-		.sparkleIcon {
-			color: #00796b;
-		}
-	}
-
-	.inputBox {
-		label {
-			color: #475569;
-		}
-
-		input, select {
-			background: #f8fffe;
-			border: 1px solid #b2dfdb;
-			color: #0f172a;
-
-			&::placeholder {
-				color: #90a4ae;
-			}
-
-			&:focus {
-				border-color: #00A69D;
-				box-shadow: 0 0 0 3px rgba(0, 166, 157, 0.12);
-			}
-		}
-	}
-
-	.submitHabitBtn {
-		background: #00796b;
-		color: #ffffff;
-
-		&:hover {
-			background: #00695c;
-		}
-	}
-
-	/* ── Habits Grid & Cards ───────────────────────────────────── */
-	.emptyFeed {
-		background: #ffffff;
-		border: 1px solid #e2f0ef;
-		color: #546e7a;
-
-		svg {
-			color: #90a4ae;
-		}
-
-		h3 {
-			color: #0f172a;
-		}
-	}
-
-	.habitCard {
-		background: #ffffff;
-		border: 1px solid #e2f0ef;
-		box-shadow: 0 2px 10px rgba(0, 121, 107, 0.06);
-
-		&:hover {
-			border-color: rgba(0, 166, 157, 0.4);
-			box-shadow: 0 6px 20px rgba(0, 121, 107, 0.12);
-		}
-
-		&.completed {
-			background: #f0fdf9;
-			border-color: #b2dfdb;
-
-			.habitTitle {
-				color: #00796b;
-			}
-		}
-	}
-
-	.categoryIconBadge {
-		background: #e8f5e9;
-		color: #2e7d32;
-		border: 1px solid rgba(46, 125, 50, 0.2);
-	}
-
-	.habitTitle {
-		color: #0f172a;
-	}
-
-	.habitDesc {
-		color: #546e7a;
-	}
-
-	.checkBtn {
-		background: #ffffff;
-		border: 2px solid #b2dfdb;
-		color: #00796b;
-
-		&:hover {
-			border-color: #00796b;
-			background: #f0fdf9;
-		}
-
-		&.checked {
-			background: #00796b;
-			border-color: #00796b;
-			color: #ffffff;
-		}
-
-		.checkDot {
-			background: #b2dfdb;
-		}
-	}
-
-	/* Progress Section */
-	.cardBody {
-		border-top: 1px solid #f0fdf9;
-		border-bottom: 1px solid #f0fdf9;
-	}
-
-	.progressValue {
-		color: #546e7a;
-
-		strong {
-			color: #0f172a;
-		}
-	}
-
-	.progressPct {
-		color: #00796b;
-		font-weight: 700;
-	}
-
-	.progressBarTrack {
-		background: #e8f5e9;
-	}
-
-	.progressBarFill {
-		background: #00796b;
-	}
-
-	.stepperLabel {
-		color: #78909c;
-	}
-
-	.stepBtn {
-		background: #f0fdf9;
-		border: 1px solid #b2dfdb;
-		color: #00796b;
-
-		&:hover:not(:disabled) {
-			background: #e0f2f0;
-			border-color: #00796b;
-			color: #004d40;
-		}
-
-		&:disabled {
-			background: #f1f5f9;
-			border-color: #e2e8f0;
-			color: #cbd5e1;
-		}
-	}
-
-	/* Tags */
-	.categoryTag {
-		background: #e8f5e9;
-		color: #2e7d32;
-	}
-
-	.sessionTag {
-		background: #e3f2fd;
-		color: #1565c0;
-	}
-
-	.pointsTag {
-		background: #fff8e1;
-		color: #f57f17;
-
-		svg {
-			color: #f57f17;
-		}
-	}
-
-	/* ── Sidebar Column Cards ──────────────────────────────────── */
-	.sidebarCard {
-		background: #ffffff;
-		border: 1px solid #e2f0ef;
-		box-shadow: 0 2px 10px rgba(0, 121, 107, 0.07);
-	}
-
-	.cardTitleRow {
-		h3 {
-			color: #0f172a;
-		}
-	}
-
-	.cardIcon {
-		color: #2e7d32;
-	}
-
-	.cardIconAlert {
-		color: #e65100;
-	}
-
-	.cardIconGold {
-		color: #f57f17;
-	}
-
-	/* Weight Toggle Grid */
-	.weightToggleGrid {
-		background: #f0fdf9;
-		border: 1px solid #e2f0ef;
-	}
-
-	.weightOption {
-		color: #546e7a;
-
-		&:hover {
-			color: #0f172a;
-			background: rgba(0, 121, 107, 0.08);
-		}
-
-		&.active {
-			background: #00796b;
-			color: #ffffff;
-			box-shadow: 0 2px 8px rgba(0, 121, 107, 0.25);
-		}
-	}
-
-	.dietPlanSummary {
-		background: #f8fffe;
-		border-left: 3px solid #00796b;
-
-		h4 {
-			color: #0f172a;
-		}
-
-		p {
-			color: #546e7a;
-		}
-	}
-
-	.macroDistribution {
-		background: #f0fdf9;
-	}
-
-	.macroLegend {
-		color: #475569;
-	}
-
-	.addDietHabitsBtn {
-		background: #00796b;
-		border: none;
-		color: #ffffff;
-
-		&:hover:not(:disabled) {
-			background: #00695c;
-			box-shadow: 0 4px 14px rgba(0, 121, 107, 0.3);
-		}
-
-		&:disabled {
-			background: #e8f5e9;
-			color: #2e7d32;
-			border: 1px solid #b2dfdb;
-		}
-	}
-
-	/* Suggested Habits */
-	.suggestedItem {
-		background: #f0fdf9;
-		border: 1px solid #e2f0ef;
-	}
-
-	.suggestedText {
-		h4 {
-			color: #0f172a;
-		}
-
-		p {
-			color: #546e7a;
-		}
-	}
-
-	.addSuggestedBtn {
-		background: #ffffff;
-		border: 1px solid #b2dfdb;
-		color: #00796b;
-
-		&:hover {
-			background: #00796b;
-			color: #ffffff;
-			border-color: #00796b;
-		}
-	}
-
-	/* Health Score & Device Vault Security Card */
-	.scoreDisplay {
-		background: #f0fdf9;
-	}
-
-	.scoreBigNum {
-		color: #00796b;
-
-		small {
-			color: #004d40;
-		}
-	}
-
-	.scoreSubtext {
-		color: #546e7a;
-	}
-
-	.privacyBanner {
-		background: #e8f5e9;
-		border: 1px solid #b2dfdb;
-		color: #2e7d32;
-
-		svg {
-			color: #2e7d32;
-		}
-	}
-}
-

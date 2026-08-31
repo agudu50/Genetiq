@@ -423,18 +423,17 @@ const Goals = () => {
 			<div className={styles.goalsContainer}>
 			{/* Hero Header Section */}
 			<section className={styles.heroSection}>
-				<div className={styles.heroGlowBg} aria-hidden />
 				<div className={styles.heroInner}>
 					<div className={styles.heroTitleGroup}>
 						<span className={styles.eyebrowTag}>
 							<Target size={12} />
-							Daily Wellness Plan
+							Daily Wellness Action Plan
 						</span>
 						<h1 className={styles.heroTitle}>
 							Action <span className={styles.accentText}>Plan</span>
 						</h1>
 						<p className={styles.heroSubtitle}>
-							Turn your health reports into simple daily routines. Track progress and earn health points.
+							Turn your health insights into simple daily routines. Track progress, stay consistent, and earn vitality points.
 						</p>
 					</div>
 
@@ -806,8 +805,9 @@ const Goals = () => {
 											type="button"
 											className={styles.addSuggestedBtn}
 											onClick={() => handleAddSuggestedGoal(s)}
+											title="Add to daily habits"
 										>
-											<Plus size={12} />
+											<Plus size={14} strokeWidth={2.5} />
 										</button>
 									</div>
 								))}
