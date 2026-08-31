@@ -115,7 +115,7 @@ const BodyModelContent = memo(function BodyModelContent({
 			onPointerDown={handlePointerDown}
 			onPointerUp={handlePointerUp}
 		>
-			{model ? (
+			{model && (
 				<Clone
 					object={model}
 					position={position}
@@ -124,17 +124,6 @@ const BodyModelContent = memo(function BodyModelContent({
 					castShadow
 					receiveShadow
 				/>
-			) : (
-				// Instant placeholder — visible while OBJ parses from cache
-				<mesh position={[position[0], position[1] + 15, position[2]]}>
-					<capsuleGeometry args={[4, 28, 6, 12]} />
-					<meshStandardMaterial
-						color={0xe8c4a0}
-						wireframe
-						transparent
-						opacity={0.18}
-					/>
-				</mesh>
 			)}
 		</group>
 	);
