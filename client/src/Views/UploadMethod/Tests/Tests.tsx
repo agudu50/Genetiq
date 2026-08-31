@@ -224,7 +224,6 @@ const Tests = () => {
 		<div className={styles.testsContainer}>
 			{/* Hero Header */}
 			<section className={styles.heroSection}>
-				<div className={styles.heroGlowBg} aria-hidden />
 				<div className={styles.heroInner}>
 					<div className={styles.heroTitleGroup}>
 						<span className={styles.eyebrowTag}>

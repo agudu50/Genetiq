@@ -1,150 +1,177 @@
-/* ─── Bio-Lifestyle & Health Hub SCSS Design System ───────────────────────── */
+// ============================================================================
+//  Healthy Lifestyle & Wellness Hub — Human-Centered Design System
+//  Solid System Colors: Signature Teal (#00a69d), Neutral Surfaces, No Gradients
+// ============================================================================
 
-/* ─── Page Wrapper (full-width background) ─────────────────────────────────── */
+$teal:   #00a69d;
+$teal-hover: #008f87;
+$green:  #10b981;
+$amber:  #f59e0b;
+$red:    #ef4444;
+$blue:   #3b82f6;
+
+/* ─── Page Wrapper & Theme Tokens ─────────────────────────────────────────── */
 .pageWrapper {
 	width: 100%;
 	min-height: 100vh;
+	font-family: "Inter", "Outfit", system-ui, -apple-system, sans-serif;
+	color: var(--lh-text);
+	background: var(--lh-bg);
+	position: relative;
+	box-sizing: border-box;
+
+	// Light mode defaults
+	--lh-bg: #f8fafd;
+	--lh-card: #ffffff;
+	--lh-card-2: rgba(15, 23, 42, 0.03);
+	--lh-text: #0f172a;
+	--lh-text-2: #475569;
+	--lh-muted: #64748b;
+	--lh-border: rgba(15, 23, 42, 0.08);
+	--lh-border-soft: rgba(15, 23, 42, 0.05);
+	--lh-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+	--lh-shadow-hover: 0 10px 28px rgba(15, 23, 42, 0.09);
+
+	// Dark mode overrides
+	html[data-theme="dark"] & {
+		--lh-bg: #070b12;
+		--lh-card: rgba(20, 28, 45, 0.65);
+		--lh-card-2: rgba(255, 255, 255, 0.03);
+		--lh-text: rgba(255, 255, 255, 0.95);
+		--lh-text-2: rgba(255, 255, 255, 0.7);
+		--lh-muted: rgba(255, 255, 255, 0.45);
+		--lh-border: rgba(255, 255, 255, 0.08);
+		--lh-border-soft: rgba(255, 255, 255, 0.05);
+		--lh-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+		--lh-shadow-hover: 0 16px 36px rgba(0, 0, 0, 0.45);
+	}
 }
 
-/* ─── Inner Content Container ───────────────────────────────────────────────── */
+/* ─── Inner Container ───────────────────────────────────────────────────────── */
 .testsContainer {
 	display: flex;
 	flex-direction: column;
-	gap: 20px;
+	gap: 24px;
 	width: 100%;
-	max-width: 1320px;
+	max-width: 1560px;
 	margin: 0 auto;
-	padding: 24px 20px;
+	padding: 24px 24px 80px;
 	box-sizing: border-box;
+
+	@media (max-width: 768px) {
+		padding: 16px 14px 60px;
+		gap: 20px;
+	}
 }
 
 /* ─── Hero Section ───────────────────────────────────────────────────────── */
 .heroSection {
 	position: relative;
-	background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.7) 100%);
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	border-radius: 20px;
-	padding: 28px 24px;
-	overflow: hidden;
-	box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
-	backdrop-filter: blur(12px);
-}
+	background: var(--lh-card);
+	border: 1px solid var(--lh-border);
+	border-radius: 24px;
+	padding: 28px 32px;
+	box-shadow: var(--lh-shadow);
+	contain: paint;
+	transition: border-color 0.25s ease, box-shadow 0.25s ease;
 
-.heroGlowBg {
-	position: absolute;
-	top: -60px;
-	right: -60px;
-	width: 340px;
-	height: 340px;
-	background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, rgba(59, 130, 246, 0.12) 50%, transparent 70%);
-	pointer-events: none;
-	filter: blur(40px);
+	@media (max-width: 768px) {
+		padding: 22px 20px;
+		border-radius: 18px;
+	}
 }
 
 .heroInner {
 	position: relative;
 	z-index: 2;
-	display: flex;
+	display: grid;
+	grid-template-columns: 1.15fr 0.85fr;
 	align-items: center;
-	justify-content: space-between;
-	gap: 24px;
+	gap: 28px;
+
+	@media (max-width: 980px) {
+		grid-template-columns: 1fr;
+		gap: 20px;
+	}
 }
 
 .heroTitleGroup {
-	max-width: 620px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	min-width: 0;
 }
 
 .eyebrowTag {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
-	padding: 4px 10px;
-	border-radius: 20px;
-	background: rgba(16, 185, 129, 0.12);
-	border: 1px solid rgba(16, 185, 129, 0.25);
-	color: var(--accent, #10b981);
+	padding: 5px 12px;
+	border-radius: 99px;
+	background: rgba($teal, 0.1);
+	border: 1px solid rgba($teal, 0.22);
+	color: $teal;
 	font-size: 11px;
-	font-weight: 600;
+	font-weight: 700;
 	text-transform: uppercase;
-	letter-spacing: 0.5px;
-	margin-bottom: 10px;
+	letter-spacing: 0.08em;
+	margin-bottom: 12px;
 }
 
 .heroTitle {
-	font-size: 32px;
-	font-weight: 800;
-	letter-spacing: -0.5px;
+	font-size: clamp(1.85rem, 3.5vw, 2.5rem);
+	font-weight: 900;
+	letter-spacing: -0.035em;
 	line-height: 1.15;
-	margin: 0 0 8px 0;
-	color: var(--text-primary, #ffffff);
+	margin: 0 0 10px 0;
+	color: var(--lh-text);
 
 	.accentText {
-		background: linear-gradient(135deg, var(--accent, #10b981) 0%, #3b82f6 100%);
-		background-clip: text;
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
+		color: $teal;
+		display: inline-block;
 	}
 }
 
 .heroSubtitle {
-	font-size: 13.5px;
-	color: var(--text-secondary, #94a3b8);
+	font-size: 14px;
+	color: var(--lh-text-2);
 	margin: 0;
-	line-height: 1.5;
+	line-height: 1.55;
+	max-width: 580px;
 }
 
-/* AI Spotlight Card */
+/* ─── AI Spotlight Card (Human-Centered, Solid Colors) ────────────────────── */
 .spotlightCard {
 	display: flex;
 	flex-direction: column;
-	gap: 0;
-	border-radius: 20px;
-	background: rgba(10, 16, 32, 0.85);
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	min-width: 300px;
-	max-width: 440px;
-	position: relative;
+	border-radius: 18px;
+	background: var(--lh-card-2);
+	border: 1px solid var(--lh-border);
 	overflow: hidden;
-	backdrop-filter: blur(16px);
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
-	/* Animated glow blob */
-	&::before {
-		content: '';
-		position: absolute;
-		top: -60px;
-		right: -60px;
-		width: 180px;
-		height: 180px;
-		border-radius: 50%;
-		background: radial-gradient(circle, rgba(16, 185, 129, 0.22) 0%, transparent 70%);
-		pointer-events: none;
-		animation: spotlightPulse 4s ease-in-out infinite;
+	&:hover {
+		border-color: rgba($teal, 0.35);
+		box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.1);
 	}
 }
 
-@keyframes spotlightPulse {
-	0%, 100% { opacity: 0.6; transform: scale(1); }
-	50% { opacity: 1; transform: scale(1.15); }
-}
-
-/* Top colorful header band */
 .spotlightTopBand {
-	padding: 16px 18px 14px;
-	background: linear-gradient(135deg, rgba(16, 185, 129, 0.18) 0%, rgba(6, 182, 212, 0.08) 100%);
-	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+	padding: 14px 18px;
+	background: rgba($teal, 0.06);
+	border-bottom: 1px solid var(--lh-border);
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
-	gap: 10px;
+	gap: 12px;
 }
 
 .spotlightIconRing {
-	width: 38px;
-	height: 38px;
-	border-radius: 12px;
-	background: rgba(16, 185, 129, 0.18);
-	border: 1px solid rgba(16, 185, 129, 0.3);
-	color: #10b981;
+	width: 36px;
+	height: 36px;
+	border-radius: 10px;
+	background: rgba($teal, 0.12);
+	border: 1px solid rgba($teal, 0.25);
+	color: $teal;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -155,66 +182,67 @@
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
+	min-width: 0;
 	flex: 1;
 }
 
 .spotlightBadge {
 	display: inline-flex;
 	align-items: center;
-	gap: 5px;
-	font-size: 9.5px;
-	font-weight: 700;
-	color: #10b981;
+	gap: 4px;
+	font-size: 10px;
+	font-weight: 800;
+	color: $teal;
 	text-transform: uppercase;
-	letter-spacing: 0.07em;
+	letter-spacing: 0.06em;
 }
 
 .spotlightCategory {
-	font-size: 11px;
-	font-weight: 600;
-	color: rgba(255, 255, 255, 0.55);
-	line-height: 1.3;
-	word-break: break-word;
+	font-size: 12px;
+	font-weight: 700;
+	color: var(--lh-text);
+	line-height: 1.25;
 }
 
-/* Content body */
 .spotlightBody {
-	padding: 14px 18px 16px;
+	padding: 16px 18px;
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	gap: 6px;
 }
 
 .spotlightTitle {
-	font-size: 15.5px;
-	font-weight: 700;
-	color: #ffffff;
+	font-size: 15px;
+	font-weight: 800;
+	color: var(--lh-text);
 	margin: 0;
-	line-height: 1.3;
-	letter-spacing: -0.02em;
+	line-height: 1.35;
+	letter-spacing: -0.015em;
 }
 
 .spotlightSummary {
-	font-size: 12px;
-	color: rgba(148, 163, 184, 0.85);
+	font-size: 12.5px;
+	color: var(--lh-text-2);
 	margin: 0;
-	line-height: 1.55;
+	line-height: 1.5;
 }
 
-/* Footer */
 .spotlightFooter {
-	padding: 0 18px 16px;
+	padding: 12px 18px 16px;
 	display: flex;
-	flex-direction: column;
-	gap: 10px;
-	align-items: flex-start;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	border-top: 1px solid var(--lh-border-soft);
 }
 
 .spotlightSourceLabel {
-	font-size: 10.5px;
-	color: rgba(255, 255, 255, 0.35);
-	line-height: 1.4;
-	word-break: break-word;
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--lh-muted);
+	line-height: 1.35;
+	flex: 1;
+	min-width: 0;
 }
 
 .spotlightActionBtn {
@@ -223,23 +251,25 @@
 	gap: 6px;
 	padding: 8px 14px;
 	border-radius: 10px;
-	background: #10b981;
+	background: $teal;
 	border: none;
 	color: #ffffff;
 	font-size: 12px;
-	font-weight: 600;
+	font-weight: 700;
+	font-family: inherit;
 	cursor: pointer;
 	transition: all 0.2s ease;
 	flex-shrink: 0;
+	white-space: nowrap;
 
 	&:hover:not(:disabled) {
-		background: #059669;
+		background: $teal-hover;
 		transform: translateY(-1px);
-		box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+		box-shadow: 0 4px 14px rgba($teal, 0.35);
 	}
 
 	&:disabled {
-		opacity: 0.5;
+		opacity: 0.6;
 		cursor: default;
 	}
 }
@@ -257,31 +287,36 @@
 /* ─── Main Two-Column Layout ─────────────────────────────────────────────── */
 .mainLayout {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) 320px;
-	gap: 20px;
+	grid-template-columns: minmax(0, 1fr) 340px;
+	gap: 24px;
 	width: 100%;
+
+	@media (max-width: 1080px) {
+		grid-template-columns: 1fr;
+		gap: 20px;
+	}
 }
 
 .primaryColumn {
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	gap: 20px;
 	min-width: 0;
 }
 
 .sidebarColumn {
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	gap: 20px;
 }
 
-/* ─── Category Filter Bar ───────────────────────────────────────────────── */
+/* ─── Category Filter Navigation Bar ─────────────────────────────────────── */
 .categoryBar {
 	display: flex;
 	align-items: center;
 	gap: 8px;
 	overflow-x: auto;
-	padding-bottom: 4px;
+	padding: 4px 0;
 
 	&::-webkit-scrollbar {
 		display: none;
@@ -289,676 +324,60 @@
 }
 
 .catBtn {
-	display: flex;
+	display: inline-flex;
 	align-items: center;
 	gap: 6px;
 	padding: 8px 14px;
-	border-radius: 10px;
-	background: rgba(15, 23, 42, 0.6);
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	color: var(--text-secondary, #94a3b8);
+	border-radius: 12px;
+	background: var(--lh-card);
+	border: 1px solid var(--lh-border);
+	color: var(--lh-text-2);
 	font-size: 12.5px;
-	font-weight: 600;
+	font-weight: 700;
+	font-family: inherit;
 	cursor: pointer;
 	white-space: nowrap;
 	flex-shrink: 0;
 	transition: all 0.2s ease;
 
 	&:hover {
-		color: var(--text-primary, #ffffff);
-		background: rgba(255, 255, 255, 0.08);
+		color: var(--lh-text);
+		border-color: rgba($teal, 0.3);
+		background: var(--lh-card-2);
 	}
 
 	&.active {
-		background: var(--accent, #10b981);
+		background: $teal;
 		color: #ffffff;
-		border-color: var(--accent, #10b981);
-		box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+		border-color: $teal;
+		box-shadow: 0 4px 12px rgba($teal, 0.25);
 	}
 }
 
-/* ─── Search & AI Trigger Bar ────────────────────────────────────────────── */
-.searchHeader {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 12px;
-}
-
-.searchBox {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	background: rgba(15, 23, 42, 0.6);
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	border-radius: 10px;
-	padding: 8px 14px;
-	flex: 1;
-
-	input {
-		background: transparent;
-		border: none;
-		outline: none;
-		color: var(--text-primary, #ffffff);
-		font-size: 13px;
-		width: 100%;
-
-		&::placeholder {
-			color: var(--text-secondary, #94a3b8);
-		}
-	}
-}
-
-.searchIcon {
-	color: var(--text-secondary, #94a3b8);
-	flex-shrink: 0;
-}
-
-.openGenBtn {
-	display: flex;
-	align-items: center;
-	gap: 6px;
-	padding: 9px 14px;
-	border-radius: 10px;
-	background: rgba(59, 130, 246, 0.15);
-	border: 1px solid rgba(59, 130, 246, 0.3);
-	color: #60a5fa;
-	font-size: 12.5px;
-	font-weight: 600;
-	cursor: pointer;
-	white-space: nowrap;
-	transition: all 0.2s ease;
-
-	&:hover {
-		background: rgba(59, 130, 246, 0.25);
-		color: #ffffff;
-	}
-}
-
-/* ─── AI Generator Drawer ────────────────────────────────────────────────── */
-.generatorDrawer {
-	background: rgba(15, 23, 42, 0.8);
-	border: 1px solid rgba(59, 130, 246, 0.3);
-	border-radius: 16px;
-	padding: 20px;
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-	backdrop-filter: blur(12px);
-}
-
-.drawerTitleRow {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-
-	h3 {
-		font-size: 15px;
-		font-weight: 700;
-		color: var(--text-primary, #ffffff);
-		margin: 0;
-	}
-}
-
-.drawerSparkle {
-	color: #60a5fa;
-}
-
-.drawerDesc {
-	font-size: 12.5px;
-	color: var(--text-secondary, #94a3b8);
-	margin: 0;
-	line-height: 1.4;
-}
-
-.drawerForm {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-
-	input {
-		flex: 1;
-		background: rgba(255, 255, 255, 0.05);
-		border: 1px solid rgba(255, 255, 255, 0.12);
-		border-radius: 10px;
-		padding: 10px 14px;
-		color: var(--text-primary, #ffffff);
-		font-size: 13px;
-		outline: none;
-
-		&:focus {
-			border-color: #60a5fa;
-		}
-	}
-}
-
-.submitGenBtn {
-	display: flex;
-	align-items: center;
-	gap: 6px;
-	padding: 10px 16px;
-	border-radius: 10px;
-	background: #3b82f6;
-	color: #ffffff;
-	font-size: 13px;
-	font-weight: 600;
-	border: none;
-	cursor: pointer;
-	white-space: nowrap;
-
-	&:hover:not(:disabled) {
-		filter: brightness(1.1);
-	}
-
-	&:disabled {
-		opacity: 0.5;
-		cursor: not-allowed;
-	}
-}
-
-/* ─── Tips Feed ─────────────────────────────────────────────────────────── */
-.tipsFeed {
-	display: flex;
-	flex-direction: column;
-	gap: 14px;
-}
-
-.tipCard {
-	background: rgba(15, 23, 42, 0.6);
-	border: 1px solid rgba(255, 255, 255, 0.07);
-	border-radius: 16px;
-	padding: 20px;
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-	backdrop-filter: blur(10px);
-	transition: all 0.2s ease;
-	position: relative;
-	overflow: hidden;
-
-	/* Subtle background glow orb — top-right corner, category tinted */
-	&::after {
-		content: '';
-		position: absolute;
-		top: -40px;
-		right: -40px;
-		width: 110px;
-		height: 110px;
-		border-radius: 50%;
-		opacity: 0.08;
-		pointer-events: none;
-		background: rgba(255, 255, 255, 0.3);
-		transition: opacity 0.2s ease;
-	}
-
-	&:hover {
-		transform: translateY(-2px);
-		&::after { opacity: 0.14; }
-	}
-
-	/* ── Fitness — emerald ─────────────────────────────── */
-	&.catFitness::after  { background: #10b981; }
-	&.catFitness:hover   { box-shadow: 0 8px 28px rgba(16, 185, 129, 0.1); }
-
-	/* ── Nutrition — amber ─────────────────────────────── */
-	&.catNutrition::after  { background: #f59e0b; }
-	&.catNutrition:hover   { box-shadow: 0 8px 28px rgba(245, 158, 11, 0.1); }
-
-	/* ── Hygiene — cyan ────────────────────────────────── */
-	&.catHygiene::after  { background: #06b6d4; }
-	&.catHygiene:hover   { box-shadow: 0 8px 28px rgba(6, 182, 212, 0.1); }
-
-	/* ── Sleep — purple ────────────────────────────────── */
-	&.catSleep::after  { background: #8b5cf6; }
-	&.catSleep:hover   { box-shadow: 0 8px 28px rgba(139, 92, 246, 0.1); }
-
-	/* ── Mind — rose ───────────────────────────────────── */
-	&.catMind::after  { background: #f43f5e; }
-	&.catMind:hover   { box-shadow: 0 8px 28px rgba(244, 63, 94, 0.1); }
-
-	/* ── Environment — lime ────────────────────────────── */
-	&.catEnvironment::after  { background: #84cc16; }
-	&.catEnvironment:hover   { box-shadow: 0 8px 28px rgba(132, 204, 22, 0.1); }
-}
-
-.tipCardTop {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-}
-
-.tipCategoryBadgeGroup {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-}
-
-.tipCatTag {
-	font-size: 11px;
-	font-weight: 700;
-	padding: 3px 9px;
-	border-radius: 20px;
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
-
-	/* Default */
-	color: #10b981;
-	background: rgba(16, 185, 129, 0.12);
-
-	&.catFitness    { color: #10b981; background: rgba(16, 185, 129, 0.12); }
-	&.catNutrition  { color: #f59e0b; background: rgba(245, 158, 11, 0.12); }
-	&.catHygiene    { color: #06b6d4; background: rgba(6, 182, 212, 0.12); }
-	&.catSleep      { color: #a78bfa; background: rgba(139, 92, 246, 0.12); }
-	&.catMind       { color: #fb7185; background: rgba(244, 63, 94, 0.12); }
-	&.catEnvironment{ color: #a3e635; background: rgba(132, 204, 22, 0.12); }
-}
-
-.tipSourceTag {
-	font-size: 11px;
-	color: var(--text-secondary, #94a3b8);
-}
-
-.bookmarkBtn {
-	background: rgba(255, 255, 255, 0.08);
-	border: 1px solid rgba(255, 255, 255, 0.16);
-	color: var(--text-secondary, #94a3b8);
-	width: 32px;
-	height: 32px;
-	border-radius: 8px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	cursor: pointer;
-	flex-shrink: 0;
-	transition: all 0.2s ease;
-
-	svg {
-		stroke: var(--text-secondary, #94a3b8);
-		stroke-width: 2.5px;
-		width: 15px;
-		height: 15px;
-		flex-shrink: 0;
-		transition: all 0.2s ease;
-	}
-
-	&:hover {
-		color: #f59e0b;
-		background: rgba(245, 158, 11, 0.15);
-		border-color: rgba(245, 158, 11, 0.4);
-
-		svg {
-			stroke: #f59e0b;
-		}
-	}
-
-	&.saved {
-		color: #f59e0b;
-		background: rgba(245, 158, 11, 0.2);
-		border-color: #f59e0b;
-
-		svg {
-			stroke: #f59e0b;
-			fill: #f59e0b;
-		}
-	}
-}
-
-.tipCardTitle {
-	font-size: 17px;
-	font-weight: 700;
-	color: var(--text-primary, #ffffff);
-	margin: 0;
-}
-
-.tipCardSummary {
-	font-size: 13px;
-	color: var(--text-secondary, #94a3b8);
-	margin: 0;
-	line-height: 1.45;
-}
-
-.tipExpandedPanel {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-	font-size: 13px;
-}
-
-.panelDivider {
-	height: 1px;
-	background: rgba(255, 255, 255, 0.08);
-	margin: 4px 0;
-}
-
-.panelBlock {
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
-
-	h4 {
-		font-size: 13px;
-		font-weight: 700;
-		color: var(--accent, #10b981);
-		margin: 0;
-	}
-
-	p {
-		color: rgba(255, 255, 255, 0.85);
-		margin: 0;
-		line-height: 1.45;
-	}
-
-	ul {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 6px;
-	}
-
-	li {
-		display: flex;
-		align-items: flex-start;
-		gap: 8px;
-		color: rgba(255, 255, 255, 0.85);
-		line-height: 1.35;
-	}
-}
-
-.stepCheckIcon {
-	color: var(--accent, #10b981);
-	flex-shrink: 0;
-	margin-top: 2px;
-}
-
-.safetyBox {
-	display: flex;
-	align-items: flex-start;
-	gap: 8px;
-	background: rgba(239, 68, 68, 0.1);
-	border: 1px solid rgba(239, 68, 68, 0.25);
-	padding: 10px;
-	border-radius: 8px;
-	color: #f87171;
-	font-size: 12px;
-	line-height: 1.35;
-
-	strong {
-		color: #ffffff;
-	}
-}
-
-.safetyIcon {
-	color: #f87171;
-	flex-shrink: 0;
-	margin-top: 2px;
-}
-
-.tipCardFooter {
-	display: flex;
-	justify-content: flex-start;
-	margin-top: 4px;
-}
-
-.expandToggleBtn {
-	background: transparent;
-	border: none;
-	color: var(--accent, #10b981);
-	font-size: 12.5px;
-	font-weight: 600;
-	cursor: pointer;
-	padding: 0;
-
-	&:hover {
-		text-decoration: underline;
-	}
-}
-
-.emptyState {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	text-align: center;
-	padding: 40px 20px;
-	background: rgba(15, 23, 42, 0.4);
-	border: 1px dashed rgba(255, 255, 255, 0.12);
-	border-radius: 16px;
-	color: var(--text-secondary, #94a3b8);
-	gap: 10px;
-
-	h3 {
-		color: var(--text-primary, #ffffff);
-		margin: 0;
-		font-size: 16px;
-	}
-
-	p {
-		font-size: 13px;
-		margin: 0;
-		max-width: 400px;
-	}
-}
-
-/* ─── Sidebar Cards ──────────────────────────────────────────────────────── */
-.sidebarCard {
-	background: rgba(15, 23, 42, 0.6);
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	border-radius: 16px;
-	padding: 18px;
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-	backdrop-filter: blur(10px);
-}
-
-.cardHeaderRow {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-
-	h3 {
-		font-size: 14.5px;
-		font-weight: 700;
-		color: var(--text-primary, #ffffff);
-		margin: 0;
-	}
-}
-
-.iconShield {
-	color: #3b82f6;
-}
-
-.iconBookmark {
-	color: #f59e0b;
-}
-
-.iconFlame {
-	color: #ef4444;
-}
-
-.essentialChecklist {
-	list-style: none;
-	padding: 0;
-	margin: 0;
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-
-	li {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		font-size: 12px;
-		color: var(--text-secondary, #94a3b8);
-		line-height: 1.35;
-
-		svg {
-			color: var(--accent, #10b981);
-			flex-shrink: 0;
-		}
-	}
-}
-
-.savedStatRow {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	background: rgba(255, 255, 255, 0.04);
-	padding: 12px;
-	border-radius: 10px;
-}
-
-.savedCountNum {
-	font-size: 24px;
-	font-weight: 900;
-	color: #f59e0b;
-}
-
-.savedCountText {
-	font-size: 12px;
-	color: var(--text-secondary, #94a3b8);
-	line-height: 1.3;
-}
-
-.remedyList {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-}
-
-.remedyItem {
-	display: flex;
-	align-items: flex-start;
-	gap: 10px;
-	background: rgba(255, 255, 255, 0.03);
-	padding: 10px;
-	border-radius: 10px;
-}
-
-.remedyIconBadge {
-	width: 28px;
-	height: 28px;
-	border-radius: 8px;
-	background: rgba(16, 185, 129, 0.12);
-	color: #10b981;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-shrink: 0;
-}
-
-.pillIcon {
-	color: inherit;
-	opacity: 0.8;
-	flex-shrink: 0;
-}
-
-.panelHeaderIcon {
-	color: #10b981;
-	flex-shrink: 0;
-	margin-right: 6px;
-	display: inline-block;
-	vertical-align: middle;
-}
-
-.humanIngHeaderIcon {
-	color: #10b981;
-	flex-shrink: 0;
-}
-
-.remedyInfo {
-	display: flex;
-	flex-direction: column;
-	gap: 2px;
-}
-
-.remedyName {
-	font-size: 12.5px;
-	color: var(--text-primary, #ffffff);
-}
-
-.remedyBenefits {
-	font-size: 11px;
-	color: var(--text-secondary, #94a3b8);
-	line-height: 1.3;
-}
-
-/* ─── Mobile Responsiveness ─────────────────────────────────────────────── */
-@media (max-width: 900px) {
-	.mainLayout {
-		grid-template-columns: 1fr;
-	}
-
-	.heroInner {
-		flex-direction: column;
-		align-items: stretch;
-	}
-
-	.spotlightCard {
-		max-width: 100%;
-		min-width: 0;
-	}
-
-	.searchHeader {
-		flex-direction: column;
-		align-items: stretch;
-	}
-
-	.openGenBtn {
-		justify-content: center;
-	}
-}
-
-@media (max-width: 600px) {
-	.testsContainer {
-		padding: 12px 10px;
-	}
-
-	.heroSection {
-		padding: 18px 14px;
-	}
-
-	.heroTitle {
-		font-size: 24px;
-	}
-
-	.drawerForm {
-		flex-direction: column;
-
-		input {
-			width: 100%;
-		}
-
-		.submitGenBtn {
-			width: 100%;
-			justify-content: center;
-		}
-	}
-}
-
+/* ─── Daily Bio-Nutrition: Ghanaian Meal Guide ───────────────────────────── */
 .humanMealSection {
-	background: rgba(18, 24, 38, 0.7);
-	border: 1px solid rgba(255, 255, 255, 0.1);
+	background: var(--lh-card);
+	border: 1px solid var(--lh-border);
 	border-radius: 20px;
-	padding: 24px;
-	margin-bottom: 28px;
+	padding: 22px 24px;
 	display: flex;
 	flex-direction: column;
-	gap: 20px;
-	backdrop-filter: blur(12px);
-	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+	gap: 18px;
+	box-shadow: var(--lh-shadow);
+
+	@media (max-width: 640px) {
+		padding: 18px 16px;
+	}
 }
 
 .humanMealHeader {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	gap: 14px;
 	flex-wrap: wrap;
-	gap: 16px;
 	padding-bottom: 14px;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	border-bottom: 1px solid var(--lh-border-soft);
 }
 
 .humanHeaderTitleGroup {
@@ -971,77 +390,78 @@
 	width: 38px;
 	height: 38px;
 	border-radius: 10px;
-	background: rgba(16, 185, 129, 0.12);
-	border: 1px solid rgba(16, 185, 129, 0.28);
-	color: #10b981;
+	background: rgba($teal, 0.1);
+	border: 1px solid rgba($teal, 0.22);
+	color: $teal;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	flex-shrink: 0;
 }
 
 .humanMealEyebrow {
-	display: block;
 	font-size: 10px;
 	font-weight: 800;
-	letter-spacing: 0.06em;
-	color: #10b981;
 	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: $teal;
+	display: block;
 }
 
 .humanMealTitle {
-	font-size: 19px;
-	font-weight: 700;
-	color: #ffffff;
-	margin: 2px 0 0 0;
-	letter-spacing: -0.01em;
+	font-size: 17px;
+	font-weight: 800;
+	color: var(--lh-text);
+	margin: 0;
+	letter-spacing: -0.015em;
 }
 
 .humanRefreshBtn {
 	display: inline-flex;
 	align-items: center;
-	gap: 8px;
-	padding: 8px 16px;
+	gap: 6px;
+	padding: 7px 13px;
 	border-radius: 10px;
+	background: var(--lh-card-2);
+	border: 1px solid var(--lh-border);
+	color: var(--lh-text-2);
 	font-size: 12px;
-	font-weight: 600;
-	color: var(--text-secondary, #cbd5e1);
-	background: rgba(255, 255, 255, 0.06);
-	border: 1px solid rgba(255, 255, 255, 0.14);
+	font-weight: 700;
+	font-family: inherit;
 	cursor: pointer;
 	transition: all 0.2s ease;
 
 	&:hover:not(:disabled) {
-		background: rgba(16, 185, 129, 0.15);
-		border-color: rgba(16, 185, 129, 0.35);
-		color: #34d399;
-	}
-
-	&:disabled {
-		opacity: 0.6;
-		cursor: not-allowed;
+		border-color: rgba($teal, 0.35);
+		color: $teal;
 	}
 }
 
 .humanMealGrid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-	gap: 18px;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 16px;
+
+	@media (max-width: 900px) {
+		grid-template-columns: 1fr;
+		gap: 14px;
+	}
 }
 
 .humanMealCard {
-	background: rgba(255, 255, 255, 0.03);
-	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: var(--lh-card-2);
+	border: 1px solid var(--lh-border-soft);
 	border-radius: 16px;
-	padding: 20px;
+	padding: 16px;
 	display: flex;
 	flex-direction: column;
-	gap: 14px;
-	transition: all 0.25s ease;
+	gap: 12px;
+	transition: all 0.2s ease;
 
 	&:hover {
-		border-color: rgba(16, 185, 129, 0.3);
+		border-color: rgba($teal, 0.3);
 		transform: translateY(-2px);
-		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+		box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.08);
 	}
 }
 
@@ -1058,597 +478,690 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	flex-shrink: 0;
 
 	&.bfIcon {
-		background: rgba(245, 158, 11, 0.15);
-		color: #f59e0b;
+		background: rgba($amber, 0.12);
+		color: $amber;
 	}
-
 	&.lhIcon {
-		background: rgba(16, 185, 129, 0.15);
-		color: #10b981;
+		background: rgba($teal, 0.12);
+		color: $teal;
 	}
-
 	&.spIcon {
-		background: rgba(139, 92, 246, 0.15);
-		color: #a78bfa;
+		background: rgba($blue, 0.12);
+		color: $blue;
 	}
 }
 
 .humanTimeLabel {
-	font-size: 12px;
-	font-weight: 700;
-	color: #ffffff;
+	font-size: 11px;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--lh-muted);
 }
 
 .humanDishBody {
 	display: flex;
 	flex-direction: column;
-	gap: 6px;
-	padding: 12px 0 10px;
-	border-top: 1px solid rgba(255, 255, 255, 0.07);
-	border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+	gap: 4px;
 }
 
 .humanDishTitle {
-	font-size: 17px;
-	font-weight: 700;
-	color: #ffffff;
+	font-size: 14.5px;
+	font-weight: 800;
+	color: var(--lh-text);
 	margin: 0;
 	line-height: 1.3;
-	letter-spacing: -0.01em;
 }
 
 .humanDishDesc {
-	font-size: 12.5px;
-	color: var(--text-secondary, #94a3b8);
+	font-size: 12px;
+	color: var(--lh-text-2);
 	margin: 0;
-	line-height: 1.55;
-	font-style: italic;
+	line-height: 1.45;
 }
 
 .humanBioBox {
 	display: flex;
 	align-items: flex-start;
-	gap: 10px;
-	background: rgba(0, 0, 0, 0.25);
-	border: none;
+	gap: 8px;
+	padding: 10px 12px;
 	border-radius: 10px;
-	padding: 12px 14px;
+	background: rgba($teal, 0.05);
+	border: 1px solid rgba($teal, 0.14);
+}
 
-	.humanBioBadge {
-		width: 26px;
-		height: 26px;
-		border-radius: 8px;
-		background: rgba(16, 185, 129, 0.15);
-		color: #10b981;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		flex-shrink: 0;
-		margin-top: 2px;
-	}
+.humanBioBadge {
+	color: $teal;
+	flex-shrink: 0;
+	margin-top: 1px;
+}
 
-	.humanBioContent {
-		display: flex;
-		flex-direction: column;
-		gap: 3px;
-	}
+.humanBioContent {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
 
-	.humanBioLabel {
-		font-size: 10px;
-		font-weight: 700;
-		letter-spacing: 0.05em;
-		color: #10b981;
-		text-transform: uppercase;
-	}
+.humanBioLabel {
+	font-size: 10px;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: $teal;
+}
 
-	.humanBioText {
-		font-size: 12px;
-		color: rgba(241, 245, 249, 0.8);
-		margin: 0;
-		line-height: 1.55;
-		font-weight: 400;
-	}
+.humanBioText {
+	font-size: 11.5px;
+	color: var(--lh-text-2);
+	margin: 0;
+	line-height: 1.4;
 }
 
 .humanIngBox {
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	gap: 6px;
 	margin-top: auto;
-	padding-top: 4px;
 }
 
 .humanIngHeader {
 	display: flex;
 	align-items: center;
-	gap: 6px;
+	gap: 5px;
 }
 
-.humanIngFlag {
-	font-size: 13px;
-	line-height: 1;
+.humanIngHeaderIcon {
+	color: var(--lh-muted);
 }
 
 .humanIngLabel {
-	font-size: 10px;
+	font-size: 10.5px;
 	font-weight: 700;
-	color: rgba(255, 255, 255, 0.4);
 	text-transform: uppercase;
-	letter-spacing: 0.06em;
+	letter-spacing: 0.04em;
+	color: var(--lh-muted);
 }
 
 .humanPillRow {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 6px;
-	align-items: center;
+	gap: 5px;
 }
 
 .humanPill {
 	display: inline-flex;
 	align-items: center;
-	gap: 5px;
-	font-size: 12px;
-	font-weight: 500;
-	color: rgba(255, 255, 255, 0.75);
-	background: rgba(255, 255, 255, 0.05);
+	gap: 4px;
+	padding: 3px 8px;
 	border-radius: 6px;
-	padding: 4px 10px;
-	transition: all 0.2s ease;
-	cursor: default;
+	font-size: 11px;
+	font-weight: 600;
+	background: var(--lh-card);
+	border: 1px solid var(--lh-border-soft);
+	color: var(--lh-text-2);
+}
 
-	.pillEmoji {
-		font-size: 13px;
-		line-height: 1;
+.pillIcon {
+	color: $teal;
+}
+
+/* ─── Search & AI Custom Tip Trigger ─────────────────────────────────────── */
+.searchHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+
+.searchBox {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	background: var(--lh-card);
+	border: 1px solid var(--lh-border);
+	border-radius: 12px;
+	padding: 9px 14px;
+	flex: 1;
+	min-width: 260px;
+	transition: border-color 0.2s ease;
+
+	&:focus-within {
+		border-color: $teal;
 	}
 
-	&:hover {
-		background: rgba(255, 255, 255, 0.1);
-		color: rgba(255, 255, 255, 0.95);
+	input {
+		background: transparent;
+		border: none;
+		outline: none;
+		color: var(--lh-text);
+		font-size: 13px;
+		font-family: inherit;
+		width: 100%;
+
+		&::placeholder {
+			color: var(--lh-muted);
+		}
 	}
 }
 
-/* ─── Light Mode Overrides ─────────────────────────────────────────────────── */
-:global(html[data-theme="light"]) {
+.searchIcon {
+	color: var(--lh-muted);
+	flex-shrink: 0;
+}
 
-	/* Page Background — full viewport */
-	.pageWrapper {
-		background: linear-gradient(180deg, #f0fdf9 0%, #eef6f5 50%, #f1f5f9 100%);
-		min-height: 100vh;
-	}
+.openGenBtn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 9px 16px;
+	border-radius: 12px;
+	background: rgba($teal, 0.1);
+	border: 1px solid rgba($teal, 0.25);
+	color: $teal;
+	font-size: 12.5px;
+	font-weight: 700;
+	font-family: inherit;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: all 0.2s ease;
 
-	.testsContainer {
-		background: transparent;
-	}
-
-
-	/* ── Hero Section ─────────────────────────────────────────── */
-	.heroSection {
-		background: #00897b;
-		border: none;
-		box-shadow: 0 8px 32px rgba(0, 121, 107, 0.22);
-		backdrop-filter: none;
-	}
-
-	.heroGlowBg {
-		display: none;
-	}
-
-	.eyebrowTag {
-		background: rgba(255, 255, 255, 0.2);
-		border-color: rgba(255, 255, 255, 0.35);
+	&:hover {
+		background: $teal;
 		color: #ffffff;
-		backdrop-filter: blur(6px);
+		border-color: $teal;
 	}
+}
 
-	.heroTitle {
-		color: #ffffff;
+/* ─── AI Custom Generator Drawer ─────────────────────────────────────────── */
+.generatorDrawer {
+	background: var(--lh-card);
+	border: 1px solid rgba($teal, 0.25);
+	border-radius: 18px;
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	box-shadow: var(--lh-shadow);
+}
 
-		.accentText {
-			background: none;
-			background-clip: unset;
-			-webkit-background-clip: unset;
-			-webkit-text-fill-color: #ffd54f;
-			color: #ffd54f;
-		}
+.drawerTitleRow {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+
+	h3 {
+		font-size: 15px;
+		font-weight: 800;
+		color: var(--lh-text);
+		margin: 0;
 	}
+}
 
-	.heroSubtitle {
-		color: rgba(255, 255, 255, 0.85);
-	}
+.drawerSparkle {
+	color: $teal;
+}
 
-	/* Spotlight Card */
-	.spotlightCard {
-		background: #ffffff;
-		border: none;
-		box-shadow:
-			0 2px 6px rgba(0, 0, 0, 0.06),
-			0 12px 36px rgba(0, 121, 107, 0.14);
-		backdrop-filter: none;
-		border-radius: 18px;
+.drawerDesc {
+	font-size: 12.5px;
+	color: var(--lh-text-2);
+	margin: 0;
+	line-height: 1.45;
+}
 
-		&::before {
-			display: none;
-		}
-	}
+.drawerForm {
+	display: flex;
+	align-items: center;
+	gap: 10px;
 
-	.spotlightTopBand {
-		background: #00796b;
-		border-bottom: none;
-		border-radius: 18px 18px 0 0;
-		padding: 18px 18px 16px;
-	}
-
-	.spotlightIconRing {
-		background: rgba(255, 255, 255, 0.18);
-		border-color: rgba(255, 255, 255, 0.3);
-		color: #ffffff;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-	}
-
-	.spotlightBadge {
-		color: rgba(255, 255, 255, 0.85);
-		font-size: 9px;
-		letter-spacing: 0.09em;
-	}
-
-	.spotlightCategory {
-		color: #ffffff;
-		font-size: 12.5px;
-		font-weight: 700;
-	}
-
-	.spotlightBody {
-		padding: 16px 18px 14px;
-	}
-
-	.spotlightTitle {
-		color: #0f172a;
-		font-size: 16px;
-	}
-
-	.spotlightSummary {
-		color: #546e7a;
-		font-size: 12.5px;
-	}
-
-	.spotlightFooter {
-		border-top: 1px solid #e8f5e9;
-		padding: 12px 18px 18px;
+	@media (max-width: 600px) {
 		flex-direction: column;
-		align-items: flex-start;
-		gap: 10px;
-		margin-top: 0;
+		align-items: stretch;
 	}
 
-	.spotlightSourceLabel {
-		color: #78909c;
-		font-size: 10.5px;
-		line-height: 1.4;
-		word-break: break-word;
-	}
-
-	.spotlightActionBtn {
-		background: #00796b;
-		color: #ffffff;
+	input {
+		flex: 1;
+		background: var(--lh-card-2);
+		border: 1px solid var(--lh-border);
 		border-radius: 10px;
-		box-shadow: 0 3px 10px rgba(0, 121, 107, 0.3);
-		font-size: 12.5px;
-
-		&:hover:not(:disabled) {
-			background: #00695c;
-			box-shadow: 0 6px 20px rgba(0, 121, 107, 0.4);
-		}
-	}
-
-	/* ── Category Bar ─────────────────────────────────────────── */
-	.categoryBar {
-		background: #ffffff;
-		border-color: #e2e8f0;
-		box-shadow: 0 1px 6px rgba(15, 23, 42, 0.06);
-	}
-
-	.catBtn {
-		color: #475569;
-		background: transparent;
-
-		&:hover {
-			background: #f0fdf9;
-			color: #00796b;
-		}
-
-		&.active {
-			background: rgba(0, 166, 157, 0.12);
-			color: #00796b;
-			border-color: rgba(0, 166, 157, 0.3);
-		}
-	}
-
-	/* ── Search Bar ───────────────────────────────────────────── */
-	.searchBox {
-		background: #ffffff;
-		border-color: #e2e8f0;
-		box-shadow: 0 1px 4px rgba(15, 23, 42, 0.05);
-
-		input {
-			color: #0f172a;
-
-			&::placeholder {
-				color: #94a3b8;
-			}
-		}
-	}
-
-	.searchIcon {
-		color: #94a3b8;
-	}
-
-	.openGenBtn {
-		background: #00796b;
-		border-color: transparent;
-		color: #ffffff;
-
-		&:hover {
-			background: #00695c;
-		}
-	}
-
-	/* ── Tip Cards ────────────────────────────────────────────── */
-	.tipCard {
-		background: #ffffff;
-		border-color: #e8f5e9;
-		box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
-
-		&:hover {
-			border-color: rgba(0, 166, 157, 0.4);
-			box-shadow: 0 6px 20px rgba(0, 121, 107, 0.12);
-			transform: translateY(-2px);
-		}
-	}
-
-	.tipCategory {
-		background: #e8f5e9;
-		color: #2e7d32;
-	}
-
-	.tipTitle {
-		color: #0f172a;
-	}
-
-	.tipSummary {
-		color: #475569;
-	}
-
-	.tipExpandBtn {
-		color: #00796b;
-
-		&:hover {
-			background: #f0fdf9;
-		}
-	}
-
-	.bookmarkBtn {
-		color: #b0bec5;
-
-		&:hover {
-			color: #00796b;
-			background: #f0fdf9;
-		}
-
-		&.saved {
-			color: #00796b;
-		}
-	}
-
-	/* Expanded Tip Body */
-	.expandedSection {
-		border-top-color: #f0fdf9;
-		background: #fafffe;
-	}
-
-	.stepItem {
-		color: #334155;
-	}
-
-	.stepNumber {
-		background: #e8f5e9;
-		color: #2e7d32;
-	}
-
-	.safetyBox {
-		background: #fffde7;
-		border-color: rgba(245, 158, 11, 0.3);
-	}
-
-	.safetyLabel {
-		color: #b45309;
-	}
-
-	.safetyText {
-		color: #475569;
-	}
-
-	.sourceRow {
-		color: #64748b;
-	}
-
-	/* ── Meal Section ─────────────────────────────────────────── */
-	.humanMealSection {
-		background: #ffffff;
-		border-color: #e2f0ef;
-		box-shadow: 0 2px 16px rgba(0, 121, 107, 0.08);
-	}
-
-	.humanMealHeader {
-		border-bottom-color: #f0fdf9;
-	}
-
-	.humanMealEyebrow {
-		color: #00796b;
-	}
-
-	.humanMealTitle {
-		color: #0f172a;
-	}
-
-	.humanHeaderIconBadge {
-		background: #e8f5e9;
-		color: #2e7d32;
-	}
-
-	.humanRefreshBtn {
-		background: #f0fdf9;
-		border-color: rgba(0, 166, 157, 0.3);
-		color: #00796b;
-
-		&:hover:not(:disabled) {
-			background: #e0f2f0;
-		}
-	}
-
-	/* Meal Cards */
-	.humanMealCard {
-		background: #fafffe;
-		border-color: #e2f0ef;
-		box-shadow: 0 1px 6px rgba(0, 121, 107, 0.05);
-	}
-
-	.humanTimeLabel {
-		color: #0f172a;
-	}
-
-	.humanDishBody {
-		border-top-color: #e8f5e9;
-		border-bottom-color: #e8f5e9;
-	}
-
-	.humanDishTitle {
-		color: #0f172a;
-	}
-
-	.humanDishDesc {
-		color: #546e7a;
-	}
-
-	/* Bio Box */
-	.humanBioBox {
-		background: rgba(0, 121, 107, 0.05);
-	}
-
-	.humanBioBadge {
-		background: #e8f5e9;
-		color: #2e7d32;
-	}
-
-	.humanBioLabel {
-		color: #2e7d32;
-	}
-
-	.humanBioText {
-		color: #334155;
-	}
-
-	/* Ingredient Pills */
-	.humanIngLabel {
-		color: rgba(15, 23, 42, 0.38);
-	}
-
-	.humanPill {
-		background: #e8f5e9;
-		color: #2e7d32;
-
-		&:hover {
-			background: #c8e6c9;
-			color: #1b5e20;
-		}
-	}
-
-	/* ── Sidebar ──────────────────────────────────────────────── */
-	.sidebarCard {
-		background: #ffffff;
-		border-color: #e2f0ef;
-		box-shadow: 0 2px 10px rgba(0, 121, 107, 0.07);
-	}
-
-	/* Card header h3 titles (Saved Lifestyle Habits, Daily Health, Ghanaian Bio-Foods) */
-	.cardHeaderRow {
-		h3 {
-			color: #0f172a;
-		}
-	}
-
-	.sidebarTitle {
-		color: #0f172a;
-	}
-
-	/* Icon colors in sidebar headers */
-	.iconShield  { color: #1976d2; }
-	.iconBookmark { color: #e65100; }
-	.iconFlame   { color: #c62828; }
-
-	/* Checklist items */
-	.essentialChecklist {
-		li {
-			color: #334155;
-
-			svg {
-				color: #00796b;
-			}
-		}
-	}
-
-	/* Saved habits stat row */
-	.savedStatRow {
-		background: #f0fdf9;
-	}
-
-	.savedCountNum {
-		color: #e65100;
-	}
-
-	.savedCountText {
-		color: #546e7a;
-	}
-
-	/* Remedy items */
-	.remedyItem {
-		background: #f0fdf9;
-	}
-
-	.remedyName {
-		color: #0f172a;
-	}
-
-	.remedyBenefits {
-		color: #546e7a;
-	}
-
-
-	/* ── AI Drawer ────────────────────────────────────────────── */
-	.generatorDrawer {
-		background: #ffffff;
-		border-color: #e2f0ef;
-		box-shadow: 0 4px 20px rgba(0, 121, 107, 0.1);
-	}
-
-	.drawerTitle {
-		color: #0f172a;
-	}
-
-	.drawerForm input {
-		background: #f8fffe;
-		border-color: #b2dfdb;
-		color: #0f172a;
-
-		&::placeholder {
-			color: #90a4ae;
-		}
+		padding: 10px 14px;
+		color: var(--lh-text);
+		font-size: 13px;
+		font-family: inherit;
+		outline: none;
 
 		&:focus {
-			border-color: #00A69D;
-			box-shadow: 0 0 0 3px rgba(0, 166, 157, 0.12);
+			border-color: $teal;
+		}
+
+		&::placeholder {
+			color: var(--lh-muted);
 		}
 	}
+}
+
+.submitGenBtn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 10px 16px;
+	border-radius: 10px;
+	background: $teal;
+	color: #ffffff;
+	font-size: 13px;
+	font-weight: 700;
+	font-family: inherit;
+	border: none;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: all 0.2s ease;
+
+	&:hover:not(:disabled) {
+		background: $teal-hover;
+	}
+
+	&:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+}
+
+/* ─── Tips Feed ─────────────────────────────────────────────────────────── */
+.tipsFeed {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.tipCard {
+	background: var(--lh-card);
+	border: 1px solid var(--lh-border);
+	border-radius: 18px;
+	padding: 20px 22px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	box-shadow: var(--lh-shadow);
+	transition: all 0.2s ease;
+
+	&:hover {
+		border-color: rgba($teal, 0.35);
+		transform: translateY(-2px);
+		box-shadow: var(--lh-shadow-hover);
+	}
+}
+
+.tipCardTop {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+.tipCategoryBadgeGroup {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.tipCatTag {
+	font-size: 11px;
+	font-weight: 800;
+	padding: 4px 10px;
+	border-radius: 99px;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: $teal;
+	background: rgba($teal, 0.1);
+	border: 1px solid rgba($teal, 0.2);
+}
+
+.tipSourceTag {
+	font-size: 11.5px;
+	font-weight: 600;
+	color: var(--lh-muted);
+}
+
+.bookmarkBtn {
+	background: var(--lh-card-2);
+	border: 1px solid var(--lh-border);
+	color: var(--lh-muted);
+	width: 36px;
+	height: 36px;
+	border-radius: 10px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	flex-shrink: 0;
+	transition: all 0.2s ease;
+	padding: 0;
+
+	svg {
+		width: 16px;
+		height: 16px;
+		stroke: var(--lh-muted);
+		stroke-width: 2.2px;
+		fill: none;
+		display: block;
+		flex-shrink: 0;
+		transition: all 0.2s ease;
+	}
+
+	&:hover {
+		color: $amber;
+		border-color: rgba($amber, 0.45);
+		background: rgba($amber, 0.1);
+
+		svg {
+			stroke: $amber;
+		}
+	}
+
+	&.saved {
+		color: $amber;
+		background: rgba($amber, 0.14);
+		border-color: rgba($amber, 0.5);
+
+		svg {
+			stroke: $amber;
+			fill: $amber;
+		}
+	}
+}
+
+.tipCardTitle {
+	font-size: 16.5px;
+	font-weight: 800;
+	color: var(--lh-text);
+	margin: 0;
+	line-height: 1.35;
+	letter-spacing: -0.015em;
+}
+
+.tipCardSummary {
+	font-size: 13px;
+	color: var(--lh-text-2);
+	margin: 0;
+	line-height: 1.5;
+}
+
+/* ─── Expandable Science & Steps Panel ──────────────────────────────────── */
+.tipExpandedPanel {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	font-size: 13px;
+	padding-top: 6px;
+}
+
+.panelDivider {
+	height: 1px;
+	background: var(--lh-border-soft);
+	margin: 2px 0;
+}
+
+.panelBlock {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+
+	h4 {
+		font-size: 13px;
+		font-weight: 800;
+		color: $teal;
+		margin: 0;
+		display: flex;
+		align-items: center;
+	}
+
+	p {
+		color: var(--lh-text-2);
+		margin: 0;
+		line-height: 1.5;
+	}
+
+	ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	li {
+		display: flex;
+		align-items: flex-start;
+		gap: 8px;
+		color: var(--lh-text-2);
+		line-height: 1.4;
+	}
+}
+
+.panelHeaderIcon {
+	color: $teal;
+	margin-right: 6px;
+	flex-shrink: 0;
+}
+
+.stepCheckIcon {
+	color: $teal;
+	flex-shrink: 0;
+	margin-top: 2px;
+}
+
+.safetyBox {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	background: rgba($amber, 0.08);
+	border: 1px solid rgba($amber, 0.22);
+	padding: 10px 12px;
+	border-radius: 10px;
+	color: var(--lh-text-2);
+	font-size: 12px;
+	line-height: 1.4;
+
+	strong {
+		color: $amber;
+	}
+}
+
+.safetyIcon {
+	color: $amber;
+	flex-shrink: 0;
+	margin-top: 1px;
+}
+
+.tipCardFooter {
+	display: flex;
+	justify-content: flex-start;
+	margin-top: 4px;
+}
+
+.expandToggleBtn {
+	background: transparent;
+	border: none;
+	color: $teal;
+	font-size: 12.5px;
+	font-weight: 700;
+	font-family: inherit;
+	cursor: pointer;
+	padding: 0;
+	transition: opacity 0.2s ease;
+
+	&:hover {
+		text-decoration: underline;
+		opacity: 0.85;
+	}
+}
+
+.emptyState {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	padding: 40px 20px;
+	background: var(--lh-card);
+	border: 1px dashed var(--lh-border);
+	border-radius: 18px;
+	color: var(--lh-muted);
+	gap: 10px;
+
+	h3 {
+		color: var(--lh-text);
+		margin: 0;
+		font-size: 16px;
+		font-weight: 800;
+	}
+
+	p {
+		font-size: 13px;
+		margin: 0;
+		max-width: 400px;
+		color: var(--lh-text-2);
+	}
+}
+
+/* ─── Sidebar Cards ──────────────────────────────────────────────────────── */
+.sidebarCard {
+	background: var(--lh-card);
+	border: 1px solid var(--lh-border);
+	border-radius: 18px;
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	box-shadow: var(--lh-shadow);
+}
+
+.cardHeaderRow {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+
+	h3 {
+		font-size: 14.5px;
+		font-weight: 800;
+		color: var(--lh-text);
+		margin: 0;
+		letter-spacing: -0.01em;
+	}
+}
+
+.iconShield {
+	color: $teal;
+}
+
+.iconBookmark {
+	color: $amber;
+}
+
+.iconFlame {
+	color: $red;
+}
+
+.essentialChecklist {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+
+	li {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 12.5px;
+		color: var(--lh-text-2);
+		line-height: 1.35;
+
+		svg {
+			color: $teal;
+			flex-shrink: 0;
+		}
+	}
+}
+
+.savedStatRow {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	background: var(--lh-card-2);
+	border: 1px solid var(--lh-border-soft);
+	padding: 12px 14px;
+	border-radius: 12px;
+}
+
+.savedCountNum {
+	font-size: 24px;
+	font-weight: 900;
+	color: $amber;
+}
+
+.savedCountText {
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--lh-text-2);
+	line-height: 1.3;
+}
+
+.remedyList {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.remedyItem {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	background: var(--lh-card-2);
+	border: 1px solid var(--lh-border-soft);
+	padding: 10px 12px;
+	border-radius: 12px;
+	transition: border-color 0.2s ease;
+
+	&:hover {
+		border-color: rgba($teal, 0.3);
+	}
+}
+
+.remedyIconBadge {
+	width: 28px;
+	height: 28px;
+	border-radius: 8px;
+	background: rgba($teal, 0.1);
+	color: $teal;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.remedyInfo {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.remedyName {
+	font-size: 12.5px;
+	font-weight: 800;
+	color: var(--lh-text);
+}
+
+.remedyBenefits {
+	font-size: 11.5px;
+	color: var(--lh-text-2);
+	line-height: 1.35;
 }
