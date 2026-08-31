@@ -5,6 +5,7 @@ import { LoginForm } from "@/Features/Auth/Login/Components/LoginForm/LoginForm"
 import { useLanguage } from "@/App/i18n/LanguageContext";
 import styles from "./Login.module.scss";
 import { ShieldCheck, Upload, Brain } from "lucide-react";
+import { prefetchDashboardOnLogin } from "@/App/Routes/routePrefetch";
 
 const Login = () => {
 	const navigate = useNavigate();
@@ -22,6 +23,10 @@ const Login = () => {
 		const frame1 = requestAnimationFrame(() => {
 			frame2 = requestAnimationFrame(() => setPageIn(true));
 		});
+
+		// Kick off dashboard JS chunks + 3D asset cache warming while user logs in
+		prefetchDashboardOnLogin();
+
 		return () => {
 			cancelAnimationFrame(frame1);
 			cancelAnimationFrame(frame2);
