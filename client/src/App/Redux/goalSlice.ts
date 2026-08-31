@@ -148,6 +148,13 @@ const goalSlice = createSlice({
 			const completedCount = state.items.filter((g) => g.completed).length;
 			state.totalHealthScore = Math.round((completedCount / state.items.length) * 100) || 0;
 		},
+		deleteGoal: (state, action: PayloadAction<string>) => {
+			state.items = state.items.filter((g) => g.id !== action.payload);
+			// Update dynamic health score
+			const completedCount = state.items.filter((g) => g.completed).length;
+			state.totalHealthScore = state.items.length > 0 ? Math.round((completedCount / state.items.length) * 100) : 0;
+			state.streakCount = completedCount > 0 ? 5 : 0;
+		},
 		sealMilestone: (
 			state,
 			action: PayloadAction<{ id: string; hash: string }>,
@@ -160,6 +167,6 @@ const goalSlice = createSlice({
 	},
 });
 
-export const { setGoals, toggleGoal, updateGoalProgress, addGoal, sealMilestone } =
+export const { setGoals, toggleGoal, updateGoalProgress, addGoal, deleteGoal, sealMilestone } =
 	goalSlice.actions;
 export default goalSlice.reducer;

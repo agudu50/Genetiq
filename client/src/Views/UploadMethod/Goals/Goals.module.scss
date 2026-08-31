@@ -613,6 +613,44 @@ $blue:       #3b82f6;
 	line-height: 1.45;
 }
 
+.cardHeaderActions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-shrink: 0;
+}
+
+.deleteHabitBtn {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	border: 1px solid var(--goal-border);
+	background: var(--goal-card-2);
+	color: var(--goal-muted);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	padding: 0;
+
+	svg {
+		width: 14px;
+		height: 14px;
+		stroke: currentColor;
+		stroke-width: 2px;
+		display: block;
+		flex-shrink: 0;
+		transition: stroke 0.2s ease;
+	}
+
+	&:hover {
+		color: $red;
+		border-color: rgba($red, 0.4);
+		background: rgba($red, 0.1);
+	}
+}
+
 .checkBtn {
 	width: 32px;
 	height: 32px;

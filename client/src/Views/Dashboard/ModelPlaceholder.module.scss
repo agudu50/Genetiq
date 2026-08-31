@@ -6,69 +6,49 @@
 	flex: 1;
 	overflow: hidden;
 	border-radius: inherit;
-	background: linear-gradient(165deg, #1e293b 0%, #0f172a 100%);
-
-	html[data-theme="light"] & {
-		background: linear-gradient(165deg, #f8fafc 0%, #e2e8f0 100%);
-	}
+	background: transparent;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
-.image {
+.loaderCenter {
+	position: relative;
+	width: 60px;
+	height: 60px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.pulseRing {
 	position: absolute;
-	inset: 0;
 	width: 100%;
 	height: 100%;
-	object-fit: contain;
-	object-position: center bottom;
-	opacity: 0.95;
+	border-radius: 50%;
+	border: 2px solid rgba(0, 166, 157, 0.35);
+	animation: pulseRingAnim 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
 }
 
-.overlay {
-	position: absolute;
-	inset: 0;
-	background: radial-gradient(
-		ellipse 75% 70% at 50% 55%,
-		transparent 0%,
-		rgba(15, 23, 42, 0.08) 100%
-	);
-	pointer-events: none;
-
-	html[data-theme="light"] & {
-		background: radial-gradient(
-			ellipse 75% 70% at 50% 55%,
-			transparent 0%,
-			rgba(255, 255, 255, 0.15) 100%
-		);
-	}
+.pulseDot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: #00a69d;
+	box-shadow: 0 0 14px #00a69d;
 }
 
-.shimmer {
-	position: absolute;
-	inset: 0;
-	background: linear-gradient(
-		105deg,
-		transparent 42%,
-		rgba(255, 255, 255, 0.04) 50%,
-		transparent 58%
-	);
-	background-size: 200% 100%;
-	animation: shimmer 1.8s ease-in-out infinite;
-	pointer-events: none;
-	opacity: 0.6;
-}
-
-@keyframes shimmer {
+@keyframes pulseRingAnim {
 	0% {
-		background-position: 200% 0;
+		transform: scale(0.5);
+		opacity: 0.8;
+	}
+	50% {
+		transform: scale(1.4);
+		opacity: 0.15;
 	}
 	100% {
-		background-position: -200% 0;
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.shimmer {
-		animation: none;
+		transform: scale(1.8);
 		opacity: 0;
 	}
 }

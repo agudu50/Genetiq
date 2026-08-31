@@ -1,9 +1,10 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/App/Redux/store";
-import { HealthGoal, toggleGoal, updateGoalProgress, addGoal, setGoals } from "@/App/Redux/goalSlice";
+import { HealthGoal, toggleGoal, updateGoalProgress, addGoal, deleteGoal, setGoals } from "@/App/Redux/goalSlice";
 import { LocalVault } from "@/App/Services/LocalVault";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "react-toastify";
 import { 
 	Check, 
 	Sparkles, 
@@ -24,7 +25,8 @@ import {
 	Sun,
 	X,
 	Lock,
-	Award
+	Award,
+	Trash2,
 } from "lucide-react";
 import styles from "./Goals.module.scss";
 
@@ -289,6 +291,17 @@ const Goals = () => {
 				g.id === id ? { ...g, completed: !g.completed, current_value: !g.completed ? g.target_value : "0", progress: !g.completed ? 100 : 0 } : g,
 			);
 			await LocalVault.save("user_goals", updatedGoals);
+		},
+		[dispatch, goals],
+	);
+
+	const handleDeleteGoal = useCallback(
+		async (id: string, e?: React.MouseEvent) => {
+			if (e) e.stopPropagation();
+			dispatch(deleteGoal(id));
+			const updatedGoals = goals.filter((g: HealthGoal) => g.id !== id);
+			await LocalVault.save("user_goals", updatedGoals);
+			toast.info("Habit removed from your daily plan", { autoClose: 2000 });
 		},
 		[dispatch, goals],
 	);
@@ -654,14 +667,24 @@ const Goals = () => {
 														<h3 className={styles.habitTitle}>{goal.title}</h3>
 														<p className={styles.habitDesc}>{goal.description}</p>
 													</div>
-													<button
-														type="button"
-														className={`${styles.checkBtn} ${goal.completed ? styles.checked : ""}`}
-														onClick={() => handleToggle(goal.id)}
-														title={goal.completed ? "Mark as in progress" : "Mark as complete"}
-													>
-														{goal.completed ? <Check size={15} strokeWidth={3} /> : <div className={styles.checkDot} />}
-													</button>
+													<div className={styles.cardHeaderActions}>
+														<button
+															type="button"
+															className={styles.deleteHabitBtn}
+															onClick={(e) => handleDeleteGoal(goal.id, e)}
+															title="Delete this habit"
+														>
+															<Trash2 size={14} />
+														</button>
+														<button
+															type="button"
+															className={`${styles.checkBtn} ${goal.completed ? styles.checked : ""}`}
+															onClick={() => handleToggle(goal.id)}
+															title={goal.completed ? "Mark as in progress" : "Mark as complete"}
+														>
+															{goal.completed ? <Check size={15} strokeWidth={3} /> : <div className={styles.checkDot} />}
+														</button>
+													</div>
 												</div>
 
 												{/* Card Body Progress */}
