@@ -244,14 +244,6 @@ $blue:   #3b82f6;
 	min-width: 0;
 }
 
-.heroBadgeRow {
-	display: flex;
-	align-items: center;
-	flex-wrap: wrap;
-	gap: 8px;
-	margin-bottom: 12px;
-}
-
 .pageEyebrow {
 	display: inline-flex;
 	align-items: center;
@@ -266,6 +258,7 @@ $blue:   #3b82f6;
 	background: rgba($teal, 0.1);
 	border: 1px solid rgba($teal, 0.22);
 	backdrop-filter: blur(8px);
+	margin-bottom: 12px;
 }
 
 .livePulseDot {
@@ -286,25 +279,6 @@ $blue:   #3b82f6;
 	50% {
 		transform: scale(1.35);
 		opacity: 0.6;
-	}
-}
-
-.encryptionBadge {
-	display: inline-flex;
-	align-items: center;
-	gap: 5px;
-	padding: 5px 11px;
-	border-radius: 99px;
-	font-size: 0.66rem;
-	font-weight: 700;
-	color: var(--hh-text-2);
-	background: var(--hh-card-2);
-	border: 1px solid var(--hh-border-soft);
-	letter-spacing: 0.04em;
-	backdrop-filter: blur(8px);
-
-	svg {
-		color: $teal;
 	}
 }
 

@@ -26,7 +26,6 @@ import {
 	SortDesc,
 	ChevronLeft,
 	ChevronRight,
-	Lock,
 	Sparkles,
 	Plus,
 } from "lucide-react";
@@ -737,17 +736,11 @@ export const HealthHistory: React.FC = () => {
 						<div className={styles.heroMainGrid}>
 							{/* Left: Identity & Information */}
 							<div className={styles.heroIdentityCol}>
-								<div className={styles.heroBadgeRow}>
-									<span className={styles.pageEyebrow}>
-										<span className={styles.livePulseDot} />
-										<Shield size={12} strokeWidth={2.5} />
-										{formattedName}'s Clinical Vault
-									</span>
-									<span className={styles.encryptionBadge}>
-										<Lock size={11} strokeWidth={2.5} />
-										On-Device Encrypted
-									</span>
-								</div>
+								<span className={styles.pageEyebrow}>
+									<span className={styles.livePulseDot} />
+									<Shield size={12} strokeWidth={2.5} />
+									{formattedName}'s Clinical Vault
+								</span>
 
 								<h1 className={styles.pageTitle}>
 									<span className={styles.titleMuted}>Clinical</span>{" "}
