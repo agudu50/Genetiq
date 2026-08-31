@@ -39,22 +39,12 @@
 }
 
 .ProgressBar-fill {
-	background: linear-gradient(90deg, var(--accent, #00A69D) 0%, #0284c7 50%, #38bdf8 100%);
+	background: var(--accent, #00A69D);
 	border-radius: 10px;
 	height: 100%;
-	box-shadow: 0 0 12px rgba(0, 166, 157, 0.35);
+	box-shadow: 0 0 10px rgba(0, 166, 157, 0.25);
 	position: relative;
 	overflow: hidden;
-
-	// Scanning Laser Sweep
-	&::after {
-		content: "";
-		position: absolute;
-		inset: 0;
-		background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.35) 50%, transparent 100%);
-		width: 40%;
-		animation: none;
-	}
 }
 
 @keyframes laserSweep {

@@ -16,30 +16,47 @@ const CtaModal = () => {
 		<div
 			className={`${styles.container} ${isClosed ? styles.containerClosed : ""}`}
 		>
-			<div className={styles.header}>
-				<div className={styles.headline}>
-					<span className={styles.count}>6</span>
-					<h3 className={styles.title}>{t("cta_new_insights")}</h3>
+			<div className={styles.inner}>
+				{/* Header */}
+				<div className={styles.header}>
+					<div className={styles.headline}>
+						<div className={styles.countBadge}>
+							<span className={styles.count}>6</span>
+						</div>
+						<div className={styles.titleGroup}>
+							<p className={styles.label}>Health Insights</p>
+							<h3 className={styles.title}>{t("cta_new_insights")}</h3>
+						</div>
+					</div>
+
+					<button
+						type="button"
+						className={styles.closeBtn}
+						onClick={() => setIsClosed(true)}
+						aria-label="Dismiss"
+					>
+						<Cross />
+					</button>
 				</div>
+
+				<div className={styles.divider} />
+
+				{/* Description */}
+				<p className={styles.description}>{t("cta_description")}</p>
+
+				{/* CTA Button */}
 				<button
 					type="button"
-					className={styles.closeBtn}
-					onClick={() => setIsClosed(true)}
-					aria-label="Dismiss"
+					className={styles.ctaBtn}
+					onClick={() => navigate(paths.config.tests)}
 				>
-					<Cross />
+					<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+						<path d="M12 2L12 12M12 12L8 8M12 12L16 8" strokeLinecap="round" strokeLinejoin="round" />
+						<path d="M3 15v4a2 2 0 002 2h14a2 2 0 002-2v-4" strokeLinecap="round" />
+					</svg>
+					{t("cta_order_dna_test")}
 				</button>
 			</div>
-
-			<p className={styles.description}>{t("cta_description")}</p>
-
-			<button
-				type="button"
-				className={styles.ctaBtn}
-				onClick={() => navigate(paths.config.tests)}
-			>
-				{t("cta_order_dna_test")}
-			</button>
 
 			<button
 				type="button"
