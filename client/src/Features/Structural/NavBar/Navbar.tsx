@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { Settings, Lock, LogOut, Wifi, WifiOff } from "lucide-react";
+import { Settings, Lock, LogOut, Wifi, WifiOff, Stethoscope } from "lucide-react";
 import { RootState } from "@/App/Redux/store";
 import { resetUser } from "@/App/Redux/userSlice";
 import { AuthCredentials } from "@/App/Services/AuthCredentials";
@@ -52,6 +52,7 @@ const Navbar = () => {
 	const pathToKey: Record<string, string> = {
 		[paths.dashboard.root]: "dashboard_nav",
 		[paths.config.goals]: "goals_nav",
+		[paths.clinical]: "clinical_nav",
 		[paths.clinicalHistory]: "history_nav",
 		[paths.config.tests]: "tests_nav",
 	};
@@ -147,6 +148,14 @@ const Navbar = () => {
 						>
 							{t("history_nav") || "History"}
 						</button>
+						<button
+							className={`${styles["nav-item"]} ${activeTab === "clinical_nav" ? styles["nav-active"] : ""}`}
+							onClick={() => goTo(paths.clinical)}
+							onMouseEnter={prefetchOnIntent(paths.clinical)}
+							onFocus={prefetchOnIntent(paths.clinical)}
+						>
+							Doctor Portal
+						</button>
 					</nav>
 				)}
 
@@ -207,6 +216,17 @@ const Navbar = () => {
 											{t("account_section")}
 										</span>
 										<LanguageSwitcher />
+										<button
+											type="button"
+											className={styles["footer-btn"]}
+											onClick={() => {
+												setIsProfileOpen(false);
+												goTo(paths.clinical);
+											}}
+										>
+											<Stethoscope size={18} strokeWidth={2} />
+											Clinical / Doctor Portal
+										</button>
 										<button
 											type="button"
 											className={styles["footer-btn"]}

@@ -1,0 +1,1043 @@
+.clinicalStage {
+	position: relative;
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden;
+	background: var(--color-background, #080c14);
+	color: var(--color-text, #f8fafc);
+	font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", Roboto, sans-serif;
+	display: flex;
+	flex-direction: column;
+}
+
+// ─── Full-Screen 3D Scene Background ─────────────────────────────────────────
+
+.canvasFullStage {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	width: 100%;
+	height: 100%;
+	background: radial-gradient(circle at 50% 50%, rgba(0, 124, 114, 0.12) 0%, rgba(8, 12, 20, 0.95) 100%);
+
+	:global(html[data-theme="light"]) & {
+		background: radial-gradient(circle at 50% 50%, rgba(0, 124, 114, 0.08) 0%, #f1f5f9 100%);
+	}
+}
+
+// ─── Floating Top Header ─────────────────────────────────────────────────────
+
+.topHeader {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 70px;
+	z-index: 30;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 28px;
+	background: rgba(11, 17, 29, 0.75);
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+	:global(html[data-theme="light"]) & {
+		background: rgba(255, 255, 255, 0.85);
+		border-bottom-color: rgba(0, 0, 0, 0.08);
+	}
+}
+
+.brandArea {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.brandLogo {
+	width: 36px;
+	height: 36px;
+	border-radius: 10px;
+	background: linear-gradient(135deg, #007c72 0%, #0ea5e9 100%);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #fff;
+	box-shadow: 0 4px 16px rgba(0, 124, 114, 0.4);
+}
+
+.hospitalMeta {
+	display: flex;
+	flex-direction: column;
+
+	.hospitalTitle {
+		font-size: 0.95rem;
+		font-weight: 800;
+		color: #ffffff;
+		letter-spacing: -0.02em;
+		margin: 0;
+
+		:global(html[data-theme="light"]) & {
+			color: #0f172a;
+		}
+	}
+
+	.hospitalSubtitle {
+		font-size: 0.74rem;
+		color: rgba(255, 255, 255, 0.5);
+		font-weight: 500;
+		margin: 0;
+
+		:global(html[data-theme="light"]) & {
+			color: #64748b;
+		}
+	}
+}
+
+// ─── Center Patient Switcher Selector ────────────────────────────────────────
+
+.patientSwitcherWrapper {
+	position: relative;
+}
+
+.patientSwitcherBtn {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 8px 18px;
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 30px;
+	color: #ffffff;
+	cursor: pointer;
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+	:global(html[data-theme="light"]) & {
+		background: #ffffff;
+		border-color: #cbd5e1;
+		color: #0f172a;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+	}
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.1);
+		border-color: #00a896;
+		transform: translateY(-1px);
+	}
+}
+
+.activePatientPill {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 0.88rem;
+	font-weight: 700;
+}
+
+.patientDropdownMenu {
+	position: absolute;
+	top: calc(100% + 10px);
+	left: 50%;
+	transform: translateX(-50%);
+	width: 380px;
+	max-height: 480px;
+	background: rgba(15, 23, 42, 0.95);
+	backdrop-filter: blur(24px);
+	-webkit-backdrop-filter: blur(24px);
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 18px;
+	box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55);
+	padding: 14px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	z-index: 100;
+	animation: popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+	:global(html[data-theme="light"]) & {
+		background: rgba(255, 255, 255, 0.98);
+		border-color: #cbd5e1;
+		box-shadow: 0 20px 48px rgba(0, 0, 0, 0.15);
+	}
+}
+
+@keyframes popIn {
+	from {
+		opacity: 0;
+		transform: translate(-50%, -8px) scale(0.96);
+	}
+	to {
+		opacity: 1;
+		transform: translate(-50%, 0) scale(1);
+	}
+}
+
+.dropdownSearch {
+	position: relative;
+	display: flex;
+	align-items: center;
+
+	input {
+		width: 100%;
+		background: rgba(255, 255, 255, 0.05);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 10px;
+		padding: 8px 12px 8px 34px;
+		font-size: 0.82rem;
+		color: #ffffff;
+		outline: none;
+
+		:global(html[data-theme="light"]) & {
+			background: #f1f5f9;
+			border-color: #e2e8f0;
+			color: #0f172a;
+		}
+
+		&:focus {
+			border-color: #007c72;
+		}
+	}
+
+	.searchIcon {
+		position: absolute;
+		left: 10px;
+		color: rgba(255, 255, 255, 0.4);
+
+		:global(html[data-theme="light"]) & {
+			color: #94a3b8;
+		}
+	}
+}
+
+.dropdownList {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	overflow-y: auto;
+	max-height: 360px;
+}
+
+.dropdownItem {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px 12px;
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid transparent;
+	cursor: pointer;
+	transition: all 0.15s;
+
+	:global(html[data-theme="light"]) & {
+		background: #f8fafc;
+	}
+
+	&:hover {
+		background: rgba(0, 124, 114, 0.12);
+		border-color: rgba(0, 124, 114, 0.3);
+	}
+}
+
+.dropdownItemActive {
+	background: rgba(0, 124, 114, 0.18) !important;
+	border-color: #007c72 !important;
+}
+
+// ─── Right Controls in Header ────────────────────────────────────────────────
+
+.headerControls {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.kpiPills {
+	display: flex;
+	gap: 8px;
+
+	@media (max-width: 900px) {
+		display: none;
+	}
+}
+
+.kpiPill {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 5px 12px;
+	border-radius: 20px;
+	font-size: 0.76rem;
+	font-weight: 700;
+	background: rgba(255, 255, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+
+	:global(html[data-theme="light"]) & {
+		background: #f1f5f9;
+		border-color: #e2e8f0;
+	}
+}
+
+.patientViewBtn {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	padding: 8px 16px;
+	border-radius: 10px;
+	background: #007c72;
+	color: #ffffff;
+	border: none;
+	font-size: 0.82rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.2s;
+
+	&:hover {
+		background: #006158;
+		transform: translateY(-1px);
+		box-shadow: 0 4px 14px rgba(0, 124, 114, 0.4);
+	}
+}
+
+// ─── Floating Overlay Panels ─────────────────────────────────────────────────
+
+.floatingLayout {
+	position: absolute;
+	top: 82px;
+	bottom: 80px;
+	left: 24px;
+	right: 24px;
+	z-index: 20;
+	display: flex;
+	justify-content: space-between;
+	pointer-events: none; // Allows interacting with 3D model behind empty spaces
+}
+
+.leftPanel,
+.rightPanel {
+	width: 370px;
+	max-width: 35vw;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	pointer-events: auto;
+	overflow-y: auto;
+	padding-right: 4px;
+
+	&::-webkit-scrollbar {
+		width: 4px;
+	}
+	&::-webkit-scrollbar-thumb {
+		background: rgba(255, 255, 255, 0.15);
+		border-radius: 4px;
+	}
+}
+
+// ─── Glassmorphic Card Container ─────────────────────────────────────────────
+
+.glassCard {
+	background: rgba(11, 17, 29, 0.82);
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 18px;
+	padding: 18px;
+	box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+	transition: border-color 0.2s;
+
+	:global(html[data-theme="light"]) & {
+		background: rgba(255, 255, 255, 0.92);
+		border-color: rgba(0, 0, 0, 0.08);
+		box-shadow: 0 12px 36px rgba(0, 0, 0, 0.06);
+	}
+
+	&:hover {
+		border-color: rgba(255, 255, 255, 0.2);
+	}
+}
+
+.cardHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 14px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+	:global(html[data-theme="light"]) & {
+		border-bottom-color: rgba(0, 0, 0, 0.06);
+	}
+
+	h3 {
+		font-size: 0.92rem;
+		font-weight: 800;
+		color: #ffffff;
+		margin: 0;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+
+		:global(html[data-theme="light"]) & {
+			color: #0f172a;
+		}
+	}
+}
+
+// ─── Patient Profile Hero Block ──────────────────────────────────────────────
+
+.patientHeroBlock {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.patientAvatarHero {
+	width: 46px;
+	height: 46px;
+	border-radius: 12px;
+	background: linear-gradient(135deg, #007c72 0%, #0ea5e9 100%);
+	color: #fff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.1rem;
+	font-weight: 800;
+}
+
+.patientInfo {
+	display: flex;
+	flex-direction: column;
+
+	.patientName {
+		font-size: 1.05rem;
+		font-weight: 800;
+		color: #ffffff;
+
+		:global(html[data-theme="light"]) & {
+			color: #0f172a;
+		}
+	}
+
+	.patientMetaText {
+		font-size: 0.76rem;
+		color: rgba(255, 255, 255, 0.55);
+		margin-top: 2px;
+
+		:global(html[data-theme="light"]) & {
+			color: #64748b;
+		}
+	}
+}
+
+.patientBiometricsGrid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 8px;
+	margin-top: 14px;
+	padding-top: 12px;
+	border-top: 1px solid rgba(255, 255, 255, 0.06);
+
+	:global(html[data-theme="light"]) & {
+		border-top-color: #f1f5f9;
+	}
+}
+
+.biometricItem {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 6px;
+	background: rgba(255, 255, 255, 0.03);
+	border-radius: 8px;
+
+	:global(html[data-theme="light"]) & {
+		background: #f8fafc;
+	}
+
+	.bioLabel {
+		font-size: 0.68rem;
+		color: rgba(255, 255, 255, 0.45);
+		font-weight: 600;
+		text-transform: uppercase;
+
+		:global(html[data-theme="light"]) & {
+			color: #94a3b8;
+		}
+	}
+
+	.bioValue {
+		font-size: 0.85rem;
+		font-weight: 800;
+		color: #ffffff;
+		margin-top: 2px;
+
+		:global(html[data-theme="light"]) & {
+			color: #0f172a;
+		}
+	}
+}
+
+// ─── Live Symptoms Cards ─────────────────────────────────────────────────────
+
+.symptomCard {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: 12px;
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.07);
+	border-radius: 12px;
+	margin-bottom: 8px;
+
+	:global(html[data-theme="light"]) & {
+		background: #f8fafc;
+		border-color: #e2e8f0;
+	}
+}
+
+.symptomTitleRow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	.symptomName {
+		font-size: 0.86rem;
+		font-weight: 700;
+		color: #ffffff;
+
+		:global(html[data-theme="light"]) & {
+			color: #0f172a;
+		}
+	}
+}
+
+.symptomNotes {
+	font-size: 0.78rem;
+	color: rgba(255, 255, 255, 0.65);
+	line-height: 1.35;
+
+	:global(html[data-theme="light"]) & {
+		color: #475569;
+	}
+}
+
+.symptomFooter {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-size: 0.72rem;
+	color: rgba(255, 255, 255, 0.45);
+	margin-top: 4px;
+
+	:global(html[data-theme="light"]) & {
+		color: #94a3b8;
+	}
+}
+
+// ─── Biomarkers & Chemistry Table ────────────────────────────────────────────
+
+.markerRow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 8px 10px;
+	background: rgba(255, 255, 255, 0.02);
+	border-radius: 8px;
+	margin-bottom: 6px;
+
+	:global(html[data-theme="light"]) & {
+		background: #f8fafc;
+	}
+
+	.markerName {
+		font-size: 0.8rem;
+		font-weight: 700;
+		color: #ffffff;
+
+		:global(html[data-theme="light"]) & {
+			color: #1e293b;
+		}
+	}
+
+	.markerVal {
+		font-size: 0.84rem;
+		font-weight: 800;
+		color: #ffffff;
+
+		:global(html[data-theme="light"]) & {
+			color: #0f172a;
+		}
+	}
+}
+
+// ─── Status Badges ───────────────────────────────────────────────────────────
+
+.badgeUrgent {
+	font-size: 0.7rem;
+	font-weight: 800;
+	padding: 2px 8px;
+	border-radius: 20px;
+	background: rgba(239, 68, 68, 0.2);
+	color: #ef4444;
+	border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.badgeWarning {
+	font-size: 0.7rem;
+	font-weight: 800;
+	padding: 2px 8px;
+	border-radius: 20px;
+	background: rgba(245, 158, 11, 0.2);
+	color: #f59e0b;
+	border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.badgeOptimal {
+	font-size: 0.7rem;
+	font-weight: 800;
+	padding: 2px 8px;
+	border-radius: 20px;
+	background: rgba(16, 185, 129, 0.2);
+	color: #10b981;
+	border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+// ─── Doctor Quick Actions Grid ───────────────────────────────────────────────
+
+.actionButtonsGrid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 8px;
+	margin-top: 10px;
+}
+
+.btnActionPrimary {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 9px 12px;
+	background: #007c72;
+	color: #ffffff;
+	border: none;
+	border-radius: 10px;
+	font-size: 0.8rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.2s;
+
+	&:hover {
+		background: #006158;
+		transform: translateY(-1px);
+	}
+}
+
+.btnActionSecondary {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 9px 12px;
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	color: #ffffff;
+	border-radius: 10px;
+	font-size: 0.8rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.2s;
+
+	:global(html[data-theme="light"]) & {
+		background: #f1f5f9;
+		border-color: #cbd5e1;
+		color: #0f172a;
+	}
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.1);
+	}
+}
+
+// ─── Advice & Care Dispatch Modal ───────────────────────────────────────────
+
+.modalOverlay {
+	position: fixed;
+	inset: 0;
+	z-index: 100;
+	background: rgba(0, 0, 0, 0.7);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+	animation: modalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalFadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.modalContent {
+	width: 100%;
+	max-width: 680px;
+	max-height: 90vh;
+	background: rgba(15, 23, 42, 0.96);
+	backdrop-filter: blur(28px);
+	-webkit-backdrop-filter: blur(28px);
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 22px;
+	box-shadow: 0 24px 64px rgba(0, 0, 0, 0.65);
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	animation: modalScaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+	:global(html[data-theme="light"]) & {
+		background: #ffffff;
+		border-color: #cbd5e1;
+		box-shadow: 0 24px 64px rgba(0, 0, 0, 0.15);
+	}
+}
+
+@keyframes modalScaleUp {
+	from {
+		opacity: 0;
+		transform: scale(0.94) translateY(12px);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
+}
+
+.modalHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 20px 24px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+	:global(html[data-theme="light"]) & {
+		border-bottom-color: #e2e8f0;
+	}
+
+	h2 {
+		font-size: 1.15rem;
+		font-weight: 800;
+		color: #ffffff;
+		margin: 0;
+		display: flex;
+		align-items: center;
+		gap: 10px;
+
+		:global(html[data-theme="light"]) & {
+			color: #0f172a;
+		}
+	}
+
+	.closeBtn {
+		background: none;
+		border: none;
+		color: rgba(255, 255, 255, 0.5);
+		font-size: 1.2rem;
+		cursor: pointer;
+		padding: 4px;
+		border-radius: 8px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: all 0.15s;
+
+		:global(html[data-theme="light"]) & {
+			color: #64748b;
+		}
+
+		&:hover {
+			color: #ffffff;
+			background: rgba(255, 255, 255, 0.08);
+
+			:global(html[data-theme="light"]) & {
+				color: #0f172a;
+				background: #f1f5f9;
+			}
+		}
+	}
+}
+
+.modalBody {
+	padding: 20px 24px;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+	flex: 1;
+}
+
+.patientTargetBox {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 16px;
+	background: rgba(0, 124, 114, 0.1);
+	border: 1px solid rgba(0, 124, 114, 0.25);
+	border-radius: 12px;
+	font-size: 0.85rem;
+
+	.targetName {
+		font-weight: 700;
+		color: #00a896;
+	}
+
+	.targetDetails {
+		color: rgba(255, 255, 255, 0.6);
+		font-size: 0.78rem;
+
+		:global(html[data-theme="light"]) & {
+			color: #64748b;
+		}
+	}
+}
+
+.historyAccordion {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.07);
+	border-radius: 14px;
+	padding: 14px;
+
+	:global(html[data-theme="light"]) & {
+		background: #f8fafc;
+		border-color: #e2e8f0;
+	}
+
+	.accordionTitle {
+		font-size: 0.82rem;
+		font-weight: 700;
+		color: rgba(255, 255, 255, 0.7);
+		text-transform: uppercase;
+		letter-spacing: 0.03em;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		:global(html[data-theme="light"]) & {
+			color: #475569;
+		}
+	}
+}
+
+.historyItem {
+	padding: 10px 12px;
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 255, 255, 0.05);
+	border-radius: 10px;
+	font-size: 0.82rem;
+
+	:global(html[data-theme="light"]) & {
+		background: #ffffff;
+		border-color: #e2e8f0;
+	}
+}
+
+.adviceInputWrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	label {
+		font-size: 0.84rem;
+		font-weight: 700;
+		color: #ffffff;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		:global(html[data-theme="light"]) & {
+			color: #0f172a;
+		}
+	}
+}
+
+.voiceControlRow {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.voiceBtn {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 12px;
+	border-radius: 20px;
+	font-size: 0.76rem;
+	font-weight: 700;
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	background: rgba(255, 255, 255, 0.05);
+	color: #ffffff;
+	cursor: pointer;
+	transition: all 0.2s;
+
+	:global(html[data-theme="light"]) & {
+		background: #f1f5f9;
+		border-color: #cbd5e1;
+		color: #0f172a;
+	}
+
+	&:hover {
+		background: rgba(0, 124, 114, 0.15);
+		border-color: #007c72;
+		color: #00a896;
+	}
+}
+
+.voiceBtnRecording {
+	background: #ef4444 !important;
+	border-color: #ef4444 !important;
+	color: #ffffff !important;
+	animation: voicePulse 1s infinite alternate;
+}
+
+@keyframes voicePulse {
+	from {
+		box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+	}
+	to {
+		box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+	}
+}
+
+.adviceTextarea {
+	width: 100%;
+	min-height: 120px;
+	background: rgba(255, 255, 255, 0.04);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 14px;
+	padding: 14px;
+	color: #ffffff;
+	font-size: 0.88rem;
+	font-family: inherit;
+	line-height: 1.5;
+	outline: none;
+	resize: vertical;
+	transition: border-color 0.2s;
+
+	:global(html[data-theme="light"]) & {
+		background: #f8fafc;
+		border-color: #cbd5e1;
+		color: #0f172a;
+	}
+
+	&:focus {
+		border-color: #007c72;
+		box-shadow: 0 0 0 3px rgba(0, 124, 114, 0.15);
+	}
+}
+
+.templatePills {
+	display: flex;
+	gap: 6px;
+	flex-wrap: wrap;
+}
+
+.templatePill {
+	padding: 5px 10px;
+	border-radius: 6px;
+	font-size: 0.74rem;
+	font-weight: 600;
+	background: rgba(255, 255, 255, 0.04);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	color: rgba(255, 255, 255, 0.7);
+	cursor: pointer;
+	transition: all 0.15s;
+
+	:global(html[data-theme="light"]) & {
+		background: #f1f5f9;
+		border-color: #e2e8f0;
+		color: #475569;
+	}
+
+	&:hover {
+		background: rgba(0, 124, 114, 0.15);
+		border-color: #007c72;
+		color: #00a896;
+	}
+}
+
+.modalFooter {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 10px;
+	padding: 16px 24px;
+	border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+	:global(html[data-theme="light"]) & {
+		border-top-color: #e2e8f0;
+	}
+}
+
+// ─── Floating Bottom Organ Switcher ──────────────────────────────────────────
+
+.bottomOrganBar {
+	position: absolute;
+	bottom: 18px;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 30;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 10px;
+	background: rgba(11, 17, 29, 0.82);
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 40px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+
+	:global(html[data-theme="light"]) & {
+		background: rgba(255, 255, 255, 0.9);
+		border-color: rgba(0, 0, 0, 0.1);
+	}
+}
+
+.organPill {
+	padding: 7px 16px;
+	border-radius: 30px;
+	border: none;
+	background: transparent;
+	color: rgba(255, 255, 255, 0.65);
+	font-size: 0.8rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.2s;
+
+	:global(html[data-theme="light"]) & {
+		color: #64748b;
+	}
+
+	&:hover {
+		color: #ffffff;
+
+		:global(html[data-theme="light"]) & {
+			color: #0f172a;
+		}
+	}
+}
+
+.organPillActive {
+	background: #007c72 !important;
+	color: #ffffff !important;
+	box-shadow: 0 2px 10px rgba(0, 124, 114, 0.4);
+}
+

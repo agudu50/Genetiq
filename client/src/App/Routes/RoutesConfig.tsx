@@ -34,6 +34,7 @@ const AIAssistant = lazyWithRetry(() => import("@/Views/Dashboard/Logs/AIAssista
 const HealthHistory = lazyWithRetry(() => import("@/Views/HealthHistory/HealthHistory"));
 const Terms = lazyWithRetry(() => import("@/Views/Legal/Terms/Terms"));
 const Privacy = lazyWithRetry(() => import("@/Views/Legal/Privacy/Privacy"));
+const DoctorPortal = lazyWithRetry(() => import("@/Views/DoctorPortal/DoctorPortal"));
 
 const Lazy = ({ children }: { children: React.ReactNode }) => (
 	<Suspense fallback={<RouteLoadingFallback />}>{children}</Suspense>
@@ -49,6 +50,14 @@ const RoutesConfig: RouteObject[] = [
 			{
 				path: paths.landing,
 				element: <Landing />,
+			},
+			{
+				path: paths.clinical,
+				element: (
+					<Lazy>
+						<DoctorPortal />
+					</Lazy>
+				),
 			},
 
 			{

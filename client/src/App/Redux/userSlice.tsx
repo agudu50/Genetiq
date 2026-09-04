@@ -6,7 +6,17 @@ export interface Medication {
 	frequency: string;
 }
 
+export interface DoctorProfile {
+	doctorName: string;
+	hospitalName: string;
+	department: string;
+	licenseNumber?: string;
+	title?: string;
+}
+
 export interface UserState {
+	accountType: "patient" | "doctor";
+	doctorProfile?: DoctorProfile;
 	firstName: string;
 	lastName: string;
 	age: string;
@@ -38,6 +48,13 @@ export interface UserState {
 const LOCAL_STORAGE_KEY = "genetiq.user";
 
 const defaultUserState: UserState = {
+	accountType: "patient",
+	doctorProfile: {
+		doctorName: "Dr. Sarah Jenkins, MD",
+		hospitalName: "Metropolitan Health Center",
+		department: "Cardiology & Internal Medicine",
+		title: "Attending Physician",
+	},
 	firstName: "",
 	lastName: "",
 	age: "",
@@ -122,6 +139,17 @@ export const userSlice = createSlice({
 			saveUserToStorage(nextState);
 			return nextState;
 		},
+		setAccountType: (state, action: PayloadAction<"patient" | "doctor">) => {
+			state.accountType = action.payload;
+			saveUserToStorage(state);
+		},
+		setDoctorProfile: (state, action: PayloadAction<Partial<DoctorProfile>>) => {
+			state.doctorProfile = {
+				...(state.doctorProfile || defaultUserState.doctorProfile!),
+				...action.payload,
+			};
+			saveUserToStorage(state);
+		},
 		updateLifestyle: (
 			state,
 			action: PayloadAction<Partial<UserState["lifestyle"]>>,
@@ -159,6 +187,8 @@ export const userSlice = createSlice({
 
 export const {
 	updateUserInfo,
+	setAccountType,
+	setDoctorProfile,
 	updateLifestyle,
 	setProfileComplete,
 	setWalletInfo,

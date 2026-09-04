@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { paths } from "@/App/Routes/Paths";
 import { toast } from "react-toastify";
-import { Mail, Lock, Eye, EyeOff, ArrowRight, User } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, ArrowRight, User, Stethoscope, Building2 } from "lucide-react";
 import { AUTH_KEYS, AuthCredentials } from "@/App/Services/AuthCredentials";
+import { setAccountType, setDoctorProfile, updateUserInfo } from "@/App/Redux/userSlice";
 import styles from "./RegisterForm.module.scss";
 
 const GoogleIcon = () => (
@@ -30,7 +32,12 @@ const getStrength = (pw: string) => {
 
 export const RegisterForm = ({ animate = false }: { animate?: boolean }) => {
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
+
+	const [role, setRole] = useState<"patient" | "doctor">("patient");
 	const [name, setName] = useState("");
+	const [hospitalName, setHospitalName] = useState("");
+	const [department, setDepartment] = useState("Cardiology");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
@@ -61,10 +68,38 @@ export const RegisterForm = ({ animate = false }: { animate?: boolean }) => {
 		}
 
 		localStorage.setItem(AUTH_KEYS.EMAIL, email);
-		await new Promise((r) => setTimeout(r, 1500));
+		localStorage.setItem("genetiq.accountType", role);
+
+		dispatch(setAccountType(role));
+		if (role === "doctor") {
+			dispatch(
+				setDoctorProfile({
+					doctorName: name.startsWith("Dr.") ? name : `Dr. ${name}`,
+					hospitalName: hospitalName.trim() || "Metropolitan Health Center",
+					department: department || "Cardiology & Internal Medicine",
+					title: "Attending Physician",
+				}),
+			);
+		} else {
+			const nameParts = name.trim().split(" ");
+			dispatch(
+				updateUserInfo({
+					firstName: nameParts[0] || "",
+					lastName: nameParts.slice(1).join(" ") || "",
+				}),
+			);
+		}
+
+		await new Promise((r) => setTimeout(r, 1000));
 		setIsLoading(false);
-		navigate(paths.config.root);
-		toast.success("Welcome to Genetiq!");
+
+		if (role === "doctor") {
+			toast.success("Welcome to Genetiq Clinical Portal!");
+			navigate(paths.clinical);
+		} else {
+			toast.success("Welcome to Genetiq!");
+			navigate(paths.config.root);
+		}
 	};
 
 	const handleOAuth = (provider: string) => {
@@ -75,18 +110,39 @@ export const RegisterForm = ({ animate = false }: { animate?: boolean }) => {
 		<div className={`${styles.formWrap} ${animate ? styles.formIn : ""}`}>
 			<div className={styles.heading}>
 				<h1 className={styles.title}>Create your account</h1>
-				<p className={styles.subtitle}>Free forever · No credit card needed</p>
+				<p className={styles.subtitle}>Choose your account type to get started</p>
+
+				<div className={styles.roleSwitch}>
+					<button
+						type='button'
+						className={`${styles.roleTab} ${role === "patient" ? styles.roleTabActive : ""}`}
+						onClick={() => setRole("patient")}
+					>
+						<User size={15} /> Patient / Individual
+					</button>
+					<button
+						type='button'
+						className={`${styles.roleTab} ${role === "doctor" ? styles.roleTabActive : ""}`}
+						onClick={() => setRole("doctor")}
+					>
+						<Stethoscope size={15} /> Doctor / Clinician
+					</button>
+				</div>
 			</div>
 
 			<form className={styles.form} onSubmit={handleRegister}>
 				<div className={styles.field}>
-					<label htmlFor='reg-name'>Full name</label>
+					<label htmlFor='reg-name'>{role === "doctor" ? "Doctor full name" : "Full name"}</label>
 					<div className={styles.inputWrap}>
-						<User size={16} className={styles.inputIcon} />
+						{role === "doctor" ? (
+							<Stethoscope size={16} className={styles.inputIcon} />
+						) : (
+							<User size={16} className={styles.inputIcon} />
+						)}
 						<input
 							id='reg-name'
 							type='text'
-							placeholder='Your name'
+							placeholder={role === "doctor" ? "e.g. Dr. Robert Chen, MD" : "Your name"}
 							value={name}
 							onChange={(e) => setName(e.target.value)}
 							autoComplete='name'
@@ -95,14 +151,48 @@ export const RegisterForm = ({ animate = false }: { animate?: boolean }) => {
 					</div>
 				</div>
 
+				{role === "doctor" && (
+					<>
+						<div className={styles.field}>
+							<label htmlFor='reg-hospital'>Hospital / Clinic affiliation</label>
+							<div className={styles.inputWrap}>
+								<Building2 size={16} className={styles.inputIcon} />
+								<input
+									id='reg-hospital'
+									type='text'
+									placeholder='e.g. Metropolitan Medical Center'
+									value={hospitalName}
+									onChange={(e) => setHospitalName(e.target.value)}
+									required
+								/>
+							</div>
+						</div>
+
+						<div className={styles.field}>
+							<label htmlFor='reg-dept'>Specialty / Department</label>
+							<div className={styles.inputWrap}>
+								<Stethoscope size={16} className={styles.inputIcon} />
+								<input
+									id='reg-dept'
+									type='text'
+									placeholder='e.g. Cardiology & Internal Medicine'
+									value={department}
+									onChange={(e) => setDepartment(e.target.value)}
+									required
+								/>
+							</div>
+						</div>
+					</>
+				)}
+
 				<div className={styles.field}>
-					<label htmlFor='reg-email'>Email address</label>
+					<label htmlFor='reg-email'>{role === "doctor" ? "Hospital / Work email" : "Email address"}</label>
 					<div className={styles.inputWrap}>
 						<Mail size={16} className={styles.inputIcon} />
 						<input
 							id='reg-email'
 							type='email'
-							placeholder='name@example.com'
+							placeholder={role === "doctor" ? "dr.name@hospital.org" : "name@example.com"}
 							value={email}
 							onChange={(e) => setEmail(e.target.value)}
 							autoComplete='email'

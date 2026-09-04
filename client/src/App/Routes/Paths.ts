@@ -25,6 +25,8 @@ export const paths = {
 	},
 	aiAssistant: "/ai-assistant",
 	clinicalHistory: "/clinical-history",
+	clinical: "/clinical",
+	doctor: "/clinical",
 	terms: "/terms",
 	privacy: "/privacy",
 };

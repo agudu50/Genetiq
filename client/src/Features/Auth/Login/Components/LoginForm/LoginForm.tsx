@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { paths } from "@/App/Routes/Paths";
 import { toast } from "react-toastify";
-import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, ArrowRight, User, Stethoscope } from "lucide-react";
 import { AUTH_KEYS, AuthCredentials } from "@/App/Services/AuthCredentials";
+import { setAccountType } from "@/App/Redux/userSlice";
 import styles from "./LoginForm.module.scss";
 
 // ─── OAuth provider icons (inline SVG) ───────────────────────────────────────
@@ -27,10 +29,15 @@ const AppleIcon = () => (
 
 export const LoginForm = ({ animate = false }: { animate?: boolean }) => {
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 
-	// Restore saved email & remember preference from a previous "keep me signed in"
-	const savedEmail    = localStorage.getItem(AUTH_KEYS.EMAIL) ?? "";
-	const savedRemember = localStorage.getItem(AUTH_KEYS.REMEMBER) === "true";
+	const initialRole =
+		(localStorage.getItem("genetiq.accountType") as "patient" | "doctor") ||
+		"patient";
+
+	const [role, setRole]                 = useState<"patient" | "doctor">(initialRole);
+	const savedEmail                      = localStorage.getItem(AUTH_KEYS.EMAIL) ?? "";
+	const savedRemember                   = localStorage.getItem(AUTH_KEYS.REMEMBER) === "true";
 
 	const [email, setEmail]               = useState(savedEmail);
 	const [password, setPassword]         = useState("");
@@ -41,7 +48,12 @@ export const LoginForm = ({ animate = false }: { animate?: boolean }) => {
 	// Auto-redirect if a persistent session already exists
 	useEffect(() => {
 		if (localStorage.getItem(AUTH_KEYS.SESSION) === "active") {
-			navigate(paths.config.root, { replace: true });
+			const savedRole = localStorage.getItem("genetiq.accountType");
+			if (savedRole === "doctor") {
+				navigate(paths.clinical, { replace: true });
+			} else {
+				navigate(paths.config.root, { replace: true });
+			}
 		}
 	}, []);
 
@@ -59,23 +71,30 @@ export const LoginForm = ({ animate = false }: { animate?: boolean }) => {
 			}
 		}
 
-		await new Promise((r) => setTimeout(r, 1500));
+		await new Promise((r) => setTimeout(r, 1000));
 		setIsLoading(false);
+
+		localStorage.setItem("genetiq.accountType", role);
+		dispatch(setAccountType(role));
 
 		if (rememberMe) {
 			localStorage.setItem(AUTH_KEYS.SESSION, "active");
 			localStorage.setItem(AUTH_KEYS.EMAIL, email);
 			localStorage.setItem(AUTH_KEYS.REMEMBER, "true");
-			toast.success("You'll stay signed in across sessions!");
 		} else {
 			localStorage.removeItem(AUTH_KEYS.SESSION);
 			localStorage.removeItem(AUTH_KEYS.EMAIL);
 			localStorage.removeItem(AUTH_KEYS.REMEMBER);
 			sessionStorage.setItem(AUTH_KEYS.SESSION, "active");
-			toast.success("Welcome back to Genetiq!");
 		}
 
-		navigate(paths.config.root);
+		if (role === "doctor") {
+			toast.success("Welcome to Genetiq Clinical Portal!");
+			navigate(paths.clinical);
+		} else {
+			toast.success("Welcome back to Genetiq!");
+			navigate(paths.config.root);
+		}
 	};
 
 	const handleOAuth = (provider: string) => {
@@ -88,18 +107,35 @@ export const LoginForm = ({ animate = false }: { animate?: boolean }) => {
 			<div className={styles.heading}>
 				<h1 className={styles.title}>Welcome back</h1>
 				<p className={styles.subtitle}>Sign in to your Genetiq account</p>
+
+				<div className={styles.roleSwitch}>
+					<button
+						type='button'
+						className={`${styles.roleTab} ${role === "patient" ? styles.roleTabActive : ""}`}
+						onClick={() => setRole("patient")}
+					>
+						<User size={15} /> Patient Sign In
+					</button>
+					<button
+						type='button'
+						className={`${styles.roleTab} ${role === "doctor" ? styles.roleTabActive : ""}`}
+						onClick={() => setRole("doctor")}
+					>
+						<Stethoscope size={15} /> Doctor / Clinician
+					</button>
+				</div>
 			</div>
 
 			{/* Email/Password form */}
 			<form className={styles.form} onSubmit={handleLogin}>
 				<div className={styles.field}>
-					<label htmlFor='login-email'>Email address</label>
+					<label htmlFor='login-email'>{role === "doctor" ? "Hospital / Work email" : "Email address"}</label>
 					<div className={styles.inputWrap}>
 						<Mail size={16} className={styles.inputIcon} />
 						<input
 							id='login-email'
 							type='email'
-							placeholder='name@example.com'
+							placeholder={role === "doctor" ? "dr.name@hospital.org" : "name@example.com"}
 							value={email}
 							onChange={(e) => setEmail(e.target.value)}
 							autoComplete='email'

@@ -175,6 +175,44 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 	gap: 6px;
 }
 
+.roleSwitch {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 6px;
+	padding: 4px;
+	background: var(--form-input-bg);
+	border: 1px solid var(--form-input-border);
+	border-radius: 12px;
+	margin-top: 4px;
+}
+
+.roleTab {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 9px 12px;
+	border: none;
+	border-radius: 8px;
+	background: transparent;
+	color: var(--form-label);
+	font-size: 0.85rem;
+	font-weight: 600;
+	font-family: inherit;
+	cursor: pointer;
+	transition: all 0.2s ease;
+
+	&:hover {
+		color: var(--form-input-text);
+	}
+}
+
+.roleTabActive {
+	background: $brand;
+	color: #ffffff !important;
+	box-shadow: 0 2px 8px rgba($brand, 0.35);
+}
+
 .title {
 	font-size: 1.875rem;
 	font-weight: 800;
