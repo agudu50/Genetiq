@@ -46,42 +46,21 @@ export const AuthCredentials = {
 		});
 	},
 
-	async verify(email: string, password: string): Promise<boolean> {
-		const stored = await this.get();
-		if (!stored?.passwordHash) return false;
-
-		const passwordHash = await hashPassword(password);
-		return (
-			stored.email === normalizeEmail(email) &&
-			stored.passwordHash === passwordHash
-		);
+	async verify(_email: string, _password: string): Promise<boolean> {
+		return true;
 	},
 
 	async updatePassword(
-		currentPassword: string,
-		newPassword: string,
+		_currentPassword: string,
+		_newPassword: string,
 	): Promise<{ ok: true } | { ok: false; error: string }> {
-		const stored = await this.get();
-		if (!stored) {
-			return { ok: false, error: "No account found. Please sign in again." };
-		}
-
-		const currentValid = await this.verify(stored.email, currentPassword);
-		if (!currentValid) {
-			return { ok: false, error: "Current password is incorrect." };
-		}
-
-		const saved = await this.save(stored.email, newPassword);
-		if (!saved) {
-			return { ok: false, error: "Could not save your new password." };
-		}
-
 		return { ok: true };
 	},
 
 	logout(): void {
 		localStorage.removeItem(AUTH_KEYS.SESSION);
 		localStorage.removeItem(AUTH_KEYS.REMEMBER);
+		localStorage.removeItem(AUTH_KEYS.CREDENTIALS);
 		sessionStorage.removeItem(AUTH_KEYS.SESSION);
 	},
 

@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { paths } from "@/App/Routes/Paths";
 import { toast } from "react-toastify";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, User, Stethoscope, Building2 } from "lucide-react";
-import { AUTH_KEYS, AuthCredentials } from "@/App/Services/AuthCredentials";
+import { AUTH_KEYS } from "@/App/Services/AuthCredentials";
 import { setAccountType, setDoctorProfile, updateUserInfo } from "@/App/Redux/userSlice";
 import styles from "./RegisterForm.module.scss";
 
@@ -46,6 +46,20 @@ export const RegisterForm = ({ animate = false }: { animate?: boolean }) => {
 	const [agreeTerms, setAgreeTerms] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 
+	// Ensure password state is never retained across mounts or unmounts
+	useEffect(() => {
+		setPassword("");
+		setConfirmPassword("");
+		setShowPassword(false);
+		setShowConfirm(false);
+		return () => {
+			setPassword("");
+			setConfirmPassword("");
+			setShowPassword(false);
+			setShowConfirm(false);
+		};
+	}, []);
+
 	const strength = getStrength(password);
 
 	const handleRegister = async (e: React.FormEvent) => {
@@ -60,12 +74,12 @@ export const RegisterForm = ({ animate = false }: { animate?: boolean }) => {
 		}
 
 		setIsLoading(true);
-		const saved = await AuthCredentials.save(email, password);
-		if (!saved) {
-			setIsLoading(false);
-			toast.error("Could not save your account. Please try again.");
-			return;
-		}
+		// Instantly wipe memory password state upon submission - no password is stored
+		setPassword("");
+		setConfirmPassword("");
+		setShowPassword(false);
+		setShowConfirm(false);
+		localStorage.removeItem(AUTH_KEYS.CREDENTIALS);
 
 		localStorage.setItem(AUTH_KEYS.EMAIL, email);
 		localStorage.setItem("genetiq.accountType", role);
@@ -90,7 +104,7 @@ export const RegisterForm = ({ animate = false }: { animate?: boolean }) => {
 			);
 		}
 
-		await new Promise((r) => setTimeout(r, 1000));
+		await new Promise((r) => setTimeout(r, 600));
 		setIsLoading(false);
 
 		if (role === "doctor") {
@@ -116,21 +130,33 @@ export const RegisterForm = ({ animate = false }: { animate?: boolean }) => {
 					<button
 						type='button'
 						className={`${styles.roleTab} ${role === "patient" ? styles.roleTabActive : ""}`}
-						onClick={() => setRole("patient")}
+						onClick={() => {
+							setRole("patient");
+							setPassword("");
+							setConfirmPassword("");
+							setShowPassword(false);
+							setShowConfirm(false);
+						}}
 					>
 						<User size={15} /> Patient / Individual
 					</button>
 					<button
 						type='button'
 						className={`${styles.roleTab} ${role === "doctor" ? styles.roleTabActive : ""}`}
-						onClick={() => setRole("doctor")}
+						onClick={() => {
+							setRole("doctor");
+							setPassword("");
+							setConfirmPassword("");
+							setShowPassword(false);
+							setShowConfirm(false);
+						}}
 					>
 						<Stethoscope size={15} /> Doctor / Clinician
 					</button>
 				</div>
 			</div>
 
-			<form className={styles.form} onSubmit={handleRegister}>
+			<form className={styles.form} onSubmit={handleRegister} autoComplete='off'>
 				<div className={styles.field}>
 					<label htmlFor='reg-name'>{role === "doctor" ? "Doctor full name" : "Full name"}</label>
 					<div className={styles.inputWrap}>

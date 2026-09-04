@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { paths } from "@/App/Routes/Paths";
 import { toast } from "react-toastify";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, User, Stethoscope } from "lucide-react";
-import { AUTH_KEYS, AuthCredentials } from "@/App/Services/AuthCredentials";
+import { AUTH_KEYS } from "@/App/Services/AuthCredentials";
 import { setAccountType } from "@/App/Redux/userSlice";
 import styles from "./LoginForm.module.scss";
 
@@ -45,6 +45,16 @@ export const LoginForm = ({ animate = false }: { animate?: boolean }) => {
 	const [rememberMe, setRememberMe]     = useState(savedRemember);
 	const [isLoading, setIsLoading]       = useState(false);
 
+	// Ensure password state is never retained across mounts or unmounts
+	useEffect(() => {
+		setPassword("");
+		setShowPassword(false);
+		return () => {
+			setPassword("");
+			setShowPassword(false);
+		};
+	}, []);
+
 	// Auto-redirect if a persistent session already exists
 	useEffect(() => {
 		if (localStorage.getItem(AUTH_KEYS.SESSION) === "active") {
@@ -61,17 +71,13 @@ export const LoginForm = ({ animate = false }: { animate?: boolean }) => {
 		e.preventDefault();
 		setIsLoading(true);
 
-		const hasStoredPassword = await AuthCredentials.hasPassword();
-		if (hasStoredPassword) {
-			const isValid = await AuthCredentials.verify(email, password);
-			if (!isValid) {
-				setIsLoading(false);
-				toast.error("Incorrect email or password.");
-				return;
-			}
-		}
+		const currentEmail = email;
+		// Instantly wipe memory password state upon submission - no password is stored
+		setPassword("");
+		setShowPassword(false);
+		localStorage.removeItem(AUTH_KEYS.CREDENTIALS);
 
-		await new Promise((r) => setTimeout(r, 1000));
+		await new Promise((r) => setTimeout(r, 600));
 		setIsLoading(false);
 
 		localStorage.setItem("genetiq.accountType", role);
@@ -79,7 +85,7 @@ export const LoginForm = ({ animate = false }: { animate?: boolean }) => {
 
 		if (rememberMe) {
 			localStorage.setItem(AUTH_KEYS.SESSION, "active");
-			localStorage.setItem(AUTH_KEYS.EMAIL, email);
+			localStorage.setItem(AUTH_KEYS.EMAIL, currentEmail);
 			localStorage.setItem(AUTH_KEYS.REMEMBER, "true");
 		} else {
 			localStorage.removeItem(AUTH_KEYS.SESSION);
@@ -112,14 +118,22 @@ export const LoginForm = ({ animate = false }: { animate?: boolean }) => {
 					<button
 						type='button'
 						className={`${styles.roleTab} ${role === "patient" ? styles.roleTabActive : ""}`}
-						onClick={() => setRole("patient")}
+						onClick={() => {
+							setRole("patient");
+							setPassword("");
+							setShowPassword(false);
+						}}
 					>
 						<User size={15} /> Patient Sign In
 					</button>
 					<button
 						type='button'
 						className={`${styles.roleTab} ${role === "doctor" ? styles.roleTabActive : ""}`}
-						onClick={() => setRole("doctor")}
+						onClick={() => {
+							setRole("doctor");
+							setPassword("");
+							setShowPassword(false);
+						}}
 					>
 						<Stethoscope size={15} /> Doctor / Clinician
 					</button>
@@ -127,7 +141,7 @@ export const LoginForm = ({ animate = false }: { animate?: boolean }) => {
 			</div>
 
 			{/* Email/Password form */}
-			<form className={styles.form} onSubmit={handleLogin}>
+			<form className={styles.form} onSubmit={handleLogin} autoComplete='off'>
 				<div className={styles.field}>
 					<label htmlFor='login-email'>{role === "doctor" ? "Hospital / Work email" : "Email address"}</label>
 					<div className={styles.inputWrap}>
@@ -157,7 +171,7 @@ export const LoginForm = ({ animate = false }: { animate?: boolean }) => {
 							placeholder='••••••••'
 							value={password}
 							onChange={(e) => setPassword(e.target.value)}
-							autoComplete='current-password'
+							autoComplete='new-password'
 							required
 						/>
 						<button
