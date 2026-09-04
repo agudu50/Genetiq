@@ -241,6 +241,12 @@ export const DoctorPortal = () => {
 		title: "Attending Physician",
 	};
 
+	const doctorInitials = (
+		(user.firstName && user.lastName ? `${user.firstName[0]}${user.lastName[0]}` : "") ||
+		(doctor.doctorName ? doctor.doctorName.replace(/^(Dr\.|Doctor)\s*/i, "").split(" ").map((n: string) => n[0]).join("").slice(0, 2) : "") ||
+		"AG"
+	).toUpperCase();
+
 	const [patients, setPatients] = useState<ClinicalPatient[]>(mockPatients);
 	const [selectedPatientId, setSelectedPatientId] = useState<string>("pt-101");
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -567,17 +573,13 @@ export const DoctorPortal = () => {
 							type='button'
 							className={`${styles.doctorTriggerBtn} ${isDoctorMenuOpen ? styles.doctorTriggerBtnActive : ""}`}
 							onClick={() => setIsDoctorMenuOpen(!isDoctorMenuOpen)}
-							title="Doctor Profile & Clinical Settings"
+							title={`${doctor.doctorName} · Doctor Profile & Settings`}
+							aria-label="Doctor Profile and Clinical Settings"
 						>
 							<div className={styles.doctorAvatarBadge}>
-								<span>{doctor.doctorName.replace("Dr. ", "").split(" ").map((n: string) => n[0]).join("").slice(0, 2) || "MD"}</span>
+								<span>{doctorInitials}</span>
 								<span className={styles.onlineDot} />
 							</div>
-							<div className={styles.doctorMetaHeader}>
-								<span className={styles.doctorNameHeader}>{doctor.doctorName}</span>
-								<span className={styles.doctorRoleHeader}>{doctor.title || "Attending Physician"}</span>
-							</div>
-							<ChevronDown size={14} className={`${styles.menuChevron} ${isDoctorMenuOpen ? styles.menuChevronRotated : ""}`} />
 						</button>
 
 						{isDoctorMenuOpen && (
@@ -585,7 +587,7 @@ export const DoctorPortal = () => {
 								{/* Doctor Profile Hero */}
 								<div className={styles.doctorMenuHero}>
 									<div className={styles.doctorMenuHeroAvatar}>
-										{doctor.doctorName.replace("Dr. ", "").split(" ").map((n: string) => n[0]).join("").slice(0, 2) || "MD"}
+										{doctorInitials}
 									</div>
 									<div className={styles.doctorMenuHeroInfo}>
 										<div className={styles.heroName}>{doctor.doctorName}</div>
