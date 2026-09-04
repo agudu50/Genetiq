@@ -10,6 +10,7 @@ import {
 	CheckCircle2,
 	Calendar as CalendarIcon,
 	Sparkles,
+	MapPin,
 } from "lucide-react";
 import { useLanguage } from "@/App/i18n/LanguageContext";
 import styles from "./PhysicianConsultModal.module.scss";
@@ -48,6 +49,7 @@ const SPECIALISTS = [
 
 const MODES = [
 	{ id: "video", label: "Video Call", icon: Video },
+	{ id: "in-person", label: "In-Person Clinic", icon: MapPin },
 	{ id: "audio", label: "Audio Phone", icon: Phone },
 	{ id: "chat", label: "AI Consultation", icon: MessageSquare },
 ];
@@ -77,6 +79,35 @@ export const PhysicianConsultModal: React.FC<PhysicianConsultModalProps> = ({
 		e.preventDefault();
 		const ref = "PHY-" + Math.floor(100000 + Math.random() * 900000);
 		setBookingRef(ref);
+
+		const selectedDoc = SPECIALISTS.find((s) => s.id === selectedSpecialist);
+		const newBooking = {
+			id: ref,
+			patientId: "pt-101",
+			patientName: "Marcus Vance",
+			patientMrn: "MRN-84920",
+			patientAvatar: "MV",
+			appointmentType: `${selectedDoc?.name || "Specialist"} Consultation`,
+			specialistName: selectedDoc?.name || "Dr. Kwame Mensah",
+			specialistInitials: selectedDoc?.initials || "KM",
+			department: selectedDoc?.role || "General Physician & Telehealth",
+			date: selectedSlot.split(",")[0] || "Today",
+			time: selectedSlot.split(",")[1]?.trim() || selectedSlot,
+			durationMinutes: selectedMode === "in-person" ? 45 : 30,
+			mode: selectedMode === "video" ? "telehealth" : selectedMode === "in-person" ? "in-person" : selectedMode === "audio" ? "phone" : "ai-consult",
+			status: "confirmed",
+			notes: notes.trim() || "Patient requested specialist consultation.",
+			roomOrLink: selectedMode === "video" ? `https://telehealth.genetiq.health/room/${ref}` : undefined,
+		};
+
+		try {
+			const existing = localStorage.getItem("genetiq.doctor_appointments");
+			const parsed = existing ? JSON.parse(existing) : [];
+			localStorage.setItem("genetiq.doctor_appointments", JSON.stringify([newBooking, ...parsed]));
+		} catch (err) {
+			console.error(err);
+		}
+
 		setIsSubmitted(true);
 	};
 

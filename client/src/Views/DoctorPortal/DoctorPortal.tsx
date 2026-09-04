@@ -239,6 +239,47 @@ const mockPatients: ClinicalPatient[] = [
 
 // ─── Doctor Booked Appointments & Schedules ─────────────────────────────────
 
+export interface ClinicalSpecialist {
+	id: string;
+	name: string;
+	role: string;
+	initials: string;
+}
+
+export const CLINICAL_SPECIALISTS: ClinicalSpecialist[] = [
+	{
+		id: "km",
+		name: "Dr. Kwame Mensah",
+		role: "General Physician & Telehealth",
+		initials: "KM",
+	},
+	{
+		id: "ao",
+		name: "Dr. Abena Osei",
+		role: "Clinical Hematologist",
+		initials: "AO",
+	},
+	{
+		id: "ka",
+		name: "Dr. Kofi Annan",
+		role: "Geneticist & Bio-consultant",
+		initials: "KA",
+	},
+	{
+		id: "aa",
+		name: "Akosua Addo, MSc",
+		role: "Clinical Dietitian & Nutritionist",
+		initials: "AA",
+	},
+];
+
+export const CONSULTATION_TIME_SLOTS = [
+	"Today, 3:00 PM",
+	"Today, 5:30 PM",
+	"Tomorrow, 10:00 AM",
+	"Tomorrow, 2:15 PM",
+];
+
 export interface DoctorAppointment {
 	id: string;
 	patientId: string;
@@ -246,11 +287,14 @@ export interface DoctorAppointment {
 	patientMrn: string;
 	patientAvatar: string;
 	appointmentType: string;
+	specialistName: string;
+	specialistRole: string;
+	specialistInitials: string;
 	department: string;
 	date: string;
 	time: string;
 	durationMinutes: number;
-	mode: "telehealth" | "in-person" | "phone";
+	mode: "telehealth" | "in-person" | "phone" | "ai-consult";
 	status: "waiting" | "confirmed" | "completed" | "cancelled";
 	notes: string;
 	roomOrLink?: string;
@@ -263,14 +307,17 @@ const initialAppointments: DoctorAppointment[] = [
 		patientName: "Marcus Vance",
 		patientMrn: "MRN-84920",
 		patientAvatar: "MV",
-		appointmentType: "Telehealth Urgent Triage: Atrial Palpitations Review",
-		department: "Cardiology & Arrhythmia",
-		date: "Today, Sep 04",
-		time: "10:30 AM",
+		appointmentType: "Urgent Arrhythmia & Palpitations Check-in",
+		specialistName: "Dr. Kwame Mensah",
+		specialistRole: "General Physician & Telehealth",
+		specialistInitials: "KM",
+		department: "General Physician & Telehealth",
+		date: "Today",
+		time: "3:00 PM",
 		durationMinutes: 30,
 		mode: "telehealth",
 		status: "waiting",
-		notes: "Reviewing severe palpitation episode logged 14 mins ago and Metoprolol tolerance.",
+		notes: "Experiencing rapid heartbeat and chest tightness after stair climb. Would like doctor to review latest Metoprolol adherence.",
 		roomOrLink: "https://telehealth.genetiq.health/room/pt-101",
 	},
 	{
@@ -279,15 +326,17 @@ const initialAppointments: DoctorAppointment[] = [
 		patientName: "Elena Rostova",
 		patientMrn: "MRN-67219",
 		patientAvatar: "ER",
-		appointmentType: "Routine 90-Day Metabolic & Thyroid Follow-up",
-		department: "Endocrinology & Internal",
-		date: "Today, Sep 04",
-		time: "02:15 PM",
-		durationMinutes: 20,
-		mode: "telehealth",
+		appointmentType: "Clinical Hematology & Ferritin Telemetry Review",
+		specialistName: "Dr. Abena Osei",
+		specialistRole: "Clinical Hematologist",
+		specialistInitials: "AO",
+		department: "Clinical Hematology",
+		date: "Today",
+		time: "5:30 PM",
+		durationMinutes: 45,
+		mode: "in-person",
 		status: "confirmed",
-		notes: "Evaluating fasting glucose trends (104 mg/dL) and daily energy diary.",
-		roomOrLink: "https://telehealth.genetiq.health/room/pt-102",
+		notes: "Discussing borderline low RBC indices, cold sensitivity, and thyroid panel balance.",
 	},
 	{
 		id: "apt-3",
@@ -295,14 +344,18 @@ const initialAppointments: DoctorAppointment[] = [
 		patientName: "David Chen",
 		patientMrn: "MRN-33108",
 		patientAvatar: "DC",
-		appointmentType: "Post-Angiogram Comprehensive Cardiac Follow-up",
-		department: "Cardiology Clinic Room 4B",
-		date: "Tomorrow, Sep 05",
-		time: "09:00 AM",
-		durationMinutes: 45,
-		mode: "in-person",
+		appointmentType: "Familial Hypercholesterolemia Genomic Screening",
+		specialistName: "Dr. Kofi Annan",
+		specialistRole: "Geneticist & Bio-consultant",
+		specialistInitials: "KA",
+		department: "Genetics & Bio-consultation",
+		date: "Tomorrow",
+		time: "10:00 AM",
+		durationMinutes: 30,
+		mode: "telehealth",
 		status: "confirmed",
-		notes: "Resting 12-lead ECG, blood pressure series, and lipid panel evaluation.",
+		notes: "Reviewing PCSK9 and LDLR gene variant risk profile and high baseline ApoB (128 mg/dL).",
+		roomOrLink: "https://telehealth.genetiq.health/room/pt-103",
 	},
 	{
 		id: "apt-4",
@@ -310,14 +363,17 @@ const initialAppointments: DoctorAppointment[] = [
 		patientName: "Marcus Vance",
 		patientMrn: "MRN-84920",
 		patientAvatar: "MV",
-		appointmentType: "14-Day Holter Monitor Telemetry Review",
-		department: "Electrophysiology",
-		date: "Sep 12, 2026",
-		time: "11:00 AM",
+		appointmentType: "Cardio-Metabolic Dietary Protocol & Macro Intake",
+		specialistName: "Akosua Addo, MSc",
+		specialistRole: "Clinical Dietitian & Nutritionist",
+		specialistInitials: "AA",
+		department: "Clinical Nutrition",
+		date: "Tomorrow",
+		time: "2:15 PM",
 		durationMinutes: 30,
-		mode: "telehealth",
+		mode: "phone",
 		status: "confirmed",
-		notes: "Scheduled after 14-day adhesive cardiac patch monitoring cycle.",
+		notes: "Formulating low-sodium, high-fiber dietary plan to assist blood pressure regulation.",
 	},
 	{
 		id: "apt-5",
@@ -325,14 +381,17 @@ const initialAppointments: DoctorAppointment[] = [
 		patientName: "Elena Rostova",
 		patientMrn: "MRN-67219",
 		patientAvatar: "ER",
-		appointmentType: "Initial Clinical Onboarding & Lab Intake",
-		department: "Internal Medicine",
-		date: "Aug 20, 2026",
-		time: "03:30 PM",
-		durationMinutes: 30,
-		mode: "telehealth",
+		appointmentType: "AI Clinical Biomarker Triage & Lab Interpretation",
+		specialistName: "Dr. Kwame Mensah",
+		specialistRole: "General Physician & Telehealth",
+		specialistInitials: "KM",
+		department: "General Physician & Telehealth",
+		date: "Aug 28",
+		time: "11:00 AM",
+		durationMinutes: 20,
+		mode: "ai-consult",
 		status: "completed",
-		notes: "Completed initial assessment, baseline labs ordered.",
+		notes: "AI multi-system review of thyroid panel, fasting insulin, and renal markers.",
 	},
 ];
 
@@ -361,14 +420,39 @@ export const DoctorPortal = () => {
 	// Appointments & Patient Schedule State
 	const [appointments, setAppointments] = useState<DoctorAppointment[]>(initialAppointments);
 	const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
-	const [appointmentFilter, setAppointmentFilter] = useState<"all" | "today" | "upcoming" | "completed">("all");
+	const [appointmentFilter, setAppointmentFilter] = useState<"all" | "today" | "telehealth" | "in-person" | "completed">("all");
+	const [specialistFilter, setSpecialistFilter] = useState<string>("all");
 	const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 	const [newApptPatientId, setNewApptPatientId] = useState("pt-101");
-	const [newApptType, setNewApptType] = useState("Telehealth Follow-up Review");
-	const [newApptDate, setNewApptDate] = useState("2026-09-08");
-	const [newApptTime, setNewApptTime] = useState("10:00 AM");
-	const [newApptMode, setNewApptMode] = useState<"telehealth" | "in-person" | "phone">("telehealth");
+	const [newApptSpecialistId, setNewApptSpecialistId] = useState("km");
+	const [newApptSlot, setNewApptSlot] = useState(CONSULTATION_TIME_SLOTS[0]);
+	const [newApptMode, setNewApptMode] = useState<"telehealth" | "in-person" | "phone" | "ai-consult">("telehealth");
 	const [newApptNotes, setNewApptNotes] = useState("");
+
+	// Load stored appointments on mount & listen for updates from patient booking modal
+	useEffect(() => {
+		const loadStoredAppointments = () => {
+			try {
+				const saved = localStorage.getItem("genetiq.doctor_appointments");
+				if (saved) {
+					const parsed = JSON.parse(saved);
+					if (Array.isArray(parsed) && parsed.length > 0) {
+						setAppointments((prev) => {
+							const existingIds = new Set(prev.map((a) => a.id));
+							const uniqueNew = parsed.filter((a: any) => !existingIds.has(a.id));
+							return [...uniqueNew, ...prev];
+						});
+					}
+				}
+			} catch (err) {
+				console.error(err);
+			}
+		};
+
+		loadStoredAppointments();
+		window.addEventListener("storage", loadStoredAppointments);
+		return () => window.removeEventListener("storage", loadStoredAppointments);
+	}, []);
 
 	// Advice & Clinical Dispatch Modal State
 	const [isAdviceModalOpen, setIsAdviceModalOpen] = useState(false);
@@ -416,7 +500,12 @@ export const DoctorPortal = () => {
 	const handleCreateNewAppointment = (e: React.FormEvent) => {
 		e.preventDefault();
 		const patientObj = patients.find((p) => p.id === newApptPatientId);
+		const specObj = CLINICAL_SPECIALISTS.find((s) => s.id === newApptSpecialistId) || CLINICAL_SPECIALISTS[0];
 		if (!patientObj) return;
+
+		const slotParts = newApptSlot.split(",");
+		const datePart = slotParts[0]?.trim() || "Today";
+		const timePart = slotParts[1]?.trim() || newApptSlot;
 
 		const newAppt: DoctorAppointment = {
 			id: `apt-${Date.now()}`,
@@ -424,26 +513,42 @@ export const DoctorPortal = () => {
 			patientName: patientObj.name,
 			patientMrn: patientObj.mrn,
 			patientAvatar: patientObj.name.split(" ").map((n) => n[0]).join(""),
-			appointmentType: newApptType,
-			department: doctor.department || "Cardiology",
-			date: newApptDate,
-			time: newApptTime,
-			durationMinutes: 30,
+			appointmentType: `${specObj.role}: ${newApptMode === "telehealth" ? "Online Video" : newApptMode === "in-person" ? "In-Person Clinic" : newApptMode === "phone" ? "Audio Phone" : "AI Clinical"} Consultation`,
+			specialistName: specObj.name,
+			specialistRole: specObj.role,
+			specialistInitials: specObj.initials,
+			department: specObj.role,
+			date: datePart,
+			time: timePart,
+			durationMinutes: newApptMode === "in-person" ? 45 : 30,
 			mode: newApptMode,
 			status: "confirmed",
-			notes: newApptNotes || "Scheduled follow-up consultation via Clinical Portal.",
-			roomOrLink: `https://telehealth.genetiq.health/room/${patientObj.id}`,
+			notes: newApptNotes.trim() || "Scheduled consultation via Doctor Portal.",
+			roomOrLink: newApptMode === "telehealth" ? `https://telehealth.genetiq.health/room/${patientObj.id}` : undefined,
 		};
 
 		setAppointments((prev) => [newAppt, ...prev]);
+
+		try {
+			const existing = localStorage.getItem("genetiq.doctor_appointments");
+			const parsed = existing ? JSON.parse(existing) : [];
+			localStorage.setItem("genetiq.doctor_appointments", JSON.stringify([newAppt, ...parsed]));
+		} catch (err) {
+			console.error(err);
+		}
+
 		setIsBookingModalOpen(false);
 		setNewApptNotes("");
-		toast.success(`New appointment confirmed for ${patientObj.name} on ${newApptDate} at ${newApptTime}!`);
+		toast.success(`New consultation booked with ${specObj.name} for ${patientObj.name} at ${newApptSlot}!`);
 	};
 
 	const filteredAppointments = appointments.filter((a) => {
+		if (specialistFilter !== "all" && a.specialistInitials?.toLowerCase() !== specialistFilter) {
+			return false;
+		}
 		if (appointmentFilter === "today") return a.date.toLowerCase().includes("today") || a.status === "waiting";
-		if (appointmentFilter === "upcoming") return a.status === "confirmed" && !a.date.toLowerCase().includes("today");
+		if (appointmentFilter === "telehealth") return a.mode === "telehealth";
+		if (appointmentFilter === "in-person") return a.mode === "in-person";
 		if (appointmentFilter === "completed") return a.status === "completed";
 		return true;
 	});
@@ -1689,7 +1794,7 @@ export const DoctorPortal = () => {
 							</div>
 						</div>
 
-						<div className={styles.modalFooter}>
+										<div className={styles.modalFooter}>
 							<button
 								type='button'
 								className={styles.btnActionPrimary}
@@ -1717,7 +1822,7 @@ export const DoctorPortal = () => {
 								<div>
 									<h2>Patient Appointments & Clinical Schedules</h2>
 									<p style={{ margin: 0, fontSize: "0.74rem", color: "rgba(255,255,255,0.5)" }}>
-										{doctor.doctorName} · {doctor.hospitalName} ({appointments.length} Total Scheduled)
+										{doctor.doctorName} · {doctor.hospitalName} ({appointments.length} Total Booked)
 									</p>
 								</div>
 							</div>
@@ -1728,7 +1833,7 @@ export const DoctorPortal = () => {
 									onClick={() => setIsBookingModalOpen(true)}
 								>
 									<CalendarPlus size={14} />
-									<span>Book New Appointment</span>
+									<span>Schedule Consultation</span>
 								</button>
 								<button
 									type='button'
@@ -1748,21 +1853,28 @@ export const DoctorPortal = () => {
 									className={`${styles.filterPill} ${appointmentFilter === "all" ? styles.filterPillActive : ""}`}
 									onClick={() => setAppointmentFilter("all")}
 								>
-									All Appointments ({appointments.length})
+									All Consultations ({appointments.length})
 								</button>
 								<button
 									type='button'
 									className={`${styles.filterPill} ${appointmentFilter === "today" ? styles.filterPillActive : ""}`}
 									onClick={() => setAppointmentFilter("today")}
 								>
-									Today's Schedule ({appointments.filter((a) => a.date.includes("Today") || a.status === "waiting").length})
+									Today's Schedule ({appointments.filter((a) => a.date.toLowerCase().includes("today") || a.status === "waiting").length})
 								</button>
 								<button
 									type='button'
-									className={`${styles.filterPill} ${appointmentFilter === "upcoming" ? styles.filterPillActive : ""}`}
-									onClick={() => setAppointmentFilter("upcoming")}
+									className={`${styles.filterPill} ${appointmentFilter === "telehealth" ? styles.filterPillActive : ""}`}
+									onClick={() => setAppointmentFilter("telehealth")}
 								>
-									Upcoming ({appointments.filter((a) => a.status === "confirmed" && !a.date.includes("Today")).length})
+									Video Call (Online) ({appointments.filter((a) => a.mode === "telehealth").length})
+								</button>
+								<button
+									type='button'
+									className={`${styles.filterPill} ${appointmentFilter === "in-person" ? styles.filterPillActive : ""}`}
+									onClick={() => setAppointmentFilter("in-person")}
+								>
+									In-Person Clinic ({appointments.filter((a) => a.mode === "in-person").length})
 								</button>
 								<button
 									type='button'
@@ -1772,6 +1884,28 @@ export const DoctorPortal = () => {
 									Completed ({appointments.filter((a) => a.status === "completed").length})
 								</button>
 							</div>
+
+							{/* Filter by Specialist */}
+							<div className={styles.specialistFilterRow}>
+								<span className={styles.specialistFilterLabel}>Specialist:</span>
+								<button
+									type='button'
+									className={`${styles.specPillSmall} ${specialistFilter === "all" ? styles.specPillSmallActive : ""}`}
+									onClick={() => setSpecialistFilter("all")}
+								>
+									All
+								</button>
+								{CLINICAL_SPECIALISTS.map((spec) => (
+									<button
+										key={spec.id}
+										type='button'
+										className={`${styles.specPillSmall} ${specialistFilter === spec.initials.toLowerCase() ? styles.specPillSmallActive : ""}`}
+										onClick={() => setSpecialistFilter(spec.initials.toLowerCase())}
+									>
+										<strong>{spec.initials}</strong> {spec.name}
+									</button>
+								))}
+							</div>
 						</div>
 
 						{/* Appointments List Body */}
@@ -1779,7 +1913,7 @@ export const DoctorPortal = () => {
 							{filteredAppointments.length === 0 ? (
 								<div className={styles.emptyScheduleState}>
 									<Calendar size={32} style={{ color: "rgba(255,255,255,0.2)", marginBottom: "8px" }} />
-									<div>No appointments found in this category.</div>
+									<div>No booked appointments found for this filter.</div>
 								</div>
 							) : (
 								filteredAppointments.map((appt) => (
@@ -1787,13 +1921,13 @@ export const DoctorPortal = () => {
 										key={appt.id}
 										className={`${styles.appointmentCard} ${appt.status === "waiting" ? styles.appointmentCardWaiting : ""}`}
 									>
-										{/* Top Row: Patient Info + Status */}
+										{/* Top Row: Patient Info + Mode & Status Badges */}
 										<div className={styles.apptTopRow}>
 											<div className={styles.apptPatientMeta}>
 												<div className={styles.apptPatientAvatar}>{appt.patientAvatar}</div>
 												<div>
 													<div className={styles.apptPatientName}>{appt.patientName}</div>
-													<div className={styles.apptMrn}>{appt.patientMrn} · {appt.department}</div>
+													<div className={styles.apptMrn}>{appt.patientMrn}</div>
 												</div>
 											</div>
 
@@ -1804,13 +1938,24 @@ export const DoctorPortal = () => {
 															? styles.modeBadgeTelehealth
 															: appt.mode === "in-person"
 															? styles.modeBadgeInPerson
-															: styles.modeBadgePhone
+															: appt.mode === "phone"
+															? styles.modeBadgePhone
+															: styles.modeBadgeAi
 													}
 												>
 													{appt.mode === "telehealth" && <Video size={12} />}
 													{appt.mode === "in-person" && <MapPin size={12} />}
 													{appt.mode === "phone" && <PhoneCall size={12} />}
-													<span>{appt.mode === "telehealth" ? "Telehealth Video" : appt.mode === "in-person" ? "In-Clinic Visit" : "Phone Call"}</span>
+													{appt.mode === "ai-consult" && <Sparkles size={12} />}
+													<span>
+														{appt.mode === "telehealth"
+															? "Video Call (Online)"
+															: appt.mode === "in-person"
+															? "In-Person Clinic"
+															: appt.mode === "phone"
+															? "Audio Phone"
+															: "AI Consultation"}
+													</span>
 												</span>
 
 												<span
@@ -1827,17 +1972,26 @@ export const DoctorPortal = () => {
 											</div>
 										</div>
 
-										{/* Details: Title, Time, Notes */}
+										{/* Specialist Assigned Banner */}
+										<div className={styles.apptSpecialistBanner}>
+											<div className={styles.specBadgeIcon}>{appt.specialistInitials || "KM"}</div>
+											<div className={styles.specMeta}>
+												<span className={styles.specName}>{appt.specialistName || "Dr. Kwame Mensah"}</span>
+												<span className={styles.specRole}>{appt.specialistRole || appt.department}</span>
+											</div>
+										</div>
+
+										{/* Details: Title, Preferred Time Slot, Notes */}
 										<div className={styles.apptDetailsBlock}>
 											<div className={styles.apptTitle}>{appt.appointmentType}</div>
 											<div className={styles.apptTimeRow}>
-												<span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
-													<Clock size={12} style={{ color: "#00a896" }} />
-													<strong>{appt.date}</strong> at <strong>{appt.time}</strong> ({appt.durationMinutes} mins)
+												<span style={{ display: "inline-flex", alignItems: "center", gap: "5px" }}>
+													<Clock size={13} style={{ color: "#00a896" }} />
+													Preferred Time Slot: <strong>{appt.date}, {appt.time}</strong> ({appt.durationMinutes} mins)
 												</span>
 											</div>
 											<div className={styles.apptNotesText}>
-												Reason / Clinical Context: {appt.notes}
+												<strong>Notes for Physician:</strong> {appt.notes || "No additional pre-consultation notes provided."}
 											</div>
 										</div>
 
@@ -1850,7 +2004,7 @@ export const DoctorPortal = () => {
 													onClick={() => handleJoinTelehealth(appt)}
 												>
 													<Video size={14} />
-													<span>{appt.status === "waiting" ? "Join Waiting Room Call Now" : "Launch Telehealth Session"}</span>
+													<span>{appt.status === "waiting" ? "Join Waiting Room Video Now" : "Launch Encrypted Video Room"}</span>
 												</button>
 											)}
 
@@ -1871,7 +2025,7 @@ export const DoctorPortal = () => {
 													title='Mark appointment completed'
 												>
 													<Check size={13} />
-													<span>Done</span>
+													<span>Mark Done</span>
 												</button>
 											)}
 										</div>
@@ -1905,7 +2059,7 @@ export const DoctorPortal = () => {
 								<div>
 									<h2>Schedule Patient Consultation</h2>
 									<p style={{ margin: 0, fontSize: "0.74rem", color: "rgba(255,255,255,0.5)" }}>
-										Book next clinical visit or telehealth review
+										Book next clinical visit or specialist review
 									</p>
 								</div>
 							</div>
@@ -1936,99 +2090,120 @@ export const DoctorPortal = () => {
 									</select>
 								</div>
 
-								{/* Appointment Type */}
+								{/* Select Specialist */}
 								<div className={styles.formGroup}>
-									<label>Consultation / Reason</label>
-									<input
-										type='text'
-										className={styles.formInput}
-										value={newApptType}
-										onChange={(e) => setNewApptType(e.target.value)}
-										placeholder='e.g., Telehealth Follow-up Review'
-										required
-									/>
+									<label>Select Specialist</label>
+									<div className={styles.specialistGrid}>
+										{CLINICAL_SPECIALISTS.map((doc) => (
+											<button
+												key={doc.id}
+												type='button'
+												className={`${styles.specialistCard} ${
+													newApptSpecialistId === doc.id ? styles.specialistCardActive : ""
+												}`}
+												onClick={() => setNewApptSpecialistId(doc.id)}
+											>
+												<div className={styles.specialistAvatar}>{doc.initials}</div>
+												<div>
+													<p className={styles.specialistName}>{doc.name}</p>
+													<p className={styles.specialistRole}>{doc.role}</p>
+												</div>
+											</button>
+										))}
+									</div>
 								</div>
 
-								{/* Mode */}
+								{/* Consultation Type / Mode */}
 								<div className={styles.formGroup}>
-									<label>Consultation Mode</label>
-									<div className={styles.modeToggleGroup}>
+									<label>Consultation Type</label>
+									<div className={styles.modeGridFour}>
 										<button
 											type='button'
-											className={`${styles.modeToggleBtn} ${newApptMode === "telehealth" ? styles.modeToggleBtnActive : ""}`}
+											className={`${styles.modeCardBtn} ${newApptMode === "telehealth" ? styles.modeCardBtnActive : ""}`}
 											onClick={() => setNewApptMode("telehealth")}
 										>
-											<Video size={14} /> Telehealth Video
+											<Video size={18} />
+											<span>Video Call</span>
 										</button>
 										<button
 											type='button'
-											className={`${styles.modeToggleBtn} ${newApptMode === "in-person" ? styles.modeToggleBtnActive : ""}`}
+											className={`${styles.modeCardBtn} ${newApptMode === "in-person" ? styles.modeCardBtnActive : ""}`}
 											onClick={() => setNewApptMode("in-person")}
 										>
-											<MapPin size={14} /> In-Clinic Visit
+											<MapPin size={18} />
+											<span>In-Person</span>
 										</button>
 										<button
 											type='button'
-											className={`${styles.modeToggleBtn} ${newApptMode === "phone" ? styles.modeToggleBtnActive : ""}`}
+											className={`${styles.modeCardBtn} ${newApptMode === "phone" ? styles.modeCardBtnActive : ""}`}
 											onClick={() => setNewApptMode("phone")}
 										>
-											<PhoneCall size={14} /> Phone
+											<PhoneCall size={18} />
+											<span>Audio Phone</span>
+										</button>
+										<button
+											type='button'
+											className={`${styles.modeCardBtn} ${newApptMode === "ai-consult" ? styles.modeCardBtnActive : ""}`}
+											onClick={() => setNewApptMode("ai-consult")}
+										>
+											<Sparkles size={18} />
+											<span>AI Consultation</span>
 										</button>
 									</div>
 								</div>
 
-								{/* Date and Time Row */}
-								<div className={styles.formRowTwo}>
-									<div className={styles.formGroup}>
-										<label>Date</label>
-										<input
-											type='date'
-											className={styles.formInput}
-											value={newApptDate}
-											onChange={(e) => setNewApptDate(e.target.value)}
-											required
-										/>
-									</div>
-									<div className={styles.formGroup}>
-										<label>Time</label>
-										<input
-											type='text'
-											className={styles.formInput}
-											value={newApptTime}
-											onChange={(e) => setNewApptTime(e.target.value)}
-											placeholder='e.g. 10:30 AM'
-											required
-										/>
+								{/* Preferred Time Slot */}
+								<div className={styles.formGroup}>
+									<label>Preferred Time Slot</label>
+									<div className={styles.slotGridTwo}>
+										{CONSULTATION_TIME_SLOTS.map((slot) => (
+											<button
+												key={slot}
+												type='button'
+												className={`${styles.slotCardBtn} ${
+													newApptSlot === slot ? styles.slotCardBtnActive : ""
+												}`}
+												onClick={() => setNewApptSlot(slot)}
+											>
+												{slot}
+											</button>
+										))}
 									</div>
 								</div>
 
-								{/* Clinical Notes */}
+								{/* Notes for Physician (Optional) */}
 								<div className={styles.formGroup}>
-									<label>Clinical Context / Preparation Notes</label>
+									<label>Notes for Physician (Optional)</label>
 									<textarea
 										className={styles.formTextarea}
 										value={newApptNotes}
 										onChange={(e) => setNewApptNotes(e.target.value)}
-										placeholder='Enter any pre-visit diagnostic instructions or clinical objectives...'
+										placeholder="Mention any symptoms, specific questions, or lab results you'd like the doctor to review..."
 										rows={3}
 									/>
 								</div>
 							</div>
 
 							<div className={styles.modalFooter}>
-								<button
-									type='button'
-									className={styles.btnActionSecondary}
-									onClick={() => setIsBookingModalOpen(false)}
-								>
-									Cancel
-								</button>
-								<button
-									type='submit'
-									className={styles.btnActionPrimary}
-								>
-									<CalendarPlus size={14} /> Confirm & Save Appointment
-								</button>
+								<div className={styles.trustBadge}>
+									<ShieldCheck size={16} style={{ color: "#10b981" }} />
+									<span>HIPAA Compliant & Confidential</span>
+								</div>
+								<div style={{ display: "flex", gap: "8px" }}>
+									<button
+										type='button'
+										className={styles.btnActionSecondary}
+										onClick={() => setIsBookingModalOpen(false)}
+									>
+										Cancel
+									</button>
+									<button
+										type='submit'
+										className={styles.btnActionPrimary}
+									>
+										<CalendarPlus size={14} /> Confirm & Schedule
+									</button>
+								</div>
 							</div>
 						</form>
 					</div>
