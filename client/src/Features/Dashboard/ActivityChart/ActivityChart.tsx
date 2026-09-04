@@ -7,7 +7,6 @@ import {
 	Flame,
 	Timer,
 	TrendingUp,
-	BarChart3,
 } from "lucide-react";
 
 type TimeRange = "week" | "month" | "year";
@@ -32,13 +31,22 @@ const WEEK_DATA: ActivityData[] = [
 
 const METRIC_CONFIG: Record<
 	MetricKey,
-	{ color: string; icon: React.ReactNode }
+	{ color: string; unit: string; icon: React.ReactNode }
 > = {
-	steps: { color: "#3b82f6", icon: <Footprints size={14} strokeWidth={2.25} /> },
-	calories: { color: "#f59e0b", icon: <Flame size={14} strokeWidth={2.25} /> },
+	steps: {
+		color: "#38bdf8",
+		unit: "steps",
+		icon: <Footprints size={15} strokeWidth={2.2} />,
+	},
+	calories: {
+		color: "#f59e0b",
+		unit: "kcal",
+		icon: <Flame size={15} strokeWidth={2.2} />,
+	},
 	activeMinutes: {
 		color: "#10b981",
-		icon: <Timer size={14} strokeWidth={2.25} />,
+		unit: "mins",
+		icon: <Timer size={15} strokeWidth={2.2} />,
 	},
 };
 
@@ -46,6 +54,7 @@ export const ActivityChart = () => {
 	const { t } = useLanguage();
 	const [timeRange, setTimeRange] = useState<TimeRange>("week");
 	const [activeMetric, setActiveMetric] = useState<MetricKey>("steps");
+	const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
 	const metrics = useMemo(
 		() =>
@@ -81,7 +90,8 @@ export const ActivityChart = () => {
 		}));
 	}, [timeRange]);
 
-	const activeColor = METRIC_CONFIG[activeMetric].color;
+	const currentConfig = METRIC_CONFIG[activeMetric];
+	const activeColor = currentConfig.color;
 
 	const { totalValue, avgValue, maxValue, todayIndex } = useMemo(() => {
 		const values = chartData.map((d) => d[activeMetric]);
@@ -91,7 +101,7 @@ export const ActivityChart = () => {
 		return {
 			totalValue: total,
 			avgValue: Math.round(total / chartData.length),
-			maxValue: Math.max(...values),
+			maxValue: Math.max(...values, 1),
 			todayIndex: idx,
 		};
 	}, [chartData, activeMetric]);
@@ -102,12 +112,28 @@ export const ActivityChart = () => {
 			style={{ "--metric-color": activeColor } as React.CSSProperties}
 		>
 			<div className={styles.inner}>
+				{/* Top Header */}
 				<header className={styles.header}>
 					<div className={styles.headerTop}>
-						<span className={styles.eyebrow}>
-							<Activity size={11} strokeWidth={2.5} />
-							{t("weekly_activity") || "Weekly Activity"}
-						</span>
+						<div className={styles.titleGroup}>
+							<div className={styles.iconBadge}>
+								<Activity size={15} strokeWidth={2.4} />
+							</div>
+							<div>
+								<h3 className={styles.title}>
+									{t("activity_overview") || "Activity Overview"}
+								</h3>
+								<span className={styles.subtitle}>
+									{timeRange === "week"
+										? "Last 7 days performance"
+										: timeRange === "month"
+											? "Monthly breakdown"
+											: "Annual summary"}
+								</span>
+							</div>
+						</div>
+
+						{/* Time Range Selector */}
 						<div className={styles.timeRangeSelector}>
 							{timeRanges.map((range) => (
 								<button
@@ -123,99 +149,142 @@ export const ActivityChart = () => {
 							))}
 						</div>
 					</div>
-					<h3 className={styles.title}>
-						<BarChart3 size={16} strokeWidth={2.25} />
-						{t("activity_overview") || "Activity Overview"}
-					</h3>
 				</header>
 
-				<div className={styles.statsStrip}>
-					<div className={styles.statTile}>
-						<span className={styles.statIcon}>
-							<TrendingUp size={14} strokeWidth={2.25} />
-						</span>
-						<div className={styles.statCopy}>
-							<span className={styles.statLabel}>{t("total") || "Total"}</span>
-							<strong className={styles.statValue}>
-								{totalValue.toLocaleString()}
-							</strong>
-						</div>
-					</div>
-					<div className={styles.statTile}>
-						<span className={styles.statIcon}>
-							{METRIC_CONFIG[activeMetric].icon}
-						</span>
-						<div className={styles.statCopy}>
-							<span className={styles.statLabel}>
-								{t("average") || "Average"}
-							</span>
-							<strong className={styles.statValue}>
-								{avgValue.toLocaleString()}
-							</strong>
-						</div>
-					</div>
-				</div>
-
-				<div className={styles.controlShell}>
-					<div className={styles.metricSelector}>
-						{metrics.map((metric) => (
+				{/* Metric Selection Switcher */}
+				<div className={styles.metricSelector}>
+					{metrics.map((metric) => {
+						const isSelected = activeMetric === metric.key;
+						const cfg = METRIC_CONFIG[metric.key];
+						return (
 							<button
 								key={metric.key}
 								type="button"
 								className={`${styles.metricBtn} ${
-									activeMetric === metric.key ? styles.metricBtnActive : ""
+									isSelected ? styles.metricBtnActive : ""
 								}`}
 								style={
 									{
-										"--btn-color": METRIC_CONFIG[metric.key].color,
+										"--btn-color": cfg.color,
 									} as React.CSSProperties
 								}
 								onClick={() => setActiveMetric(metric.key)}
 							>
-								<span className={styles.metricBtnIcon}>
-									{METRIC_CONFIG[metric.key].icon}
-								</span>
-								{metric.label}
+								<span className={styles.metricBtnIcon}>{cfg.icon}</span>
+								<span className={styles.metricBtnLabel}>{metric.label}</span>
 							</button>
-						))}
+						);
+					})}
+				</div>
+
+				{/* Summary Stat Tiles */}
+				<div className={styles.statsStrip}>
+					<div className={styles.statTile}>
+						<div className={styles.statIconWrap}>
+							<TrendingUp size={15} strokeWidth={2.4} />
+						</div>
+						<div className={styles.statCopy}>
+							<span className={styles.statLabel}>Total {currentConfig.unit}</span>
+							<div className={styles.statValueRow}>
+								<strong className={styles.statValue}>
+									{totalValue.toLocaleString()}
+								</strong>
+							</div>
+						</div>
+					</div>
+
+					<div className={styles.statTile}>
+						<div className={styles.statIconWrap}>
+							{currentConfig.icon}
+						</div>
+						<div className={styles.statCopy}>
+							<span className={styles.statLabel}>Daily Average</span>
+							<div className={styles.statValueRow}>
+								<strong className={styles.statValue}>
+									{avgValue.toLocaleString()}
+								</strong>
+								<span className={styles.statUnit}>/ day</span>
+							</div>
+						</div>
 					</div>
 				</div>
 
+				{/* Chart Area with Dedicated X-Axis */}
 				<div className={styles.chartArea}>
+					{/* Y-Axis Labels */}
 					<div className={styles.yAxis}>
 						<span>{maxValue.toLocaleString()}</span>
 						<span>{Math.round(maxValue / 2).toLocaleString()}</span>
 						<span>0</span>
 					</div>
+
+					{/* Chart Panel */}
 					<div className={styles.chartPanel}>
-						<div className={styles.gridLines} aria-hidden>
-							<span />
-							<span />
-							<span />
-						</div>
-						<div className={styles.barsContainer}>
-							{chartData.map((data, index) => {
-								const height = (data[activeMetric] / maxValue) * 100;
-								const isToday = index === todayIndex;
-								return (
-									<div key={data.day} className={styles.barWrapper}>
-										<div className={styles.barOuter}>
-											<div
-												className={`${styles.bar} ${isToday ? styles.barToday : ""}`}
-												style={{ height: `${height}%` }}
-											>
-												<span className={styles.barValue}>
-													{data[activeMetric].toLocaleString()}
-												</span>
+						<div className={styles.chartCanvas}>
+							<div className={styles.gridLines} aria-hidden>
+								<span />
+								<span />
+								<span />
+							</div>
+
+							<div className={styles.barsContainer}>
+								{chartData.map((data, index) => {
+									const heightPct = Math.max(
+										8,
+										(data[activeMetric] / maxValue) * 100,
+									);
+									const isToday = index === todayIndex;
+									const isHovered = hoveredIndex === index;
+
+									return (
+										<div
+											key={data.day}
+											className={`${styles.barColumn} ${
+												isToday ? styles.barColumnToday : ""
+											}`}
+											onMouseEnter={() => setHoveredIndex(index)}
+											onMouseLeave={() => setHoveredIndex(null)}
+										>
+											{/* Background Track Rail */}
+											<div className={styles.barTrackRail}>
+												<div
+													className={`${styles.bar} ${
+														isToday ? styles.barToday : ""
+													}`}
+													style={{ height: `${heightPct}%` }}
+												>
+													{/* Floating Value Tooltip on Hover */}
+													{isHovered && (
+														<div className={styles.barTooltip}>
+															<span className={styles.tooltipVal}>
+																{data[activeMetric].toLocaleString()}
+															</span>
+															<span className={styles.tooltipUnit}>
+																{currentConfig.unit}
+															</span>
+														</div>
+													)}
+												</div>
 											</div>
 										</div>
-										<span
-											className={`${styles.barLabel} ${
-												isToday ? styles.barLabelToday : ""
-											}`}
-										>
-											{data.day}
-										</span>
+									);
+								})}
+							</div>
+						</div>
+
+						{/* Dedicated Clean X-Axis */}
+						<div className={styles.xAxis}>
+							{chartData.map((data, index) => {
+								const isToday = index === todayIndex;
+								return (
+									<div
+										key={data.day}
+										className={`${styles.xDayCol} ${
+											isToday ? styles.xDayColToday : ""
+										}`}
+									>
+										<span className={styles.dayName}>{data.day}</span>
+										{isToday && <span className={styles.todayDot} />}
 									</div>
 								);
 							})}

@@ -4,8 +4,8 @@
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-	gap: 16px;
-	padding: 20px 22px;
+	gap: 14px;
+	padding: 18px 20px;
 	border-radius: 20px;
 	position: relative;
 	overflow: hidden;
@@ -13,213 +13,120 @@
 	width: 100%;
 	@include mixins.dashboard-card;
 
-	&:hover {
-		border-color: rgba(0, 166, 157, 0.22);
-	}
-
 	@media (max-width: 768px) {
-		padding: 18px;
-		gap: 14px;
+		padding: 16px;
+		gap: 12px;
 		border-radius: 16px;
 	}
-}
-
-.cardMeshBg,
-.cardGlowBlob {
-	display: none;
-}
-
-@keyframes pulseGlow {
-	0% { transform: scale(1); opacity: 0.8; }
-	100% { transform: scale(1.15); opacity: 1; }
 }
 
 .TrackerWidget-Head {
 	display: flex;
 	justify-content: space-between;
-	align-items: flex-start;
+	align-items: center;
 	width: 100%;
 	gap: 12px;
 	z-index: 1;
 
 	@media (max-width: 480px) {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 12px;
+		flex-direction: row;
+		align-items: center;
 	}
 }
 
 .TrackerWidget-info {
 	display: flex;
-	align-items: flex-start;
-	gap: 14px;
+	align-items: center;
+	gap: 12px;
 	flex: 1;
 	min-width: 0;
-	overflow: visible;
 }
 
 .TrackerWidget-icon-container {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 42px;
-	height: 42px;
-	border-radius: 12px;
-	background: rgba(6, 78, 59, 0.12);
-	border: 1px solid rgba(6, 78, 59, 0.3);
-	color: #064e3b;
+	width: 36px;
+	height: 36px;
+	border-radius: 10px;
+	background: rgba(16, 185, 129, 0.12);
+	border: 1px solid rgba(16, 185, 129, 0.28);
+	color: #10b981;
 	flex-shrink: 0;
-	transition: all 0.3s ease;
-	position: relative;
-	box-shadow: 0 0 12px rgba(6, 78, 59, 0.15);
-
-	html[data-theme="dark"] & {
-		background: rgba(6, 78, 59, 0.35);
-		border-color: rgba(52, 211, 153, 0.3);
-		color: #34d399;
-	}
-
-	&::after {
-		content: "";
-		position: absolute;
-		inset: -2px;
-		border-radius: 14px;
-		border: 1px solid rgba(6, 78, 59, 0.25);
-		opacity: 0;
-		transform: scale(0.9);
-		transition: all 0.4s ease;
-	}
-
-	&:hover::after {
-		opacity: 1;
-		transform: scale(1);
-	}
-
-	@media (max-width: 768px) {
-		width: 38px;
-		height: 38px;
-		border-radius: 10px;
-	}
-}
-
-.TrackerWidget-icon {
-	width: 20px;
-	height: 20px;
-	transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .TrackerWidget-text {
-	font-size: 15px;
+	font-size: 14px;
 	font-weight: 700;
-	color: var(--text-secondary, #94a3b8);
-	line-height: 1.5;
+	color: #ffffff;
+	line-height: 1.4;
 	margin: 0;
-	letter-spacing: -0.015em;
+	letter-spacing: -0.01em;
 	min-width: 0;
-	word-break: break-word;
-	overflow-wrap: break-word;
-	white-space: normal;
 
 	html[data-theme="light"] & {
-		color: #000000;
-		font-weight: 800;
-	}
-
-	@media (max-width: 768px) {
-		font-size: 14px;
+		color: #0f172a;
 	}
 }
 
 .TrackerWidget-target-badge {
 	display: inline-block;
-	color: #064e3b;
+	color: #10b981;
 	font-weight: 800;
 	letter-spacing: -0.01em;
-
-	html[data-theme="dark"] & {
-		color: #34d399;
-	}
 }
 
 // ─── Status Capsule Tag ───
 .TrackerWidget-status-tag {
 	display: inline-flex;
 	align-items: center;
-	gap: 8px;
+	gap: 6px;
 	font-size: 11px;
 	font-weight: 800;
-	padding: 6px 14px;
-	border-radius: 100px;
+	padding: 4px 10px;
+	border-radius: 99px;
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
 	white-space: nowrap;
-	
-	&.processing {
-		color: #064e3b;
-		background: rgba(6, 78, 59, 0.12);
-		border: 1px solid rgba(6, 78, 59, 0.3);
-		animation: none;
-
-		html[data-theme="dark"] & {
-			color: #34d399;
-			background: rgba(6, 78, 59, 0.35);
-			border-color: rgba(52, 211, 153, 0.3);
-		}
-	}
+	flex-shrink: 0;
 
 	&.completed {
-		color: #34d399;
-		background: rgba(16, 185, 129, 0.08);
-		border: 1px solid rgba(16, 185, 129, 0.2);
+		color: #10b981;
+		background: rgba(16, 185, 129, 0.12);
+		border: 1px solid rgba(16, 185, 129, 0.28);
+	}
+
+	&.processing {
+		color: #38bdf8;
+		background: rgba(56, 189, 248, 0.12);
+		border: 1px solid rgba(56, 189, 248, 0.28);
 	}
 
 	&.idle {
-		color: #60a5fa;
-		background: rgba(59, 130, 246, 0.08);
-		border: 1px solid rgba(59, 130, 246, 0.2);
+		color: #94a3b8;
+		background: rgba(148, 163, 184, 0.12);
+		border: 1px solid rgba(148, 163, 184, 0.28);
 	}
 }
 
-// ─── Blinking LED Status Dots ───
 .status-dot {
 	width: 6px;
 	height: 6px;
-	border-radius: 50%;
+	border-radius: 99px;
 	display: inline-block;
 	flex-shrink: 0;
 
-	&.processing {
-		background-color: #064e3b;
-		box-shadow: 0 0 8px rgba(6, 78, 59, 0.6);
-		animation: none;
-
-		html[data-theme="dark"] & {
-			background-color: #34d399;
-			box-shadow: 0 0 8px #34d399;
-		}
+	&.completed {
+		background-color: #10b981;
 	}
 
-	&.completed {
-		background-color: #34d399;
-		box-shadow: 0 0 8px #34d399;
+	&.processing {
+		background-color: #38bdf8;
 	}
 
 	&.idle {
-		background-color: #60a5fa;
-		box-shadow: 0 0 8px #60a5fa, 0 0 12px rgba(59, 130, 246, 0.4);
-		animation: none;
+		background-color: #94a3b8;
 	}
-}
-
-@keyframes ledPulse {
-	0% { opacity: 0.4; transform: scale(0.9); }
-	50% { opacity: 1; transform: scale(1.15); }
-	100% { opacity: 0.4; transform: scale(0.9); }
-}
-
-@keyframes pulseStatus {
-	0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.1); }
-	100% { box-shadow: 0 0 14px 2px rgba(245, 158, 11, 0.06); }
 }
 
 // ─── Bar Wrapper ───
@@ -237,19 +144,14 @@
 	z-index: 1;
 
 	.calendar-icon {
-		color: #064e3b;
-		opacity: 0.75;
+		color: #10b981;
 		flex-shrink: 0;
-
-		html[data-theme="dark"] & {
-			color: #34d399;
-		}
 	}
 
 	.footer-text {
 		font-size: 12.5px;
 		font-weight: 600;
-		color: var(--text-secondary, #94a3b8);
+		color: #94a3b8;
 		margin: 0;
 		letter-spacing: -0.01em;
 		display: flex;
@@ -258,8 +160,7 @@
 		gap: 6px;
 
 		html[data-theme="light"] & {
-			color: #1e293b;
-			font-weight: 750;
+			color: #64748b;
 		}
 
 		@media (max-width: 768px) {
@@ -270,28 +171,12 @@
 	.expected-badge {
 		display: inline-flex;
 		align-items: center;
-		gap: 5px;
-		padding: 3px 8px;
+		padding: 2px 8px;
 		border-radius: 6px;
-		background: #064e3b;
-		border: 1px solid #064e3b;
-		font-weight: 800;
-		color: #ffffff;
-		letter-spacing: -0.01em;
+		background: rgba(56, 189, 248, 0.12);
+		border: 1px solid rgba(56, 189, 248, 0.28);
+		font-weight: 700;
+		color: #38bdf8;
 		font-size: 11.5px;
-		vertical-align: middle;
-		box-shadow: 0 2px 8px rgba(6, 78, 59, 0.25);
-
-		html[data-theme="dark"] & {
-			background: #064e3b;
-			border-color: rgba(52, 211, 153, 0.3);
-			color: #ffffff;
-		}
-
-		.clock-icon {
-			color: #ffffff;
-			opacity: 0.9;
-			flex-shrink: 0;
-		}
 	}
 }
