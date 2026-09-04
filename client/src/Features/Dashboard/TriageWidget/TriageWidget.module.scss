@@ -178,9 +178,15 @@
 }
 
 .statusPillOnline {
-	color: #10b981;
-	background: rgba(16, 185, 129, 0.1);
-	border: 1px solid rgba(16, 185, 129, 0.2);
+	color: #064e3b;
+	background: rgba(6, 78, 59, 0.1);
+	border: 1px solid rgba(6, 78, 59, 0.25);
+
+	html[data-theme="dark"] & {
+		color: #34d399;
+		background: rgba(6, 78, 59, 0.35);
+		border-color: rgba(52, 211, 153, 0.3);
+	}
 }
 
 .statusPillOffline {

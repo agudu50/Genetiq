@@ -1,10 +1,10 @@
 // ============================================================================
 //  Healthy Lifestyle & Wellness Hub — Human-Centered Design System
-//  Solid System Colors: Signature Teal (#00a69d), Neutral Surfaces, No Gradients
+//  Solid System Colors: Signature Deep Green (#064e3b), Neutral Surfaces, No Gradients
 // ============================================================================
 
-$teal:   #00a69d;
-$teal-hover: #008f87;
+$teal:   #064e3b;
+$teal-hover: #04382b;
 $green:  #10b981;
 $amber:  #f59e0b;
 $red:    #ef4444;
@@ -112,10 +112,16 @@ $blue:   #3b82f6;
 	border: 1px solid rgba($teal, 0.22);
 	color: $teal;
 	font-size: 11px;
-	font-weight: 700;
+	font-weight: 800;
 	text-transform: uppercase;
 	letter-spacing: 0.08em;
 	margin-bottom: 12px;
+
+	html[data-theme="dark"] & {
+		background: rgba(6, 78, 59, 0.4);
+		border-color: rgba(52, 211, 153, 0.35);
+		color: #34d399;
+	}
 }
 
 .heroTitle {
@@ -129,6 +135,10 @@ $blue:   #3b82f6;
 	.accentText {
 		color: $teal;
 		display: inline-block;
+
+		html[data-theme="dark"] & {
+			color: #34d399;
+		}
 	}
 }
 
@@ -153,6 +163,10 @@ $blue:   #3b82f6;
 	&:hover {
 		border-color: rgba($teal, 0.35);
 		box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.1);
+
+		html[data-theme="dark"] & {
+			border-color: rgba(52, 211, 153, 0.35);
+		}
 	}
 }
 
@@ -163,6 +177,11 @@ $blue:   #3b82f6;
 	display: flex;
 	align-items: center;
 	gap: 12px;
+
+	html[data-theme="dark"] & {
+		background: rgba(6, 78, 59, 0.25);
+		border-color: rgba(255, 255, 255, 0.08);
+	}
 }
 
 .spotlightIconRing {
@@ -176,6 +195,12 @@ $blue:   #3b82f6;
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
+
+	html[data-theme="dark"] & {
+		background: rgba(6, 78, 59, 0.4);
+		border-color: rgba(52, 211, 153, 0.35);
+		color: #34d399;
+	}
 }
 
 .spotlightBadgeGroup {
@@ -195,6 +220,10 @@ $blue:   #3b82f6;
 	color: $teal;
 	text-transform: uppercase;
 	letter-spacing: 0.06em;
+
+	html[data-theme="dark"] & {
+		color: #34d399;
+	}
 }
 
 .spotlightCategory {
@@ -397,6 +426,12 @@ $blue:   #3b82f6;
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
+
+	html[data-theme="dark"] & {
+		background: rgba(6, 78, 59, 0.4);
+		border-color: rgba(52, 211, 153, 0.35);
+		color: #34d399;
+	}
 }
 
 .humanMealEyebrow {
@@ -406,6 +441,10 @@ $blue:   #3b82f6;
 	letter-spacing: 0.08em;
 	color: $teal;
 	display: block;
+
+	html[data-theme="dark"] & {
+		color: #34d399;
+	}
 }
 
 .humanMealTitle {
@@ -434,6 +473,11 @@ $blue:   #3b82f6;
 	&:hover:not(:disabled) {
 		border-color: rgba($teal, 0.35);
 		color: $teal;
+
+		html[data-theme="dark"] & {
+			border-color: rgba(52, 211, 153, 0.4);
+			color: #34d399;
+		}
 	}
 }
 
@@ -462,6 +506,10 @@ $blue:   #3b82f6;
 		border-color: rgba($teal, 0.3);
 		transform: translateY(-2px);
 		box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.08);
+
+		html[data-theme="dark"] & {
+			border-color: rgba(52, 211, 153, 0.35);
+		}
 	}
 }
 
@@ -487,6 +535,11 @@ $blue:   #3b82f6;
 	&.lhIcon {
 		background: rgba($teal, 0.12);
 		color: $teal;
+
+		html[data-theme="dark"] & {
+			background: rgba(6, 78, 59, 0.4);
+			color: #34d399;
+		}
 	}
 	&.spIcon {
 		background: rgba($blue, 0.12);
@@ -531,12 +584,21 @@ $blue:   #3b82f6;
 	border-radius: 10px;
 	background: rgba($teal, 0.05);
 	border: 1px solid rgba($teal, 0.14);
+
+	html[data-theme="dark"] & {
+		background: rgba(6, 78, 59, 0.25);
+		border-color: rgba(52, 211, 153, 0.25);
+	}
 }
 
 .humanBioBadge {
 	color: $teal;
 	flex-shrink: 0;
 	margin-top: 1px;
+
+	html[data-theme="dark"] & {
+		color: #34d399;
+	}
 }
 
 .humanBioContent {
@@ -551,6 +613,10 @@ $blue:   #3b82f6;
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 	color: $teal;
+
+	html[data-theme="dark"] & {
+		color: #34d399;
+	}
 }
 
 .humanBioText {
@@ -606,6 +672,10 @@ $blue:   #3b82f6;
 
 .pillIcon {
 	color: $teal;
+
+	html[data-theme="dark"] & {
+		color: #34d399;
+	}
 }
 
 /* ─── Search & AI Custom Tip Trigger ─────────────────────────────────────── */
@@ -631,6 +701,10 @@ $blue:   #3b82f6;
 
 	&:focus-within {
 		border-color: $teal;
+
+		html[data-theme="dark"] & {
+			border-color: #34d399;
+		}
 	}
 
 	input {
@@ -669,6 +743,12 @@ $blue:   #3b82f6;
 	white-space: nowrap;
 	transition: all 0.2s ease;
 
+	html[data-theme="dark"] & {
+		background: rgba(6, 78, 59, 0.4);
+		border-color: rgba(52, 211, 153, 0.35);
+		color: #34d399;
+	}
+
 	&:hover {
 		background: $teal;
 		color: #ffffff;
@@ -686,6 +766,10 @@ $blue:   #3b82f6;
 	flex-direction: column;
 	gap: 12px;
 	box-shadow: var(--lh-shadow);
+
+	html[data-theme="dark"] & {
+		border-color: rgba(52, 211, 153, 0.25);
+	}
 }
 
 .drawerTitleRow {
@@ -703,6 +787,10 @@ $blue:   #3b82f6;
 
 .drawerSparkle {
 	color: $teal;
+
+	html[data-theme="dark"] & {
+		color: #34d399;
+	}
 }
 
 .drawerDesc {
@@ -735,6 +823,10 @@ $blue:   #3b82f6;
 
 		&:focus {
 			border-color: $teal;
+
+			html[data-theme="dark"] & {
+				border-color: #34d399;
+			}
 		}
 
 		&::placeholder {
@@ -792,6 +884,10 @@ $blue:   #3b82f6;
 		border-color: rgba($teal, 0.35);
 		transform: translateY(-2px);
 		box-shadow: var(--lh-shadow-hover);
+
+		html[data-theme="dark"] & {
+			border-color: rgba(52, 211, 153, 0.35);
+		}
 	}
 }
 
@@ -819,6 +915,12 @@ $blue:   #3b82f6;
 	color: $teal;
 	background: rgba($teal, 0.1);
 	border: 1px solid rgba($teal, 0.2);
+
+	html[data-theme="dark"] & {
+		background: rgba(6, 78, 59, 0.4);
+		border-color: rgba(52, 211, 153, 0.35);
+		color: #34d399;
+	}
 }
 
 .tipSourceTag {
@@ -918,6 +1020,10 @@ $blue:   #3b82f6;
 		margin: 0;
 		display: flex;
 		align-items: center;
+
+		html[data-theme="dark"] & {
+			color: #34d399;
+		}
 	}
 
 	p {
@@ -948,12 +1054,20 @@ $blue:   #3b82f6;
 	color: $teal;
 	margin-right: 6px;
 	flex-shrink: 0;
+
+	html[data-theme="dark"] & {
+		color: #34d399;
+	}
 }
 
 .stepCheckIcon {
 	color: $teal;
 	flex-shrink: 0;
 	margin-top: 2px;
+
+	html[data-theme="dark"] & {
+		color: #34d399;
+	}
 }
 
 .safetyBox {
@@ -995,6 +1109,10 @@ $blue:   #3b82f6;
 	cursor: pointer;
 	padding: 0;
 	transition: opacity 0.2s ease;
+
+	html[data-theme="dark"] & {
+		color: #34d399;
+	}
 
 	&:hover {
 		text-decoration: underline;
@@ -1058,6 +1176,10 @@ $blue:   #3b82f6;
 
 .iconShield {
 	color: $teal;
+
+	html[data-theme="dark"] & {
+		color: #34d399;
+	}
 }
 
 .iconBookmark {
@@ -1087,6 +1209,10 @@ $blue:   #3b82f6;
 		svg {
 			color: $teal;
 			flex-shrink: 0;
+
+			html[data-theme="dark"] & {
+				color: #34d399;
+			}
 		}
 	}
 }
@@ -1132,6 +1258,10 @@ $blue:   #3b82f6;
 
 	&:hover {
 		border-color: rgba($teal, 0.3);
+
+		html[data-theme="dark"] & {
+			border-color: rgba(52, 211, 153, 0.3);
+		}
 	}
 }
 
@@ -1145,6 +1275,12 @@ $blue:   #3b82f6;
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
+
+	html[data-theme="dark"] & {
+		background: rgba(6, 78, 59, 0.4);
+		border-color: rgba(52, 211, 153, 0.35);
+		color: #34d399;
+	}
 }
 
 .remedyInfo {
