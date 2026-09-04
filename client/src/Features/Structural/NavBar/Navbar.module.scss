@@ -523,6 +523,10 @@
 
 		svg {
 			color: #064e3b;
+
+			html[data-theme="dark"] & {
+				color: #34d399;
+			}
 		}
 	}
 

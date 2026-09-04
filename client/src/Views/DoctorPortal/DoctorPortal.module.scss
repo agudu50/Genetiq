@@ -1680,9 +1680,9 @@
 }
 
 .modeCardBtnActive {
-	background: rgba(6, 78, 59, 0.2) !important;
-	border-color: #064e3b !important;
-	color: #064e3b !important;
+	background: rgba(6, 78, 59, 0.45) !important;
+	border-color: rgba(52, 211, 153, 0.4) !important;
+	color: #34d399 !important;
 	font-weight: 800 !important;
 
 	:global(html[data-theme="light"]) & {

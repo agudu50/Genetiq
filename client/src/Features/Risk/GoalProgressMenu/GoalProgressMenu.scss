@@ -100,6 +100,10 @@
 	font-weight: 700;
 	display: flex;
 	align-items: center;
+
+	html[data-theme="dark"] & {
+		color: #34d399;
+	}
 }
 
 .button {
