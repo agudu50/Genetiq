@@ -22,7 +22,6 @@ export const AgeSlider: React.FC<AgeSliderProps> = ({ ageData }) => {
 	const chronoPct = toPercent(ageData.chronoAge, rangeStart, rangeEnd);
 	const spanLeft = Math.min(bioPct, chronoPct);
 	const spanWidth = Math.max(2, Math.abs(chronoPct - bioPct));
-	const tooltipLeft = Math.min(88, Math.max(12, spanLeft + spanWidth / 2));
 
 	const axisLabels = useMemo(() => {
 		const labels: number[] = [];
@@ -49,17 +48,6 @@ export const AgeSlider: React.FC<AgeSliderProps> = ({ ageData }) => {
 			</div>
 
 			<div className={styles.trackCard}>
-				{/* Unified Floating Badge Callout */}
-				<div
-					className={styles.unifiedCallout}
-					style={{ left: `${tooltipLeft}%` }}
-				>
-					<span className={styles.calloutBio}>Bio {ageData.biologicalAge}</span>
-					<span className={styles.calloutSep}>•</span>
-					<span className={styles.calloutChrono}>Chrono {ageData.chronoAge}</span>
-					<span className={styles.calloutArrow} />
-				</div>
-
 				<div className={styles.trackBar}>
 					<div className={styles.trackBackground} />
 
