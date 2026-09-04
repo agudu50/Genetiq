@@ -1067,7 +1067,7 @@ const ImportOrUpload = () => {
 													<div className={styles.filePreviewHeader}>
 														<div className={styles.filePreviewTitleGroup}>
 															<span className={styles.filePreviewBadge}>
-																<ScanSearch size={13} color="#00a69d" strokeWidth={2.2} /> {t("Preview")}
+																<ScanSearch size={13} color="var(--iou-brand-text)" strokeWidth={2.2} /> {t("Preview")}
 															</span>
 															<span className={styles.filePreviewFileName}>{file.name}</span>
 														</div>
@@ -1078,7 +1078,7 @@ const ImportOrUpload = () => {
 																</span>
 															) : (
 																<span className={styles.fileUploadingChip}>
-																	<Loader2 size={12} className={styles.spinner} color="#00a69d" /> {t("Uploading")}
+																	<Loader2 size={12} className={styles.spinner} color="var(--iou-brand-text)" /> {t("Uploading")}
 																</span>
 															)}
 															<button 
@@ -1140,7 +1140,7 @@ const ImportOrUpload = () => {
 																	className={styles.showPreviewLinkBtn}
 																	onClick={(e) => togglePreview(file, e)}
 																>
-																	<Eye size={13} color="#00a69d" strokeWidth={2.2} /> {t("Show preview")}
+																	<Eye size={13} color="var(--iou-brand-text)" strokeWidth={2.2} /> {t("Show preview")}
 																</button>
 															)}
 														</div>
@@ -1734,7 +1734,7 @@ function SingleResultView({
 								)
 							) : (
 								<>
-									<Volume2 size={15} color="#00a69d" /> {t("Listen to report")}
+									<Volume2 size={15} color="var(--iou-brand-text)" /> {t("Listen to report")}
 								</>
 							)}
 						</button>

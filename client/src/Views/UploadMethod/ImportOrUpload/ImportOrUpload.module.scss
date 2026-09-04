@@ -1,7 +1,8 @@
 // ── Theme tokens ──────────────────────────────────────────────────────────────
 
-$teal: #00a69d;
-$teal2: #008f87;
+$teal: #064e3b;
+$teal2: #04382b;
+$teal-bright: #34d399;
 
 @mixin iou-theme-dark {
 	--iou-bg: #0a0e1a;
@@ -47,6 +48,9 @@ $teal2: #008f87;
 	--iou-label: rgba(255, 255, 255, 0.35);
 	--iou-label-weight: 600;
 	--iou-input-weight: 400;
+	--iou-brand-text: #34d399;
+	--iou-brand-tint: rgba(6, 78, 59, 0.25);
+	--iou-brand-border: rgba(52, 211, 153, 0.25);
 }
 
 @mixin iou-theme-light {
@@ -93,6 +97,9 @@ $teal2: #008f87;
 	--iou-label: #1e293b;
 	--iou-label-weight: 700;
 	--iou-input-weight: 500;
+	--iou-brand-text: #064e3b;
+	--iou-brand-tint: rgba(6, 78, 59, 0.08);
+	--iou-brand-border: rgba(6, 78, 59, 0.22);
 }
 
 .page {
@@ -183,8 +190,8 @@ $teal2: #008f87;
 	color: var(--iou-muted);
 	transition: color 0.3s;
 
-	&.stepActive { color: $teal; }
-	&.stepDone   { color: rgba($teal, 0.6); }
+	&.stepActive { color: var(--iou-brand-text); }
+	&.stepDone   { color: var(--iou-brand-text); }
 }
 
 .stepNum {
@@ -206,9 +213,9 @@ $teal2: #008f87;
 		color: #fff;
 	}
 	.stepDone & {
-		border-color: rgba($teal, 0.5);
-		color: $teal;
-		background: rgba($teal, 0.08);
+		border-color: var(--iou-brand-border);
+		color: var(--iou-brand-text);
+		background: var(--iou-brand-tint);
 	}
 }
 
@@ -263,7 +270,7 @@ $teal2: #008f87;
 	}
 }
 
-.teal { color: $teal; }
+.teal { color: var(--iou-brand-text); }
 
 // ── Personal info step (redesigned) ───────────────────────────────────────────
 
