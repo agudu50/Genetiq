@@ -9,20 +9,20 @@
 	border: 1px solid rgba(255, 255, 255, 0.12);
 	border-radius: 50%;
 	cursor: pointer;
-	transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 	display: flex !important;
 	align-items: center;
 	justify-content: center;
 	position: relative;
 	flex-shrink: 0;
-	color: rgba(255, 255, 255, 0.6) !important;
+	color: rgba(255, 255, 255, 0.75) !important;
 	box-shadow:
 		0 8px 16px rgba(0, 0, 0, 0.2),
 		inset 0 0 0 1px rgba(255, 255, 255, 0.05);
 
 	html[data-theme="light"] & {
-		background: rgba(255, 255, 255, 0.92);
-		border-color: rgba(0, 166, 157, 0.22);
+		background: rgba(255, 255, 255, 0.94);
+		border-color: rgba(15, 23, 42, 0.12);
 		color: #334155 !important;
 		box-shadow:
 			0 4px 14px rgba(15, 23, 42, 0.08),
@@ -30,22 +30,22 @@
 	}
 
 	&:hover:not(.disabled) {
-		transform: scale(1.15) !important;
+		transform: scale(1.1) !important;
 		background: rgba(15, 23, 42, 0.95);
 		color: #ffffff !important;
-		border-color: rgba(0, 166, 157, 0.45);
+		border-color: rgba(52, 211, 153, 0.5);
 		box-shadow:
 			0 12px 32px rgba(0, 0, 0, 0.4),
-			0 0 15px rgba(0, 166, 157, 0.25);
+			0 0 15px rgba(6, 78, 59, 0.3);
 		z-index: 10;
 
 		html[data-theme="light"] & {
 			background: #ffffff;
-			color: #00A69D !important;
-			border-color: rgba(0, 166, 157, 0.4);
+			color: #064e3b !important;
+			border-color: rgba(6, 78, 59, 0.4);
 			box-shadow:
-				0 12px 24px rgba(0, 166, 157, 0.08),
-				0 0 12px rgba(0, 166, 157, 0.15);
+				0 12px 24px rgba(6, 78, 59, 0.12),
+				0 0 12px rgba(6, 78, 59, 0.15);
 		}
 
 		// Show tooltip on hover
@@ -57,15 +57,23 @@
 	}
 
 	&.active {
-		transform: scale(1.15) !important;
+		transform: scale(1.12) !important;
 		background: #064e3b !important;
 		color: #ffffff !important;
-		border: 1px solid rgba(255, 255, 255, 0.25) !important;
-		box-shadow: 0 8px 20px rgba(6, 78, 59, 0.45);
+		border: 1.5px solid rgba(255, 255, 255, 0.4) !important;
+		box-shadow: 0 8px 20px rgba(6, 78, 59, 0.5);
 		z-index: 11;
 
+		html[data-theme="dark"] & {
+			background: #064e3b !important;
+			color: #ffffff !important;
+			border: 1.5px solid #34d399 !important;
+			box-shadow: 0 0 16px rgba(52, 211, 153, 0.45);
+		}
+
 		svg {
-			filter: none;
+			color: #ffffff !important;
+			fill: currentColor !important;
 		}
 	}
 
@@ -83,15 +91,12 @@
 	}
 
 	svg {
-		width: 24px !important;
-		height: 24px !important;
-		min-width: 24px !important;
-		min-height: 24px !important;
-		fill: currentColor !important;
-		stroke: currentColor !important;
-		transition: all 0.4s ease;
-		stroke-width: 1.5;
+		width: 22px !important;
+		height: 22px !important;
+		min-width: 22px !important;
+		min-height: 22px !important;
 		display: block;
+		transition: transform 0.2s ease, color 0.2s ease;
 	}
 
 	// Tooltip Styling
