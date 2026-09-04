@@ -36,9 +36,9 @@ const Login = () => {
 			<div className={styles.leftPanel}>
 				<div className={styles.leftInner}>
 					<div className={styles.brand} onClick={() => navigate(paths.landing)}>
-						<img src='/assets/genetiq_logo_v2.png' alt='Genetiq' className={styles.brandLogo} />
-						<span className={styles.brandName}>Genetiq</span>
-					</div>
+					<img src='/assets/genetiq-logo.jpeg' alt='Genetiq' className={styles.brandLogo} />
+					<span className={styles.brandName}>Genetiq</span>
+				</div>
 
 					<div className={styles.leftContent}>
 						<h2 className={styles.leftHeading}>
@@ -67,9 +67,9 @@ const Login = () => {
 			<div className={styles.rightPanel}>
 				<div className={styles.rightInner}>
 					<div className={styles.mobileHeader} onClick={() => navigate(paths.landing)}>
-						<img src='/assets/genetiq_logo_v2.png' alt='Genetiq' className={styles.brandLogo} />
-						<span className={styles.brandName}>Genetiq</span>
-					</div>
+					<img src='/assets/genetiq-logo.jpeg' alt='Genetiq' className={styles.brandLogo} />
+					<span className={styles.brandName}>Genetiq</span>
+				</div>
 
 					<LoginForm animate={true} />
 				</div>

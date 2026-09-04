@@ -106,7 +106,7 @@ const Navbar = () => {
 					onClick={() => goTo(paths.dashboard.root)}
 				>
 					<img
-						src='/assets/genetiq_logo_v2.png'
+						src='/assets/genetiq-logo.jpeg'
 						alt='Genetiq Logo'
 						className={styles.logoImage}
 					/>

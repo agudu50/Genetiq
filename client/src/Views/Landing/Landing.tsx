@@ -502,7 +502,7 @@ function BuilderSection() {
 
 			<ScrollReveal className={styles.builderCard} delay={0.08}>
 				<div className={styles.builderAvatar}>
-					<img src='/assets/genetiq_logo_v2.png' alt={BUILDER.name} className={styles.builderAvatarImg} />
+					<img src='/assets/genetiq-logo.jpeg' alt={BUILDER.name} className={styles.builderAvatarImg} />
 				</div>
 
 				<div className={styles.builderInfo}>
@@ -620,7 +620,7 @@ export default function Landing() {
 				<div className={styles.navInner}>
 					<div className={styles.logo} onClick={() => navigate(paths.landing)}>
 						<img
-							src='/assets/genetiq_logo_v2.png'
+							src='/assets/genetiq-logo.jpeg'
 							alt='Genetiq Logo'
 							className={styles.logoImage}
 							width={36}

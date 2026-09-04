@@ -41,7 +41,7 @@ const Privacy = () => {
 			{/* Nav */}
 			<nav className={styles.nav}>
 				<a className={styles.navBrand} onClick={() => navigate(paths.landing)}>
-					<img src="/assets/genetiq_logo_v2.png" alt="Genetiq" className={styles.navLogo} />
+					<img src="/assets/genetiq-logo.jpeg" alt="Genetiq" className={styles.navLogo} />
 					<span className={styles.navName}>Genetiq</span>
 				</a>
 				<button className={styles.navBack} onClick={goBack}>

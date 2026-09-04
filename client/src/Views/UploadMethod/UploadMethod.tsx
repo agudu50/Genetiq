@@ -136,7 +136,7 @@ const Config = () => {
 				<div className={styles.footerTop}>
 					<div className={styles.footerBrand}>
 						<div className={styles.footerLogo}>
-							<img src="/assets/genetiq_logo_v2.png" alt="Genetiq" />
+							<img src="/assets/genetiq-logo.jpeg" alt="Genetiq" />
 							<span>Genetiq</span>
 						</div>
 						<p className={styles.footerDesc}>
