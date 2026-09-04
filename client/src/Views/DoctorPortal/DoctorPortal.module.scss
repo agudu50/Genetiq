@@ -327,6 +327,10 @@
 	pointer-events: auto;
 	overflow-y: auto;
 	padding-right: 4px;
+	padding-bottom: 32px;
+	-webkit-overflow-scrolling: touch;
+	overscroll-behavior-y: contain;
+	touch-action: pan-y;
 	transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
 
 	&.collapsed {
@@ -353,6 +357,10 @@
 	pointer-events: auto;
 	overflow-y: auto;
 	padding-right: 4px;
+	padding-bottom: 32px;
+	-webkit-overflow-scrolling: touch;
+	overscroll-behavior-y: contain;
+	touch-action: pan-y;
 	transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
 
 	&.collapsed {
@@ -445,6 +453,7 @@
 // ─── Glassmorphic Card Container ─────────────────────────────────────────────
 
 .glassCard {
+	flex-shrink: 0;
 	background: rgba(11, 17, 29, 0.82);
 	backdrop-filter: blur(20px);
 	-webkit-backdrop-filter: blur(20px);
@@ -1288,30 +1297,50 @@
 	}
 
 	.floatingLayout {
-		top: 64px;
-		bottom: 64px;
-		left: 8px;
-		right: 8px;
+		position: fixed;
+		top: 60px;
+		bottom: 56px;
+		left: 0;
+		right: 0;
+		pointer-events: none;
 	}
 
 	.leftPanel,
 	.rightPanel {
 		position: fixed;
-		top: 64px;
-		bottom: 64px;
+		top: 60px;
+		bottom: 56px;
 		left: 8px;
 		right: 8px;
 		width: auto;
+		height: auto !important;
+		max-height: calc(100dvh - 116px);
 		max-width: none;
 		z-index: 45;
+		overflow-y: auto;
+		overflow-x: hidden;
+		-webkit-overflow-scrolling: touch;
+		overscroll-behavior-y: contain;
+		touch-action: pan-y;
+		padding-bottom: 90px !important;
+		pointer-events: auto !important;
+		background: rgba(11, 17, 29, 0.96);
+		border-radius: 16px;
+		border: 1px solid rgba(255, 255, 255, 0.14);
+		box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+
+		:global(html[data-theme="light"]) & {
+			background: rgba(255, 255, 255, 0.98);
+			border-color: #cbd5e1;
+			box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+		}
 	}
 
-	.leftPanel.collapsed {
-		transform: translateY(100vh);
-	}
-
+	.leftPanel.collapsed,
 	.rightPanel.collapsed {
-		transform: translateY(100vh);
+		transform: translateY(120vh) !important;
+		opacity: 0;
+		pointer-events: none;
 	}
 
 	.expandToggleBtn {
