@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
 import { paths } from "@/App/Routes/Paths";
 import { toast } from "react-toastify";
+import ThemeSwitcher from "@/Features/Structural/ThemeSwitcher/ThemeSwitcher";
 import {
 	Activity,
 	AlertTriangle,
@@ -862,6 +863,9 @@ export const DoctorPortal = () => {
 							{appointments.filter((a) => a.status === "waiting" || a.date.includes("Today")).length} Today
 						</span>
 					</button>
+
+					{/* Theme Switcher */}
+					<ThemeSwitcher />
 
 					{/* Doctor Profile & Clinical Features Dropdown */}
 					<div className={styles.doctorMenuWrapper} ref={doctorMenuRef}>
