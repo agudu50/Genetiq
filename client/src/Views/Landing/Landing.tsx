@@ -553,6 +553,7 @@ export default function Landing() {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
 	useEffect(() => {
+		prefetchRoute(paths.auth.login);
 		prefetchRoute(paths.config.root);
 		prefetchRoute(paths.config.importOrUpload);
 	}, []);

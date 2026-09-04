@@ -106,52 +106,36 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 .oauthDivider,
 .oauthIcon,
 .switchPrompt {
-	opacity: 0;
+	opacity: 1;
 }
 
 .formIn {
 	.heading {
-		animation: formFadeUp 0.5s $ease-out 0.32s forwards;
+		animation: formFadeUp 0.3s $ease-out forwards;
 	}
 
 	.field {
-		animation: formFadeUp 0.45s $ease-out forwards;
-
-		&:nth-child(1) {
-			animation-delay: 0.4s;
-		}
-
-		&:nth-child(2) {
-			animation-delay: 0.48s;
-		}
+		animation: formFadeUp 0.3s $ease-out forwards;
 	}
 
 	.checkRow {
-		animation: formFadeUp 0.45s $ease-out 0.56s forwards;
+		animation: formFadeUp 0.3s $ease-out forwards;
 	}
 
 	.submitBtn {
-		animation: formFadeUp 0.45s $ease-out 0.64s forwards;
+		animation: formFadeUp 0.3s $ease-out forwards;
 	}
 
 	.oauthDivider {
-		animation: formFadeUp 0.45s $ease-out 0.72s forwards;
+		animation: formFadeUp 0.3s $ease-out forwards;
 	}
 
 	.oauthIcon {
-		animation: formPopIn 0.45s $ease-out forwards;
-
-		&:nth-child(1) {
-			animation-delay: 0.8s;
-		}
-
-		&:nth-child(2) {
-			animation-delay: 0.88s;
-		}
+		animation: formPopIn 0.3s $ease-out forwards;
 	}
 
 	.switchPrompt {
-		animation: formFadeUp 0.45s $ease-out 0.96s forwards;
+		animation: formFadeUp 0.3s $ease-out forwards;
 	}
 }
 

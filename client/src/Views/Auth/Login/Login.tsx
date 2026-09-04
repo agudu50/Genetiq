@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { paths } from "@/App/Routes/Paths";
 import { LoginForm } from "@/Features/Auth/Login/Components/LoginForm/LoginForm";
@@ -10,7 +10,6 @@ import { prefetchDashboardOnLogin } from "@/App/Routes/routePrefetch";
 const Login = () => {
 	const navigate = useNavigate();
 	const { t } = useLanguage();
-	const [pageIn, setPageIn] = useState(false);
 
 	const features = [
 		{ icon: <Upload size={18} />, text: t("auth_feature_upload") },
@@ -19,22 +18,16 @@ const Login = () => {
 	];
 
 	useEffect(() => {
-		let frame2 = 0;
-		const frame1 = requestAnimationFrame(() => {
-			frame2 = requestAnimationFrame(() => setPageIn(true));
-		});
+		// Defer dashboard assets until after login is fully rendered and idle
+		const timer = setTimeout(() => {
+			prefetchDashboardOnLogin();
+		}, 1500);
 
-		// Kick off dashboard JS chunks + 3D asset cache warming while user logs in
-		prefetchDashboardOnLogin();
-
-		return () => {
-			cancelAnimationFrame(frame1);
-			cancelAnimationFrame(frame2);
-		};
+		return () => clearTimeout(timer);
 	}, []);
 
 	return (
-		<div className={`${styles.page} ${pageIn ? styles.pageIn : ""}`}>
+		<div className={`${styles.page} ${styles.pageIn}`}>
 			<div className={styles.bgLayer} aria-hidden>
 				<div className={styles.bgGrid} />
 				<div className={styles.bgGlow} />
@@ -78,7 +71,7 @@ const Login = () => {
 						<span className={styles.brandName}>Genetiq</span>
 					</div>
 
-					<LoginForm animate={pageIn} />
+					<LoginForm animate={true} />
 				</div>
 			</div>
 		</div>

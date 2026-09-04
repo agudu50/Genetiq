@@ -7,6 +7,8 @@ const routePrefetchers: Record<string, PrefetchFn> = {
 	[paths.config.goals]: () => import("@/Views/UploadMethod/Goals/Goals"),
 	[paths.clinicalHistory]: () => import("@/Views/HealthHistory/HealthHistory"),
 	[paths.config.tests]: () => import("@/Views/UploadMethod/Tests/Tests"),
+	[paths.auth.login]: () => import("@/Views/Auth/Login/Login"),
+	[paths.auth.register]: () => import("@/Views/Auth/Register/Register"),
 	[paths.config.root]: () => import("@/Views/UploadMethod/UploadMethod"),
 	[paths.config.importOrUpload]: () =>
 		import("@/Views/UploadMethod/ImportOrUpload/ImportOrUpload"),
@@ -29,6 +31,7 @@ export function prefetchRoute(path: string): void {
 }
 
 export function prefetchMainAppRoutes(): void {
+	prefetchRoute(paths.auth.login);
 	prefetchRoute(paths.config.root);
 	prefetchRoute(paths.config.importOrUpload);
 	prefetchRoute(paths.config.goals);
