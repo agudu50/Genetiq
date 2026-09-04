@@ -24,7 +24,9 @@ interface TestState {
 	filter: "All" | "Pending" | "Completed" | "Flagged";
 }
 
-const initialState: TestState = {
+const LOCAL_STORAGE_KEY = "genetiq.tests";
+
+const defaultTestState: TestState = {
 	items: [
 		{
 			id: "test-1",
@@ -57,15 +59,49 @@ const initialState: TestState = {
 	filter: "All",
 };
 
+const loadTestsFromStorage = (): TestState => {
+	if (typeof window !== "undefined") {
+		try {
+			const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+			if (stored) {
+				const parsed = JSON.parse(stored);
+				if (parsed && Array.isArray(parsed.items) && parsed.items.length > 0) {
+					return {
+						items: parsed.items,
+						filter: parsed.filter || "All",
+					};
+				}
+			}
+		} catch (e) {
+			console.error("Error reading tests from storage", e);
+		}
+	}
+	return defaultTestState;
+};
+
+const saveTestsToStorage = (state: TestState) => {
+	if (typeof window !== "undefined") {
+		try {
+			localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+		} catch (e) {
+			console.error("Error saving tests to storage", e);
+		}
+	}
+};
+
+const initialState: TestState = loadTestsFromStorage();
+
 const testSlice = createSlice({
 	name: "tests",
 	initialState,
 	reducers: {
 		setFilter: (state, action: PayloadAction<TestState["filter"]>) => {
 			state.filter = action.payload;
+			saveTestsToStorage(state);
 		},
 		addTest: (state, action: PayloadAction<LabTest>) => {
 			state.items.push(action.payload);
+			saveTestsToStorage(state);
 		},
 		updateTest: (
 			state,
@@ -74,6 +110,7 @@ const testSlice = createSlice({
 			const index = state.items.findIndex((t) => t.id === action.payload.id);
 			if (index !== -1) {
 				state.items[index] = { ...state.items[index], ...action.payload };
+				saveTestsToStorage(state);
 			}
 		},
 	},

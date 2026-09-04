@@ -27,7 +27,9 @@ interface TriageState {
 	selectedLanguage: GemmaLanguage;
 }
 
-const initialState: TriageState = {
+const LOCAL_STORAGE_KEY = "genetiq.triage";
+
+const defaultTriageState: TriageState = {
 	symptomsInput: "",
 	activeAlerts: [],
 	messages: [
@@ -43,12 +45,57 @@ const initialState: TriageState = {
 	selectedLanguage: "english" as GemmaLanguage,
 };
 
+const loadTriageFromStorage = (): TriageState => {
+	if (typeof window !== "undefined") {
+		try {
+			const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+			if (stored) {
+				const parsed = JSON.parse(stored);
+				return {
+					symptomsInput: parsed.symptomsInput || "",
+					activeAlerts: Array.isArray(parsed.activeAlerts) ? parsed.activeAlerts : [],
+					messages:
+						Array.isArray(parsed.messages) && parsed.messages.length > 0
+							? parsed.messages
+							: defaultTriageState.messages,
+					isAnalyzing: false,
+					selectedLanguage: (parsed.selectedLanguage as GemmaLanguage) || "english",
+				};
+			}
+		} catch (e) {
+			console.error("Error reading triage from storage", e);
+		}
+	}
+	return defaultTriageState;
+};
+
+const saveTriageToStorage = (state: TriageState) => {
+	if (typeof window !== "undefined") {
+		try {
+			localStorage.setItem(
+				LOCAL_STORAGE_KEY,
+				JSON.stringify({
+					symptomsInput: state.symptomsInput,
+					activeAlerts: state.activeAlerts,
+					messages: state.messages,
+					selectedLanguage: state.selectedLanguage,
+				}),
+			);
+		} catch (e) {
+			console.error("Error saving triage to storage", e);
+		}
+	}
+};
+
+const initialState: TriageState = loadTriageFromStorage();
+
 const triageSlice = createSlice({
 	name: "triage",
 	initialState,
 	reducers: {
 		setSymptomsInput: (state, action: PayloadAction<string>) => {
 			state.symptomsInput = action.payload;
+			saveTriageToStorage(state);
 		},
 		appendSymptom: (state, action: PayloadAction<string>) => {
 			const current = state.symptomsInput.trim();
@@ -59,15 +106,19 @@ const triageSlice = createSlice({
 			} else {
 				state.symptomsInput = action.payload;
 			}
+			saveTriageToStorage(state);
 		},
 		addAlert: (state, action: PayloadAction<TriageAlert>) => {
 			state.activeAlerts.push(action.payload);
+			saveTriageToStorage(state);
 		},
 		addMessage: (state, action: PayloadAction<ChatMessage>) => {
 			state.messages.push(action.payload);
+			saveTriageToStorage(state);
 		},
 		clearAlerts: (state) => {
 			state.activeAlerts = [];
+			saveTriageToStorage(state);
 		},
 		clearMessages: (state) => {
 			state.messages = [
@@ -75,16 +126,18 @@ const triageSlice = createSlice({
 					id: "msg-initial",
 					role: "bot",
 					text: sanitizeAiText(
-				"Hello! I'm your Genetiq Health Assistant. Describe your symptoms or tap a suggestion below for a faster answer.",
-			),
+						"Hello! I'm your Genetiq Health Assistant. Describe your symptoms or tap a suggestion below for a faster answer.",
+					),
 				},
 			];
+			saveTriageToStorage(state);
 		},
 		setAnalyzing: (state, action: PayloadAction<boolean>) => {
 			state.isAnalyzing = action.payload;
 		},
 		setLanguage: (state, action: PayloadAction<GemmaLanguage>) => {
 			state.selectedLanguage = action.payload;
+			saveTriageToStorage(state);
 		},
 	},
 });

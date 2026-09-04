@@ -18,7 +18,9 @@ interface GenomicsState {
 	suiObjectId?: string; // Reference to the encrypted DNA object on Sui
 }
 
-const initialState: GenomicsState = {
+const LOCAL_STORAGE_KEY = "genetiq.genomics";
+
+const defaultGenomicsState: GenomicsState = {
 	traits: [
 		{
 			id: "dna-1",
@@ -65,15 +67,54 @@ const initialState: GenomicsState = {
 	lastUpdated: "2024-03-10",
 };
 
+const loadGenomicsFromStorage = (): GenomicsState => {
+	if (typeof window !== "undefined") {
+		try {
+			const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+			if (stored) {
+				const parsed = JSON.parse(stored);
+				if (parsed && Array.isArray(parsed.traits) && parsed.traits.length > 0) {
+					return {
+						traits: parsed.traits,
+						geneticResilience:
+							typeof parsed.geneticResilience === "number"
+								? parsed.geneticResilience
+								: 82,
+						lastUpdated: parsed.lastUpdated || "2024-03-10",
+						suiObjectId: parsed.suiObjectId,
+					};
+				}
+			}
+		} catch (e) {
+			console.error("Error reading genomics from storage", e);
+		}
+	}
+	return defaultGenomicsState;
+};
+
+const saveGenomicsToStorage = (state: GenomicsState) => {
+	if (typeof window !== "undefined") {
+		try {
+			localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+		} catch (e) {
+			console.error("Error saving genomics to storage", e);
+		}
+	}
+};
+
+const initialState: GenomicsState = loadGenomicsFromStorage();
+
 const genomicsSlice = createSlice({
 	name: "genomics",
 	initialState,
 	reducers: {
 		setTraits: (state, action: PayloadAction<GeneticTrait[]>) => {
 			state.traits = action.payload;
+			saveGenomicsToStorage(state);
 		},
 		updateResilience: (state, action: PayloadAction<number>) => {
 			state.geneticResilience = action.payload;
+			saveGenomicsToStorage(state);
 		},
 	},
 });

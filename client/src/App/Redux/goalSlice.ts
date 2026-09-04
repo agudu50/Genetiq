@@ -30,7 +30,9 @@ interface GoalState {
 	totalHealthScore: number;
 }
 
-const initialState: GoalState = {
+const LOCAL_STORAGE_KEY = "genetiq.goals";
+
+const defaultGoalState: GoalState = {
 	items: [
 		{
 			id: "goal-1",
@@ -97,6 +99,39 @@ const initialState: GoalState = {
 	totalHealthScore: 0,
 };
 
+const loadGoalsFromStorage = (): GoalState => {
+	if (typeof window !== "undefined") {
+		try {
+			const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+			if (stored) {
+				const parsed = JSON.parse(stored);
+				if (parsed && Array.isArray(parsed.items) && parsed.items.length > 0) {
+					return {
+						items: parsed.items,
+						streakCount: typeof parsed.streakCount === "number" ? parsed.streakCount : 0,
+						totalHealthScore: typeof parsed.totalHealthScore === "number" ? parsed.totalHealthScore : 0,
+					};
+				}
+			}
+		} catch (e) {
+			console.error("Error reading goals from storage", e);
+		}
+	}
+	return defaultGoalState;
+};
+
+const saveGoalsToStorage = (state: GoalState) => {
+	if (typeof window !== "undefined") {
+		try {
+			localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+		} catch (e) {
+			console.error("Error saving goals to storage", e);
+		}
+	}
+};
+
+const initialState: GoalState = loadGoalsFromStorage();
+
 const goalSlice = createSlice({
 	name: "goals",
 	initialState,
@@ -107,6 +142,7 @@ const goalSlice = createSlice({
 			const completedCount = action.payload.filter((g) => g.completed).length;
 			state.streakCount = completedCount > 0 ? 5 : 0; // simple mock streak
 			state.totalHealthScore = Math.round((completedCount / action.payload.length) * 100) || 0;
+			saveGoalsToStorage(state);
 		},
 		toggleGoal: (state, action: PayloadAction<string>) => {
 			const goal = state.items.find((g) => g.id === action.payload);
@@ -128,6 +164,7 @@ const goalSlice = createSlice({
 			const completedCount = state.items.filter((g) => g.completed).length;
 			state.totalHealthScore = Math.round((completedCount / state.items.length) * 100) || 0;
 			state.streakCount = completedCount > 0 ? 5 : 0;
+			saveGoalsToStorage(state);
 		},
 		updateGoalProgress: (
 			state,
@@ -141,12 +178,14 @@ const goalSlice = createSlice({
 			// Update dynamic health score
 			const completedCount = state.items.filter((g) => g.completed).length;
 			state.totalHealthScore = Math.round((completedCount / state.items.length) * 100) || 0;
+			saveGoalsToStorage(state);
 		},
 		addGoal: (state, action: PayloadAction<HealthGoal>) => {
 			state.items.push(action.payload);
 			// Update dynamic health score
 			const completedCount = state.items.filter((g) => g.completed).length;
 			state.totalHealthScore = Math.round((completedCount / state.items.length) * 100) || 0;
+			saveGoalsToStorage(state);
 		},
 		deleteGoal: (state, action: PayloadAction<string>) => {
 			state.items = state.items.filter((g) => g.id !== action.payload);
@@ -154,6 +193,7 @@ const goalSlice = createSlice({
 			const completedCount = state.items.filter((g) => g.completed).length;
 			state.totalHealthScore = state.items.length > 0 ? Math.round((completedCount / state.items.length) * 100) : 0;
 			state.streakCount = completedCount > 0 ? 5 : 0;
+			saveGoalsToStorage(state);
 		},
 		sealMilestone: (
 			state,
@@ -163,6 +203,7 @@ const goalSlice = createSlice({
 			if (goal) {
 				goal.vaultSealHash = action.payload.hash;
 			}
+			saveGoalsToStorage(state);
 		},
 	},
 });

@@ -35,7 +35,9 @@ export interface UserState {
 	clinicalHistory: string;
 }
 
-const initialState: UserState = {
+const LOCAL_STORAGE_KEY = "genetiq.user";
+
+const defaultUserState: UserState = {
 	firstName: "",
 	lastName: "",
 	age: "",
@@ -64,21 +66,72 @@ const initialState: UserState = {
 	clinicalHistory: "",
 };
 
+const loadUserFromStorage = (): UserState => {
+	if (typeof window !== "undefined") {
+		try {
+			const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+			if (stored) {
+				const parsed = JSON.parse(stored);
+				return {
+					...defaultUserState,
+					...parsed,
+					lifestyle: {
+						...defaultUserState.lifestyle,
+						...(parsed.lifestyle || {}),
+					},
+					medications:
+						Array.isArray(parsed.medications) && parsed.medications.length > 0
+							? parsed.medications
+							: defaultUserState.medications,
+					medicalConditions: Array.isArray(parsed.medicalConditions)
+						? parsed.medicalConditions
+						: defaultUserState.medicalConditions,
+					symptoms: Array.isArray(parsed.symptoms)
+						? parsed.symptoms
+						: defaultUserState.symptoms,
+					allergies: Array.isArray(parsed.allergies)
+						? parsed.allergies
+						: defaultUserState.allergies,
+				};
+			}
+		} catch (e) {
+			console.error("Error reading user from storage", e);
+		}
+	}
+	return defaultUserState;
+};
+
+const saveUserToStorage = (state: UserState) => {
+	if (typeof window !== "undefined") {
+		try {
+			localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+		} catch (e) {
+			console.error("Error saving user to storage", e);
+		}
+	}
+};
+
+const initialState: UserState = loadUserFromStorage();
+
 export const userSlice = createSlice({
 	name: "user",
 	initialState,
 	reducers: {
 		updateUserInfo: (state, action: PayloadAction<Partial<UserState>>) => {
-			return { ...state, ...action.payload };
+			const nextState = { ...state, ...action.payload };
+			saveUserToStorage(nextState);
+			return nextState;
 		},
 		updateLifestyle: (
 			state,
 			action: PayloadAction<Partial<UserState["lifestyle"]>>,
 		) => {
 			state.lifestyle = { ...state.lifestyle, ...action.payload };
+			saveUserToStorage(state);
 		},
 		setProfileComplete: (state, action: PayloadAction<boolean>) => {
 			state.isProfileComplete = action.payload;
+			saveUserToStorage(state);
 		},
 		setWalletInfo: (
 			state,
@@ -89,8 +142,18 @@ export const userSlice = createSlice({
 		) => {
 			state.walletAddress = action.payload.walletAddress;
 			state.isWalletConnected = action.payload.isWalletConnected;
+			saveUserToStorage(state);
 		},
-		resetUser: () => initialState,
+		resetUser: () => {
+			if (typeof window !== "undefined") {
+				try {
+					localStorage.removeItem(LOCAL_STORAGE_KEY);
+				} catch (e) {
+					console.error("Error clearing user storage", e);
+				}
+			}
+			return defaultUserState;
+		},
 	},
 });
 
