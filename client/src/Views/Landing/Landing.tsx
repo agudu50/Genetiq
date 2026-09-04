@@ -19,6 +19,7 @@ import {
 	Menu,
 } from "lucide-react";
 import { paths } from "@/App/Routes/Paths";
+import { prefetchRoute } from "@/App/Routes/routePrefetch";
 import ThemeSwitcher from "@/Features/Structural/ThemeSwitcher/ThemeSwitcher";
 import LanguageSwitcher from "@/Features/Structural/LanguageSwitcher/LanguageSwitcher";
 import { useLanguage } from "@/App/i18n/LanguageContext";
@@ -550,6 +551,11 @@ export default function Landing() {
 	const [isScrolled, setIsScrolled] = useState(false);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+	useEffect(() => {
+		prefetchRoute(paths.config.root);
+		prefetchRoute(paths.config.importOrUpload);
+	}, []);
 
 	useEffect(() => {
 		let ticking = false;

@@ -708,40 +708,28 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 .subtitle,
 .card,
 .configFooter {
-	opacity: 0;
+	opacity: 1;
 }
 
 .pageIn {
 	.badge {
-		animation: fadeUp 0.55s $ease-out 0.12s forwards;
+		animation: fadeUp 0.3s $ease-out forwards;
 	}
 
 	.title {
-		animation: fadeUp 0.6s $ease-out 0.22s forwards;
+		animation: fadeUp 0.35s $ease-out forwards;
 	}
 
 	.subtitle {
-		animation: fadeUp 0.55s $ease-out 0.32s forwards;
+		animation: fadeUp 0.35s $ease-out forwards;
 	}
 
 	.card {
-		animation: cardIn 0.55s $ease-out forwards;
-
-		&:nth-child(1) {
-			animation-delay: 0.42s;
-		}
-
-		&:nth-child(2) {
-			animation-delay: 0.54s;
-		}
-
-		&:nth-child(3) {
-			animation-delay: 0.66s;
-		}
+		animation: cardIn 0.35s $ease-out forwards;
 	}
 
 	.configFooter {
-		animation: fadeUp 0.6s $ease-out 0.82s forwards;
+		animation: fadeUp 0.35s $ease-out forwards;
 	}
 }
 

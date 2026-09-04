@@ -29,6 +29,8 @@ export function prefetchRoute(path: string): void {
 }
 
 export function prefetchMainAppRoutes(): void {
+	prefetchRoute(paths.config.root);
+	prefetchRoute(paths.config.importOrUpload);
 	prefetchRoute(paths.config.goals);
 	prefetchRoute(paths.clinicalHistory);
 	prefetchRoute(paths.config.tests);

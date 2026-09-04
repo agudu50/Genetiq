@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { paths } from "@/App/Routes/Paths";
 import {
@@ -77,21 +76,9 @@ const FOOTER_LINKS = [
 const Config = () => {
 	const navigate = useNavigate();
 	const { t } = useLanguage();
-	const [pageIn, setPageIn] = useState(false);
-
-	useEffect(() => {
-		let frame2 = 0;
-		const frame1 = requestAnimationFrame(() => {
-			frame2 = requestAnimationFrame(() => setPageIn(true));
-		});
-		return () => {
-			cancelAnimationFrame(frame1);
-			cancelAnimationFrame(frame2);
-		};
-	}, []);
 
 	return (
-		<div className={`${styles.page} ${pageIn ? styles.pageIn : ""}`}>
+		<div className={`${styles.page} ${styles.pageIn}`}>
 			<div className={styles.bgLayer} aria-hidden>
 				<div className={styles.bgGrid} />
 				<div className={styles.bgGlow} />
