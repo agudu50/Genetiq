@@ -1,58 +1,70 @@
 .splitCardContainer {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 10px;
+	gap: 12px;
 	width: 100%;
 	min-width: 0;
 
 	@media (max-width: 480px) {
 		grid-template-columns: 1fr;
-		gap: 8px;
+		gap: 10px;
 	}
 }
 
 .compactCard {
 	display: flex;
-	align-items: center;
+	flex-direction: column;
 	justify-content: space-between;
-	gap: 10px;
-	padding: 10px 14px;
-	border-radius: 12px;
+	gap: 14px;
+	padding: 14px 16px;
+	border-radius: 14px;
 	min-width: 0;
-	transition: border-color 0.2s ease;
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	transition: all 0.2s ease;
+
+	html[data-theme="light"] & {
+		background: #f8fafc;
+		border-color: #e2e8f0;
+	}
+
+	&:hover {
+		transform: translateY(-1px);
+	}
 }
 
 .compactCardBio {
-	background: rgba(16, 185, 129, 0.06);
-	border: 1px solid rgba(16, 185, 129, 0.25);
-
 	&:hover {
-		border-color: #10b981;
+		border-color: rgba(16, 185, 129, 0.4);
 	}
 }
 
 .compactCardChrono {
-	background: rgba(56, 189, 248, 0.06);
-	border: 1px solid rgba(56, 189, 248, 0.25);
-
 	&:hover {
-		border-color: #38bdf8;
+		border-color: rgba(56, 189, 248, 0.4);
 	}
 }
 
-.cardLeft {
+.cardHeader {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: 10px;
+	min-width: 0;
+}
+
+.labelGroup {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
 	min-width: 0;
 }
 
 .iconBio {
-	width: 28px;
-	height: 28px;
-	border-radius: 8px;
-	background: rgba(16, 185, 129, 0.15);
-	border: 1px solid rgba(16, 185, 129, 0.3);
+	width: 32px;
+	height: 32px;
+	border-radius: 10px;
+	background: rgba(16, 185, 129, 0.12);
+	border: 1px solid rgba(16, 185, 129, 0.28);
 	color: #10b981;
 	display: flex;
 	align-items: center;
@@ -61,11 +73,11 @@
 }
 
 .iconChrono {
-	width: 28px;
-	height: 28px;
-	border-radius: 8px;
-	background: rgba(56, 189, 248, 0.15);
-	border: 1px solid rgba(56, 189, 248, 0.3);
+	width: 32px;
+	height: 32px;
+	border-radius: 10px;
+	background: rgba(56, 189, 248, 0.12);
+	border: 1px solid rgba(56, 189, 248, 0.28);
 	color: #38bdf8;
 	display: flex;
 	align-items: center;
@@ -77,6 +89,7 @@
 	font-size: 0.78rem;
 	font-weight: 700;
 	color: #ffffff;
+	letter-spacing: -0.01em;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -86,29 +99,47 @@
 	}
 }
 
+.bioSubtext {
+	font-size: 0.68rem;
+	font-weight: 600;
+	color: #10b981;
+	letter-spacing: 0.01em;
+}
+
+.chronoSubtext {
+	font-size: 0.68rem;
+	font-weight: 600;
+	color: #94a3b8;
+	letter-spacing: 0.01em;
+}
+
+.valueRow {
+	display: flex;
+	align-items: baseline;
+	gap: 4px;
+}
+
 .valBio {
-	font-size: 1.35rem;
+	font-size: 1.6rem;
 	font-weight: 900;
 	line-height: 1;
 	color: #10b981;
-	letter-spacing: -0.02em;
+	letter-spacing: -0.03em;
 	white-space: nowrap;
-	flex-shrink: 0;
 }
 
 .valChrono {
-	font-size: 1.35rem;
+	font-size: 1.6rem;
 	font-weight: 900;
 	line-height: 1;
 	color: #38bdf8;
-	letter-spacing: -0.02em;
+	letter-spacing: -0.03em;
 	white-space: nowrap;
-	flex-shrink: 0;
 }
 
 .unit {
-	font-size: 0.72rem;
+	font-size: 0.78rem;
 	font-weight: 700;
-	opacity: 0.85;
+	color: #94a3b8;
 	margin-left: 2px;
 }

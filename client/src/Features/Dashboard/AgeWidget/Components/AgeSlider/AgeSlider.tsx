@@ -21,7 +21,7 @@ export const AgeSlider: React.FC<AgeSliderProps> = ({ ageData }) => {
 	const bioPct = toPercent(ageData.biologicalAge, rangeStart, rangeEnd);
 	const chronoPct = toPercent(ageData.chronoAge, rangeStart, rangeEnd);
 	const spanLeft = Math.min(bioPct, chronoPct);
-	const spanWidth = Math.max(1.5, Math.abs(chronoPct - bioPct));
+	const spanWidth = Math.max(2, Math.abs(chronoPct - bioPct));
 	const tooltipLeft = Math.min(88, Math.max(12, spanLeft + spanWidth / 2));
 
 	const axisLabels = useMemo(() => {
@@ -35,7 +35,9 @@ export const AgeSlider: React.FC<AgeSliderProps> = ({ ageData }) => {
 	return (
 		<div className={styles.gaugeContainer}>
 			<div className={styles.gaugeHeader}>
-				<span className={styles.gaugeTitle}>{t("age_timeline")}</span>
+				<div className={styles.titleGroup}>
+					<span className={styles.gaugeTitle}>{t("age_timeline")}</span>
+				</div>
 				<div className={styles.legendGroup}>
 					<span className={styles.legendBio}>
 						<span className={styles.dotBio} /> Bio ({ageData.biologicalAge})
@@ -47,7 +49,7 @@ export const AgeSlider: React.FC<AgeSliderProps> = ({ ageData }) => {
 			</div>
 
 			<div className={styles.trackCard}>
-				{/* Unified Floating Floating Badge Callout */}
+				{/* Unified Floating Badge Callout */}
 				<div
 					className={styles.unifiedCallout}
 					style={{ left: `${tooltipLeft}%` }}
@@ -55,28 +57,35 @@ export const AgeSlider: React.FC<AgeSliderProps> = ({ ageData }) => {
 					<span className={styles.calloutBio}>Bio {ageData.biologicalAge}</span>
 					<span className={styles.calloutSep}>•</span>
 					<span className={styles.calloutChrono}>Chrono {ageData.chronoAge}</span>
+					<span className={styles.calloutArrow} />
 				</div>
 
 				<div className={styles.trackBar}>
 					<div className={styles.trackBackground} />
 
-					{/* Active Reversal Span */}
+					{/* Active Span between Bio and Chrono */}
 					<div
 						className={styles.activeSpan}
 						style={{ left: `${spanLeft}%`, width: `${spanWidth}%` }}
 					/>
 
-					{/* Bio Pointer Dot */}
+					{/* Bio Pointer */}
 					<div
 						className={`${styles.pointer} ${styles.pointerBio}`}
 						style={{ left: `${bioPct}%` }}
-					/>
+						title={`Biological Age: ${ageData.biologicalAge}`}
+					>
+						<span className={styles.pointerInner} />
+					</div>
 
-					{/* Chrono Pointer Dot */}
+					{/* Chrono Pointer */}
 					<div
 						className={`${styles.pointer} ${styles.pointerChrono}`}
 						style={{ left: `${chronoPct}%` }}
-					/>
+						title={`Chronological Age: ${ageData.chronoAge}`}
+					>
+						<span className={styles.pointerInner} />
+					</div>
 				</div>
 
 				{/* Axis Ticks & Labels */}

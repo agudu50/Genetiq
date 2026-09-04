@@ -1,7 +1,7 @@
 .gaugeContainer {
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
+	gap: 12px;
 	width: 100%;
 	min-width: 0;
 }
@@ -12,14 +12,25 @@
 	justify-content: space-between;
 	gap: 8px;
 	min-width: 0;
+	flex-wrap: wrap;
+}
+
+.titleGroup {
+	display: flex;
+	align-items: center;
+	gap: 6px;
 }
 
 .gaugeTitle {
-	font-size: 0.72rem;
-	font-weight: 800;
-	letter-spacing: 0.08em;
-	color: #9ca3af;
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	color: #94a3b8;
 	text-transform: uppercase;
+
+	html[data-theme="light"] & {
+		color: #64748b;
+	}
 }
 
 .legendGroup {
@@ -27,19 +38,23 @@
 	align-items: center;
 	gap: 12px;
 	font-size: 0.72rem;
-	font-weight: 700;
+	font-weight: 600;
 }
 
 .legendBio {
 	display: inline-flex;
 	align-items: center;
-	gap: 5px;
+	gap: 6px;
 	color: #10b981;
+	background: rgba(16, 185, 129, 0.08);
+	padding: 2px 8px;
+	border-radius: 6px;
+	border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 .dotBio {
-	width: 8px;
-	height: 8px;
+	width: 6px;
+	height: 6px;
 	border-radius: 99px;
 	background: #10b981;
 }
@@ -47,79 +62,101 @@
 .legendChrono {
 	display: inline-flex;
 	align-items: center;
-	gap: 5px;
+	gap: 6px;
 	color: #38bdf8;
+	background: rgba(56, 189, 248, 0.08);
+	padding: 2px 8px;
+	border-radius: 6px;
+	border: 1px solid rgba(56, 189, 248, 0.2);
 }
 
 .dotChrono {
-	width: 8px;
-	height: 8px;
+	width: 6px;
+	height: 6px;
 	border-radius: 99px;
 	background: #38bdf8;
 }
 
 .trackCard {
 	position: relative;
-	padding: 30px 12px 10px;
+	padding: 38px 14px 12px;
 	border-radius: 12px;
-	background: rgba(255, 255, 255, 0.03);
-	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: #131b2b;
+	border: 1px solid rgba(255, 255, 255, 0.07);
 
 	html[data-theme="light"] & {
 		background: #f8fafc;
-		border-color: rgba(0, 0, 0, 0.08);
+		border-color: #e2e8f0;
 	}
 }
 
 .unifiedCallout {
 	position: absolute;
-	top: 6px;
+	top: 8px;
 	transform: translateX(-50%);
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
-	padding: 3px 8px;
-	border-radius: 99px;
+	padding: 4px 10px;
+	border-radius: 8px;
 	background: #1e293b;
-	border: 1px solid rgba(16, 185, 129, 0.3);
+	border: 1px solid #334155;
 	white-space: nowrap;
 	z-index: 10;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 
 	html[data-theme="light"] & {
 		background: #ffffff;
-		border-color: rgba(16, 185, 129, 0.3);
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+		border-color: #cbd5e1;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 	}
 }
 
 .calloutBio {
 	font-size: 0.72rem;
-	font-weight: 800;
+	font-weight: 700;
 	color: #10b981;
 }
 
 .calloutSep {
 	font-size: 0.7rem;
-	color: #6b7280;
+	color: #64748b;
 }
 
 .calloutChrono {
 	font-size: 0.72rem;
-	font-weight: 800;
+	font-weight: 700;
 	color: #38bdf8;
+}
+
+.calloutArrow {
+	position: absolute;
+	bottom: -4px;
+	left: 50%;
+	transform: translateX(-50%) rotate(45deg);
+	width: 8px;
+	height: 8px;
+	background: #1e293b;
+	border-right: 1px solid #334155;
+	border-bottom: 1px solid #334155;
+
+	html[data-theme="light"] & {
+		background: #ffffff;
+		border-color: #cbd5e1;
+	}
 }
 
 .trackBar {
 	position: relative;
 	height: 8px;
-	margin: 0 6px 14px;
+	margin: 0 4px 14px;
 }
 
 .trackBackground {
 	position: absolute;
 	inset: 0;
 	border-radius: 99px;
-	background: rgba(255, 255, 255, 0.08);
+	background: #1e293b;
 
 	html[data-theme="light"] & {
 		background: #e2e8f0;
@@ -138,10 +175,19 @@
 	position: absolute;
 	top: 50%;
 	transform: translate(-50%, -50%);
-	width: 14px;
-	height: 14px;
+	width: 18px;
+	height: 18px;
 	border-radius: 99px;
 	z-index: 6;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.pointerBio {
+	background: #10b981;
 	border: 2px solid #0f172a;
 
 	html[data-theme="light"] & {
@@ -149,12 +195,20 @@
 	}
 }
 
-.pointerBio {
-	background: #10b981;
-}
-
 .pointerChrono {
 	background: #38bdf8;
+	border: 2px solid #0f172a;
+
+	html[data-theme="light"] & {
+		border-color: #ffffff;
+	}
+}
+
+.pointerInner {
+	width: 6px;
+	height: 6px;
+	border-radius: 99px;
+	background: #ffffff;
 }
 
 .axisContainer {
@@ -182,7 +236,7 @@
 .tick {
 	width: 1px;
 	height: 5px;
-	background: rgba(255, 255, 255, 0.2);
+	background: #334155;
 
 	html[data-theme="light"] & {
 		background: #cbd5e1;
@@ -191,10 +245,10 @@
 
 .axisVal {
 	font-size: 0.68rem;
-	font-weight: 700;
-	color: #9ca3af;
+	font-weight: 600;
+	color: #64748b;
 
 	html[data-theme="light"] & {
-		color: #64748b;
+		color: #94a3b8;
 	}
 }

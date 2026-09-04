@@ -4,7 +4,7 @@ import { AgeMetrics } from "./Components/AgeMetrics/AgeMetrics";
 import { AgeSlider } from "./Components/AgeSlider/AgeSlider";
 import { useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
-import { Dna, TrendingDown, TrendingUp, Minus } from "lucide-react";
+import { Activity, TrendingDown, TrendingUp, Minus } from "lucide-react";
 import { useLanguage } from "@/App/i18n/LanguageContext";
 
 export const AgeWidget = () => {
@@ -54,10 +54,12 @@ export const AgeWidget = () => {
 			<div className={styles.inner}>
 				<div className={styles.header}>
 					<div className={styles.headerRow}>
-						<span className={styles.eyebrow}>
-							<Dna size={12} strokeWidth={2.5} />
-							{t("age_analysis")}
-						</span>
+						<div className={styles.titleGroup}>
+							<div className={styles.iconBadge}>
+								<Activity size={14} strokeWidth={2.5} />
+							</div>
+							<h3 className={styles.widgetTitle}>{t("age_analysis")}</h3>
+						</div>
 						<div
 							className={`${styles.deltaBanner} ${styles[`deltaBanner_${deltaInsight.tone}`]}`}
 						>
