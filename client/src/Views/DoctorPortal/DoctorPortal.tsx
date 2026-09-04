@@ -11,6 +11,8 @@ import {
 	ArrowUpRight,
 	Bell,
 	Brain,
+	Calendar,
+	CalendarPlus,
 	Check,
 	CheckCircle2,
 	ChevronDown,
@@ -24,8 +26,10 @@ import {
 	FileText,
 	Heart,
 	History,
+	MapPin,
 	Mic,
 	MicOff,
+	PhoneCall,
 	Pill,
 	Plus,
 	RefreshCw,
@@ -37,6 +41,8 @@ import {
 	Sparkles,
 	Stethoscope,
 	User,
+	UserCheck,
+	Video,
 	Volume2,
 	Wind,
 	X,
@@ -231,6 +237,105 @@ const mockPatients: ClinicalPatient[] = [
 	},
 ];
 
+// ─── Doctor Booked Appointments & Schedules ─────────────────────────────────
+
+export interface DoctorAppointment {
+	id: string;
+	patientId: string;
+	patientName: string;
+	patientMrn: string;
+	patientAvatar: string;
+	appointmentType: string;
+	department: string;
+	date: string;
+	time: string;
+	durationMinutes: number;
+	mode: "telehealth" | "in-person" | "phone";
+	status: "waiting" | "confirmed" | "completed" | "cancelled";
+	notes: string;
+	roomOrLink?: string;
+}
+
+const initialAppointments: DoctorAppointment[] = [
+	{
+		id: "apt-1",
+		patientId: "pt-101",
+		patientName: "Marcus Vance",
+		patientMrn: "MRN-84920",
+		patientAvatar: "MV",
+		appointmentType: "Telehealth Urgent Triage: Atrial Palpitations Review",
+		department: "Cardiology & Arrhythmia",
+		date: "Today, Sep 04",
+		time: "10:30 AM",
+		durationMinutes: 30,
+		mode: "telehealth",
+		status: "waiting",
+		notes: "Reviewing severe palpitation episode logged 14 mins ago and Metoprolol tolerance.",
+		roomOrLink: "https://telehealth.genetiq.health/room/pt-101",
+	},
+	{
+		id: "apt-2",
+		patientId: "pt-102",
+		patientName: "Elena Rostova",
+		patientMrn: "MRN-67219",
+		patientAvatar: "ER",
+		appointmentType: "Routine 90-Day Metabolic & Thyroid Follow-up",
+		department: "Endocrinology & Internal",
+		date: "Today, Sep 04",
+		time: "02:15 PM",
+		durationMinutes: 20,
+		mode: "telehealth",
+		status: "confirmed",
+		notes: "Evaluating fasting glucose trends (104 mg/dL) and daily energy diary.",
+		roomOrLink: "https://telehealth.genetiq.health/room/pt-102",
+	},
+	{
+		id: "apt-3",
+		patientId: "pt-103",
+		patientName: "David Chen",
+		patientMrn: "MRN-33108",
+		patientAvatar: "DC",
+		appointmentType: "Post-Angiogram Comprehensive Cardiac Follow-up",
+		department: "Cardiology Clinic Room 4B",
+		date: "Tomorrow, Sep 05",
+		time: "09:00 AM",
+		durationMinutes: 45,
+		mode: "in-person",
+		status: "confirmed",
+		notes: "Resting 12-lead ECG, blood pressure series, and lipid panel evaluation.",
+	},
+	{
+		id: "apt-4",
+		patientId: "pt-101",
+		patientName: "Marcus Vance",
+		patientMrn: "MRN-84920",
+		patientAvatar: "MV",
+		appointmentType: "14-Day Holter Monitor Telemetry Review",
+		department: "Electrophysiology",
+		date: "Sep 12, 2026",
+		time: "11:00 AM",
+		durationMinutes: 30,
+		mode: "telehealth",
+		status: "confirmed",
+		notes: "Scheduled after 14-day adhesive cardiac patch monitoring cycle.",
+	},
+	{
+		id: "apt-5",
+		patientId: "pt-102",
+		patientName: "Elena Rostova",
+		patientMrn: "MRN-67219",
+		patientAvatar: "ER",
+		appointmentType: "Initial Clinical Onboarding & Lab Intake",
+		department: "Internal Medicine",
+		date: "Aug 20, 2026",
+		time: "03:30 PM",
+		durationMinutes: 30,
+		mode: "telehealth",
+		status: "completed",
+		notes: "Completed initial assessment, baseline labs ordered.",
+	},
+];
+
 export const DoctorPortal = () => {
 	const navigate = useNavigate();
 	const user = useSelector((state: RootState) => state.user);
@@ -253,6 +358,18 @@ export const DoctorPortal = () => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedOrganSystem, setSelectedOrganSystem] = useState<string>("cardiovascular");
 
+	// Appointments & Patient Schedule State
+	const [appointments, setAppointments] = useState<DoctorAppointment[]>(initialAppointments);
+	const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
+	const [appointmentFilter, setAppointmentFilter] = useState<"all" | "today" | "upcoming" | "completed">("all");
+	const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+	const [newApptPatientId, setNewApptPatientId] = useState("pt-101");
+	const [newApptType, setNewApptType] = useState("Telehealth Follow-up Review");
+	const [newApptDate, setNewApptDate] = useState("2026-09-08");
+	const [newApptTime, setNewApptTime] = useState("10:00 AM");
+	const [newApptMode, setNewApptMode] = useState<"telehealth" | "in-person" | "phone">("telehealth");
+	const [newApptNotes, setNewApptNotes] = useState("");
+
 	// Advice & Clinical Dispatch Modal State
 	const [isAdviceModalOpen, setIsAdviceModalOpen] = useState(false);
 	const [adviceText, setAdviceText] = useState("");
@@ -270,6 +387,66 @@ export const DoctorPortal = () => {
 
 	const doctorMenuRef = useRef<HTMLDivElement>(null);
 	const patientDropdownRef = useRef<HTMLDivElement>(null);
+
+	// Appointment Handlers
+	const handleJoinTelehealth = (appt: DoctorAppointment) => {
+		toast.info(`Launching encrypted Telehealth session with ${appt.patientName}...`);
+		setTimeout(() => {
+			toast.success(`Connected to secure clinical room with ${appt.patientName}.`);
+		}, 800);
+	};
+
+	const handleFocusPatientFromAppt = (patientId: string) => {
+		const target = patients.find((p) => p.id === patientId);
+		if (target) {
+			setSelectedPatientId(target.id);
+			setSelectedOrganSystem(target.defaultOrgan);
+			setIsScheduleModalOpen(false);
+			toast.success(`Patient Chart & 3D Twin switched to ${target.name}.`);
+		}
+	};
+
+	const handleMarkApptCompleted = (apptId: string) => {
+		setAppointments((prev) =>
+			prev.map((a) => (a.id === apptId ? { ...a, status: "completed" as const } : a)),
+		);
+		toast.success("Appointment completed and recorded into clinical encounter audit trail.");
+	};
+
+	const handleCreateNewAppointment = (e: React.FormEvent) => {
+		e.preventDefault();
+		const patientObj = patients.find((p) => p.id === newApptPatientId);
+		if (!patientObj) return;
+
+		const newAppt: DoctorAppointment = {
+			id: `apt-${Date.now()}`,
+			patientId: patientObj.id,
+			patientName: patientObj.name,
+			patientMrn: patientObj.mrn,
+			patientAvatar: patientObj.name.split(" ").map((n) => n[0]).join(""),
+			appointmentType: newApptType,
+			department: doctor.department || "Cardiology",
+			date: newApptDate,
+			time: newApptTime,
+			durationMinutes: 30,
+			mode: newApptMode,
+			status: "confirmed",
+			notes: newApptNotes || "Scheduled follow-up consultation via Clinical Portal.",
+			roomOrLink: `https://telehealth.genetiq.health/room/${patientObj.id}`,
+		};
+
+		setAppointments((prev) => [newAppt, ...prev]);
+		setIsBookingModalOpen(false);
+		setNewApptNotes("");
+		toast.success(`New appointment confirmed for ${patientObj.name} on ${newApptDate} at ${newApptTime}!`);
+	};
+
+	const filteredAppointments = appointments.filter((a) => {
+		if (appointmentFilter === "today") return a.date.toLowerCase().includes("today") || a.status === "waiting";
+		if (appointmentFilter === "upcoming") return a.status === "confirmed" && !a.date.toLowerCase().includes("today");
+		if (appointmentFilter === "completed") return a.status === "completed";
+		return true;
+	});
 
 	// Panel Collapsible State - auto collapse on smaller screens for immediate 3D twin visibility
 	const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState(() =>
@@ -554,7 +731,7 @@ export const DoctorPortal = () => {
 					)}
 				</div>
 
-				{/* Header Right Controls: KPIs + Doctor Profile & Settings Menu */}
+				{/* Header Right Controls: KPIs + Schedule + Doctor Profile & Settings Menu */}
 				<div className={styles.headerControls}>
 					<div className={styles.kpiPills}>
 						<div className={styles.kpiPill}>
@@ -566,6 +743,20 @@ export const DoctorPortal = () => {
 							<span>6 Reports</span>
 						</div>
 					</div>
+
+					{/* Direct Appointments / Schedule Quick Trigger */}
+					<button
+						type='button'
+						className={styles.scheduleHeaderBtn}
+						onClick={() => setIsScheduleModalOpen(true)}
+						title='View Booked Patient Appointments & Schedules'
+					>
+						<Calendar size={14} style={{ color: "#00a896" }} />
+						<span className={styles.scheduleBtnText}>Appointments</span>
+						<span className={styles.scheduleCountBadge}>
+							{appointments.filter((a) => a.status === "waiting" || a.date.includes("Today")).length} Today
+						</span>
+					</button>
 
 					{/* Doctor Profile & Clinical Features Dropdown */}
 					<div className={styles.doctorMenuWrapper} ref={doctorMenuRef}>
@@ -604,6 +795,26 @@ export const DoctorPortal = () => {
 
 								{/* Clinical Features & Access List */}
 								<div className={styles.doctorMenuItems}>
+									<button
+										type='button'
+										className={styles.doctorMenuItem}
+										onClick={() => {
+											setIsScheduleModalOpen(true);
+											setIsDoctorMenuOpen(false);
+										}}
+									>
+										<div className={styles.menuItemIcon} style={{ background: "rgba(0, 168, 150, 0.15)", color: "#00a896" }}>
+											<Calendar size={15} />
+										</div>
+										<div className={styles.menuItemText}>
+											<span className={styles.menuItemTitle}>Patient Appointments & Schedule</span>
+											<span className={styles.menuItemSub}>{appointments.length} booked consultations</span>
+										</div>
+										<span className={styles.statusPillLive}>
+											{appointments.filter((a) => a.status === "waiting").length > 0 ? "1 Waiting" : "Active"}
+										</span>
+									</button>
+
 									<button
 										type='button'
 										className={styles.doctorMenuItem}
@@ -1494,7 +1705,337 @@ export const DoctorPortal = () => {
 				</div>
 			)}
 
-			{/* 6. Bottom Floating Organ System Bar */}
+			{/* 6. Patient Appointments & Clinical Schedules Modal */}
+			{isScheduleModalOpen && (
+				<div className={styles.modalOverlay} onClick={() => setIsScheduleModalOpen(false)}>
+					<div className={`${styles.modalContent} ${styles.scheduleModalContent}`} onClick={(e) => e.stopPropagation()}>
+						<div className={styles.modalHeader}>
+							<div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+								<div className={styles.scheduleModalIconBadge}>
+									<Calendar size={18} style={{ color: "#00a896" }} />
+								</div>
+								<div>
+									<h2>Patient Appointments & Clinical Schedules</h2>
+									<p style={{ margin: 0, fontSize: "0.74rem", color: "rgba(255,255,255,0.5)" }}>
+										{doctor.doctorName} · {doctor.hospitalName} ({appointments.length} Total Scheduled)
+									</p>
+								</div>
+							</div>
+							<div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+								<button
+									type='button'
+									className={styles.bookNewApptBtn}
+									onClick={() => setIsBookingModalOpen(true)}
+								>
+									<CalendarPlus size={14} />
+									<span>Book New Appointment</span>
+								</button>
+								<button
+									type='button'
+									className={styles.closeBtn}
+									onClick={() => setIsScheduleModalOpen(false)}
+								>
+									<X size={18} />
+								</button>
+							</div>
+						</div>
+
+						{/* Filter Pills */}
+						<div className={styles.scheduleFiltersBar}>
+							<div className={styles.filterPillsGroup}>
+								<button
+									type='button'
+									className={`${styles.filterPill} ${appointmentFilter === "all" ? styles.filterPillActive : ""}`}
+									onClick={() => setAppointmentFilter("all")}
+								>
+									All Appointments ({appointments.length})
+								</button>
+								<button
+									type='button'
+									className={`${styles.filterPill} ${appointmentFilter === "today" ? styles.filterPillActive : ""}`}
+									onClick={() => setAppointmentFilter("today")}
+								>
+									Today's Schedule ({appointments.filter((a) => a.date.includes("Today") || a.status === "waiting").length})
+								</button>
+								<button
+									type='button'
+									className={`${styles.filterPill} ${appointmentFilter === "upcoming" ? styles.filterPillActive : ""}`}
+									onClick={() => setAppointmentFilter("upcoming")}
+								>
+									Upcoming ({appointments.filter((a) => a.status === "confirmed" && !a.date.includes("Today")).length})
+								</button>
+								<button
+									type='button'
+									className={`${styles.filterPill} ${appointmentFilter === "completed" ? styles.filterPillActive : ""}`}
+									onClick={() => setAppointmentFilter("completed")}
+								>
+									Completed ({appointments.filter((a) => a.status === "completed").length})
+								</button>
+							</div>
+						</div>
+
+						{/* Appointments List Body */}
+						<div className={styles.scheduleModalBody}>
+							{filteredAppointments.length === 0 ? (
+								<div className={styles.emptyScheduleState}>
+									<Calendar size={32} style={{ color: "rgba(255,255,255,0.2)", marginBottom: "8px" }} />
+									<div>No appointments found in this category.</div>
+								</div>
+							) : (
+								filteredAppointments.map((appt) => (
+									<div
+										key={appt.id}
+										className={`${styles.appointmentCard} ${appt.status === "waiting" ? styles.appointmentCardWaiting : ""}`}
+									>
+										{/* Top Row: Patient Info + Status */}
+										<div className={styles.apptTopRow}>
+											<div className={styles.apptPatientMeta}>
+												<div className={styles.apptPatientAvatar}>{appt.patientAvatar}</div>
+												<div>
+													<div className={styles.apptPatientName}>{appt.patientName}</div>
+													<div className={styles.apptMrn}>{appt.patientMrn} · {appt.department}</div>
+												</div>
+											</div>
+
+											<div className={styles.apptBadgesGroup}>
+												<span
+													className={
+														appt.mode === "telehealth"
+															? styles.modeBadgeTelehealth
+															: appt.mode === "in-person"
+															? styles.modeBadgeInPerson
+															: styles.modeBadgePhone
+													}
+												>
+													{appt.mode === "telehealth" && <Video size={12} />}
+													{appt.mode === "in-person" && <MapPin size={12} />}
+													{appt.mode === "phone" && <PhoneCall size={12} />}
+													<span>{appt.mode === "telehealth" ? "Telehealth Video" : appt.mode === "in-person" ? "In-Clinic Visit" : "Phone Call"}</span>
+												</span>
+
+												<span
+													className={
+														appt.status === "waiting"
+															? styles.badgeUrgentPulse
+															: appt.status === "confirmed"
+															? styles.badgeOptimal
+															: styles.badgeWarning
+													}
+												>
+													{appt.status === "waiting" ? "Waiting in Room" : appt.status === "confirmed" ? "Confirmed" : "Completed"}
+												</span>
+											</div>
+										</div>
+
+										{/* Details: Title, Time, Notes */}
+										<div className={styles.apptDetailsBlock}>
+											<div className={styles.apptTitle}>{appt.appointmentType}</div>
+											<div className={styles.apptTimeRow}>
+												<span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+													<Clock size={12} style={{ color: "#00a896" }} />
+													<strong>{appt.date}</strong> at <strong>{appt.time}</strong> ({appt.durationMinutes} mins)
+												</span>
+											</div>
+											<div className={styles.apptNotesText}>
+												Reason / Clinical Context: {appt.notes}
+											</div>
+										</div>
+
+										{/* Action Buttons Row */}
+										<div className={styles.apptActionsRow}>
+											{appt.mode === "telehealth" && appt.status !== "completed" && (
+												<button
+													type='button'
+													className={styles.joinTelehealthBtn}
+													onClick={() => handleJoinTelehealth(appt)}
+												>
+													<Video size={14} />
+													<span>{appt.status === "waiting" ? "Join Waiting Room Call Now" : "Launch Telehealth Session"}</span>
+												</button>
+											)}
+
+											<button
+												type='button'
+												className={styles.focusPatientBtn}
+												onClick={() => handleFocusPatientFromAppt(appt.patientId)}
+											>
+												<UserCheck size={14} />
+												<span>Focus 3D Twin & Chart</span>
+											</button>
+
+											{appt.status !== "completed" && (
+												<button
+													type='button'
+													className={styles.markDoneBtn}
+													onClick={() => handleMarkApptCompleted(appt.id)}
+													title='Mark appointment completed'
+												>
+													<Check size={13} />
+													<span>Done</span>
+												</button>
+											)}
+										</div>
+									</div>
+								))
+							)}
+						</div>
+
+						<div className={styles.modalFooter}>
+							<button
+								type='button'
+								className={styles.btnActionSecondary}
+								onClick={() => setIsScheduleModalOpen(false)}
+							>
+								Close Schedule
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
+
+			{/* 7. Book New Patient Appointment Sub-Modal */}
+			{isBookingModalOpen && (
+				<div className={styles.modalOverlay} onClick={() => setIsBookingModalOpen(false)}>
+					<div className={`${styles.modalContent} ${styles.bookingModalContent}`} onClick={(e) => e.stopPropagation()}>
+						<div className={styles.modalHeader}>
+							<div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+								<div className={styles.scheduleModalIconBadge}>
+									<CalendarPlus size={18} style={{ color: "#00a896" }} />
+								</div>
+								<div>
+									<h2>Schedule Patient Consultation</h2>
+									<p style={{ margin: 0, fontSize: "0.74rem", color: "rgba(255,255,255,0.5)" }}>
+										Book next clinical visit or telehealth review
+									</p>
+								</div>
+							</div>
+							<button
+								type='button'
+								className={styles.closeBtn}
+								onClick={() => setIsBookingModalOpen(false)}
+							>
+								<X size={18} />
+							</button>
+						</div>
+
+						<form onSubmit={handleCreateNewAppointment}>
+							<div className={styles.bookingModalBody}>
+								{/* Patient selector */}
+								<div className={styles.formGroup}>
+									<label>Select Patient</label>
+									<select
+										className={styles.formSelect}
+										value={newApptPatientId}
+										onChange={(e) => setNewApptPatientId(e.target.value)}
+									>
+										{patients.map((p) => (
+											<option key={p.id} value={p.id}>
+												{p.name} ({p.mrn}) · {p.primaryDiagnosis}
+											</option>
+										))}
+									</select>
+								</div>
+
+								{/* Appointment Type */}
+								<div className={styles.formGroup}>
+									<label>Consultation / Reason</label>
+									<input
+										type='text'
+										className={styles.formInput}
+										value={newApptType}
+										onChange={(e) => setNewApptType(e.target.value)}
+										placeholder='e.g., Telehealth Follow-up Review'
+										required
+									/>
+								</div>
+
+								{/* Mode */}
+								<div className={styles.formGroup}>
+									<label>Consultation Mode</label>
+									<div className={styles.modeToggleGroup}>
+										<button
+											type='button'
+											className={`${styles.modeToggleBtn} ${newApptMode === "telehealth" ? styles.modeToggleBtnActive : ""}`}
+											onClick={() => setNewApptMode("telehealth")}
+										>
+											<Video size={14} /> Telehealth Video
+										</button>
+										<button
+											type='button'
+											className={`${styles.modeToggleBtn} ${newApptMode === "in-person" ? styles.modeToggleBtnActive : ""}`}
+											onClick={() => setNewApptMode("in-person")}
+										>
+											<MapPin size={14} /> In-Clinic Visit
+										</button>
+										<button
+											type='button'
+											className={`${styles.modeToggleBtn} ${newApptMode === "phone" ? styles.modeToggleBtnActive : ""}`}
+											onClick={() => setNewApptMode("phone")}
+										>
+											<PhoneCall size={14} /> Phone
+										</button>
+									</div>
+								</div>
+
+								{/* Date and Time Row */}
+								<div className={styles.formRowTwo}>
+									<div className={styles.formGroup}>
+										<label>Date</label>
+										<input
+											type='date'
+											className={styles.formInput}
+											value={newApptDate}
+											onChange={(e) => setNewApptDate(e.target.value)}
+											required
+										/>
+									</div>
+									<div className={styles.formGroup}>
+										<label>Time</label>
+										<input
+											type='text'
+											className={styles.formInput}
+											value={newApptTime}
+											onChange={(e) => setNewApptTime(e.target.value)}
+											placeholder='e.g. 10:30 AM'
+											required
+										/>
+									</div>
+								</div>
+
+								{/* Clinical Notes */}
+								<div className={styles.formGroup}>
+									<label>Clinical Context / Preparation Notes</label>
+									<textarea
+										className={styles.formTextarea}
+										value={newApptNotes}
+										onChange={(e) => setNewApptNotes(e.target.value)}
+										placeholder='Enter any pre-visit diagnostic instructions or clinical objectives...'
+										rows={3}
+									/>
+								</div>
+							</div>
+
+							<div className={styles.modalFooter}>
+								<button
+									type='button'
+									className={styles.btnActionSecondary}
+									onClick={() => setIsBookingModalOpen(false)}
+								>
+									Cancel
+								</button>
+								<button
+									type='submit'
+									className={styles.btnActionPrimary}
+								>
+									<CalendarPlus size={14} /> Confirm & Save Appointment
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			)}
+
+			{/* 8. Bottom Floating Organ System Bar */}
 			<div className={styles.bottomOrganBar}>
 				<button
 					type='button'
