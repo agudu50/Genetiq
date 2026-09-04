@@ -1,7 +1,8 @@
 @use "@/App/Styles/_mixins" as mixins;
 
-$teal: #00a69d;
-$cyan: #06b6d4;
+$teal: #064e3b;
+$teal-hover: #04382b;
+$cyan: #10b981;
 
 .profileWidget {
 	position: relative;
@@ -53,9 +54,13 @@ $cyan: #06b6d4;
 	width: 160px;
 	height: 160px;
 	border-radius: 50%;
-	background: radial-gradient(circle, rgba($teal, 0.22) 0%, transparent 68%);
+	background: radial-gradient(circle, rgba(6, 78, 59, 0.22) 0%, transparent 68%);
 	filter: blur(12px);
 	pointer-events: none;
+
+	html[data-theme="dark"] & {
+		background: radial-gradient(circle, rgba(52, 211, 153, 0.2) 0%, transparent 68%);
+	}
 }
 
 .inner {
@@ -85,10 +90,10 @@ $cyan: #06b6d4;
 	font-weight: 800;
 	text-transform: uppercase;
 	letter-spacing: 0.1em;
-	color: #64748b;
+	color: $teal;
 
 	html[data-theme="dark"] & {
-		color: #94a3b8;
+		color: #34d399;
 	}
 }
 
@@ -101,8 +106,14 @@ $cyan: #06b6d4;
 	font-size: 0.68rem;
 	font-weight: 800;
 	color: $teal;
-	background: rgba($teal, 0.1);
-	border: 1px solid rgba($teal, 0.18);
+	background: rgba($teal, 0.08);
+	border: 1px solid rgba($teal, 0.2);
+
+	html[data-theme="dark"] & {
+		color: #34d399;
+		background: rgba(52, 211, 153, 0.12);
+		border-color: rgba(52, 211, 153, 0.25);
+	}
 }
 
 .identityCard {
@@ -146,6 +157,10 @@ $cyan: #06b6d4;
 	stroke-width: 3;
 	stroke-linecap: round;
 	transition: stroke-dashoffset 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+	html[data-theme="dark"] & {
+		stroke: #34d399;
+	}
 }
 
 .avatar {
@@ -292,18 +307,32 @@ $cyan: #06b6d4;
 	display: inline-flex;
 	align-items: center;
 	gap: 5px;
-	padding: 4px 8px;
-	border: none;
+	padding: 4px 10px;
+	border: 1px solid rgba($teal, 0.2);
 	border-radius: 8px;
-	background: transparent;
+	background: rgba($teal, 0.08);
 	color: $teal;
 	font-size: 0.68rem;
-	font-weight: 700;
+	font-weight: 800;
 	cursor: pointer;
-	transition: background 0.2s ease, color 0.2s ease;
+	transition: all 0.2s ease;
+
+	html[data-theme="dark"] & {
+		color: #34d399;
+		background: rgba(52, 211, 153, 0.12);
+		border-color: rgba(52, 211, 153, 0.25);
+	}
 
 	&:hover {
-		background: rgba($teal, 0.1);
+		background: $teal;
+		color: #ffffff;
+		border-color: $teal;
+
+		html[data-theme="dark"] & {
+			background: #34d399;
+			color: #064e3b;
+			border-color: #34d399;
+		}
 	}
 }
 
@@ -342,6 +371,10 @@ $cyan: #06b6d4;
 		.vitalIcon {
 			color: $teal;
 			transform: scale(1.06);
+
+			html[data-theme="dark"] & {
+				color: #34d399;
+			}
 		}
 	}
 }
@@ -352,6 +385,10 @@ $cyan: #06b6d4;
 	align-items: center;
 	justify-content: center;
 	transition: transform 0.2s ease, color 0.2s ease;
+
+	html[data-theme="dark"] & {
+		color: #34d399;
+	}
 }
 
 .vitalData {
@@ -404,9 +441,15 @@ $cyan: #06b6d4;
 		border: 1px solid rgba(96, 165, 250, 0.2);
 	}
 	&.normal {
-		background: rgba($teal, 0.12);
+		background: rgba(6, 78, 59, 0.12);
 		color: $teal;
-		border: 1px solid rgba($teal, 0.2);
+		border: 1px solid rgba(6, 78, 59, 0.2);
+
+		html[data-theme="dark"] & {
+			color: #34d399;
+			background: rgba(52, 211, 153, 0.14);
+			border-color: rgba(52, 211, 153, 0.25);
+		}
 	}
 	&.overweight {
 		background: rgba(251, 191, 36, 0.12);
@@ -434,6 +477,10 @@ $cyan: #06b6d4;
 
 		.vitalIcon {
 			color: $teal;
+
+			html[data-theme="dark"] & {
+				color: #34d399;
+			}
 		}
 	}
 }
@@ -458,6 +505,10 @@ $cyan: #06b6d4;
 	color: $teal;
 	text-transform: uppercase;
 	letter-spacing: 0.06em;
+
+	html[data-theme="dark"] & {
+		color: #34d399;
+	}
 }
 
 .completenessCard {
@@ -473,6 +524,11 @@ $cyan: #06b6d4;
 	html[data-theme="light"] & {
 		background: rgba($teal, 0.04);
 		border-color: rgba($teal, 0.14);
+	}
+
+	html[data-theme="dark"] & {
+		background: rgba(6, 78, 59, 0.12);
+		border-color: rgba(52, 211, 153, 0.2);
 	}
 }
 
@@ -499,8 +555,12 @@ $cyan: #06b6d4;
 .completenessProgress {
 	height: 100%;
 	border-radius: 99px;
-	background: linear-gradient(90deg, $teal 0%, $cyan 100%);
+	background: linear-gradient(90deg, #064e3b 0%, #10b981 100%);
 	transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+	html[data-theme="dark"] & {
+		background: linear-gradient(90deg, #059669 0%, #34d399 100%);
+	}
 }
 
 .completenessText {
@@ -530,17 +590,18 @@ $cyan: #06b6d4;
 	padding: 8px 14px;
 	border-radius: 10px;
 	border: none;
-	background: linear-gradient(135deg, $teal 0%, $cyan 100%);
-	color: #fff;
+	background: $teal;
+	color: #ffffff;
 	font-size: 0.72rem;
 	font-weight: 800;
 	cursor: pointer;
-	transition: transform 0.2s ease, box-shadow 0.2s ease;
-	box-shadow: 0 4px 14px rgba($teal, 0.25);
+	transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+	box-shadow: 0 4px 14px rgba(6, 78, 59, 0.25);
 
 	&:hover {
 		transform: translateY(-1px);
-		box-shadow: 0 6px 18px rgba($teal, 0.32);
+		background: $teal-hover;
+		box-shadow: 0 6px 18px rgba(6, 78, 59, 0.35);
 	}
 }
 
@@ -578,6 +639,10 @@ $cyan: #06b6d4;
 
 	svg {
 		color: $teal;
+
+		html[data-theme="dark"] & {
+			color: #34d399;
+		}
 	}
 }
 
@@ -597,6 +662,10 @@ $cyan: #06b6d4;
 
 	svg {
 		color: $teal;
+
+		html[data-theme="dark"] & {
+			color: #34d399;
+		}
 	}
 }
 
@@ -615,7 +684,7 @@ $cyan: #06b6d4;
 
 	&:focus-within {
 		border-color: rgba($teal, 0.45);
-		box-shadow: 0 0 0 3px rgba($teal, 0.1);
+		box-shadow: 0 0 0 3px rgba(6, 78, 59, 0.1);
 	}
 }
 
@@ -664,6 +733,10 @@ $cyan: #06b6d4;
 
 	html[data-theme="light"] & {
 		border-color: rgba(15, 23, 42, 0.08);
+	}
+
+	html[data-theme="dark"] & {
+		color: #34d399;
 	}
 }
 
@@ -730,10 +803,15 @@ $cyan: #06b6d4;
 	padding: 9px 0;
 	border-radius: 10px;
 	border: none;
-	background: linear-gradient(135deg, $teal 0%, $cyan 100%);
+	background: $teal;
 	color: #fff;
 	font-size: 0.8rem;
 	font-weight: 800;
 	cursor: pointer;
-	box-shadow: 0 4px 14px rgba($teal, 0.25);
+	box-shadow: 0 4px 14px rgba(6, 78, 59, 0.25);
+
+	&:hover {
+		background: $teal-hover;
+		box-shadow: 0 6px 18px rgba(6, 78, 59, 0.35);
+	}
 }
