@@ -808,7 +808,7 @@
 	gap: 6px;
 	padding: 7px 14px;
 	border-radius: 8px;
-	background: #00a896;
+	background: #064e3b;
 	color: #ffffff;
 	border: none;
 	font-size: 0.76rem;
@@ -818,7 +818,7 @@
 	transition: all 0.2s;
 
 	&:hover:not(:disabled) {
-		background: #008f80;
+		background: #04382b;
 	}
 
 	&:disabled {
@@ -949,9 +949,9 @@
 .thresholdVal {
 	font-size: 0.8rem;
 	font-weight: 800;
-	color: #00a896;
-	background: rgba(0, 168, 150, 0.12);
-	border: 1px solid rgba(0, 168, 150, 0.3);
+	color: #10b981;
+	background: rgba(6, 78, 59, 0.2);
+	border: 1px solid rgba(6, 78, 59, 0.4);
 	padding: 4px 10px;
 	border-radius: 8px;
 }
@@ -959,7 +959,7 @@
 .toggleCheckbox {
 	width: 18px;
 	height: 18px;
-	accent-color: #00a896;
+	accent-color: #064e3b;
 	cursor: pointer;
 }
 
@@ -987,16 +987,16 @@
 	gap: 5px;
 	padding: 5px 12px;
 	border-radius: 8px;
-	background: rgba(0, 168, 150, 0.15);
-	border: 1px solid rgba(0, 168, 150, 0.35);
-	color: #00a896;
+	background: rgba(6, 78, 59, 0.15);
+	border: 1px solid rgba(6, 78, 59, 0.35);
+	color: #10b981;
 	font-size: 0.74rem;
 	font-weight: 700;
 	cursor: pointer;
 	transition: all 0.15s;
 
 	&:hover {
-		background: #00a896;
+		background: #064e3b;
 		color: #ffffff;
 	}
 }
@@ -1081,8 +1081,8 @@
 	width: 36px;
 	height: 36px;
 	border-radius: 10px;
-	background: rgba(0, 168, 150, 0.15);
-	border: 1px solid rgba(0, 168, 150, 0.3);
+	background: rgba(6, 78, 59, 0.2);
+	border: 1px solid rgba(6, 78, 59, 0.4);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -1094,7 +1094,7 @@
 	gap: 6px;
 	padding: 7px 14px;
 	border-radius: 8px;
-	background: #00a896;
+	background: #064e3b;
 	color: #ffffff;
 	border: none;
 	font-size: 0.76rem;
@@ -1103,7 +1103,7 @@
 	transition: all 0.2s;
 
 	&:hover {
-		background: #008f80;
+		background: #04382b;
 		transform: translateY(-1px);
 	}
 }
@@ -1151,9 +1151,9 @@
 }
 
 .filterPillActive {
-	background: rgba(0, 168, 150, 0.18) !important;
-	border-color: #00a896 !important;
-	color: #00a896 !important;
+	background: #064e3b !important;
+	border-color: #064e3b !important;
+	color: #ffffff !important;
 	font-weight: 800 !important;
 }
 
@@ -1679,10 +1679,16 @@
 }
 
 .modeCardBtnActive {
-	background: rgba(0, 168, 150, 0.18) !important;
-	border-color: #00a896 !important;
-	color: #00a896 !important;
+	background: rgba(6, 78, 59, 0.2) !important;
+	border-color: #064e3b !important;
+	color: #064e3b !important;
 	font-weight: 800 !important;
+
+	:global(html[data-theme="light"]) & {
+		background: #e6f4ea !important;
+		border-color: #064e3b !important;
+		color: #064e3b !important;
+	}
 }
 
 .slotGridTwo {
@@ -1723,9 +1729,9 @@
 }
 
 .slotCardBtnActive {
-	background: rgba(0, 168, 150, 0.2) !important;
-	border-color: #00a896 !important;
-	color: #00a896 !important;
+	background: #064e3b !important;
+	border-color: #064e3b !important;
+	color: #ffffff !important;
 	font-weight: 800 !important;
 }
 
@@ -1991,13 +1997,14 @@
 	width: 46px;
 	height: 46px;
 	border-radius: 12px;
-	background: #00a69d;
+	background: #064e3b;
 	color: #fff;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	font-size: 1.1rem;
 	font-weight: 800;
+	box-shadow: 0 4px 12px rgba(6, 78, 59, 0.35);
 }
 
 .patientInfo {
@@ -2213,7 +2220,7 @@
 	justify-content: center;
 	gap: 6px;
 	padding: 9px 12px;
-	background: #007c72;
+	background: #064e3b;
 	color: #ffffff;
 	border: none;
 	border-radius: 10px;
@@ -2221,9 +2228,10 @@
 	font-weight: 700;
 	cursor: pointer;
 	transition: all 0.2s;
+	box-shadow: 0 2px 8px rgba(6, 78, 59, 0.35);
 
 	&:hover {
-		background: #006158;
+		background: #04382b;
 		transform: translateY(-1px);
 	}
 }
@@ -2646,12 +2654,12 @@
 }
 
 .organPillActive {
-	background: #00a69d !important;
+	background: #064e3b !important;
 	color: #ffffff !important;
-	box-shadow: 0 4px 14px rgba(0, 166, 157, 0.4);
+	box-shadow: 0 4px 14px rgba(6, 78, 59, 0.4);
 
 	:global(html[data-theme="light"]) & {
-		background: #00a69d !important;
+		background: #064e3b !important;
 		color: #ffffff !important;
 	}
 }
