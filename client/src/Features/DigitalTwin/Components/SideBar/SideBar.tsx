@@ -222,7 +222,7 @@ const SideBar = ({
 		<motion.div
 			initial={{ opacity: 0, x: -20 }}
 			animate={isCollapsed ? { opacity: 0, x: -100 } : { opacity: 1, x: 0 }}
-			className={styles["SideBar-container"]}
+			className={`${styles["SideBar-container"]} SideBar-container`}
 		>
 			<div className={styles["sidebar-inner"]}>
 				<div className={styles["sidebar-controls"]}>

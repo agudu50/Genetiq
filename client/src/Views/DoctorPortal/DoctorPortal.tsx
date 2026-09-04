@@ -12,6 +12,8 @@ import {
 	Check,
 	CheckCircle2,
 	ChevronDown,
+	ChevronLeft,
+	ChevronRight,
 	ChevronUp,
 	Clock,
 	Droplet,
@@ -242,6 +244,10 @@ export const DoctorPortal = () => {
 	const [showProblemHistory, setShowProblemHistory] = useState(true);
 	const recognitionRef = useRef<any>(null);
 
+	// Panel Collapsible State
+	const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState(false);
+	const [isRightPanelCollapsed, setIsRightPanelCollapsed] = useState(false);
+
 	const selectedPatient =
 		patients.find((p) => p.id === selectedPatientId) || patients[0];
 
@@ -369,11 +375,11 @@ export const DoctorPortal = () => {
 	};
 
 	return (
-		<div className={styles.clinicalStage}>
+		<div className={`${styles.clinicalStage} ${isLeftPanelCollapsed ? styles.leftCollapsed : ""}`}>
 			{/* 1. Full-Screen 3D Digital Twin Stage */}
 			<div className={styles.canvasFullStage}>
 				<CameraProvider>
-					<MainScene selectedCategory={selectedOrganSystem} />
+					<MainScene selectedCategory={selectedOrganSystem} showSidebar={false} />
 				</CameraProvider>
 			</div>
 
@@ -499,12 +505,47 @@ export const DoctorPortal = () => {
 				</div>
 			</header>
 
+			{/* Floating Expand Buttons (shown when panels are collapsed) */}
+			{isLeftPanelCollapsed && (
+				<button
+					type='button'
+					className={`${styles.expandToggleBtn} ${styles.expandToggleBtnLeft}`}
+					onClick={() => setIsLeftPanelCollapsed(false)}
+				>
+					<User size={14} /> Show Patient Profile
+				</button>
+			)}
+
+			{isRightPanelCollapsed && (
+				<button
+					type='button'
+					className={`${styles.expandToggleBtn} ${styles.expandToggleBtnRight}`}
+					onClick={() => setIsRightPanelCollapsed(false)}
+				>
+					<Activity size={14} /> Show Labs & Meds
+				</button>
+			)}
+
 			{/* 3. Floating Overlay Panels (Left & Right) */}
 			<div className={styles.floatingLayout}>
 				{/* Left Floating Panel: Patient Profile & Live Symptoms */}
-				<div className={styles.leftPanel}>
+				<div className={`${styles.leftPanel} ${isLeftPanelCollapsed ? styles.collapsed : ""}`}>
 					{/* Patient Biometrics Card */}
 					<div className={styles.glassCard}>
+						<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
+							<span style={{ fontSize: "0.7rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.05em", color: "#00a896" }}>
+								Assigned Patient
+							</span>
+							<button
+								type='button'
+								className={styles.panelCollapseBtn}
+								onClick={() => setIsLeftPanelCollapsed(true)}
+								title='Collapse Patient Panel'
+							>
+								<ChevronLeft size={16} />
+							</button>
+						</div>
+
 						<div className={styles.patientHeroBlock}>
 							<div className={styles.patientAvatarHero}>
 								{selectedPatient.name.split(" ").map((n) => n[0]).join("")}
@@ -592,7 +633,7 @@ export const DoctorPortal = () => {
 				</div>
 
 				{/* Right Floating Panel: Point-in-Time Chemistry & Diagnostics */}
-				<div className={styles.rightPanel}>
+				<div className={`${styles.rightPanel} ${isRightPanelCollapsed ? styles.collapsed : ""}`}>
 					{/* Lab Biomarkers Card */}
 					<div className={styles.glassCard}>
 						<div className={styles.cardHeader}>
@@ -600,6 +641,14 @@ export const DoctorPortal = () => {
 								<Activity size={16} style={{ color: "#00a896" }} />
 								Lab Biomarkers & Chemistry
 							</h3>
+							<button
+								type='button'
+								className={styles.panelCollapseBtn}
+								onClick={() => setIsRightPanelCollapsed(true)}
+								title='Collapse Labs Panel'
+							>
+								<ChevronRight size={16} />
+							</button>
 						</div>
 
 						{selectedPatient.labMarkers.map((m, idx) => (

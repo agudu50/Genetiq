@@ -22,6 +22,7 @@ interface MainSceneProps {
 	onSidebarToggle?: () => void;
 	onSidebarSelectionMade?: () => void;
 	isPaused?: boolean;
+	showSidebar?: boolean;
 }
 
 const MainScene: React.FC<MainSceneProps> = ({
@@ -30,6 +31,7 @@ const MainScene: React.FC<MainSceneProps> = ({
 	onSidebarToggle,
 	onSidebarSelectionMade,
 	isPaused = false,
+	showSidebar = true,
 }) => {
 	const { cameraState, setCameraState } = useCamera();
 	const { backgroundId, preset, selectBackground, wrapperStyle } =
@@ -147,13 +149,15 @@ const MainScene: React.FC<MainSceneProps> = ({
 
 	return (
 		<div className='canvas-container'>
-			<SideBar
-				onModelChange={handleModelChange}
-				modelType={modelType}
-				externalCollapsed={sidebarCollapsed}
-				onExternalToggle={onSidebarToggle}
-				onSelectionMade={onSidebarSelectionMade}
-			/>
+			{showSidebar && (
+				<SideBar
+					onModelChange={handleModelChange}
+					modelType={modelType}
+					externalCollapsed={sidebarCollapsed}
+					onExternalToggle={onSidebarToggle}
+					onSelectionMade={onSidebarSelectionMade}
+				/>
+			)}
 			<div
 				className='canvas-wrapper'
 				data-bg={backgroundId}
