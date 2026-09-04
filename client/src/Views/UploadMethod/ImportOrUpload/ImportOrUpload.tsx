@@ -6,7 +6,7 @@ import { updateUserInfo } from "@/App/Redux/userSlice";
 import { addUploadRecord } from "@/App/Redux/uploadHistorySlice";
 import type { LabFinding, Recommendation } from "@/App/Redux/uploadHistorySlice";
 import { paths } from "@/App/Routes/Paths";
-import { Upload, FileText, ShieldCheck, Zap, ChevronRight, CheckCircle, ArrowLeft, Loader2, Wifi, WifiOff, Brain, Stethoscope, User, Droplets, Ruler, Scale, Activity, Clock, Check, Lock, ChevronDown, Bug, Microscope, FlaskConical, Dna, Candy, ScanSearch, Waves, Info, Sparkles, Camera, Globe, Eye, EyeOff, ZoomIn, Volume2, Pause, Play } from "lucide-react";
+import { Upload, FileText, ShieldCheck, Zap, ChevronRight, CheckCircle, ArrowLeft, Loader2, Wifi, WifiOff, Brain, Stethoscope, User, Droplets, Ruler, Scale, Activity, Clock, Lock, ChevronDown, Bug, Microscope, FlaskConical, Dna, Candy, ScanSearch, Waves, Info, Sparkles, Camera, Globe, Eye, EyeOff, ZoomIn, Volume2, Pause, Play } from "lucide-react";
 import {
 	analyzeLabResults,
 	getTranslation,
@@ -709,11 +709,6 @@ const ImportOrUpload = () => {
 												onChange={set("firstName")}
 												required
 											/>
-											{info.firstName ? (
-												<span className={styles.personalFieldCheck} aria-hidden>
-													<Check size={14} strokeWidth={3} />
-												</span>
-											) : null}
 										</div>
 									</div>
 									<div className={styles.personalField}>
@@ -726,11 +721,6 @@ const ImportOrUpload = () => {
 												onChange={set("lastName")}
 												required
 											/>
-											{info.lastName ? (
-												<span className={styles.personalFieldCheck} aria-hidden>
-													<Check size={14} strokeWidth={3} />
-												</span>
-											) : null}
 										</div>
 									</div>
 									<div className={styles.personalField}>
