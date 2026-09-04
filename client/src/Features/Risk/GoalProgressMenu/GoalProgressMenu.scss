@@ -96,8 +96,8 @@
 	padding: 10px 20px;
 	cursor: pointer;
 	gap: 8px;
-	color: #0041c4;
-	font-weight: 500;
+	color: #064e3b;
+	font-weight: 700;
 	display: flex;
 	align-items: center;
 }
@@ -304,7 +304,7 @@
 	}
 
 	&.active {
-		background: rgba(13, 120, 251, 1);
+		background: #064e3b;
 		color: #ffffff;
 	}
 
@@ -314,7 +314,7 @@
 }
 
 .day-button.active {
-	background: rgba(13, 120, 251, 1);
+	background: #064e3b;
 	color: #ffffff;
 }
 
