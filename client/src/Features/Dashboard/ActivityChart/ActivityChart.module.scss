@@ -167,8 +167,8 @@ $emerald: #10b981;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	gap: 6px;
-	padding: 8px 6px;
+	gap: 5px;
+	padding: 7px 4px;
 	border: 1px solid transparent;
 	border-radius: 8px;
 	background: transparent;
@@ -196,15 +196,14 @@ $emerald: #10b981;
 	justify-content: center;
 	flex-shrink: 0;
 	color: var(--btn-color, $blue);
-	opacity: 0.8;
+	opacity: 0.85;
 }
 
 .metricBtnLabel {
 	font-size: 0.72rem;
 	font-weight: 700;
 	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	line-height: 1;
 }
 
 .metricBtnActive {

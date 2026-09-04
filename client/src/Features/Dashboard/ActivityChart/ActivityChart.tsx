@@ -63,7 +63,7 @@ export const ActivityChart = () => {
 				{ key: "calories" as const, label: t("calories") || "Calories" },
 				{
 					key: "activeMinutes" as const,
-					label: t("active_minutes") || "Active Minutes",
+					label: "Active Mins",
 				},
 			] as const,
 		[t],
