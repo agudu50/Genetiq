@@ -70,7 +70,7 @@ function statusIcon(status: FindingStatus) {
 
 function healthScoreColour(score: number) {
 	if (score >= 90) return "#10b981";
-	if (score >= 75) return "#00A69D";
+	if (score >= 75) return "#059669";
 	if (score >= 51) return "#f59e0b";
 	return "#ef4444";
 }
@@ -166,12 +166,12 @@ const HealthScoreChart = ({ records }: { records: UploadRecord[] }) => {
 				>
 					<defs>
 						<linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1">
-							<stop offset="0%" stopColor="#00a69d" stopOpacity="0.35" />
-							<stop offset="100%" stopColor="#00a69d" stopOpacity="0.02" />
+							<stop offset="0%" stopColor="#064e3b" stopOpacity="0.35" />
+							<stop offset="100%" stopColor="#064e3b" stopOpacity="0.02" />
 						</linearGradient>
 						<linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
-							<stop offset="0%" stopColor="#00a69d" />
-							<stop offset="100%" stopColor="#38bdf8" />
+							<stop offset="0%" stopColor="#064e3b" />
+							<stop offset="100%" stopColor="#10b981" />
 						</linearGradient>
 					</defs>
 

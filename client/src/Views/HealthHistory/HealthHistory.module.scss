@@ -5,8 +5,9 @@
 //  shared across themes.
 // ============================================================================
 
-$teal:   #00a69d;
-$teal2:  #008f87;
+$teal:   #064e3b;
+$teal2:  #04382b;
+$teal-hover: #04382b;
 $green:  #10b981;
 $amber:  #f59e0b;
 $red:    #ef4444;
@@ -29,8 +30,8 @@ $blue:   #3b82f6;
 	--hh-shadow-hover: 0 16px 40px rgba(15, 23, 42, 0.1);
 	--hh-ring-track: rgba(15, 23, 42, 0.08);
 	--hh-dot-border: #ffffff;
-	--hh-profile-glow: rgba(0, 166, 157, 0.14);
-	--hh-profile-header: linear-gradient(145deg, rgba(0, 166, 157, 0.07) 0%, rgba(56, 189, 248, 0.04) 42%, #ffffff 72%);
+	--hh-profile-glow: rgba(6, 78, 59, 0.14);
+	--hh-profile-header: linear-gradient(145deg, rgba(6, 78, 59, 0.07) 0%, rgba(56, 189, 248, 0.04) 42%, #ffffff 72%);
 
 	min-height: 100vh;
 	background: var(--hh-bg);
@@ -48,7 +49,7 @@ $blue:   #3b82f6;
 		z-index: 0;
 		pointer-events: none;
 		background:
-			radial-gradient(900px 460px at 16% -8%, rgba(0, 166, 157, 0.1), transparent 60%),
+			radial-gradient(900px 460px at 16% -8%, rgba(6, 78, 59, 0.1), transparent 60%),
 			radial-gradient(820px 440px at 102% 2%, rgba(56, 189, 248, 0.1), transparent 58%),
 			radial-gradient(760px 620px at 50% 120%, rgba(99, 102, 241, 0.06), transparent 62%),
 			linear-gradient(180deg, #f8fafd 0%, #eef2f7 46%, #e6ebf3 100%);
@@ -69,21 +70,21 @@ $blue:   #3b82f6;
 
 	html[data-theme="dark"] & {
 		--hh-bg: #070b12;
-		--hh-text: rgba(255, 255, 255, 0.9);
-		--hh-text-2: rgba(255, 255, 255, 0.7);
-		--hh-muted: rgba(255, 255, 255, 0.42);
+		--hh-text: rgba(255, 255, 255, 0.95);
+		--hh-text-2: rgba(255, 255, 255, 0.72);
+		--hh-muted: rgba(255, 255, 255, 0.48);
 		--hh-card: rgba(255, 255, 255, 0.035);
-		--hh-card-solid: rgba(20, 28, 45, 0.6);
-		--hh-card-2: rgba(255, 255, 255, 0.02);
+		--hh-card-solid: rgba(20, 28, 45, 0.65);
+		--hh-card-2: rgba(255, 255, 255, 0.03);
 		--hh-border: rgba(255, 255, 255, 0.08);
 		--hh-border-soft: rgba(255, 255, 255, 0.06);
-		--hh-divider: rgba(255, 255, 255, 0.07);
+		--hh-divider: rgba(255, 255, 255, 0.08);
 		--hh-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.6);
 		--hh-shadow-hover: 0 24px 52px -16px rgba(0, 0, 0, 0.7);
-		--hh-ring-track: rgba(255, 255, 255, 0.07);
+		--hh-ring-track: rgba(255, 255, 255, 0.08);
 		--hh-dot-border: #070b12;
-		--hh-profile-glow: rgba(0, 166, 157, 0.22);
-		--hh-profile-header: linear-gradient(145deg, rgba(0, 166, 157, 0.12) 0%, rgba(56, 189, 248, 0.06) 38%, rgba(20, 28, 45, 0.92) 72%);
+		--hh-profile-glow: rgba(52, 211, 153, 0.22);
+		--hh-profile-header: linear-gradient(145deg, rgba(52, 211, 153, 0.12) 0%, rgba(56, 189, 248, 0.06) 38%, rgba(20, 28, 45, 0.92) 72%);
 
 		background: #070b12;
 
@@ -259,6 +260,12 @@ $blue:   #3b82f6;
 	border: 1px solid rgba($teal, 0.22);
 	backdrop-filter: blur(8px);
 	margin-bottom: 12px;
+
+	html[data-theme="dark"] & {
+		color: #34d399;
+		background: rgba(52, 211, 153, 0.12);
+		border-color: rgba(52, 211, 153, 0.25);
+	}
 }
 
 .livePulseDot {
@@ -297,6 +304,10 @@ $blue:   #3b82f6;
 .titleAccent {
 	color: $teal;
 	display: inline-block;
+
+	html[data-theme="dark"] & {
+		color: #34d399;
+	}
 }
 
 .pageSubtitle {
@@ -331,6 +342,10 @@ $blue:   #3b82f6;
 	svg {
 		color: $teal;
 		flex-shrink: 0;
+
+		html[data-theme="dark"] & {
+			color: #34d399;
+		}
 	}
 
 	&:hover {
@@ -338,6 +353,11 @@ $blue:   #3b82f6;
 		color: var(--hh-text);
 		transform: translateY(-1px);
 		background: rgba($teal, 0.06);
+
+		html[data-theme="dark"] & {
+			border-color: rgba(52, 211, 153, 0.35);
+			background: rgba(52, 211, 153, 0.08);
+		}
 	}
 
 	&.pillHighlight {
@@ -346,6 +366,15 @@ $blue:   #3b82f6;
 
 		svg {
 			color: $teal;
+		}
+
+		html[data-theme="dark"] & {
+			border-color: rgba(52, 211, 153, 0.3);
+			background: rgba(52, 211, 153, 0.1);
+
+			svg {
+				color: #34d399;
+			}
 		}
 	}
 }
@@ -411,6 +440,12 @@ $blue:   #3b82f6;
 	color: $teal;
 	background: rgba($teal, 0.1);
 	border: 1px solid rgba($teal, 0.2);
+
+	html[data-theme="dark"] & {
+		color: #34d399;
+		background: rgba(52, 211, 153, 0.12);
+		border-color: rgba(52, 211, 153, 0.25);
+	}
 }
 
 .pulseDotAlt {
@@ -420,6 +455,11 @@ $blue:   #3b82f6;
 	background: $teal;
 	box-shadow: 0 0 8px $teal;
 	animation: pulseGlow 1.8s ease-in-out infinite;
+
+	html[data-theme="dark"] & {
+		background: #34d399;
+		box-shadow: 0 0 8px #34d399;
+	}
 }
 
 .miniScoreBadge {
@@ -474,7 +514,13 @@ $blue:   #3b82f6;
 	border: 1px solid rgba($teal, 0.25);
 	color: $teal;
 	flex-shrink: 0;
-	box-shadow: 0 4px 12px rgba($teal, 0.1);
+	box-shadow: 0 4px 12px rgba(6, 78, 59, 0.1);
+
+	html[data-theme="dark"] & {
+		background: rgba(52, 211, 153, 0.12);
+		border-color: rgba(52, 211, 153, 0.25);
+		color: #34d399;
+	}
 }
 
 .latestFileInfo {
@@ -509,6 +555,10 @@ $blue:   #3b82f6;
 
 .bulletSep {
 	color: rgba($teal, 0.5);
+
+	html[data-theme="dark"] & {
+		color: rgba(52, 211, 153, 0.5);
+	}
 }
 
 .latestCardActions {
@@ -542,14 +592,14 @@ $blue:   #3b82f6;
 	cursor: pointer;
 	color: #fff;
 	background: $teal;
-	box-shadow: 0 4px 16px rgba($teal, 0.3);
+	box-shadow: 0 4px 16px rgba(6, 78, 59, 0.3);
 	transition: all 0.22s ease;
 	white-space: nowrap;
 
 	&:hover {
 		transform: translateY(-2px);
-		box-shadow: 0 8px 22px rgba($teal, 0.42);
-		filter: brightness(1.06);
+		background: $teal-hover;
+		box-shadow: 0 8px 22px rgba(6, 78, 59, 0.42);
 	}
 
 	&:active {
@@ -579,6 +629,11 @@ $blue:   #3b82f6;
 		color: var(--hh-text);
 		background: rgba($teal, 0.08);
 		transform: translateY(-1px);
+
+		html[data-theme="dark"] & {
+			border-color: rgba(52, 211, 153, 0.4);
+			background: rgba(52, 211, 153, 0.08);
+		}
 	}
 }
 
@@ -663,6 +718,12 @@ $blue:   #3b82f6;
 	background: rgba($teal, 0.12);
 	border: 1px solid rgba($teal, 0.25);
 	color: $teal;
+
+	html[data-theme="dark"] & {
+		background: rgba(52, 211, 153, 0.12);
+		border-color: rgba(52, 211, 153, 0.25);
+		color: #34d399;
+	}
 }
 
 .heroStatIconAmber {
@@ -1030,6 +1091,10 @@ $blue:   #3b82f6;
 		flex-shrink: 0;
 		color: $teal;
 		opacity: 0.9;
+
+		html[data-theme="dark"] & {
+			color: #34d399;
+		}
 	}
 
 	.profileBanner:hover & {
@@ -1051,7 +1116,7 @@ $blue:   #3b82f6;
 	justify-content: center;
 	gap: 8px;
 	padding: 10px 18px;
-	background: linear-gradient(135deg, $teal 0%, #0ea5a0 45%, #38bdf8 100%);
+	background: $teal;
 	border: none;
 	border-radius: 14px;
 	color: #fff;
@@ -1059,23 +1124,15 @@ $blue:   #3b82f6;
 	font-weight: 700;
 	font-family: inherit;
 	cursor: pointer;
-	transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
-	box-shadow: 0 8px 22px rgba(0, 166, 157, 0.32);
+	transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.2s ease;
+	box-shadow: 0 8px 22px rgba(6, 78, 59, 0.32);
 	position: relative;
 	overflow: hidden;
 
-	&::before {
-		content: "";
-		position: absolute;
-		inset: 0;
-		background: linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, transparent 48%);
-		pointer-events: none;
-	}
-
 	&:hover {
 		transform: translateY(-2px);
-		box-shadow: 0 12px 28px rgba(0, 166, 157, 0.4);
-		filter: brightness(1.03);
+		background: $teal-hover;
+		box-shadow: 0 12px 28px rgba(6, 78, 59, 0.4);
 	}
 
 	&:active {
@@ -1128,7 +1185,10 @@ $blue:   #3b82f6;
 	gap: 10px;
 	color: var(--hh-text);
 
-	svg { color: $teal; }
+	svg { 
+		color: $teal; 
+		html[data-theme="dark"] & { color: #34d399; }
+	}
 
 	h2 {
 		margin: 0;
@@ -1166,11 +1226,13 @@ $blue:   #3b82f6;
 	svg {
 		color: $teal;
 		transition: transform 0.2s ease;
+		html[data-theme="dark"] & { color: #34d399; }
 	}
 
 	&:hover {
 		color: var(--hh-text);
 		border-color: rgba($teal, 0.3);
+		html[data-theme="dark"] & { border-color: rgba(52, 211, 153, 0.35); }
 	}
 
 	@media (max-width: 480px) {
@@ -1210,13 +1272,18 @@ $blue:   #3b82f6;
 	border-radius: 50%;
 	background: $teal;
 	border: 2px solid var(--hh-dot-border);
-	box-shadow: 0 0 0 3px rgba($teal, 0.2);
+	box-shadow: 0 0 0 3px rgba(6, 78, 59, 0.2);
 	flex-shrink: 0;
+
+	html[data-theme="dark"] & {
+		background: #34d399;
+		box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.25);
+	}
 
 	@media (max-width: 640px) {
 		width: 9px;
 		height: 9px;
-		box-shadow: 0 0 0 2px rgba($teal, 0.25);
+		box-shadow: 0 0 0 2px rgba(6, 78, 59, 0.25);
 	}
 }
 
@@ -1226,6 +1293,10 @@ $blue:   #3b82f6;
 	min-height: 24px;
 	background: linear-gradient(to bottom, rgba($teal, 0.35), rgba($teal, 0.04));
 	margin: 6px 0;
+
+	html[data-theme="dark"] & {
+		background: linear-gradient(to bottom, rgba(52, 211, 153, 0.35), rgba(52, 211, 153, 0.04));
+	}
 }
 
 // ── Cards list (replaces timeline) ──────────────────────────────────────────
@@ -1255,6 +1326,7 @@ $blue:   #3b82f6;
 	&:hover {
 		border-color: rgba($teal, 0.22);
 		box-shadow: var(--hh-shadow-hover);
+		html[data-theme="dark"] & { border-color: rgba(52, 211, 153, 0.25); }
 	}
 
 	@media (max-width: 640px) { padding: 16px; }
@@ -1294,6 +1366,12 @@ $blue:   #3b82f6;
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 	align-self: flex-start;
+
+	html[data-theme="dark"] & {
+		color: #34d399;
+		background: rgba(52, 211, 153, 0.12);
+		border-color: rgba(52, 211, 153, 0.25);
+	}
 }
 
 .recordDateRow {
@@ -1445,7 +1523,10 @@ $blue:   #3b82f6;
 	letter-spacing: 0.07em;
 	color: var(--hh-muted);
 
-	svg { color: $teal; }
+	svg { 
+		color: $teal; 
+		html[data-theme="dark"] & { color: #34d399; }
+	}
 }
 
 .findingsList {
@@ -1584,6 +1665,10 @@ $blue:   #3b82f6;
 .chevronOpen {
 	transform: rotate(180deg);
 	color: $teal;
+
+	html[data-theme="dark"] & {
+		color: #34d399;
+	}
 }
 
 .findingNote {
@@ -1622,7 +1707,10 @@ $blue:   #3b82f6;
 	text-align: left;
 	transition: background 0.2s, border-color 0.2s;
 
-	svg:first-child { color: $teal; }
+	svg:first-child { 
+		color: $teal; 
+		html[data-theme="dark"] & { color: #34d399; }
+	}
 	span { flex: 1; }
 
 	&:hover { border-color: rgba($teal, 0.28); }
@@ -1702,6 +1790,12 @@ $blue:   #3b82f6;
 	align-items: center;
 	justify-content: center;
 	color: $teal;
+
+	html[data-theme="dark"] & {
+		background: rgba(52, 211, 153, 0.12);
+		border-color: rgba(52, 211, 153, 0.25);
+		color: #34d399;
+	}
 }
 
 .uploadBtn {
@@ -1709,7 +1803,7 @@ $blue:   #3b82f6;
 	align-items: center;
 	gap: 8px;
 	padding: 13px 28px;
-	background: linear-gradient(135deg, $teal, #38bdf8);
+	background: $teal;
 	color: #fff;
 	border: none;
 	border-radius: 12px;
@@ -1718,12 +1812,13 @@ $blue:   #3b82f6;
 	font-family: inherit;
 	cursor: pointer;
 	margin-top: 8px;
-	transition: transform 0.15s, box-shadow 0.2s;
-	box-shadow: 0 6px 18px rgba($teal, 0.3);
+	transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
+	box-shadow: 0 6px 18px rgba(6, 78, 59, 0.3);
 
 	&:hover {
 		transform: translateY(-2px);
-		box-shadow: 0 10px 26px rgba($teal, 0.42);
+		background: $teal-hover;
+		box-shadow: 0 10px 26px rgba(6, 78, 59, 0.42);
 	}
 }
 
@@ -1742,7 +1837,12 @@ $blue:   #3b82f6;
 
 	@media (min-width: 1025px) { grid-column: 1 / -1; }
 
-	svg { flex-shrink: 0; color: $teal; margin-top: 1px; }
+	svg { 
+		flex-shrink: 0; 
+		color: $teal; 
+		margin-top: 1px; 
+		html[data-theme="dark"] & { color: #34d399; }
+	}
 }
 
 // ── History column (wraps charts + timeline) ────────────────────────────────
@@ -1795,7 +1895,10 @@ $blue:   #3b82f6;
 	gap: 10px;
 	color: var(--hh-text);
 
-	svg { color: $teal; }
+	svg { 
+		color: $teal; 
+		html[data-theme="dark"] & { color: #34d399; }
+	}
 
 	h2 {
 		margin: 0;
@@ -1825,7 +1928,7 @@ $blue:   #3b82f6;
 	}
 
 	&::-webkit-scrollbar-thumb {
-		background: rgba($teal, 0.2);
+		background: rgba(6, 78, 59, 0.2);
 		border-radius: 2px;
 	}
 
@@ -1870,7 +1973,10 @@ $blue:   #3b82f6;
 	gap: 10px;
 	color: var(--hh-text);
 
-	svg { color: $teal; }
+	svg { 
+		color: $teal; 
+		html[data-theme="dark"] & { color: #34d399; }
+	}
 
 	h2 {
 		margin: 0;
@@ -2001,7 +2107,10 @@ $blue:   #3b82f6;
 	margin-right: 4px;
 	white-space: nowrap;
 
-	svg { color: $teal; }
+	svg { 
+		color: $teal; 
+		html[data-theme="dark"] & { color: #34d399; }
+	}
 }
 
 .sortPill,
@@ -2026,6 +2135,7 @@ $blue:   #3b82f6;
 	&:hover {
 		border-color: rgba($teal, 0.3);
 		color: var(--hh-text);
+		html[data-theme="dark"] & { border-color: rgba(52, 211, 153, 0.35); }
 	}
 }
 
@@ -2034,6 +2144,12 @@ $blue:   #3b82f6;
 	border-color: rgba($teal, 0.3);
 	color: $teal;
 	font-weight: 800;
+
+	html[data-theme="dark"] & {
+		background: rgba(52, 211, 153, 0.14);
+		border-color: rgba(52, 211, 153, 0.35);
+		color: #34d399;
+	}
 }
 
 .filterPillActive {
@@ -2041,6 +2157,12 @@ $blue:   #3b82f6;
 	border-color: rgba($teal, 0.3);
 	color: $teal;
 	font-weight: 800;
+
+	html[data-theme="dark"] & {
+		background: rgba(52, 211, 153, 0.14);
+		border-color: rgba(52, 211, 153, 0.35);
+		color: #34d399;
+	}
 }
 
 // ── Empty filter state ──────────────────────────────────────────────────────
@@ -2109,6 +2231,12 @@ $blue:   #3b82f6;
 		border-color: rgba($teal, 0.3);
 		color: $teal;
 		background: rgba($teal, 0.06);
+
+		html[data-theme="dark"] & {
+			border-color: rgba(52, 211, 153, 0.35);
+			color: #34d399;
+			background: rgba(52, 211, 153, 0.08);
+		}
 	}
 
 	&:disabled {
@@ -2137,6 +2265,11 @@ $blue:   #3b82f6;
 	&:hover {
 		border-color: rgba($teal, 0.3);
 		color: $teal;
+
+		html[data-theme="dark"] & {
+			border-color: rgba(52, 211, 153, 0.35);
+			color: #34d399;
+		}
 	}
 }
 
@@ -2145,11 +2278,11 @@ $blue:   #3b82f6;
 	border-color: $teal;
 	color: #fff;
 	font-weight: 800;
-	box-shadow: 0 4px 12px rgba($teal, 0.3);
+	box-shadow: 0 4px 12px rgba(6, 78, 59, 0.3);
 
 	&:hover {
-		background: $teal;
-		border-color: $teal;
+		background: $teal-hover;
+		border-color: $teal-hover;
 		color: #fff;
 	}
 }

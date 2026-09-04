@@ -1,6 +1,6 @@
 @use "@/App/Styles/_mixins" as mixins;
 
-$teal-primary: #00a69d;
+$teal-primary: #064e3b;
 $purple-vibrant: #8b5cf6;
 $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 
@@ -170,9 +170,9 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .handoverBtn {
-	background: rgba($teal-primary, 0.1);
-	border: 1px solid rgba($teal-primary, 0.22);
-	color: $teal-primary;
+	background: $teal-primary;
+	border: 1px solid $teal-primary;
+	color: #ffffff;
 	padding: 8px 14px;
 	border-radius: 12px;
 	font-size: 12px;
@@ -184,16 +184,12 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 	transition: all 0.35s $ease-spring;
 	white-space: nowrap;
 
-	html[data-theme="light"] & {
-		background: rgba($teal-primary, 0.08);
-	}
-
 	&:hover {
-		background: $teal-primary;
+		background: #04382b;
 		color: #ffffff;
-		border-color: $teal-primary;
+		border-color: #04382b;
 		transform: translateY(-1px);
-		box-shadow: 0 6px 18px rgba(0, 166, 157, 0.28);
+		box-shadow: 0 6px 18px rgba(6, 78, 59, 0.28);
 	}
 }
 
