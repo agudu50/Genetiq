@@ -246,9 +246,24 @@ export const DoctorPortal = () => {
 	const [showProblemHistory, setShowProblemHistory] = useState(true);
 	const recognitionRef = useRef<any>(null);
 
-	// Panel Collapsible State
-	const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState(false);
-	const [isRightPanelCollapsed, setIsRightPanelCollapsed] = useState(false);
+	// Panel Collapsible State - auto collapse on smaller screens for immediate 3D twin visibility
+	const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState(() =>
+		typeof window !== "undefined" ? window.innerWidth <= 900 : false,
+	);
+	const [isRightPanelCollapsed, setIsRightPanelCollapsed] = useState(() =>
+		typeof window !== "undefined" ? window.innerWidth <= 1200 : false,
+	);
+
+	useEffect(() => {
+		const handleResize = () => {
+			if (window.innerWidth <= 900) {
+				setIsLeftPanelCollapsed(true);
+				setIsRightPanelCollapsed(true);
+			}
+		};
+		window.addEventListener("resize", handleResize);
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
 
 	const selectedPatient =
 		patients.find((p) => p.id === selectedPatientId) || patients[0];
@@ -501,8 +516,10 @@ export const DoctorPortal = () => {
 						type='button'
 						className={styles.patientViewBtn}
 						onClick={() => navigate(paths.dashboard.root)}
+						title='Switch to Patient Mode'
 					>
-						<User size={14} /> Patient Mode
+						<User size={14} />
+						<span className={styles.patientBtnLabel}>Patient Mode</span>
 					</button>
 				</div>
 			</header>
@@ -512,9 +529,15 @@ export const DoctorPortal = () => {
 				<button
 					type='button'
 					className={`${styles.expandToggleBtn} ${styles.expandToggleBtnLeft}`}
-					onClick={() => setIsLeftPanelCollapsed(false)}
+					onClick={() => {
+						setIsLeftPanelCollapsed(false);
+						if (window.innerWidth <= 768) {
+							setIsRightPanelCollapsed(true);
+						}
+					}}
 				>
-					<User size={14} /> Show Patient Profile
+					<User size={14} />
+					<span>Patient Profile</span>
 				</button>
 			)}
 
@@ -522,9 +545,15 @@ export const DoctorPortal = () => {
 				<button
 					type='button'
 					className={`${styles.expandToggleBtn} ${styles.expandToggleBtnRight}`}
-					onClick={() => setIsRightPanelCollapsed(false)}
+					onClick={() => {
+						setIsRightPanelCollapsed(false);
+						if (window.innerWidth <= 768) {
+							setIsLeftPanelCollapsed(true);
+						}
+					}}
 				>
-					<Activity size={14} /> Show Labs & Meds
+					<Activity size={14} />
+					<span>Labs & Meds</span>
 				</button>
 			)}
 

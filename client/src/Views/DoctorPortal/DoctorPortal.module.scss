@@ -1169,3 +1169,213 @@
 	}
 }
 
+// ─── Responsive Mobile & Tablet Optimizations ────────────────────────────────
+
+@media (max-width: 1024px) {
+	.topHeader {
+		padding: 0 16px;
+		height: 64px;
+	}
+
+	.hospitalSubtitle {
+		display: none;
+	}
+
+	.patientSwitcherBtn {
+		padding: 6px 12px;
+		font-size: 0.8rem;
+	}
+
+	.floatingLayout {
+		top: 72px;
+		bottom: 72px;
+		left: 12px;
+		right: 12px;
+	}
+
+	.leftPanel,
+	.rightPanel {
+		width: min(340px, calc(100vw - 24px));
+		background: rgba(11, 17, 29, 0.94);
+		border-radius: 18px;
+		box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+
+		:global(html[data-theme="light"]) & {
+			background: rgba(255, 255, 255, 0.96);
+			box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12);
+		}
+	}
+
+	.expandToggleBtnLeft {
+		top: 72px;
+		left: 12px;
+	}
+
+	.expandToggleBtnRight {
+		top: 72px;
+		right: 12px;
+	}
+
+	.bottomOrganBar {
+		bottom: 12px;
+		max-width: calc(100vw - 24px);
+		padding: 4px 6px;
+	}
+}
+
+@media (max-width: 768px) {
+	.topHeader {
+		padding: 0 10px;
+		height: 58px;
+	}
+
+	.brandArea {
+		gap: 8px;
+	}
+
+	.brandLogo {
+		width: 28px;
+		height: 28px;
+		border-radius: 8px;
+		svg {
+			width: 16px;
+			height: 16px;
+		}
+	}
+
+	.hospitalTitle {
+		font-size: 0.78rem !important;
+		max-width: 100px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.patientSwitcherWrapper {
+		position: static;
+	}
+
+	.patientSwitcherBtn {
+		padding: 5px 8px;
+		gap: 4px;
+		font-size: 0.74rem;
+	}
+
+	.activePatientPill {
+		font-size: 0.74rem;
+		gap: 4px;
+	}
+
+	.patientDropdownMenu {
+		position: fixed;
+		top: 62px;
+		left: 10px;
+		right: 10px;
+		width: auto;
+		transform: none;
+		max-height: 70vh;
+		z-index: 1000;
+	}
+
+	.patientBtnLabel {
+		display: none;
+	}
+
+	.patientViewBtn {
+		padding: 6px 8px;
+		font-size: 0.72rem;
+		border-radius: 8px;
+	}
+
+	.floatingLayout {
+		top: 64px;
+		bottom: 64px;
+		left: 8px;
+		right: 8px;
+	}
+
+	.leftPanel,
+	.rightPanel {
+		position: fixed;
+		top: 64px;
+		bottom: 64px;
+		left: 8px;
+		right: 8px;
+		width: auto;
+		max-width: none;
+		z-index: 45;
+	}
+
+	.leftPanel.collapsed {
+		transform: translateY(100vh);
+	}
+
+	.rightPanel.collapsed {
+		transform: translateY(100vh);
+	}
+
+	.expandToggleBtn {
+		padding: 6px 10px;
+		font-size: 0.72rem;
+		gap: 4px;
+		border-radius: 20px;
+	}
+
+	.expandToggleBtnLeft {
+		top: 66px;
+		left: 8px;
+	}
+
+	.expandToggleBtnRight {
+		top: 66px;
+		right: 8px;
+	}
+
+	.bottomOrganBar {
+		bottom: 10px;
+		max-width: calc(100vw - 16px);
+		padding: 4px 6px;
+		gap: 4px;
+	}
+
+	.organPill {
+		padding: 6px 10px;
+		font-size: 0.72rem;
+		gap: 4px;
+		svg {
+			width: 12px;
+			height: 12px;
+		}
+	}
+
+	.modalOverlay {
+		padding: 8px;
+	}
+
+	.modalContent {
+		max-height: 94vh;
+		border-radius: 16px;
+	}
+
+	.modalHeader {
+		padding: 14px 16px;
+		h2 {
+			font-size: 0.95rem;
+		}
+	}
+
+	.modalBody {
+		padding: 14px 16px;
+		gap: 12px;
+	}
+
+	.modalFooter {
+		padding: 12px 16px;
+		flex-direction: column-reverse;
+		gap: 8px;
+		button {
+			width: 100%;
+		}
+	}
+}
+
