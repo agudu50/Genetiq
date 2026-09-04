@@ -352,11 +352,11 @@ $teal-bright: #34d399;
 }
 
 .personalProgressTrack {
-	stroke: rgba($teal, 0.12);
+	stroke: var(--iou-brand-tint);
 }
 
 .personalProgressFill {
-	stroke: $teal;
+	stroke: var(--iou-brand-text);
 	transition: stroke-dashoffset 0.45s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -389,9 +389,9 @@ $teal-bright: #34d399;
 	height: 48px;
 	border-radius: 12px;
 	flex-shrink: 0;
-	color: $teal;
-	background: var(--iou-surface);
-	border: 1px solid var(--iou-border);
+	color: var(--iou-brand-text);
+	background: var(--iou-brand-tint);
+	border: 1px solid var(--iou-brand-border);
 }
 
 .personalHeroCopy {
@@ -412,7 +412,7 @@ $teal-bright: #34d399;
 	font-weight: 700;
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
-	color: $teal;
+	color: var(--iou-brand-text);
 }
 
 .personalCompleteness {
@@ -423,9 +423,9 @@ $teal-bright: #34d399;
 	border-radius: 99px;
 	font-size: 11px;
 	font-weight: 700;
-	color: var(--iou-text);
-	background: rgba($teal, 0.1);
-	border: 1px solid rgba($teal, 0.18);
+	color: var(--iou-brand-text);
+	background: var(--iou-brand-tint);
+	border: 1px solid var(--iou-brand-border);
 }
 
 .personalStepJourney {
@@ -644,9 +644,9 @@ $teal-bright: #34d399;
 .personalCardProgressBar {
 	height: 100%;
 	border-radius: 99px;
-	background: linear-gradient(90deg, $teal 0%, $teal2 100%);
+	background: var(--iou-brand-text);
 	transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-	box-shadow: 0 0 12px rgba($teal, 0.35);
+	box-shadow: 0 0 12px rgba(52, 211, 153, 0.35);
 }
 
 .personalSectionHead {
@@ -666,9 +666,9 @@ $teal-bright: #34d399;
 	font-size: 10px;
 	font-weight: 800;
 	letter-spacing: 0.04em;
-	color: $teal;
-	background: rgba($teal, 0.1);
-	border: 1px solid rgba($teal, 0.18);
+	color: var(--iou-brand-text);
+	background: var(--iou-brand-tint);
+	border: 1px solid var(--iou-brand-border);
 }
 
 .personalSection {
@@ -695,7 +695,7 @@ $teal-bright: #34d399;
 	letter-spacing: 0.01em;
 
 	svg {
-		color: $teal;
+		color: var(--iou-brand-text);
 		flex-shrink: 0;
 	}
 }
@@ -752,7 +752,7 @@ $teal-bright: #34d399;
 	align-items: center;
 	justify-content: center;
 	padding: 0 12px;
-	color: $teal;
+	color: var(--iou-brand-text);
 	border-left: 1px solid var(--iou-input-border);
 }
 
@@ -838,10 +838,10 @@ $teal-bright: #34d399;
 }
 
 .personalBloodChipActive {
-	color: $teal;
-	border-color: rgba($teal, 0.45);
-	background: rgba($teal, 0.1);
-	box-shadow: inset 0 0 0 1px rgba($teal, 0.12);
+	color: var(--iou-brand-text);
+	border-color: var(--iou-brand-text);
+	background: var(--iou-brand-tint);
+	box-shadow: 0 0 0 1px var(--iou-brand-border);
 }
 
 .personalInputWrap,
@@ -855,8 +855,8 @@ $teal-bright: #34d399;
 	transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
 
 	&:focus-within {
-		border-color: rgba($teal, 0.55);
-		box-shadow: 0 0 0 3px rgba($teal, 0.12);
+		border-color: var(--iou-brand-text);
+		box-shadow: 0 0 0 3px var(--iou-brand-tint);
 	}
 
 	input,
@@ -899,7 +899,7 @@ $teal-bright: #34d399;
 	font-weight: 700;
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
-	color: $teal;
+	color: var(--iou-brand-text);
 	border-left: 1px solid var(--iou-input-border);
 	white-space: nowrap;
 }
@@ -910,7 +910,7 @@ $teal-bright: #34d399;
 		right: 12px;
 		top: 50%;
 		transform: translateY(-50%);
-		color: $teal;
+		color: var(--iou-brand-text);
 		pointer-events: none;
 		opacity: 0.75;
 	}
@@ -955,8 +955,8 @@ $teal-bright: #34d399;
 	width: 36px;
 	height: 36px;
 	border-radius: 10px;
-	color: $teal;
-	background: rgba($teal, 0.12);
+	color: var(--iou-brand-text);
+	background: var(--iou-brand-tint);
 	flex-shrink: 0;
 
 	.bmiUnderweight & { color: #60a5fa; background: rgba(96, 165, 250, 0.12); }
@@ -991,7 +991,7 @@ $teal-bright: #34d399;
 
 .personalBmiZoneNormal {
 	flex: 4;
-	background: rgba($teal, 0.55);
+	background: rgba(52, 211, 153, 0.55);
 }
 
 .personalBmiZoneOver {
@@ -1048,9 +1048,9 @@ $teal-bright: #34d399;
 	border-radius: 99px;
 	font-size: 11px;
 	font-weight: 700;
-	color: $teal;
-	background: rgba($teal, 0.12);
-	border: 1px solid rgba($teal, 0.2);
+	color: var(--iou-brand-text);
+	background: var(--iou-brand-tint);
+	border: 1px solid var(--iou-brand-border);
 	white-space: nowrap;
 
 	.bmiUnderweight & { color: #60a5fa; background: rgba(96, 165, 250, 0.12); border-color: rgba(96, 165, 250, 0.2); }
@@ -1075,7 +1075,7 @@ $teal-bright: #34d399;
 	color: var(--iou-muted);
 
 	svg {
-		color: $teal;
+		color: var(--iou-brand-text);
 		flex-shrink: 0;
 	}
 }
@@ -1094,13 +1094,14 @@ $teal-bright: #34d399;
 	font-family: inherit;
 	color: #fff;
 	cursor: pointer;
-	background: linear-gradient(135deg, $teal 0%, $teal2 100%);
-	box-shadow: 0 10px 28px rgba($teal, 0.28);
+	background: $teal;
+	box-shadow: 0 10px 28px rgba(6, 78, 59, 0.28);
 	transition: transform 0.15s, box-shadow 0.2s, filter 0.2s, opacity 0.2s;
 
 	&:hover:not(:disabled) {
+		background: $teal2;
 		transform: translateY(-1px);
-		box-shadow: 0 14px 32px rgba($teal, 0.34);
+		box-shadow: 0 14px 32px rgba(6, 78, 59, 0.34);
 		filter: brightness(1.03);
 	}
 
