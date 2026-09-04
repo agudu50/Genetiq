@@ -6,7 +6,8 @@ import {
 	Activity,
 	FileText,
 	Smartphone,
-	Users,
+	UserCheck,
+	Target,
 	Bot,
 	Zap,
 	ArrowRight,
@@ -35,45 +36,52 @@ export const QuickActions = ({
 		{
 			id: "take-quiz",
 			label: t("take_quiz") || "Take Quiz",
-			color: "#a78bfa",
+			color: "#8b5cf6",
 			path: "/config",
-			icon: <ClipboardCheck size={17} strokeWidth={2.25} />,
+			icon: <ClipboardCheck size={18} strokeWidth={2.2} />,
 		},
 		{
 			id: "log-exercise",
 			label: t("log_exercise") || "Log Exercise",
-			color: "#3b82f6",
+			color: "#38bdf8",
 			path: "/log/exercise",
-			icon: <Activity size={17} strokeWidth={2.25} />,
+			icon: <Activity size={18} strokeWidth={2.2} />,
 		},
 		{
 			id: "view-reports",
 			label: t("view_reports") || "View Reports",
 			color: "#06b6d4",
 			path: "/reports",
-			icon: <FileText size={17} strokeWidth={2.25} />,
+			icon: <FileText size={18} strokeWidth={2.2} />,
 		},
 		{
 			id: "connect-device",
 			label: t("connect_device") || "Connect Device",
 			color: "#f59e0b",
 			path: "/config/connect-app",
-			icon: <Smartphone size={17} strokeWidth={2.25} />,
+			icon: <Smartphone size={18} strokeWidth={2.2} />,
 		},
 		{
-			id: "specialist-access",
-			label: t("specialist_access") || "Specialist Access",
+			id: "ask-doctor",
+			label: "Ask Doctor",
 			color: "#ec4899",
 			path: "/ai-assistant",
-			icon: <Users size={17} strokeWidth={2.25} />,
+			icon: <UserCheck size={18} strokeWidth={2.2} />,
+		},
+		{
+			id: "health-goals",
+			label: t("goals_nav") || "Health Goals",
+			color: "#10b981",
+			path: "/goals",
+			icon: <Target size={18} strokeWidth={2.2} />,
 		},
 		{
 			id: "symptom-triage",
 			label: t("ai_assistant") || "AI Assistant",
-			color: "#00a69d",
+			color: "#10b981",
 			onClick: onToggleChatbot,
 			featured: true,
-			icon: <Bot size={18} strokeWidth={2.25} />,
+			icon: <Bot size={19} strokeWidth={2.2} />,
 		},
 	];
 
@@ -91,12 +99,18 @@ export const QuickActions = ({
 	return (
 		<div className={styles.container}>
 			<div className={styles.inner}>
+				{/* Top Header */}
 				<div className={styles.header}>
 					<div className={styles.headerTop}>
-						<span className={styles.eyebrow}>
-							<Zap size={12} strokeWidth={2.5} />
-							{t("quick_actions_short") || "Shortcuts"}
-						</span>
+						<div className={styles.titleGroup}>
+							<div className={styles.iconBadge}>
+								<Zap size={15} strokeWidth={2.4} />
+							</div>
+							<h3 className={styles.title}>
+								{t("quick_actions") || "Quick Actions"}
+							</h3>
+						</div>
+
 						<div className={styles.telemetryStatus}>
 							<span className={styles.pulseBeacon} />
 							<Radio size={11} strokeWidth={2.5} />
@@ -105,9 +119,9 @@ export const QuickActions = ({
 							</span>
 						</div>
 					</div>
-					<h3 className={styles.title}>{t("quick_actions") || "Quick Actions"}</h3>
 				</div>
 
+				{/* Action Tiles Grid */}
 				<div className={styles.actionsGrid}>
 					{gridActions.map((action) => (
 						<button
@@ -117,30 +131,38 @@ export const QuickActions = ({
 							style={{ "--action-color": action.color } as React.CSSProperties}
 							onClick={() => handleAction(action)}
 						>
-							<span className={styles.iconWrapper}>{action.icon}</span>
+							<div className={styles.actionIconBox}>{action.icon}</div>
 							<span className={styles.label}>{action.label}</span>
-							<ArrowRight size={14} className={styles.actionArrow} strokeWidth={2.25} />
 						</button>
 					))}
 				</div>
 
+				{/* Featured AI Assistant Card */}
 				{featuredAction && (
 					<button
 						type="button"
 						className={styles.featuredBtn}
-						style={
-							{ "--action-color": featuredAction.color } as React.CSSProperties
-						}
 						onClick={() => handleAction(featuredAction)}
 					>
-						<span className={styles.featuredIcon}>{featuredAction.icon}</span>
-						<span className={styles.featuredCopy}>
-							<span className={styles.featuredLabel}>{featuredAction.label}</span>
-							<span className={styles.featuredHint}>
-								{t("ai_assistant_hint") || "Ask about symptoms & care"}
-							</span>
-						</span>
-						<ArrowRight size={16} className={styles.featuredArrow} strokeWidth={2.5} />
+						<div className={styles.featuredLeft}>
+							<div className={styles.featuredIconWrap}>
+								<Bot size={19} strokeWidth={2.2} />
+							</div>
+							<div className={styles.featuredCopy}>
+								<span className={styles.featuredLabel}>
+									{featuredAction.label}
+								</span>
+								<span className={styles.featuredHint}>
+									{t("ai_assistant_hint") || "Ask about symptoms & care"}
+								</span>
+							</div>
+						</div>
+
+						<ArrowRight
+							size={16}
+							className={styles.featuredArrow}
+							strokeWidth={2.5}
+						/>
 					</button>
 				)}
 			</div>

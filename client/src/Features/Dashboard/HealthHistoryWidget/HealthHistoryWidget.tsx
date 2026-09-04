@@ -39,11 +39,11 @@ const formatRelativeTime = (
 		const now = new Date();
 		const diffMs = now.getTime() - date.getTime();
 
-		if (diffMs < 30000) return t("just_now");
+		if (diffMs < 30000) return t("just_now") || "Just now";
 
 		const diffMins = Math.floor(diffMs / 60000);
 		if (diffMins < 60) {
-			const label = diffMins === 1 ? t("min_ago") : t("mins_ago");
+			const label = diffMins === 1 ? t("min_ago") || "min ago" : t("mins_ago") || "mins ago";
 			return label.includes("{n}")
 				? label.replace("{n}", String(diffMins))
 				: `${diffMins} ${label}`;
@@ -51,16 +51,16 @@ const formatRelativeTime = (
 
 		const diffHours = Math.floor(diffMs / 3600000);
 		if (diffHours < 24) {
-			const label = diffHours === 1 ? t("hour_ago") : t("hours_ago");
+			const label = diffHours === 1 ? t("hour_ago") || "hour ago" : t("hours_ago") || "hours ago";
 			return label.includes("{n}")
 				? label.replace("{n}", String(diffHours))
 				: `${diffHours} ${label}`;
 		}
 
 		const diffDays = Math.floor(diffMs / 86400000);
-		if (diffDays === 1) return t("yesterday");
+		if (diffDays === 1) return t("yesterday") || "Yesterday";
 		if (diffDays < 7) {
-			const label = diffDays === 1 ? t("day_ago") : t("days_ago");
+			const label = diffDays === 1 ? t("day_ago") || "day ago" : t("days_ago") || "days ago";
 			return label.includes("{n}")
 				? label.replace("{n}", String(diffDays))
 				: `${diffDays} ${label}`;
@@ -71,7 +71,7 @@ const formatRelativeTime = (
 			{ month: "short", day: "numeric", year: "numeric" },
 		);
 	} catch {
-		return t("recent");
+		return t("recent") || "Recent";
 	}
 };
 
@@ -120,7 +120,7 @@ const DEFAULT_MOCK_ITEMS: HistoryItem[] = [
 		date: new Date(now.getTime() - 72 * 60 * 60 * 1000).toISOString(),
 		status: "Verified",
 		icon: "beaker",
-		color: "#3b82f6",
+		color: "#38bdf8",
 	},
 ];
 
@@ -195,30 +195,27 @@ export const HealthHistoryWidget = () => {
 	const renderIcon = (iconName: string) => {
 		switch (iconName) {
 			case "beaker":
-				return <Beaker size={16} strokeWidth={2.25} />;
+				return <Beaker size={16} strokeWidth={2.2} />;
 			case "brain":
-				return <Brain size={16} strokeWidth={2.25} />;
+				return <Brain size={16} strokeWidth={2.2} />;
 			case "shield":
-				return <ShieldCheck size={16} strokeWidth={2.25} />;
+				return <ShieldCheck size={16} strokeWidth={2.2} />;
 			case "wearable":
-				return <Watch size={16} strokeWidth={2.25} />;
+				return <Watch size={16} strokeWidth={2.2} />;
 			default:
-				return <Activity size={16} strokeWidth={2.25} />;
+				return <Activity size={16} strokeWidth={2.2} />;
 		}
 	};
 
 	return (
 		<div className={styles.container}>
-			<div className={styles.cardMeshBg} aria-hidden />
-			<div className={styles.cardGlowBlob} aria-hidden />
-
 			<header className={styles.header}>
 				<div className={styles.titleBlock}>
 					<div className={styles.titleIconWrap}>
-						<ClipboardList size={18} strokeWidth={2.25} />
+						<ClipboardList size={16} strokeWidth={2.4} />
 					</div>
 					<div className={styles.titleText}>
-						<h3 className={styles.title}>{t("clinical_history")}</h3>
+						<h3 className={styles.title}>{t("clinical_history") || "Clinical History"}</h3>
 						<div className={styles.titleMeta}>
 							<span className={styles.recordsPill}>
 								{combinedItems.length}{" "}
@@ -234,74 +231,62 @@ export const HealthHistoryWidget = () => {
 						className={styles.handoverBtn}
 						onClick={() => setShowQR(true)}
 					>
-						<QrCode size={14} strokeWidth={2.25} />
-						<span>{t("clinical_handover")}</span>
+						<QrCode size={14} strokeWidth={2.2} />
+						<span>{t("clinical_handover") || "Clinical Handover"}</span>
 					</button>
 					<button
 						type="button"
 						className={styles.viewAll}
 						onClick={() => navigate(paths.clinicalHistory)}
 					>
-						<span>{t("view_all")}</span>
+						<span>{t("view_all") || "View All"}</span>
 						<ChevronRight size={14} strokeWidth={2.5} />
 					</button>
 				</div>
 			</header>
 
-			<div className={styles.timeline}>
-				<div className={styles.timelineSpine} aria-hidden />
-
-				{combinedItems.map((item, i) => {
+			{/* Record Cards Grid / Stack */}
+			<div className={styles.cardsStack}>
+				{combinedItems.map((item) => {
 					const statusTone = getStatusTone(item.status);
-					const isLast = i === combinedItems.length - 1;
 
 					return (
 						<button
 							type="button"
 							key={item.id}
-							className={`${styles.historyItem} ${isLast ? styles.historyItemLast : ""}`}
+							className={styles.recordCard}
 							style={{ "--accent-color": item.color } as React.CSSProperties}
 							onClick={() => navigate(paths.clinicalHistory)}
 						>
-							<div className={styles.timelineNode}>
-								<div className={styles.iconContainer}>
-									{renderIcon(item.icon)}
+							<div className={styles.recordIconBox}>
+								{renderIcon(item.icon)}
+							</div>
+
+							<div className={styles.recordContent}>
+								<div className={styles.recordTopRow}>
+									<span className={styles.recordType}>
+										{t(item.type) || item.type}
+									</span>
+									<span className={styles.recordDate}>
+										<Clock size={11} strokeWidth={2.2} />
+										{formatRelativeTime(item.date, t, lang)}
+									</span>
+								</div>
+
+								<h4 className={styles.recordTitle}>{item.title}</h4>
+
+								<div className={styles.statusRow}>
+									<span
+										className={`${styles.statusBadge} ${styles[`statusBadge--${statusTone}`]}`}
+									>
+										<span className={styles.statusDot} />
+										{t(item.status) || item.status}
+									</span>
 								</div>
 							</div>
 
-							<div className={styles.itemCard}>
-								<div className={styles.itemAccent} aria-hidden />
-
-								<div className={styles.itemIconMobile} aria-hidden>
-									{renderIcon(item.icon)}
-								</div>
-
-								<div className={styles.content}>
-									<div className={styles.row}>
-										<span className={styles.itemType}>
-											{t(item.type)}
-										</span>
-										<span className={styles.itemDate}>
-											<Clock size={11} strokeWidth={2.25} />
-											{formatRelativeTime(item.date, t, lang)}
-										</span>
-									</div>
-
-									<h4 className={styles.itemTitle}>{item.title}</h4>
-
-									<div className={styles.statusRow}>
-										<span
-											className={`${styles.statusBadge} ${styles[`statusBadge--${statusTone}`]}`}
-										>
-											<span className={styles.statusDot} />
-											{t(item.status)}
-										</span>
-									</div>
-								</div>
-
-								<div className={styles.itemArrow}>
-									<ChevronRight size={16} strokeWidth={2.5} />
-								</div>
+							<div className={styles.recordArrow}>
+								<ChevronRight size={16} strokeWidth={2.5} />
 							</div>
 						</button>
 					);
@@ -317,34 +302,33 @@ export const HealthHistoryWidget = () => {
 						className={styles.qrModal}
 						onClick={(e) => e.stopPropagation()}
 					>
-							<div className={styles.modalHeader}>
-								<h3>{t("clinical_handover")}</h3>
-								<button
-									type="button"
-									onClick={() => setShowQR(false)}
-									aria-label={t("close")}
-								>
-									<X size={20} strokeWidth={2.5} aria-hidden />
-								</button>
+						<div className={styles.modalHeader}>
+							<h3>{t("clinical_handover") || "Clinical Handover"}</h3>
+							<button
+								type="button"
+								onClick={() => setShowQR(false)}
+								aria-label={t("close") || "Close"}
+							>
+								<X size={20} strokeWidth={2.5} aria-hidden />
+							</button>
+						</div>
+						<div className={styles.qrContent}>
+							<div className={styles.qrPlaceholder}>
+								<QrCode size={160} strokeWidth={1.5} color="#10b981" />
 							</div>
-							<div className={styles.qrContent}>
-								<div className={styles.qrPlaceholder}>
-									<QrCode size={160} strokeWidth={1.5} color="#00A69D" />
-									<div className={styles.qrScanLine} />
-								</div>
-								<p className={styles.qrInstructions}>
-									{t("clinical_handover_instructions")}
-								</p>
-								<div className={styles.accessLevel}>
-									<ShieldCheck size={16} />
-									<span>{t("clinical_access_level")}</span>
-								</div>
+							<p className={styles.qrInstructions}>
+								{t("clinical_handover_instructions") || "Scan this QR code with any mobile device to securely view the verified clinical handover summary."}
+							</p>
+							<div className={styles.accessLevel}>
+								<ShieldCheck size={16} />
+								<span>{t("clinical_access_level") || "End-to-End Encrypted Handover"}</span>
 							</div>
-							<div className={styles.modalFooter}>
-								<button type="button" className={styles.btnShare}>
-									<Share2 size={18} /> {t("share_secure_link")}
-								</button>
-							</div>
+						</div>
+						<div className={styles.modalFooter}>
+							<button type="button" className={styles.btnShare}>
+								<Share2 size={18} /> {t("share_secure_link") || "Share Secure Link"}
+							</button>
+						</div>
 					</div>
 				</div>
 			)}
