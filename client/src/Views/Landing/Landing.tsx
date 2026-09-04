@@ -433,7 +433,10 @@ const InitializeModal = ({
 				</div>
 				<div className={styles.modalBody}>
 					<p>Take a photo of your lab results or upload a PDF. Our AI will read it and explain every value to you in plain English plus give you a personalised diet and health plan.</p>
-					<p className={styles.securityNote}>🔒 Your results are private and belong only to you. We never share them.</p>
+					<p className={styles.securityNote}>
+						<Lock size={13} style={{ verticalAlign: "middle", marginRight: "6px" }} />
+						Your results are private and belong only to you. We never share them.
+					</p>
 				</div>
 				<div className={styles.modalActions}>
 					<button className={styles.btnModalOutline} onClick={onClose}>Cancel</button>

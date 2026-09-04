@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
 import { removeFromCart, clearCart } from "@/App/Redux/cartSlice";
 import { useLanguage } from "@/App/i18n/LanguageContext";
-import { ShoppingCart, X, Trash2, CheckCircle, CreditCard, Sparkles } from "lucide-react";
+import { ShoppingCart, X, Trash2, CheckCircle, CreditCard, Sparkles, Lock } from "lucide-react";
 import styles from "./CartDrawer.module.scss";
 
 interface CartDrawerProps {
@@ -81,7 +81,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
 								<div key={item.id} className={styles.cartItem}>
 									<div className={styles.itemMeta}>
 										<div className={styles.itemIconWrap}>
-											<span className={styles.itemBullet}>✦</span>
+											<span className={styles.itemBullet} style={{ display: "inline-flex", alignItems: "center" }}>
+												<Sparkles size={12} />
+											</span>
 										</div>
 										<div className={styles.itemDetails}>
 											<h4>{item.name}</h4>
@@ -125,8 +127,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
 							<span>{t("checkout_now") || "Secure Checkout"}</span>
 							<Sparkles size={14} className={styles.checkoutSparkle} />
 						</button>
-						<p className={styles.checkoutNote}>
-							🔒 {t("secure_pci") || "256-Bit Encrypted PCI-Compliant Checkout"}
+						<p className={styles.checkoutNote} style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>
+							<Lock size={12} /> {t("secure_pci") || "256-Bit Encrypted PCI-Compliant Checkout"}
 						</p>
 					</div>
 				)}

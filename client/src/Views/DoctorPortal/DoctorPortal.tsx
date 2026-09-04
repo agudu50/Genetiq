@@ -7,10 +7,15 @@ import { toast } from "react-toastify";
 import {
 	Activity,
 	AlertTriangle,
+	ArrowDownRight,
+	ArrowUpRight,
+	Check,
 	CheckCircle2,
 	ChevronDown,
 	ChevronUp,
 	Clock,
+	Droplet,
+	Heart,
 	History,
 	Mic,
 	MicOff,
@@ -402,8 +407,21 @@ export const DoctorPortal = () => {
 										? styles.badgeWarning
 										: styles.badgeOptimal
 								}
+								style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}
 							>
-								{selectedPatient.status === "urgent" ? "🔴 Urgent" : selectedPatient.status === "monitoring" ? "🟡 Monitored" : "🟢 Stable"}
+								{selectedPatient.status === "urgent" ? (
+									<>
+										<ShieldAlert size={12} /> Urgent
+									</>
+								) : selectedPatient.status === "monitoring" ? (
+									<>
+										<AlertTriangle size={12} /> Monitored
+									</>
+								) : (
+									<>
+										<CheckCircle2 size={12} /> Stable
+									</>
+								)}
 							</span>
 						</div>
 						<ChevronDown size={14} style={{ opacity: 0.6 }} />
@@ -603,7 +621,19 @@ export const DoctorPortal = () => {
 												: styles.badgeOptimal
 										}
 									>
-										{m.status === "elevated" ? "High ↑" : m.status === "low" ? "Low ↓" : "Optimal ✓"}
+										{m.status === "elevated" ? (
+											<span style={{ display: "inline-flex", alignItems: "center", gap: "2px" }}>
+												High <ArrowUpRight size={12} strokeWidth={2.5} />
+											</span>
+										) : m.status === "low" ? (
+											<span style={{ display: "inline-flex", alignItems: "center", gap: "2px" }}>
+												Low <ArrowDownRight size={12} strokeWidth={2.5} />
+											</span>
+										) : (
+											<span style={{ display: "inline-flex", alignItems: "center", gap: "2px" }}>
+												Optimal <Check size={12} strokeWidth={2.5} />
+											</span>
+										)}
 									</span>
 								</div>
 							</div>
@@ -737,7 +767,7 @@ export const DoctorPortal = () => {
 											)
 										}
 									>
-										🫀 Cardio / Palpitations Protocol
+										<Heart size={13} /> Cardio / Palpitations Protocol
 									</button>
 									<button
 										type='button'
@@ -748,7 +778,7 @@ export const DoctorPortal = () => {
 											)
 										}
 									>
-										🩺 Blood Pressure Protocol
+										<Activity size={13} /> Blood Pressure Protocol
 									</button>
 									<button
 										type='button'
@@ -759,7 +789,7 @@ export const DoctorPortal = () => {
 											)
 										}
 									>
-										🩸 Glucose & Metabolic Advice
+										<Droplet size={13} /> Glucose & Metabolic Advice
 									</button>
 								</div>
 							</div>
@@ -817,21 +847,21 @@ export const DoctorPortal = () => {
 					className={`${styles.organPill} ${selectedOrganSystem === "cardiovascular" ? styles.organPillActive : ""}`}
 					onClick={() => setSelectedOrganSystem("cardiovascular")}
 				>
-					🫀 Cardiovascular (Heart)
+					<Heart size={14} /> Cardiovascular (Heart)
 				</button>
 				<button
 					type='button'
 					className={`${styles.organPill} ${selectedOrganSystem === "total" ? styles.organPillActive : ""}`}
 					onClick={() => setSelectedOrganSystem("total")}
 				>
-					🧍 Full Body (Overview)
+					<User size={14} /> Full Body (Overview)
 				</button>
 				<button
 					type='button'
 					className={`${styles.organPill} ${selectedOrganSystem === "gastroenterolgy" ? styles.organPillActive : ""}`}
 					onClick={() => setSelectedOrganSystem("gastroenterolgy")}
 				>
-					🩸 Metabolic & Liver
+					<Activity size={14} /> Metabolic & Liver
 				</button>
 			</div>
 		</div>

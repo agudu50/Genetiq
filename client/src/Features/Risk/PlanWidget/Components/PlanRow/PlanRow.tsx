@@ -119,7 +119,7 @@ export const PlanRow = ({
 						className={`${styles["PlanRow-cart"]} ${isInCart ? styles["PlanRow-cart-added"] : ""}`}
 						onClick={handleCartClick}
 					>
-						<p>{isInCart ? `${t("added") || "Added"} ✓` : t("add_to_cart")}</p>
+						<p>{isInCart ? (t("added") || "Added") : t("add_to_cart")}</p>
 						<Cart />
 					</button>
 				)}

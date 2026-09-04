@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Activity, Heart, Check, ChevronDown } from "lucide-react";
 import styles from "./Dropdown.module.scss";
 
 interface DropdownOption {
@@ -54,16 +55,18 @@ const Dropdown = ({ value, onChange }: DropdownProps) => {
 			return (
 				<span
 					className={`${styles.optionIcon} ${styles.optionIconTotal}`}
+					style={{ display: "inline-flex", alignItems: "center" }}
 				>
-					⬡
+					<Activity size={14} />
 				</span>
 			);
 		}
 		return (
 			<span
 				className={`${styles.optionIcon} ${styles.optionIconCardio}`}
+				style={{ display: "inline-flex", alignItems: "center" }}
 			>
-				♥
+				<Heart size={14} />
 			</span>
 		);
 	};
@@ -83,19 +86,10 @@ const Dropdown = ({ value, onChange }: DropdownProps) => {
 						{selected.label}
 					</div>
 					<div className={styles.divider} />
-					<svg
-						width='14'
-						height='14'
-						viewBox='0 0 24 24'
-						fill='none'
-						stroke='currentColor'
-						strokeWidth='2.5'
-						strokeLinecap='round'
-						strokeLinejoin='round'
+					<ChevronDown
+						size={14}
 						className={`${styles.icon} ${isOpen ? styles.rotated : ""}`}
-					>
-						<polyline points='6 9 12 15 18 9'></polyline>
-					</svg>
+					/>
 				</div>
 			</button>
 
@@ -112,8 +106,9 @@ const Dropdown = ({ value, onChange }: DropdownProps) => {
 							{option.label}
 							<span
 								className={`${styles.checkMark} ${option.value === value ? styles.visible : ""}`}
+								style={{ display: "inline-flex", alignItems: "center" }}
 							>
-								✓
+								<Check size={12} strokeWidth={2.5} />
 							</span>
 						</button>
 					))}

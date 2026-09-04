@@ -315,27 +315,27 @@ export function buildFallbackLabAnalysis(
 
 	const recommendations = [
 		{
-			icon: "🏥",
+			icon: "hospital",
 			title: "Share these results with your doctor",
 			body: "Take this summary and your original lab report to your clinic or hospital so they can confirm the findings and plan next steps.",
 		},
 	];
 	if (hasSpep || actionCount > 0) {
 		recommendations.push({
-			icon: "🔬",
+			icon: "investigation",
 			title: "Ask about follow-up tests",
 			body: "If your report mentions an M-spike or unusual protein band, ask your doctor whether you need immunofixation or a referral to a blood specialist.",
 		});
 	}
 	if (hasLiver) {
 		recommendations.push({
-			icon: "💧",
+			icon: "water",
 			title: "Support your liver while you wait",
 			body: "Avoid alcohol, stay hydrated, eat balanced meals, and avoid unnecessary herbal mixes unless your doctor approves them.",
 		});
 	}
 	recommendations.push({
-		icon: "📋",
+		icon: "report",
 		title: "Keep a copy of your report",
 		body: "Save the photo and this summary so you can compare with future tests.",
 	});

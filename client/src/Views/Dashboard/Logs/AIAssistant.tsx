@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Bot, Send, ImagePlus, X, Phone, Heart, Leaf, AlertTriangle, Shield, Wifi, WifiOff, Stethoscope, ChevronRight, Brain, Flame } from "lucide-react";
+import { Bot, Send, ImagePlus, X, Phone, Heart, Leaf, AlertTriangle, Shield, Wifi, WifiOff, Stethoscope, ChevronRight, Brain, Flame, Activity } from "lucide-react";
 import {
 	chatWithGemma,
 	analyzeLabResults,
@@ -17,12 +17,12 @@ import { renderRecommendationIcon } from "@/App/Utils/renderRecommendationIcon";
 
 type Tab = "chat" | "scanner" | "remedies" | "emergency";
 
-const LANGUAGES: { id: GemmaLanguage; label: string; flag: string; code: string }[] = [
-	{ id: "english", label: "English", flag: "🇬🇧", code: "EN" },
-	{ id: "twi", label: "Twi", flag: "🇬🇭", code: "TW" },
-	{ id: "ga", label: "Ga", flag: "🇬🇭", code: "GA" },
-	{ id: "ewe", label: "Ewe", flag: "🇬🇭", code: "EW" },
-	{ id: "fante", label: "Fante", flag: "🇬🇭", code: "FT" },
+const LANGUAGES: { id: GemmaLanguage; label: string; code: string }[] = [
+	{ id: "english", label: "English", code: "EN" },
+	{ id: "twi", label: "Twi", code: "TW" },
+	{ id: "ga", label: "Ga", code: "GA" },
+	{ id: "ewe", label: "Ewe", code: "EW" },
+	{ id: "fante", label: "Fante", code: "FT" },
 ];
 
 const LOCALIZED_TEXTS: Record<GemmaLanguage, Record<string, string>> = {
@@ -381,8 +381,8 @@ export default function AIAssistant() {
 							className={`${styles.langPill} ${l.id === language ? styles.langPillActive : ""}`}
 							onClick={() => setLanguage(l.id)}
 						>
-							<span>{l.flag}</span>
-							<span>{l.code}</span>
+							<span style={{ fontWeight: 600 }}>{l.code}</span>
+							<span style={{ fontSize: "0.75rem", opacity: 0.85 }}>{l.label}</span>
 						</button>
 					))}
 				</div>
@@ -517,7 +517,15 @@ function ChatSection({ language, gemmaOnline }: { language: GemmaLanguage; gemma
 						<div className={styles.chatBubble}>
 							{m.urgency && m.urgency !== "Green" && (
 								<span className={`${styles.urgencyBadge} ${styles[`urgency${m.urgency}`]}`}>
-									{m.urgency === "Red" ? "⚠️ Urgent" : "⚡ Moderate"}
+									{m.urgency === "Red" ? (
+										<span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+											<AlertTriangle size={11} strokeWidth={2.5} /> Urgent
+										</span>
+									) : (
+										<span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+											<Activity size={11} strokeWidth={2.5} /> Moderate
+										</span>
+									)}
 								</span>
 							)}
 							{m.role === "bot" ? (
@@ -726,7 +734,9 @@ function RemedySection({ language }: { language: GemmaLanguage }) {
 						onClick={() => setExpanded(expanded === remedy.name ? null : remedy.name)}
 					>
 						<div className={styles.remedyTop}>
-							<span className={styles.remedyEmoji}>{remedy.emoji}</span>
+							<div className={styles.remedyEmoji} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+								<Leaf size={18} style={{ color: "#34d399" }} />
+							</div>
 							<div className={styles.remedyInfo}>
 								<h3>{remedy.name}</h3>
 								<span className={styles.remedyLocal}>{remedy.localName}</span>
