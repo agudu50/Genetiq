@@ -1,6 +1,6 @@
 // ── Register page — theme-aware split layout ──────────────────────────────────
 
-$brand: #007c72;
+$brand: #064e3b;
 
 @mixin register-theme-dark {
 	--reg-bg: #0a0e1a;
@@ -11,11 +11,12 @@ $brand: #007c72;
 	--reg-text-soft: rgba(255, 255, 255, 0.75);
 	--reg-footer: rgba(255, 255, 255, 0.25);
 	--reg-footer-link: rgba(255, 255, 255, 0.35);
-	--reg-brand-tint: rgba(0, 166, 157, 0.12);
-	--reg-brand-border: rgba(0, 166, 157, 0.2);
-	--reg-accent-glow: rgba(0, 166, 157, 0.35);
+	--reg-brand-tint: rgba(6, 78, 59, 0.25);
+	--reg-brand-border: rgba(52, 211, 153, 0.25);
+	--reg-accent-glow: rgba(52, 211, 153, 0.35);
 	--reg-show-glow: 1;
 	--reg-brand-name: #ffffff;
+	--reg-brand-text: #34d399;
 }
 
 @mixin register-theme-light {
@@ -27,11 +28,12 @@ $brand: #007c72;
 	--reg-text-soft: #475569;
 	--reg-footer: #94a3b8;
 	--reg-footer-link: #64748b;
-	--reg-brand-tint: #e6f4f3;
-	--reg-brand-border: rgba(0, 124, 114, 0.22);
+	--reg-brand-tint: rgba(6, 78, 59, 0.08);
+	--reg-brand-border: rgba(6, 78, 59, 0.22);
 	--reg-accent-glow: transparent;
 	--reg-show-glow: 0.35;
 	--reg-brand-name: #{$brand};
+	--reg-brand-text: #064e3b;
 }
 
 // ── Animations ────────────────────────────────────────────────────────────────
@@ -371,7 +373,7 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 		left: -120px;
 		width: 360px;
 		height: 360px;
-		background: rgba(0, 166, 157, calc(0.18 * var(--reg-show-glow)));
+		background: rgba(6, 78, 59, calc(0.3 * var(--reg-show-glow)));
 		border-radius: 50%;
 		pointer-events: none;
 		animation: blobFloatA 14s ease-in-out infinite;
@@ -385,7 +387,7 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 		right: -80px;
 		width: 280px;
 		height: 280px;
-		background: rgba(6, 182, 212, calc(0.1 * var(--reg-show-glow)));
+		background: rgba(16, 185, 129, calc(0.12 * var(--reg-show-glow)));
 		border-radius: 50%;
 		pointer-events: none;
 		animation: blobFloatB 18s ease-in-out infinite;
@@ -489,7 +491,7 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: $brand;
+	color: var(--reg-brand-text);
 	flex-shrink: 0;
 	animation: iconPulse 3s ease-in-out infinite;
 }
@@ -512,7 +514,7 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 	gap: 8px;
 	font-size: 0.82rem;
 	font-weight: 600;
-	color: $brand;
+	color: var(--reg-brand-text);
 	background: var(--reg-brand-tint);
 	border: 1px solid var(--reg-brand-border);
 	border-radius: 20px;
@@ -530,7 +532,7 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 		transition: color 0.2s;
 
 		&:hover {
-			color: $brand;
+			color: var(--reg-brand-text);
 		}
 	}
 }
