@@ -210,18 +210,19 @@
 }
 
 .importBtn {
-	background: linear-gradient(135deg, #10b981, #34d399);
-	color: white;
+	background: #00a69d;
+	color: #ffffff;
 	border: none;
 	padding: 8px 20px;
 	border-radius: 10px;
 	font-size: 13px;
 	font-weight: 600;
 	cursor: pointer;
-	transition: all 0.25s ease;
+	transition: all 0.2s ease;
 
 	&:hover {
-		transform: scale(1.04);
-		box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+		background: #008f87;
+		transform: translateY(-1px);
+		box-shadow: 0 4px 14px rgba(0, 166, 157, 0.35);
 	}
 }

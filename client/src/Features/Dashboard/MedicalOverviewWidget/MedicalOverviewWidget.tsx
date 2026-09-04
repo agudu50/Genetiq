@@ -44,14 +44,6 @@ export const MedicalOverviewWidget = () => {
 		},
 	];
 
-	const conditionColors: Record<string, string> = {
-		Diabetes: "#f59e0b",
-		Hypertension: "#ef4444",
-		Asthma: "#3b82f6",
-		"Heart Disease": "#ec4899",
-		Other: "#8b5cf6",
-	};
-
 	const hasAnyData = conditionsCount > 0 || medicationsCount > 0 || symptomsCount > 0;
 
 	return (
@@ -135,11 +127,6 @@ export const MedicalOverviewWidget = () => {
 								<div
 									key={cond}
 									className={styles.conditionPill}
-									style={
-										{
-											"--pill-color": conditionColors[cond] || "#8b5cf6",
-										} as React.CSSProperties
-									}
 								>
 									<span className={styles.pillDot} />
 									{cond}

@@ -4,9 +4,9 @@ $teal: #00a69d;
 $green: #10b981;
 $amber: #f59e0b;
 $red: #ef4444;
-$purple: #8b5cf6;
-$blue: #3b82f6;
-$indigo: #6366f1;
+$purple: #00a69d;
+$blue: #00a69d;
+$indigo: #00a69d;
 
 .container {
 	position: relative;
@@ -21,32 +21,16 @@ $indigo: #6366f1;
 	position: absolute;
 	inset: 0;
 	pointer-events: none;
-	background: linear-gradient(
-		180deg,
-		rgba($indigo, 0.1) 0%,
-		rgba($teal, 0.04) 38%,
-		transparent 72%
-	);
-
-	html[data-theme="light"] & {
-		background: linear-gradient(
-			180deg,
-			rgba($indigo, 0.06) 0%,
-			rgba($teal, 0.03) 40%,
-			transparent 78%
-		);
-	}
+	background: transparent;
 }
 
 .heroMesh {
 	position: absolute;
 	inset: 0;
 	pointer-events: none;
-	opacity: 0.25;
-	background-image: radial-gradient(rgba($indigo, 0.12) 1px, transparent 1.4px);
+	opacity: 0.15;
+	background-image: radial-gradient(rgba($teal, 0.12) 1px, transparent 1.4px);
 	background-size: 18px 18px;
-	mask-image: linear-gradient(180deg, #000 0%, transparent 85%);
-	-webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 85%);
 }
 
 .inner {
@@ -59,33 +43,39 @@ $indigo: #6366f1;
 	min-width: 0;
 }
 
+// ─── Header ───────────────────────────────────────
 .header {
 	display: flex;
-	flex-direction: column;
-	gap: 8px;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.headerLeft {
+	display: flex;
+	align-items: center;
+	gap: 10px;
 	min-width: 0;
 }
 
-.headerTop {
+.iconWrap {
+	width: 36px;
+	height: 36px;
+	border-radius: 10px;
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
-	gap: 8px;
+	justify-content: center;
+	flex-shrink: 0;
+	color: #fff;
+	background: #00a69d;
 }
 
 .eyebrow {
-	display: inline-flex;
-	align-items: center;
-	gap: 5px;
-	padding: 4px 10px;
-	border-radius: 99px;
-	font-size: 0.58rem;
+	font-size: 0.65rem;
 	font-weight: 800;
 	text-transform: uppercase;
-	letter-spacing: 0.1em;
-	color: $indigo;
-	background: rgba($indigo, 0.1);
-	border: 1px solid rgba($indigo, 0.16);
+	letter-spacing: 0.08em;
+	color: #00a69d;
 }
 
 .countBadge {
@@ -94,10 +84,10 @@ $indigo: #6366f1;
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
 	color: #fff;
-	background: linear-gradient(135deg, $indigo, #4f46e5);
+	background: #00a69d;
 	padding: 4px 10px;
 	border-radius: 99px;
-	box-shadow: 0 4px 12px rgba($indigo, 0.28);
+	box-shadow: 0 2px 8px rgba(0, 166, 157, 0.25);
 	flex-shrink: 0;
 }
 
@@ -282,6 +272,7 @@ $indigo: #6366f1;
 	color: var(--text-secondary, #94a3b8);
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
+	line-clamp: 2;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 
