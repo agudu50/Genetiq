@@ -238,58 +238,40 @@ $ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .ConcernWidget-detail-cards {
+	display: grid;
 	gap: 16px;
 	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 
 	@media (max-width: 768px) {
-		&-visible {
-			display: flex;
-			overflow-x: auto;
-			scroll-snap-type: x mandatory;
-			-webkit-overflow-scrolling: touch;
-			padding-bottom: 8px;
-			margin: 0 -4px;
-			padding-left: 4px;
-			padding-right: 4px;
-			gap: 12px;
+		display: flex;
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+		-webkit-overflow-scrolling: touch;
+		padding-bottom: 8px;
+		margin: 0 -4px;
+		padding-left: 4px;
+		padding-right: 4px;
+		gap: 12px;
 
-			&::-webkit-scrollbar {
-				height: 0px;
-			}
-
-			> * {
-				flex: 0 0 280px;
-				scroll-snap-align: start;
-			}
+		&::-webkit-scrollbar {
+			height: 0px;
 		}
-	}
 
-	&-visible {
-		display: grid;
-	}
-	&-hidden {
-		display: none;
+		> * {
+			flex: 0 0 280px;
+			scroll-snap-align: start;
+		}
 	}
 }
 
 .ConcernWidget-reasons {
-	overflow: hidden;
-	&-hidden {
-		display: none;
-	}
+	width: 100%;
+	overflow: visible;
 }
 
 .ConcernWidget-symptoms {
-	overflow: hidden;
-	transition: all 1s ease;
-	&-visible {
-		max-height: 400px;
-	}
-	&-hidden {
-		visibility: hidden;
-		max-height: 0;
-		transition: all 0.3s ease;
-	}
+	width: 100%;
+	overflow: visible;
 }
 
 @media (max-width: 768px) {

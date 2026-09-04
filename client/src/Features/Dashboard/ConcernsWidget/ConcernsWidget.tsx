@@ -304,13 +304,7 @@ export const ConcernsWidget: React.FC<ConcernsWidgetProps> = ({ category }) => {
 
 			<div className={styles["ConcernWidget-content"]}>
 				<div className={styles["ConcernWidget-cards-layout"]}>
-					<div
-						className={`${styles["ConcernWidget-detail-cards"]} ${
-							isCardioDetailView
-								? styles["ConcernWidget-detail-cards-visible"]
-								: styles["ConcernWidget-detail-cards-hidden"]
-						}`}
-					>
+					<div className={styles["ConcernWidget-detail-cards"]}>
 						{selectedSystem.details.map((detail) => (
 							<DetailsCard
 								key={`${detail.id}-${category}`}
@@ -322,23 +316,11 @@ export const ConcernsWidget: React.FC<ConcernsWidgetProps> = ({ category }) => {
 					</div>
 				</div>
 
-				<div
-					className={`${styles["ConcernWidget-reasons"]} ${
-						isCardioDetailView
-							? styles["ConcernWidget-reasons-visible"]
-							: styles["ConcernWidget-reasons-hidden"]
-					}`}
-				>
+				<div className={styles["ConcernWidget-reasons"]}>
 					<ReasonsTable reasons={reasons} />
 				</div>
 
-				<div
-					className={`${styles["ConcernWidget-symptoms"]} ${
-						isCardioDetailView
-							? styles["ConcernWidget-symptoms-visible"]
-							: styles["ConcernWidget-symptoms-hidden"]
-					}`}
-				>
+				<div className={styles["ConcernWidget-symptoms"]}>
 					{symptoms && (
 						<Symptoms
 							description={symptoms.description}
