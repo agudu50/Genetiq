@@ -140,6 +140,14 @@
 	font-weight: 700;
 }
 
+.patientNameMobile {
+	display: none;
+}
+
+.patientNameFull {
+	display: inline;
+}
+
 .patientDropdownMenu {
 	position: absolute;
 	top: calc(100% + 10px);
@@ -1235,11 +1243,13 @@
 @media (max-width: 768px) {
 	.topHeader {
 		padding: 0 10px;
-		height: 58px;
+		height: 56px;
+		gap: 6px;
 	}
 
 	.brandArea {
-		gap: 8px;
+		gap: 6px;
+		flex-shrink: 0;
 	}
 
 	.brandLogo {
@@ -1247,43 +1257,74 @@
 		height: 28px;
 		border-radius: 8px;
 		svg {
-			width: 16px;
-			height: 16px;
+			width: 15px;
+			height: 15px;
 		}
 	}
 
 	.hospitalTitle {
 		font-size: 0.78rem !important;
-		max-width: 100px;
+		max-width: 80px;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
 
+	.hospitalSubtitle {
+		display: none;
+	}
+
 	.patientSwitcherWrapper {
 		position: static;
+		flex: 1;
+		min-width: 0;
+		display: flex;
+		justify-content: center;
 	}
 
 	.patientSwitcherBtn {
-		padding: 5px 8px;
-		gap: 4px;
-		font-size: 0.74rem;
+		padding: 5px 10px;
+		gap: 5px;
+		border-radius: 20px;
+		max-width: 100%;
+		background: rgba(255, 255, 255, 0.08);
+
+		:global(html[data-theme="light"]) & {
+			background: #f1f5f9;
+			border-color: #cbd5e1;
+		}
 	}
 
 	.activePatientPill {
-		font-size: 0.74rem;
-		gap: 4px;
+		gap: 5px;
+		font-size: 0.76rem;
+		min-width: 0;
+	}
+
+	.patientNameFull {
+		display: none;
+	}
+
+	.patientNameMobile {
+		display: inline;
+		font-size: 0.76rem;
+		font-weight: 700;
+		max-width: 90px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.patientDropdownMenu {
 		position: fixed;
-		top: 62px;
-		left: 10px;
-		right: 10px;
+		top: 58px;
+		left: 8px;
+		right: 8px;
 		width: auto;
 		transform: none;
-		max-height: 70vh;
+		max-height: calc(100dvh - 70px);
 		z-index: 1000;
+		border-radius: 16px;
 	}
 
 	.patientBtnLabel {
@@ -1291,9 +1332,18 @@
 	}
 
 	.patientViewBtn {
-		padding: 6px 8px;
-		font-size: 0.72rem;
+		width: 32px;
+		height: 32px;
+		padding: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		border-radius: 8px;
+		flex-shrink: 0;
+		svg {
+			width: 15px;
+			height: 15px;
+		}
 	}
 
 	.floatingLayout {

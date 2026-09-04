@@ -420,8 +420,9 @@ export const DoctorPortal = () => {
 						onClick={() => setIsDropdownOpen(!isDropdownOpen)}
 					>
 						<div className={styles.activePatientPill}>
-							<User size={15} style={{ color: "#00a896" }} />
-							<span>{selectedPatient.name} ({selectedPatient.mrn})</span>
+							<User size={14} style={{ color: "#00a896", flexShrink: 0 }} />
+							<span className={styles.patientNameFull}>{selectedPatient.name} ({selectedPatient.mrn})</span>
+							<span className={styles.patientNameMobile}>{selectedPatient.name}</span>
 							<span
 								className={
 									selectedPatient.status === "urgent"
@@ -430,24 +431,24 @@ export const DoctorPortal = () => {
 										? styles.badgeWarning
 										: styles.badgeOptimal
 								}
-								style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}
+								style={{ display: "inline-flex", alignItems: "center", gap: "3px" }}
 							>
 								{selectedPatient.status === "urgent" ? (
 									<>
-										<ShieldAlert size={12} /> Urgent
+										<ShieldAlert size={11} /> <span className={styles.badgeText}>Urgent</span>
 									</>
 								) : selectedPatient.status === "monitoring" ? (
 									<>
-										<AlertTriangle size={12} /> Monitored
+										<AlertTriangle size={11} /> <span className={styles.badgeText}>Monitored</span>
 									</>
 								) : (
 									<>
-										<CheckCircle2 size={12} /> Stable
+										<CheckCircle2 size={11} /> <span className={styles.badgeText}>Stable</span>
 									</>
 								)}
 							</span>
 						</div>
-						<ChevronDown size={14} style={{ opacity: 0.6 }} />
+						<ChevronDown size={13} style={{ opacity: 0.6, flexShrink: 0 }} />
 					</button>
 
 					{/* Dropdown Menu */}
