@@ -13,20 +13,27 @@ interface AgeMetricsProps {
 
 export const AgeMetrics: React.FC<AgeMetricsProps> = ({ ageData }) => {
 	const { t } = useLanguage();
-	const diff = (ageData.chronoAge - ageData.biologicalAge).toFixed(1);
+	const diff = Math.abs(ageData.chronoAge - ageData.biologicalAge).toFixed(1);
 	const isYounger = ageData.chronoAge > ageData.biologicalAge;
+	const isOlder = ageData.biologicalAge > ageData.chronoAge;
 
 	return (
 		<div className={styles.splitCardContainer}>
-			{/* Biological Age Metric Card */}
+			{/* Biological (Body) Age Metric Card */}
 			<div className={`${styles.compactCard} ${styles.compactCardBio}`}>
 				<div className={styles.cardHeader}>
 					<div className={styles.iconBio}>
 						<HeartPulse size={15} strokeWidth={2.2} />
 					</div>
 					<div className={styles.labelGroup}>
-						<span className={styles.cardLabel}>{t("biological_age")}</span>
-						<span className={styles.bioSubtext}>{isYounger ? `-${diff} yrs advantage` : "Current pace"}</span>
+						<span className={styles.cardLabel}>Body Age</span>
+						<span className={styles.bioSubtext}>
+							{isYounger
+								? `${diff} yrs younger than actual`
+								: isOlder
+									? `${diff} yrs older than actual`
+									: "Matches actual age"}
+						</span>
 					</div>
 				</div>
 				<div className={styles.valueRow}>
@@ -35,15 +42,15 @@ export const AgeMetrics: React.FC<AgeMetricsProps> = ({ ageData }) => {
 				</div>
 			</div>
 
-			{/* Chronological Age Metric Card */}
+			{/* Chronological (Actual) Age Metric Card */}
 			<div className={`${styles.compactCard} ${styles.compactCardChrono}`}>
 				<div className={styles.cardHeader}>
 					<div className={styles.iconChrono}>
 						<Calendar size={15} strokeWidth={2.2} />
 					</div>
 					<div className={styles.labelGroup}>
-						<span className={styles.cardLabel}>{t("chronological_age")}</span>
-						<span className={styles.chronoSubtext}>Calendar baseline</span>
+						<span className={styles.cardLabel}>Actual Age</span>
+						<span className={styles.chronoSubtext}>From your birthday</span>
 					</div>
 				</div>
 				<div className={styles.valueRow}>

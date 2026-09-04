@@ -84,8 +84,6 @@ const simplifyMarkerTerm = (term: string): string => {
 	return cleaned || "Health Markers";
 };
 
-
-
 export const TrackerWidget = () => {
 	const { t } = useLanguage();
 	const { uploadStatus } = useSelector((state: RootState) => state.user);
@@ -104,34 +102,20 @@ export const TrackerWidget = () => {
 		return simplifyMarkerTerm(raw);
 	}, [latestRecord, mockTracker.target, t]);
 
+	const isCompleted = uploadStatus === "completed" || !uploadStatus;
+	const isProcessing = uploadStatus === "processing";
+
 	const tracker = {
 		target: activeTarget,
-		progress:
-			uploadStatus === "completed"
-				? 100
-				: uploadStatus === "processing"
-					? 75
-					: mockTracker.progress,
-		expected_days: uploadStatus === "completed" ? 0 : mockTracker.expected_days,
+		progress: isCompleted ? 100 : isProcessing ? 75 : mockTracker.progress,
+		expected_days: isCompleted ? 0 : mockTracker.expected_days,
 	};
 
-	const statusClass = 
-		uploadStatus === "completed" 
-			? "completed" 
-			: uploadStatus === "processing" 
-				? "processing" 
-				: "idle";
-
-	const statusLabel = 
-		uploadStatus === "completed" 
-			? t("completed") || "Completed" 
-			: uploadStatus === "processing" 
-				? t("processing") || "In Progress" 
-				: t("pending") || "Pending";
+	const statusClass = isCompleted ? "completed" : isProcessing ? "processing" : "idle";
+	const statusLabel = isCompleted ? "Ready" : isProcessing ? "Analyzing" : "Pending";
 
 	return (
 		<div className={styles["TrackerWidget-container"]}>
-
 			{/* Top Header Row: Info on left, Status badge capsule on right */}
 			<div className={styles["TrackerWidget-Head"]}>
 				<div className={styles["TrackerWidget-info"]}>
@@ -139,9 +123,7 @@ export const TrackerWidget = () => {
 						<Logo className={styles["TrackerWidget-icon"]} />
 					</div>
 					<p className={styles["TrackerWidget-text"]}>
-						{uploadStatus === "completed"
-							? t("analysis_complete") || "Analysis complete for"
-							: t("stay_tuned_checking") || "Stay tuned, we are checking your"}{" "}
+						{isCompleted ? "Analysis complete for" : "Analyzing results for"}{" "}
 						<span className={styles["TrackerWidget-target-badge"]}>
 							{tracker.target}
 						</span>
@@ -178,11 +160,11 @@ export const TrackerWidget = () => {
 					<line x1="3" y1="10" x2="21" y2="10" />
 				</svg>
 				<p className={styles["footer-text"]}>
-					{uploadStatus === "completed" ? (
-						t("insights_ready") || "Your personalized molecular health insights are compiled."
+					{isCompleted ? (
+						"Your personalized health insights and next steps are ready."
 					) : (
 						<>
-							{t("results_expected_in") || "Results expected in"}{" "}
+							Results expected in{" "}
 							<span className={styles["expected-badge"]}>
 								<svg
 									className={styles["clock-icon"]}
@@ -198,7 +180,7 @@ export const TrackerWidget = () => {
 									<circle cx="12" cy="12" r="10" />
 									<polyline points="12 6 12 12 16 14" />
 								</svg>
-								{tracker.expected_days} {t("days") || "days"}
+								{tracker.expected_days} days
 							</span>
 						</>
 					)}

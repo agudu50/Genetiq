@@ -39,10 +39,10 @@ export const AgeSlider: React.FC<AgeSliderProps> = ({ ageData }) => {
 				</div>
 				<div className={styles.legendGroup}>
 					<span className={styles.legendBio}>
-						<span className={styles.dotBio} /> Bio ({ageData.biologicalAge})
+						<span className={styles.dotBio} /> Body Age ({ageData.biologicalAge})
 					</span>
 					<span className={styles.legendChrono}>
-						<span className={styles.dotChrono} /> Chrono ({ageData.chronoAge})
+						<span className={styles.dotChrono} /> Actual Age ({ageData.chronoAge})
 					</span>
 				</div>
 			</div>
@@ -61,7 +61,7 @@ export const AgeSlider: React.FC<AgeSliderProps> = ({ ageData }) => {
 					<div
 						className={`${styles.pointer} ${styles.pointerBio}`}
 						style={{ left: `${bioPct}%` }}
-						title={`Biological Age: ${ageData.biologicalAge}`}
+						title={`Body Age: ${ageData.biologicalAge}`}
 					>
 						<span className={styles.pointerInner} />
 					</div>
@@ -70,7 +70,7 @@ export const AgeSlider: React.FC<AgeSliderProps> = ({ ageData }) => {
 					<div
 						className={`${styles.pointer} ${styles.pointerChrono}`}
 						style={{ left: `${chronoPct}%` }}
-						title={`Chronological Age: ${ageData.chronoAge}`}
+						title={`Actual Age: ${ageData.chronoAge}`}
 					>
 						<span className={styles.pointerInner} />
 					</div>
