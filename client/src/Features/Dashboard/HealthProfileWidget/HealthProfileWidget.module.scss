@@ -154,19 +154,19 @@ $cyan: #06b6d4;
 	width: 42px;
 	height: 42px;
 	border-radius: 50%;
-	background: linear-gradient(135deg, rgba($teal, 0.18) 0%, rgba(15, 23, 42, 0.95) 100%);
+	background: #064e3b;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	font-weight: 800;
 	font-size: 0.9rem;
-	color: #fff;
-	border: 1px solid rgba(255, 255, 255, 0.08);
+	color: #ffffff;
+	border: 1px solid rgba(255, 255, 255, 0.15);
 
 	html[data-theme="light"] & {
-		background: linear-gradient(135deg, rgba($teal, 0.12) 0%, #ffffff 100%);
-		color: #0f766e;
-		border-color: rgba(15, 23, 42, 0.06);
+		background: #064e3b;
+		color: #ffffff;
+		border-color: rgba(6, 78, 59, 0.2);
 	}
 }
 
@@ -630,6 +630,7 @@ $cyan: #06b6d4;
 	color: #f8fafc;
 	width: 100%;
 	-moz-appearance: textfield;
+	appearance: textfield;
 
 	html[data-theme="light"] & {
 		color: #0f172a;
@@ -647,6 +648,7 @@ $cyan: #06b6d4;
 	&::-webkit-outer-spin-button,
 	&::-webkit-inner-spin-button {
 		-webkit-appearance: none;
+		appearance: none;
 		margin: 0;
 	}
 }

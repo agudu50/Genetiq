@@ -175,8 +175,8 @@
 	width: 40px;
 	height: 40px;
 	border-radius: 50%;
-	background: rgba(16, 185, 129, 0.15);
-	color: #10b981;
+	background: #064e3b;
+	color: #ffffff;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -261,9 +261,9 @@
 	}
 
 	&.selected {
-		background: #10b981;
-		border-color: #10b981;
-		color: #064e3b;
+		background: #064e3b;
+		border-color: #064e3b;
+		color: #ffffff;
 		font-weight: 700;
 	}
 }
@@ -313,9 +313,9 @@
 }
 
 .submitButton {
-	background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+	background: #064e3b;
 	color: #ffffff;
-	font-weight: 600;
+	font-weight: 700;
 	font-size: 0.95rem;
 	padding: 0.75rem 1.5rem;
 	border-radius: 12px;
@@ -325,11 +325,12 @@
 	align-items: center;
 	gap: 0.5rem;
 	transition: all 0.2s ease;
-	box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+	box-shadow: 0 4px 14px rgba(6, 78, 59, 0.35);
 
 	&:hover:not(:disabled) {
 		transform: translateY(-1px);
-		box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
+		background: #04382b;
+		box-shadow: 0 6px 20px rgba(6, 78, 59, 0.45);
 	}
 
 	&:disabled {

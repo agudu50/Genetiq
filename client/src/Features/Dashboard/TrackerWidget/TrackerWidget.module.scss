@@ -65,20 +65,26 @@
 	width: 42px;
 	height: 42px;
 	border-radius: 12px;
-	background: color-mix(in srgb, var(--accent, #00A69D) 12%, transparent);
-	border: 1px solid rgba(0, 166, 157, 0.25);
-	color: var(--accent, #00A69D);
+	background: rgba(6, 78, 59, 0.12);
+	border: 1px solid rgba(6, 78, 59, 0.3);
+	color: #064e3b;
 	flex-shrink: 0;
 	transition: all 0.3s ease;
 	position: relative;
-	box-shadow: 0 0 12px rgba(0, 166, 157, 0.15);
+	box-shadow: 0 0 12px rgba(6, 78, 59, 0.15);
+
+	html[data-theme="dark"] & {
+		background: rgba(6, 78, 59, 0.35);
+		border-color: rgba(52, 211, 153, 0.3);
+		color: #34d399;
+	}
 
 	&::after {
 		content: "";
 		position: absolute;
 		inset: -2px;
 		border-radius: 14px;
-		border: 1px solid rgba(0, 166, 157, 0.25);
+		border: 1px solid rgba(6, 78, 59, 0.25);
 		opacity: 0;
 		transform: scale(0.9);
 		transition: all 0.4s ease;
@@ -126,9 +132,13 @@
 
 .TrackerWidget-target-badge {
 	display: inline-block;
-	color: var(--accent, #00A69D);
+	color: #064e3b;
 	font-weight: 800;
 	letter-spacing: -0.01em;
+
+	html[data-theme="dark"] & {
+		color: #34d399;
+	}
 }
 
 // ─── Status Capsule Tag ───
@@ -145,20 +155,26 @@
 	white-space: nowrap;
 	
 	&.processing {
-		color: #fbbf24; // Amber Gold
-		background: rgba(245, 158, 11, 0.08);
-		border: 1px solid rgba(245, 158, 11, 0.2);
+		color: #064e3b;
+		background: rgba(6, 78, 59, 0.12);
+		border: 1px solid rgba(6, 78, 59, 0.3);
 		animation: none;
+
+		html[data-theme="dark"] & {
+			color: #34d399;
+			background: rgba(6, 78, 59, 0.35);
+			border-color: rgba(52, 211, 153, 0.3);
+		}
 	}
 
 	&.completed {
-		color: #34d399; // Emerald green
+		color: #34d399;
 		background: rgba(16, 185, 129, 0.08);
 		border: 1px solid rgba(16, 185, 129, 0.2);
 	}
 
 	&.idle {
-		color: #60a5fa; // Blue
+		color: #60a5fa;
 		background: rgba(59, 130, 246, 0.08);
 		border: 1px solid rgba(59, 130, 246, 0.2);
 	}
@@ -173,9 +189,14 @@
 	flex-shrink: 0;
 
 	&.processing {
-		background-color: #fbbf24;
-		box-shadow: 0 0 8px #fbbf24, 0 0 12px rgba(245, 158, 11, 0.4);
+		background-color: #064e3b;
+		box-shadow: 0 0 8px rgba(6, 78, 59, 0.6);
 		animation: none;
+
+		html[data-theme="dark"] & {
+			background-color: #34d399;
+			box-shadow: 0 0 8px #34d399;
+		}
 	}
 
 	&.completed {
@@ -216,9 +237,13 @@
 	z-index: 1;
 
 	.calendar-icon {
-		color: var(--accent, #00A69D);
+		color: #064e3b;
 		opacity: 0.75;
 		flex-shrink: 0;
+
+		html[data-theme="dark"] & {
+			color: #34d399;
+		}
 	}
 
 	.footer-text {
@@ -248,20 +273,23 @@
 		gap: 5px;
 		padding: 3px 8px;
 		border-radius: 6px;
-		background: rgba(0, 166, 157, 0.08);
-		border: 1px solid rgba(0, 166, 157, 0.15);
+		background: #064e3b;
+		border: 1px solid #064e3b;
 		font-weight: 800;
-		color: var(--accent, #00A69D);
+		color: #ffffff;
 		letter-spacing: -0.01em;
 		font-size: 11.5px;
 		vertical-align: middle;
+		box-shadow: 0 2px 8px rgba(6, 78, 59, 0.25);
 
-		html[data-theme="light"] & {
-			background: rgba(0, 166, 157, 0.05);
+		html[data-theme="dark"] & {
+			background: #064e3b;
+			border-color: rgba(52, 211, 153, 0.3);
+			color: #ffffff;
 		}
 
 		.clock-icon {
-			color: var(--accent, #00A69D);
+			color: #ffffff;
 			opacity: 0.9;
 			flex-shrink: 0;
 		}

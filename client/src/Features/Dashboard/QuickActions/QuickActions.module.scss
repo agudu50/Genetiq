@@ -224,14 +224,14 @@ $green: #10b981;
 	cursor: pointer;
 	font-family: inherit;
 	text-align: left;
-	background: $teal;
-	box-shadow: 0 4px 14px rgba($teal, 0.2);
+	background: #064e3b;
+	box-shadow: 0 4px 14px rgba(6, 78, 59, 0.25);
 	transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 
 	&:hover {
 		transform: translateY(-1px);
-		box-shadow: 0 6px 18px rgba($teal, 0.28);
-		background: #008f87;
+		box-shadow: 0 6px 18px rgba(6, 78, 59, 0.35);
+		background: #04382b;
 
 		.featuredArrow {
 			transform: translateX(3px);

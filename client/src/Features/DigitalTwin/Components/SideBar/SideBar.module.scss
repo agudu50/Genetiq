@@ -77,13 +77,13 @@
 	}
 
 	&.active {
-		background: rgba(0, 166, 157, 0.22);
-		color: #fff;
+		background: #064e3b;
+		color: #ffffff;
 		font-weight: 700;
 
 		html[data-theme="light"] & {
-			background: rgba(0, 166, 157, 0.12);
-			color: #00a69d;
+			background: #064e3b;
+			color: #ffffff;
 		}
 	}
 }

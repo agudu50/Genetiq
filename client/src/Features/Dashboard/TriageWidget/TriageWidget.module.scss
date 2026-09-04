@@ -528,7 +528,7 @@
 	width: 32px;
 	height: 32px;
 	border-radius: 12px;
-	background: #00a69d;
+	background: #064e3b;
 	border: none;
 	color: #ffffff;
 	display: flex;
@@ -536,7 +536,7 @@
 	justify-content: center;
 	cursor: pointer;
 	transition: all 0.2s ease;
-	box-shadow: 0 3px 8px rgba(0, 166, 157, 0.25);
+	box-shadow: 0 3px 8px rgba(6, 78, 59, 0.25);
 	padding: 0 !important;
 	flex-shrink: 0;
 
@@ -546,9 +546,9 @@
 	}
 
 	&:hover:not(:disabled) {
-		background: #008f87;
+		background: #04382b;
 		transform: scale(1.05) translateY(-0.5px);
-		box-shadow: 0 5px 12px rgba(0, 166, 157, 0.35);
+		box-shadow: 0 5px 12px rgba(6, 78, 59, 0.35);
 	}
 
 	&:disabled {

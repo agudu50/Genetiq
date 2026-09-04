@@ -507,8 +507,20 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 	}
 
 	&:hover {
-		background: color-mix(in srgb, var(--accent) 10%, transparent);
-		color: var(--accent);
+		background: rgba(6, 78, 59, 0.12);
+		color: #064e3b;
+
+		html[data-theme="dark"] & {
+			background: rgba(6, 78, 59, 0.25);
+			color: #34d399;
+		}
+
+		.dock-label {
+			color: #064e3b;
+			html[data-theme="dark"] & {
+				color: #34d399;
+			}
+		}
 	}
 
 	&:active {
@@ -517,18 +529,23 @@ $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 
 	// Active state
 	&.dock-btn-active {
-		background: linear-gradient(135deg, #00A69D 0%, #008f87 100%);
+		background: #064e3b;
 		color: #ffffff;
 		box-shadow:
-			0 4px 14px rgba(0, 166, 157, 0.35),
+			0 4px 14px rgba(6, 78, 59, 0.35),
 			0 2px 4px rgba(0, 0, 0, 0.08);
+
+		&:hover {
+			background: #04382b;
+			color: #ffffff;
+		}
 
 		svg {
 			filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15));
 		}
 
 		.dock-label {
-			color: rgba(255, 255, 255, 0.9);
+			color: rgba(255, 255, 255, 0.95);
 		}
 	}
 

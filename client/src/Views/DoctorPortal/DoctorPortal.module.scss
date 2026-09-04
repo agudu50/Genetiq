@@ -64,12 +64,13 @@
 	width: 36px;
 	height: 36px;
 	border-radius: 10px;
-	background: #00a69d;
+	background: #064e3b;
+	border: 1px solid rgba(255, 255, 255, 0.2);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: #fff;
-	box-shadow: 0 4px 14px rgba(0, 166, 157, 0.35);
+	color: #ffffff;
+	box-shadow: 0 4px 14px rgba(6, 78, 59, 0.4);
 }
 
 .hospitalMeta {
@@ -84,18 +85,18 @@
 		margin: 0;
 
 		:global(html[data-theme="light"]) & {
-			color: #0f172a;
+			color: #ffffff;
 		}
 	}
 
 	.hospitalSubtitle {
 		font-size: 0.74rem;
-		color: rgba(255, 255, 255, 0.5);
+		color: rgba(255, 255, 255, 0.85);
 		font-weight: 500;
 		margin: 0;
 
 		:global(html[data-theme="light"]) & {
-			color: #64748b;
+			color: rgba(255, 255, 255, 0.85);
 		}
 	}
 }

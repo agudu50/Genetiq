@@ -98,12 +98,14 @@
 	font-family: 'Outfit', 'Inter', sans-serif;
 	background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
 	-webkit-background-clip: text;
+	background-clip: text;
 	-webkit-text-fill-color: transparent;
 	transition: all 0.3s ease;
 
 	html[data-theme="dark"] & {
 		background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
 		-webkit-background-clip: text;
+		background-clip: text;
 		-webkit-text-fill-color: transparent;
 	}
 
@@ -253,12 +255,12 @@
 
 .nav-active {
 	color: #ffffff !important;
-	background: linear-gradient(135deg, $teal-primary 0%, $cyan 100%) !important;
+	background: #064e3b !important;
 	font-weight: 700;
-	box-shadow: 0 4px 14px rgba($teal-primary, 0.35);
+	box-shadow: 0 4px 14px rgba(6, 78, 59, 0.35);
 
 	&:hover {
-		background: linear-gradient(135deg, $teal-dark 0%, $teal-primary 100%) !important;
+		background: #04382b !important;
 		transform: translateY(-0.5px);
 	}
 }
@@ -357,15 +359,15 @@
 	}
 
 	&:hover, &.active {
-		border-color: rgba($teal-primary, 0.4);
+		border-color: rgba(6, 78, 59, 0.4);
 		background: #ffffff;
-		box-shadow: 0 0 16px rgba($teal-primary, 0.2);
+		box-shadow: 0 0 16px rgba(6, 78, 59, 0.2);
 		transform: scale(1.02);
 
 		html[data-theme="dark"] & {
 			background: rgba(255, 255, 255, 0.06);
-			border-color: rgba($teal-primary, 0.5);
-			box-shadow: 0 0 20px rgba($teal-primary, 0.3);
+			border-color: rgba(6, 78, 59, 0.5);
+			box-shadow: 0 0 20px rgba(6, 78, 59, 0.3);
 		}
 	}
 
@@ -373,15 +375,15 @@
 		width: 36px;
 		height: 36px;
 		border-radius: 50%;
-		background: linear-gradient(135deg, $teal-primary 0%, $cyan 100%);
+		background: #064e3b;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		color: white;
+		color: #ffffff;
 		font-weight: 750;
 		font-size: 14px;
 		letter-spacing: 0.02em;
-		box-shadow: 0 2px 8px rgba($teal-primary, 0.25);
+		box-shadow: 0 2px 8px rgba(6, 78, 59, 0.35);
 		box-sizing: border-box;
 	}
 }
