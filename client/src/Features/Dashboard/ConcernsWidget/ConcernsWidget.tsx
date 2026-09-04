@@ -5,8 +5,6 @@ import { detailedSystemConcerns } from "./helpers/detailedSystemConcerns";
 import { Concern } from "./helpers/concernsMockData";
 import { ConcernsCard } from "./Components/ConcernsCard/ConcernsCard";
 import { DetailsCard } from "./Components/DetailsCard/DetailsCard";
-import { ReasonsTable } from "./Components/ReasonsTable/ReasonsTable";
-import { SymptomsList } from "./Components/SymptomsList/SymptomsList";
 import { PlanWidget } from "../PlanWidget/PlanWidget";
 import { useLanguage } from "@/App/i18n/LanguageContext";
 
@@ -224,8 +222,6 @@ export const ConcernsWidget: React.FC<ConcernsWidgetProps> = ({ category }) => {
 	}, [visibleConcerns]);
 
 	const selectedSystem = detailedSystemConcerns[0];
-	const reasons = selectedSystem.details[detailIndex - 1]?.reasons ?? [];
-	const symptoms = selectedSystem?.details[detailIndex - 1]?.symptoms;
 
 	const handleShowMore = () => {
 		setIsShowMore((prev) => !prev);
@@ -319,25 +315,6 @@ export const ConcernsWidget: React.FC<ConcernsWidgetProps> = ({ category }) => {
 							/>
 						))}
 					</div>
-				</div>
-				<div
-					className={`${styles["ConcernWidget-reasons"]} ${
-						isCardioDetailView
-							? styles["ConcernWidget-reasons-visible"]
-							: styles["ConcernWidget-reasons-hidden"]
-					}`}
-				>
-					<ReasonsTable reasons={reasons} detailIndex={detailIndex} />
-				</div>
-
-				<div
-					className={`${styles["ConcernWidget-symptoms"]} ${
-						isCardioDetailView
-							? styles["ConcernWidget-symptoms-visible"]
-							: styles["ConcernWidget-symptoms-hidden"]
-					}`}
-				>
-					<SymptomsList symptoms={symptoms} />
 				</div>
 
 				<PlanWidget key={lang} />

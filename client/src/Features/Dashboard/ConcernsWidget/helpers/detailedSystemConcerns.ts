@@ -69,7 +69,7 @@ export const detailedSystemConcerns: SystemConcerns[] = [
 						statusText: "Above optimal",
 						status: "High",
 						description:
-							'LDL stands for low-density lipoprotein, a type of cholesterol in your blood that is sometimes called "bad" cholesterol',
+							'LDL is often called "bad cholesterol" because high levels can slowly build up in blood vessels. Your level of 112 mg/dL is slightly above the ideal target (reference range: 100 - 129 mg/dL).',
 						date: "100-129",
 					},
 					{
@@ -83,7 +83,7 @@ export const detailedSystemConcerns: SystemConcerns[] = [
 						statusText: "Optimal",
 						status: "Low",
 						description:
-							"VLDL stands for very low-density lipoprotein, a type of fat in your blood that can contribute to plaque buildup in your arteries.",
+							"VLDL carries healthy fats (triglycerides) through your bloodstream. Your level of 17 mg/dL is in the healthy target range (reference range: 7 - 40 mg/dL).",
 						date: "7-40",
 					},
 					{
@@ -97,7 +97,7 @@ export const detailedSystemConcerns: SystemConcerns[] = [
 						statusText: "Below Optimal",
 						status: "High",
 						description:
-							" HDL helps remove cholesterol from the bloodstream and is linked to a lower risk of heart disease.",
+							'HDL is the protective "good cholesterol" that cleans excess fats from your blood vessels. Your level is 58 mg/dL (target is 60 mg/dL or higher).',
 						date: "60-null",
 					},
 
@@ -112,11 +112,11 @@ export const detailedSystemConcerns: SystemConcerns[] = [
 						statusText: "Optimal",
 						status: "Low",
 						description:
-							"Your body needs cholesterol to make hormones, digest food, and more. However, too much cholesterol can be a problem. ",
+							"Your total cholesterol measures all the cholesterol in your blood. At 181 mg/dL, it is in the healthy range (reference: under 200 mg/dL).",
 						date: "null-200",
 					},
 					{
-						id: 4,
+						id: 5,
 						title: "Cholesterol:HDL",
 						icon: Drop,
 						test: "Blood test",
@@ -126,28 +126,28 @@ export const detailedSystemConcerns: SystemConcerns[] = [
 						statusText: "Optimal",
 						status: "Low",
 						description:
-							"Calculation that compares your total cholesterol to your high-density lipoprotein (HDL) cholesterol levels ",
+							"This ratio compares total cholesterol to good HDL cholesterol. A lower ratio means better heart protection (healthy target: under 4.0).",
 						date: "null-4",
 					},
 					{
-						id: 4,
+						id: 6,
 						title: "HbA1C",
 						icon: Drop,
 						test: "Blood test",
 						level: { type: "progress", src: 55 },
 						value: "5.3",
-						unit: "Ratio",
+						unit: "%",
 						statusText: "Optimal",
 						status: "Low",
 						description:
-							"Average level of blood sugar over the past two to three months ",
+							"HbA1C measures your average blood sugar levels over the past 2–3 months. Your 5.3% indicates healthy sugar control (healthy target: 4.0 - 6.0%).",
 						date: "4-6",
 					},
 				],
 				symptoms: {
 					id: 1,
 					description:
-						"Symptoms of AFib can vary, and in some cases, individuals may not notice any symptoms at all. You may experience the following symptoms with AFib",
+						"Symptoms of AFib can vary, and in some cases, individuals may not notice any symptoms at all. You may experience the following symptoms with AFib:",
 					symptomsList: [
 						"Palpitations",
 						"Shortness of breath",
