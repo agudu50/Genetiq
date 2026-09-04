@@ -9,6 +9,7 @@ import {
 	AlertTriangle,
 	ArrowDownRight,
 	ArrowUpRight,
+	Brain,
 	Check,
 	CheckCircle2,
 	ChevronDown,
@@ -29,6 +30,7 @@ import {
 	Sparkles,
 	Stethoscope,
 	User,
+	Wind,
 	X,
 } from "lucide-react";
 import { CameraProvider } from "@/Features/DigitalTwin/Context/CameraContext";
@@ -893,7 +895,7 @@ export const DoctorPortal = () => {
 			<div className={styles.bottomOrganBar}>
 				<button
 					type='button'
-					className={`${styles.organPill} ${selectedOrganSystem === "cardiovascular" ? styles.organPillActive : ""}`}
+					className={`${styles.organPill} ${selectedOrganSystem === "cardiovascular" || selectedOrganSystem === "CardioLoad" ? styles.organPillActive : ""}`}
 					onClick={() => setSelectedOrganSystem("cardiovascular")}
 				>
 					<Heart size={14} /> Cardiovascular (Heart)
@@ -907,10 +909,31 @@ export const DoctorPortal = () => {
 				</button>
 				<button
 					type='button'
-					className={`${styles.organPill} ${selectedOrganSystem === "gastroenterolgy" ? styles.organPillActive : ""}`}
+					className={`${styles.organPill} ${selectedOrganSystem === "gastroenterolgy" || selectedOrganSystem === "Gastroenterolgy" ? styles.organPillActive : ""}`}
 					onClick={() => setSelectedOrganSystem("gastroenterolgy")}
 				>
 					<Activity size={14} /> Metabolic & Liver
+				</button>
+				<button
+					type='button'
+					className={`${styles.organPill} ${selectedOrganSystem === "Pulmonology" ? styles.organPillActive : ""}`}
+					onClick={() => setSelectedOrganSystem("Pulmonology")}
+				>
+					<Wind size={14} /> Respiratory (Lungs)
+				</button>
+				<button
+					type='button'
+					className={`${styles.organPill} ${selectedOrganSystem === "StressManagement" ? styles.organPillActive : ""}`}
+					onClick={() => setSelectedOrganSystem("StressManagement")}
+				>
+					<Brain size={14} /> Neurological (Brain)
+				</button>
+				<button
+					type='button'
+					className={`${styles.organPill} ${selectedOrganSystem === "Pulmonology1" ? styles.organPillActive : ""}`}
+					onClick={() => setSelectedOrganSystem("Pulmonology1")}
+				>
+					<Droplet size={14} /> Renal (Kidneys)
 				</button>
 			</div>
 		</div>
