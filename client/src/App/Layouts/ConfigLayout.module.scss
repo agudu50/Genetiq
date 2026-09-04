@@ -1,12 +1,13 @@
 // ── Config layout shell ───────────────────────────────────────────────────────
 
-$brand: #007c72;
+$brand: #064e3b;
+$brand-hover: #04382b;
 
 @mixin config-layout-dark {
 	--cfg-bg: #0a0e1a;
 	--cfg-nav-bg: rgba(10, 14, 26, 0.85);
 	--cfg-border: rgba(255, 255, 255, 0.06);
-	--cfg-brand-name: #00a69d;
+	--cfg-brand-name: #34d399;
 }
 
 @mixin config-layout-light {
@@ -110,7 +111,7 @@ $brand: #007c72;
 	white-space: nowrap;
 
 	&:hover {
-		background: #006158;
+		background: $brand-hover;
 		transform: translateY(-1px);
 		box-shadow: 0 6px 20px rgba($brand, 0.25);
 	}
