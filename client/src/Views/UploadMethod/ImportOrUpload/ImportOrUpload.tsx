@@ -6,7 +6,7 @@ import { updateUserInfo } from "@/App/Redux/userSlice";
 import { addUploadRecord } from "@/App/Redux/uploadHistorySlice";
 import type { LabFinding, Recommendation } from "@/App/Redux/uploadHistorySlice";
 import { paths } from "@/App/Routes/Paths";
-import { Upload, FileText, ShieldCheck, Zap, ChevronRight, CheckCircle, ArrowLeft, Loader2, Wifi, WifiOff, Brain, Stethoscope, User, Droplets, Ruler, Scale, Activity, Clock, Lock, ChevronDown, Bug, Microscope, FlaskConical, Dna, Candy, ScanSearch, Waves, Info, Sparkles, Camera, Globe, Eye, EyeOff, ZoomIn, Volume2, Pause, Play } from "lucide-react";
+import { Upload, FileText, ShieldCheck, Zap, ChevronRight, CheckCircle, ArrowLeft, Loader2, Wifi, WifiOff, Brain, Stethoscope, User, Droplets, Ruler, Scale, Activity, Clock, Lock, ChevronDown, Bug, Microscope, FlaskConical, Dna, Candy, ScanSearch, Waves, Info, Sparkles, Camera, Globe, Eye, EyeOff, ZoomIn, Volume2, Pause, Play, RotateCw, X, AlertCircle, Check } from "lucide-react";
 import {
 	analyzeLabResults,
 	getTranslation,
@@ -109,6 +109,16 @@ const ImportOrUpload = () => {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const cameraInputRef = useRef<HTMLInputElement>(null);
 	const [zoomModalUrl, setZoomModalUrl] = useState<string | null>(null);
+
+	// ── Live Camera Modal State ───────────────────────────────────────────────
+	const [cameraModalOpen, setCameraModalOpen] = useState(false);
+	const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
+	const [cameraFacing, setCameraFacing] = useState<"environment" | "user">("environment");
+	const [cameraError, setCameraError] = useState<string | null>(null);
+	const [capturedPhotoUrl, setCapturedPhotoUrl] = useState<string | null>(null);
+	const [capturedPhotoBlob, setCapturedPhotoBlob] = useState<Blob | null>(null);
+	const videoRef = useRef<HTMLVideoElement>(null);
+	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
 	const [uploadTab, setUploadTab] = useState<"file" | "text" | "preset">("file");
 	const [langDropdownOpen, setLangDropdownOpen] = useState(false);
@@ -170,6 +180,137 @@ const ImportOrUpload = () => {
 		void refresh();
 	}, [step, refresh]);
 
+	// ── Live Camera Stream Management ─────────────────────────────────────────
+
+	const stopCamera = useCallback(() => {
+		if (cameraStream) {
+			cameraStream.getTracks().forEach((track) => track.stop());
+			setCameraStream(null);
+		}
+	}, [cameraStream]);
+
+	const startCamera = async (facing: "environment" | "user" = cameraFacing) => {
+		stopCamera();
+		setCameraError(null);
+		try {
+			if (typeof navigator === "undefined" || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+				setCameraError("Live camera is not supported on this browser or connection. Please use file upload.");
+				return;
+			}
+			let stream: MediaStream;
+			try {
+				stream = await navigator.mediaDevices.getUserMedia({
+					video: {
+						facingMode: facing,
+						width: { ideal: 1920 },
+						height: { ideal: 1080 }
+					},
+					audio: false
+				});
+			} catch {
+				// Fallback without strict constraints if specific facing mode fails
+				stream = await navigator.mediaDevices.getUserMedia({
+					video: true,
+					audio: false
+				});
+			}
+			setCameraStream(stream);
+			setCameraFacing(facing);
+			setCameraError(null);
+			if (videoRef.current) {
+				videoRef.current.srcObject = stream;
+				await videoRef.current.play().catch(() => {});
+			}
+		} catch (err: any) {
+			console.error("Camera access error:", err);
+			if (err?.name === "NotAllowedError" || err?.name === "PermissionDeniedError") {
+				setCameraError("Camera permission was denied. Please allow camera access in your browser address bar.");
+			} else if (err?.name === "NotFoundError" || err?.name === "DevicesNotFoundError") {
+				setCameraError("No camera device was detected on your computer or phone.");
+			} else {
+				setCameraError("Unable to access live camera. Please check your permissions or choose a file instead.");
+			}
+		}
+	};
+
+	useEffect(() => {
+		if (cameraModalOpen && cameraStream && videoRef.current) {
+			videoRef.current.srcObject = cameraStream;
+			videoRef.current.play().catch(() => {});
+		}
+	}, [cameraModalOpen, cameraStream]);
+
+	useEffect(() => {
+		return () => {
+			if (cameraStream) {
+				cameraStream.getTracks().forEach((t) => t.stop());
+			}
+		};
+	}, [cameraStream]);
+
+	const handleSnapPhotoClick = async (e: React.MouseEvent) => {
+		e.stopPropagation();
+		setCapturedPhotoUrl(null);
+		setCapturedPhotoBlob(null);
+		setCameraModalOpen(true);
+		await startCamera("environment");
+	};
+
+	const handleSwitchCamera = async () => {
+		const nextFacing = cameraFacing === "environment" ? "user" : "environment";
+		await startCamera(nextFacing);
+	};
+
+	const handleCapturePhoto = () => {
+		if (!videoRef.current) return;
+		const video = videoRef.current;
+		const canvas = canvasRef.current || document.createElement("canvas");
+		canvas.width = video.videoWidth || 1280;
+		canvas.height = video.videoHeight || 720;
+		const ctx = canvas.getContext("2d");
+		if (!ctx) return;
+
+		ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+		canvas.toBlob((blob) => {
+			if (!blob) return;
+			const url = URL.createObjectURL(blob);
+			setCapturedPhotoBlob(blob);
+			setCapturedPhotoUrl(url);
+			stopCamera();
+		}, "image/jpeg", 0.95);
+	};
+
+	const handleRetakePhoto = () => {
+		if (capturedPhotoUrl) {
+			URL.revokeObjectURL(capturedPhotoUrl);
+			setCapturedPhotoUrl(null);
+			setCapturedPhotoBlob(null);
+		}
+		void startCamera(cameraFacing);
+	};
+
+	const handleConfirmPhoto = () => {
+		if (!capturedPhotoBlob) return;
+		const file = new File(
+			[capturedPhotoBlob],
+			`lab-scan-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-")}.jpg`,
+			{ type: "image/jpeg" }
+		);
+		addFiles([file]);
+		handleCloseCameraModal();
+	};
+
+	const handleCloseCameraModal = () => {
+		stopCamera();
+		if (capturedPhotoUrl) {
+			URL.revokeObjectURL(capturedPhotoUrl);
+			setCapturedPhotoUrl(null);
+			setCapturedPhotoBlob(null);
+		}
+		setCameraModalOpen(false);
+		setCameraError(null);
+	};
+
 	// ── Step 1: Personal info submit ──────────────────────────────────────────
 
 	const handlePersonalSubmit = (e: React.FormEvent) => {
@@ -185,7 +326,7 @@ const ImportOrUpload = () => {
 
 	// ── Step 2: File handling ─────────────────────────────────────────────────
 
-	const addFiles = (list: FileList | null) => {
+	const addFiles = (list: FileList | File[] | null) => {
 		if (!list) return;
 		setSelectedPreset(null); // Clear preset if files uploaded
 		const newFiles: UploadedFile[] = Array.from(list).map((file) => ({
@@ -1032,10 +1173,7 @@ const ImportOrUpload = () => {
 											<button
 												type="button"
 												className={styles.uploadHubCameraBtn}
-												onClick={(e) => {
-													e.stopPropagation();
-													cameraInputRef.current?.click();
-												}}
+												onClick={handleSnapPhotoClick}
 											>
 												<Camera size={14} /> {t("Snap Photo")}
 											</button>
@@ -1277,6 +1415,131 @@ const ImportOrUpload = () => {
 							</svg>
 						</button>
 						<img src={zoomModalUrl} alt="Zoomed Lab Report" className={styles.zoomModalImg} />
+					</div>
+				</div>
+			)}
+
+			{/* ── Live Camera Scanner Modal ─────────────────── */}
+			{cameraModalOpen && (
+				<div className={styles.cameraModalOverlay} onClick={handleCloseCameraModal}>
+					<div className={styles.cameraModalCard} onClick={(e) => e.stopPropagation()}>
+						<div className={styles.cameraModalHeader}>
+							<div className={styles.cameraModalTitleGroup}>
+								<div className={styles.cameraModalBadge}>
+									<Camera size={18} />
+								</div>
+								<h3 className={styles.cameraModalTitle}>{t("Live Document Scanner")}</h3>
+							</div>
+							<button
+								type="button"
+								className={styles.cameraModalCloseBtn}
+								onClick={handleCloseCameraModal}
+								aria-label="Close live camera"
+							>
+								<X size={18} strokeWidth={2.5} color="#ffffff" />
+							</button>
+						</div>
+
+						{cameraError ? (
+							<div className={styles.cameraErrorContainer}>
+								<div className={styles.cameraErrorIcon}>
+									<AlertCircle size={28} />
+								</div>
+								<h4 className={styles.cameraErrorTitle}>{t("Camera Access Required")}</h4>
+								<p className={styles.cameraErrorDesc}>{cameraError}</p>
+								<div className={styles.cameraErrorActions}>
+									<button
+										type="button"
+										className={styles.cameraRetakeBtn}
+										onClick={() => void startCamera(cameraFacing)}
+									>
+										<RotateCw size={15} /> {t("Try Again")}
+									</button>
+									<button
+										type="button"
+										className={styles.cameraUsePhotoBtn}
+										onClick={() => {
+											handleCloseCameraModal();
+											cameraInputRef.current?.click();
+										}}
+									>
+										<Upload size={15} /> {t("Choose File Instead")}
+									</button>
+								</div>
+							</div>
+						) : (
+							<>
+								<div className={styles.cameraViewfinder}>
+									{capturedPhotoUrl ? (
+										<img
+											src={capturedPhotoUrl}
+											alt="Captured lab document"
+											className={styles.cameraPhotoPreview}
+										/>
+									) : (
+										<>
+											<video
+												ref={videoRef}
+												autoPlay
+												playsInline
+												muted
+												className={styles.cameraVideo}
+											/>
+											<canvas ref={canvasRef} style={{ display: "none" }} />
+											<div className={styles.cameraDocumentGuide}>
+												<div className={styles.cameraGuideCorners} />
+												<div className={styles.cameraGuideCornersBottom} />
+												<span className={styles.cameraGuideHint}>
+													{t("Align lab report or test strip within the frame")}
+												</span>
+											</div>
+										</>
+									)}
+								</div>
+
+								<div className={styles.cameraControls}>
+									{capturedPhotoUrl ? (
+										<div className={styles.cameraConfirmActions}>
+											<button
+												type="button"
+												className={styles.cameraRetakeBtn}
+												onClick={handleRetakePhoto}
+											>
+												<RotateCw size={16} /> {t("Retake")}
+											</button>
+											<button
+												type="button"
+												className={styles.cameraUsePhotoBtn}
+												onClick={handleConfirmPhoto}
+											>
+												<Check size={16} /> {t("Use This Photo")}
+											</button>
+										</div>
+									) : (
+										<div className={styles.cameraShutterWrap}>
+											<button
+												type="button"
+												className={styles.cameraCaptureBtn}
+												onClick={handleCapturePhoto}
+												aria-label="Capture photo"
+												title="Capture photo"
+											>
+												<Camera size={26} />
+											</button>
+											<button
+												type="button"
+												className={styles.cameraSwitchBtn}
+												onClick={handleSwitchCamera}
+												title="Switch Camera (Front/Back)"
+											>
+												<RotateCw size={15} />
+												<span>{t("Flip")}</span>
+											</button>
+										</div>
+									)}
+								</div>
+							</>
+						)}
 					</div>
 				</div>
 			)}
