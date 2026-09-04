@@ -82,6 +82,12 @@ const Dashboard = () => {
 	);
 	const [category, setCategory] = useState(selectedCategory || "total");
 
+	useEffect(() => {
+		if (selectedCategory && selectedCategory !== category) {
+			setCategory(selectedCategory);
+		}
+	}, [selectedCategory]);
+
 	const [isModelVisible, setIsModelVisible] = useState(true);
 	const [pageIn, setPageIn] = useState(false);
 
