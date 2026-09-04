@@ -856,7 +856,7 @@ export const DoctorPortal = () => {
 						onClick={() => setIsScheduleModalOpen(true)}
 						title='View Booked Patient Appointments & Schedules'
 					>
-						<Calendar size={14} style={{ color: "#00a896" }} />
+						<Calendar size={14} style={{ color: "#ffffff" }} />
 						<span className={styles.scheduleBtnText}>Appointments</span>
 						<span className={styles.scheduleCountBadge}>
 							{appointments.filter((a) => a.status === "waiting" || a.date.includes("Today")).length} Today

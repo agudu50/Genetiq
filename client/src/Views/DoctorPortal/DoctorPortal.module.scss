@@ -297,26 +297,27 @@
 	gap: 7px;
 	padding: 6px 12px;
 	border-radius: 20px;
-	background: rgba(0, 168, 150, 0.12);
-	border: 1px solid rgba(0, 168, 150, 0.35);
+	background: #064e3b;
+	border: 1px solid #064e3b;
 	color: #ffffff;
 	font-size: 0.76rem;
 	font-weight: 700;
 	cursor: pointer;
 	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 	backdrop-filter: blur(8px);
+	box-shadow: 0 2px 8px rgba(6, 78, 59, 0.35);
 
 	:global(html[data-theme="light"]) & {
-		background: #e6fffa;
-		border-color: #00a896;
-		color: #0f172a;
+		background: #064e3b;
+		border-color: #064e3b;
+		color: #ffffff;
 	}
 
 	&:hover {
-		background: rgba(0, 168, 150, 0.22);
-		border-color: #00a896;
+		background: #04382b;
+		border-color: #04382b;
 		transform: translateY(-1px);
-		box-shadow: 0 4px 12px rgba(0, 168, 150, 0.25);
+		box-shadow: 0 4px 12px rgba(6, 78, 59, 0.5);
 	}
 }
 
@@ -329,9 +330,9 @@
 .scheduleCountBadge {
 	font-size: 0.65rem;
 	font-weight: 800;
-	background: #00a896;
+	background: #10b981;
 	color: #ffffff;
-	padding: 1px 6px;
+	padding: 1px 7px;
 	border-radius: 10px;
 	letter-spacing: 0.02em;
 }
@@ -349,19 +350,19 @@
 	padding: 2px;
 	border-radius: 50%;
 	background: transparent;
-	border: 2px solid transparent;
+	border: 2px solid rgba(255, 255, 255, 0.3);
 	cursor: pointer;
 	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
 	&:hover {
 		transform: scale(1.06);
-		border-color: rgba(0, 168, 150, 0.5);
+		border-color: #ffffff;
 	}
 }
 
 .doctorTriggerBtnActive {
 	transform: scale(1.06);
-	border-color: #00a896 !important;
+	border-color: #ffffff !important;
 }
 
 .doctorAvatarBadge {
@@ -369,7 +370,8 @@
 	width: 36px;
 	height: 36px;
 	border-radius: 50%;
-	background: linear-gradient(135deg, #00a896, #0284c7);
+	background: #064e3b;
+	border: 1px solid rgba(255, 255, 255, 0.2);
 	color: #ffffff;
 	display: flex;
 	align-items: center;
@@ -377,7 +379,7 @@
 	font-size: 0.82rem;
 	font-weight: 800;
 	letter-spacing: 0.04em;
-	box-shadow: 0 2px 10px rgba(0, 168, 150, 0.4);
+	box-shadow: 0 2px 8px rgba(6, 78, 59, 0.4);
 	transition: all 0.2s ease;
 }
 
@@ -389,7 +391,7 @@
 	height: 10px;
 	border-radius: 50%;
 	background: #10b981;
-	border: 2px solid #0a0f18;
+	border: 2px solid #064e3b;
 	box-shadow: 0 0 5px rgba(16, 185, 129, 0.8);
 
 	:global(html[data-theme="light"]) & {
@@ -423,7 +425,7 @@
 	border: 1px solid rgba(255, 255, 255, 0.12);
 	border-radius: 16px;
 	padding: 12px;
-	box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 168, 150, 0.15);
+	box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(16, 185, 129, 0.2);
 	backdrop-filter: blur(20px);
 	z-index: 100;
 	display: flex;
@@ -465,7 +467,7 @@
 	width: 40px;
 	height: 40px;
 	border-radius: 50%;
-	background: linear-gradient(135deg, #00a896, #0284c7);
+	background: #064e3b;
 	color: #ffffff;
 	display: flex;
 	align-items: center;
@@ -473,6 +475,7 @@
 	font-size: 0.9rem;
 	font-weight: 800;
 	flex-shrink: 0;
+	box-shadow: 0 2px 8px rgba(6, 78, 59, 0.35);
 }
 
 .doctorMenuHeroInfo {
@@ -658,17 +661,17 @@
 	gap: 8px;
 	padding: 8px 12px;
 	border-radius: 10px;
-	background: linear-gradient(135deg, #007c72, #00a896);
+	background: #064e3b;
 	border: none;
 	color: #ffffff;
 	font-size: 0.78rem;
 	font-weight: 700;
 	cursor: pointer;
 	transition: all 0.2s;
-	box-shadow: 0 4px 12px rgba(0, 124, 114, 0.3);
+	box-shadow: 0 4px 12px rgba(6, 78, 59, 0.3);
 
 	&:hover {
-		background: linear-gradient(135deg, #006158, #008f80);
+		background: #04382b;
 		transform: translateY(-1px);
 	}
 }
@@ -1215,7 +1218,7 @@
 	width: 36px;
 	height: 36px;
 	border-radius: 50%;
-	background: linear-gradient(135deg, #00a896, #0284c7);
+	background: #064e3b;
 	color: #ffffff;
 	display: flex;
 	align-items: center;
@@ -1223,6 +1226,7 @@
 	font-size: 0.8rem;
 	font-weight: 800;
 	flex-shrink: 0;
+	box-shadow: 0 2px 6px rgba(6, 78, 59, 0.3);
 }
 
 .apptPatientName {
@@ -1331,8 +1335,8 @@
 	gap: 10px;
 	padding: 8px 12px;
 	border-radius: 10px;
-	background: rgba(0, 168, 150, 0.08);
-	border: 1px solid rgba(0, 168, 150, 0.2);
+	background: rgba(16, 185, 129, 0.08);
+	border: 1px solid rgba(16, 185, 129, 0.2);
 
 	:global(html[data-theme="light"]) & {
 		background: #f0fdfa;
@@ -1344,7 +1348,7 @@
 	width: 32px;
 	height: 32px;
 	border-radius: 8px;
-	background: linear-gradient(135deg, #00a896, #0284c7);
+	background: #064e3b;
 	color: #ffffff;
 	font-size: 0.76rem;
 	font-weight: 800;
@@ -1352,6 +1356,7 @@
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
+	box-shadow: 0 2px 6px rgba(6, 78, 59, 0.3);
 }
 
 .specMeta {
@@ -1426,9 +1431,9 @@
 }
 
 .specPillSmallActive {
-	background: rgba(0, 168, 150, 0.2) !important;
-	border-color: #00a896 !important;
-	color: #00a896 !important;
+	background: rgba(16, 185, 129, 0.2) !important;
+	border-color: #10b981 !important;
+	color: #10b981 !important;
 	font-weight: 800 !important;
 }
 
@@ -1488,18 +1493,19 @@
 	gap: 6px;
 	padding: 6px 12px;
 	border-radius: 8px;
-	background: linear-gradient(135deg, #0284c7, #0ea5e9);
+	background: #064e3b;
 	color: #ffffff;
 	border: none;
 	font-size: 0.75rem;
 	font-weight: 700;
 	cursor: pointer;
 	transition: all 0.2s;
-	box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
+	box-shadow: 0 2px 8px rgba(6, 78, 59, 0.35);
 
 	&:hover {
+		background: #04382b;
 		transform: translateY(-1px);
-		box-shadow: 0 4px 12px rgba(2, 132, 199, 0.5);
+		box-shadow: 0 4px 12px rgba(6, 78, 59, 0.5);
 	}
 }
 
@@ -1509,16 +1515,16 @@
 	gap: 6px;
 	padding: 6px 12px;
 	border-radius: 8px;
-	background: rgba(0, 168, 150, 0.15);
-	border: 1px solid rgba(0, 168, 150, 0.35);
-	color: #00a896;
+	background: rgba(16, 185, 129, 0.15);
+	border: 1px solid rgba(16, 185, 129, 0.35);
+	color: #10b981;
 	font-size: 0.75rem;
 	font-weight: 700;
 	cursor: pointer;
 	transition: all 0.15s;
 
 	&:hover {
-		background: #00a896;
+		background: #10b981;
 		color: #ffffff;
 	}
 }
@@ -1595,21 +1601,21 @@
 
 	&:hover {
 		background: rgba(255, 255, 255, 0.06);
-		border-color: rgba(0, 168, 150, 0.3);
+		border-color: rgba(16, 185, 129, 0.3);
 	}
 }
 
 .specialistCardActive {
-	background: rgba(0, 168, 150, 0.15) !important;
-	border-color: #00a896 !important;
-	box-shadow: 0 0 10px rgba(0, 168, 150, 0.2);
+	background: rgba(16, 185, 129, 0.15) !important;
+	border-color: #10b981 !important;
+	box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
 }
 
 .specialistAvatar {
 	width: 34px;
 	height: 34px;
 	border-radius: 8px;
-	background: linear-gradient(135deg, #00a896, #0284c7);
+	background: #064e3b;
 	color: #ffffff;
 	font-size: 0.75rem;
 	font-weight: 800;
@@ -1617,6 +1623,7 @@
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
+	box-shadow: 0 2px 6px rgba(6, 78, 59, 0.3);
 }
 
 .specialistName {
