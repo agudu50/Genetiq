@@ -1,313 +1,288 @@
 @use "@/App/Styles/_mixins" as mixins;
 
-$ease: cubic-bezier(0.22, 1, 0.36, 1);
-
-.DetailsCard-card {
+.card {
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	justify-content: space-between;
+	gap: 14px;
 	width: 100%;
 	min-width: 0;
-	padding: 16px;
+	padding: 16px 16px 14px 16px;
 	box-sizing: border-box;
 	text-align: left;
 	font: inherit;
 	color: inherit;
 	cursor: pointer;
 	border-radius: 16px;
-	background: rgba(30, 41, 59, 0.45);
-	backdrop-filter: blur(12px);
-	-webkit-backdrop-filter: blur(12px);
-	border: 1px solid rgba(255, 255, 255, 0.06);
-	transition: all 0.25s $ease;
-	-webkit-tap-highlight-color: transparent;
+	@include mixins.dashboard-card;
 	position: relative;
 	overflow: hidden;
-
-	html[data-theme="light"] & {
-		background: #ffffff;
-		backdrop-filter: none;
-		-webkit-backdrop-filter: none;
-		border-color: #e2e8f0;
-		box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
-	}
+	-webkit-tap-highlight-color: transparent;
 
 	&:hover {
-		border-color: color-mix(in srgb, var(--concern-accent) 45%, rgba(255, 255, 255, 0.12));
-		transform: translateY(-3px);
-		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 0 0 1px rgba(255, 255, 255, 0.05);
+		transform: translateY(-2px);
+		border-color: rgba(255, 255, 255, 0.16);
 
 		html[data-theme="light"] & {
-			border-color: color-mix(in srgb, var(--concern-accent) 30%, #cbd5e1);
-			box-shadow: 0 6px 20px rgba(15, 23, 42, 0.05);
+			border-color: #cbd5e1;
+			box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
 		}
 
-		.DetailsCard-iconBox {
-			transform: scale(1.05);
-			border-color: color-mix(in srgb, var(--concern-accent) 45%, transparent);
+		.footerIcon {
+			transform: translateX(3px);
+			color: var(--concern-accent);
 		}
 	}
 
-	&-active {
+	&Active {
 		border-color: var(--concern-accent);
-		background: rgba(30, 41, 59, 0.65);
-		box-shadow: inset 0 0 0 1px var(--concern-accent);
+		box-shadow: 0 0 0 1px var(--concern-accent), 0 4px 16px rgba(0, 0, 0, 0.2);
 
 		html[data-theme="light"] & {
-			background: #f8fafc;
 			border-color: var(--concern-accent);
-			box-shadow: inset 0 0 0 1px var(--concern-accent);
+			box-shadow: 0 0 0 1px var(--concern-accent), 0 4px 14px rgba(15, 23, 42, 0.06);
+		}
+
+		.title {
+			color: #ffffff;
+
+			html[data-theme="light"] & {
+				color: #0f172a;
+			}
+		}
+
+		.footer {
+			color: var(--concern-accent);
 		}
 	}
 }
 
-.DetailsCard-glowStrip {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	height: 3px;
-	background: var(--concern-accent);
-	box-shadow: 0 1px 12px var(--concern-glow);
-	opacity: 0;
-	transition: opacity 0.3s ease;
-
-	.DetailsCard-card-active & {
-		opacity: 1;
-	}
-}
-
-.DetailsCard-head {
+.header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 12px;
-	width: 100%;
-	position: relative;
-	z-index: 2;
-}
-
-.DetailsCard-headRight {
-	display: flex;
-	align-items: center;
 	gap: 10px;
+	width: 100%;
 }
 
-.DetailsCard-iconWrapper {
-	position: relative;
-	display: inline-flex;
-}
-
-.DetailsCard-pulseRing {
-	position: absolute;
-	inset: -5px;
-	border-radius: 14px;
-	border: 1.5px solid var(--concern-accent);
-	pointer-events: none;
-	z-index: 0;
-}
-
-.DetailsCard-iconBox {
+.iconBox {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
-	width: 42px;
-	height: 42px;
-	border-radius: 12px;
+	width: 38px;
+	height: 38px;
+	border-radius: 10px;
 	color: var(--concern-accent);
-	background: color-mix(in srgb, var(--concern-accent) 12%, rgba(255, 255, 255, 0.01));
-	border: 1px solid color-mix(in srgb, var(--concern-accent) 22%, rgba(255, 255, 255, 0.04));
-	transition: transform 0.25s $ease, border-color 0.25s $ease;
-	position: relative;
-	z-index: 1;
-
-	@media (max-width: 768px) {
-		width: 38px;
-		height: 38px;
-		border-radius: 10px;
-	}
-}
-
-.severityBadge {
-	display: inline-flex;
-	align-items: center;
-	flex-shrink: 0;
-	padding: 4px 10px;
-	border-radius: 99px;
-	font-size: 9px;
-	font-weight: 800;
-	letter-spacing: 0.06em;
-	text-transform: uppercase;
-	border: 1px solid transparent;
-	line-height: 1;
-}
-
-.live-pulse-dot {
-	width: 5px;
-	height: 5px;
-	background-color: #ef4444;
-	border-radius: 50%;
-	display: inline-block;
-	margin-right: 5px;
-	box-shadow: 0 0 6px rgba(239, 68, 68, 0.8);
-	animation: pulseLiveDot 1.5s infinite ease-in-out;
+	background: rgba(255, 255, 255, 0.04);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	transition: all 0.15s ease;
 
 	html[data-theme="light"] & {
-		background-color: #dc2626;
-		box-shadow: 0 0 4px rgba(220, 38, 38, 0.6);
-	}
-}
-
-@keyframes pulseLiveDot {
-	0% {
-		transform: scale(0.9);
-		opacity: 0.6;
-	}
-	50% {
-		transform: scale(1.4);
-		opacity: 1;
-	}
-	100% {
-		transform: scale(0.9);
-		opacity: 0.6;
-	}
-}
-
-.status-high {
-	color: #fca5a5;
-	background: rgba(239, 68, 68, 0.12);
-	border-color: rgba(239, 68, 68, 0.25);
-
-	html[data-theme="light"] & {
-		color: #dc2626;
-		background: rgba(239, 68, 68, 0.06);
-		border-color: rgba(239, 68, 68, 0.15);
-	}
-}
-
-.status-medium {
-	color: #fcd34d;
-	background: rgba(245, 158, 11, 0.12);
-	border-color: rgba(245, 158, 11, 0.25);
-
-	html[data-theme="light"] & {
-		color: #d97706;
-		background: rgba(245, 158, 11, 0.06);
-		border-color: rgba(245, 158, 11, 0.15);
-	}
-}
-
-.status-low {
-	color: #6ee7b7;
-	background: rgba(16, 185, 129, 0.12);
-	border-color: rgba(16, 185, 129, 0.25);
-
-	html[data-theme="light"] & {
-		color: #059669;
-		background: rgba(16, 185, 129, 0.06);
-		border-color: rgba(16, 185, 129, 0.15);
-	}
-}
-
-.DetailsCard-body {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	width: 100%;
-	position: relative;
-	z-index: 2;
-}
-
-.DetailsCard-body-title {
-	margin: 0;
-	font-size: 14.5px;
-	font-weight: 750;
-	line-height: 1.4;
-	letter-spacing: -0.015em;
-	color: var(--text, #ffffff);
-
-	html[data-theme="light"] & {
-		color: #0f172a;
-		font-weight: 800;
-	}
-}
-
-.factorChips {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 6px;
-}
-
-.factorChip {
-	display: inline-flex;
-	align-items: center;
-	padding: 3px 8px;
-	border-radius: 6px;
-	font-size: 11px;
-	font-weight: 600;
-	line-height: 1.3;
-	color: var(--text-secondary, rgba(255, 255, 255, 0.65));
-	background: rgba(255, 255, 255, 0.03);
-	border: 1px solid rgba(255, 255, 255, 0.06);
-	transition: all 0.2s ease;
-
-	html[data-theme="light"] & {
-		color: #475569;
 		background: #f1f5f9;
 		border-color: #e2e8f0;
 	}
 }
 
-.DetailsCard-checkbox-container {
+.headerRight {
 	display: flex;
 	align-items: center;
-	justify-content: center;
-	position: relative;
-	width: 20px;
-	height: 20px;
+	gap: 8px;
 }
 
-.DetailsCard-custom-checkbox {
+.severityBadge {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	flex-shrink: 0;
+	padding: 4px 9px;
+	border-radius: 99px;
+	font-size: 11px;
+	font-weight: 750;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	line-height: 1;
+}
+
+.statusDot {
+	width: 6px;
+	height: 6px;
+	border-radius: 99px;
+	background: currentColor;
+	flex-shrink: 0;
+}
+
+.statusHigh {
+	color: #f87171;
+	background: rgba(239, 68, 68, 0.12);
+	border: 1px solid rgba(239, 68, 68, 0.28);
+
+	html[data-theme="light"] & {
+		color: #dc2626;
+		background: #fee2e2;
+		border-color: #fca5a5;
+	}
+}
+
+.statusMedium {
+	color: #fbbf24;
+	background: rgba(245, 158, 11, 0.12);
+	border: 1px solid rgba(245, 158, 11, 0.28);
+
+	html[data-theme="light"] & {
+		color: #d97706;
+		background: #fef3c7;
+		border-color: #fcd34d;
+	}
+}
+
+.statusLow {
+	color: #34d399;
+	background: rgba(16, 185, 129, 0.12);
+	border: 1px solid rgba(16, 185, 129, 0.28);
+
+	html[data-theme="light"] & {
+		color: #059669;
+		background: #d1fae5;
+		border-color: #6ee7b7;
+	}
+}
+
+.checkbox {
 	width: 20px;
 	height: 20px;
-	border: 1.5px solid rgba(255, 255, 255, 0.15);
-	border-radius: 100%;
-	background-color: transparent;
+	border: 1.5px solid rgba(255, 255, 255, 0.2);
+	border-radius: 99px;
+	background: transparent;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	transition: all 0.25s ease;
+	color: #ffffff;
+	flex-shrink: 0;
+	transition: all 0.15s ease;
 
 	html[data-theme="light"] & {
 		border-color: #cbd5e1;
 	}
 
-	&.checked {
-		border-color: transparent;
+	&Checked {
+		border-color: var(--concern-accent);
 		background: var(--concern-accent);
-		box-shadow: 0 0 8px var(--concern-glow);
-	}
-
-	svg {
-		width: 10px;
-		height: 10px;
-		path {
-			fill: #ffffff;
-		}
+		color: #ffffff;
 	}
 }
 
-.DetailsCard-bgGlow {
-	position: absolute;
-	bottom: -40px;
-	right: -40px;
-	width: 130px;
-	height: 130px;
-	border-radius: 100%;
-	background: radial-gradient(circle, var(--concern-glow) 0%, transparent 70%);
-	filter: blur(16px);
-	pointer-events: none;
-	z-index: 1;
+.body {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	width: 100%;
+	flex: 1;
 }
+
+.title {
+	margin: 0;
+	font-size: 15px;
+	font-weight: 700;
+	line-height: 1.35;
+	letter-spacing: -0.015em;
+	color: #f8fafc;
+	min-height: 38px;
+	display: flex;
+	align-items: center;
+
+	html[data-theme="light"] & {
+		color: #0f172a;
+	}
+}
+
+.factorsContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.factorsLabel {
+	font-size: 10px;
+	font-weight: 750;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: #64748b;
+	line-height: 1;
+
+	html[data-theme="light"] & {
+		color: #94a3b8;
+	}
+}
+
+.factorChips {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.factorChip {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	padding: 5px 8px;
+	border-radius: 7px;
+	@include mixins.dashboard-nested-surface;
+
+	html[data-theme="light"] & {
+		background: #f8fafc;
+		border-color: #e2e8f0;
+	}
+}
+
+.factorDot {
+	width: 5px;
+	height: 5px;
+	border-radius: 99px;
+	background: var(--concern-accent);
+	flex-shrink: 0;
+}
+
+.factorText {
+	font-size: 12px;
+	font-weight: 550;
+	line-height: 1.3;
+	color: #cbd5e1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+
+	html[data-theme="light"] & {
+		color: #475569;
+	}
+}
+
+.footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-top: 10px;
+	margin-top: 4px;
+	border-top: 1px solid rgba(255, 255, 255, 0.06);
+	font-size: 11.5px;
+	font-weight: 650;
+	color: #94a3b8;
+	transition: color 0.15s ease;
+
+	html[data-theme="light"] & {
+		border-top-color: #f1f5f9;
+		color: #64748b;
+	}
+}
+
+.footerText {
+	display: inline-flex;
+	align-items: center;
+}
+
+.footerIcon {
+	flex-shrink: 0;
+	transition: transform 0.16s ease, color 0.16s ease;
+}
+
+

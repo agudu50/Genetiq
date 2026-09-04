@@ -1,10 +1,16 @@
 import React from "react";
 import { Detail } from "../../helpers/detailedSystemConcerns";
 import styles from "./DetailsCard.module.scss";
-import Check from "@assets/ConcernsWidget/Check.svg?react";
 import { useLanguage } from "@/App/i18n/LanguageContext";
-import { Heart, Brain, Activity, TrendingUp, HeartOff } from "lucide-react";
-import { motion } from "framer-motion";
+import {
+	Heart,
+	Brain,
+	Activity,
+	TrendingUp,
+	HeartOff,
+	Check,
+	ChevronRight,
+} from "lucide-react";
 
 interface DetailsCardProps {
 	detail: Detail;
@@ -18,7 +24,12 @@ const renderDetailIcon = (title: string, size = 18) => {
 	if (t.includes("stroke")) {
 		return <Brain {...props} />;
 	}
-	if (t.includes("fibrillation") || t.includes("heartbeat") || t.includes("afib")) {
+	if (
+		t.includes("fibrillation") ||
+		t.includes("heartbeat") ||
+		t.includes("afib") ||
+		t.includes("irregular")
+	) {
 		return <Activity {...props} />;
 	}
 	if (t.includes("hypertension") || t.includes("pressure")) {
@@ -39,9 +50,9 @@ export const DetailsCard: React.FC<DetailsCardProps> = ({
 	const isActive = detail.id === detailIndex;
 
 	const getStatusClass = (status: string) => {
-		if (status === "High") return styles["status-high"];
-		if (status === "Medium") return styles["status-medium"];
-		return styles["status-low"];
+		if (status === "High") return styles.statusHigh;
+		if (status === "Medium") return styles.statusMedium;
+		return styles.statusLow;
 	};
 
 	const getAccentColor = (status: string) => {
@@ -50,101 +61,70 @@ export const DetailsCard: React.FC<DetailsCardProps> = ({
 		return "#10b981";
 	};
 
-	const getStatusGlowColor = (status: string) => {
-		if (status === "High") return "rgba(239, 68, 68, 0.4)";
-		if (status === "Medium") return "rgba(245, 158, 11, 0.4)";
-		return "rgba(16, 185, 129, 0.4)";
-	};
-
 	const handleClick = () => {
 		setDetailIndex(detail.id);
 	};
 
+	const displayTitle = t(detail.title) || detail.title;
+
 	return (
-		<motion.button
+		<button
 			type="button"
-			layoutId={`card-${detail.id}`}
-			whileHover={{ y: -4, scale: 1.02 }}
-			whileTap={{ scale: 0.98 }}
-			transition={{ type: "spring", stiffness: 300, damping: 20 }}
-			className={`${styles["DetailsCard-card"]} ${getStatusClass(detail.status)} ${
-				isActive ? styles["DetailsCard-card-active"] : ""
+			className={`${styles.card} ${getStatusClass(detail.status)} ${
+				isActive ? styles.cardActive : ""
 			}`}
 			style={
 				{
 					"--concern-accent": getAccentColor(detail.status),
-					"--concern-glow": getStatusGlowColor(detail.status),
 				} as React.CSSProperties
 			}
 			onClick={handleClick}
 		>
-			{/* Top accent light glow strip */}
-			<div className={styles["DetailsCard-glowStrip"]} />
-
-			<div className={styles["DetailsCard-head"]}>
-				<div className={styles["DetailsCard-iconWrapper"]}>
-					{/* Pulsing indicator ring */}
-					{isActive && (
-						<motion.div
-							animate={{ scale: [0.95, 1.15, 0.95], opacity: [0.4, 0.8, 0.4] }}
-							transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-							className={styles["DetailsCard-pulseRing"]}
-						/>
-					)}
-					<span className={styles["DetailsCard-iconBox"]}>
-						{renderDetailIcon(detail.title)}
-					</span>
+			{/* Header */}
+			<div className={styles.header}>
+				<div className={styles.iconBox}>
+					{renderDetailIcon(detail.title)}
 				</div>
-				
-				<div className={styles["DetailsCard-headRight"]}>
+
+				<div className={styles.headerRight}>
 					<span className={`${styles.severityBadge} ${getStatusClass(detail.status)}`}>
-						{detail.status === "High" && (
-							<span className={styles["live-pulse-dot"]} />
-						)}
-						{t(detail.status)}
+						<span className={styles.statusDot} />
+						{t(detail.status) || detail.status}
 					</span>
-					
-					<div className={styles["DetailsCard-checkbox-container"]}>
-						<div className={`${styles["DetailsCard-custom-checkbox"]} ${isActive ? styles["checked"] : ""}`}>
-							{isActive && (
-								<motion.span
-									initial={{ scale: 0 }}
-									animate={{ scale: 1 }}
-									transition={{ type: "spring", stiffness: 500, damping: 15 }}
-								>
-									<Check />
-								</motion.span>
-							)}
-						</div>
+
+					<div className={`${styles.checkbox} ${isActive ? styles.checkboxChecked : ""}`}>
+						{isActive && <Check size={11} strokeWidth={3} />}
 					</div>
 				</div>
 			</div>
-			
-			<div className={styles["DetailsCard-body"]}>
-				<h4 className={styles["DetailsCard-body-title"]}>{t(detail.title)}</h4>
-				
-				<div className={styles.factorChips}>
-					{detail.factors.map((factor) => (
-						<motion.span
-							whileHover={{ scale: 1.05, filter: "brightness(1.15)" }}
-							key={factor}
-							className={styles.factorChip}
-						>
-							{t(factor)}
-						</motion.span>
-					))}
+
+			{/* Body */}
+			<div className={styles.body}>
+				<h4 className={styles.title}>{displayTitle}</h4>
+
+				<div className={styles.factorsContainer}>
+					<span className={styles.factorsLabel}>
+						{t("factors") || "Contributing Factors"}
+					</span>
+					<div className={styles.factorChips}>
+						{detail.factors.map((factor) => (
+							<div key={factor} className={styles.factorChip}>
+								<span className={styles.factorDot} />
+								<span className={styles.factorText}>{t(factor) || factor}</span>
+							</div>
+						))}
+					</div>
 				</div>
 			</div>
 
-			{/* Soft visual glow background overlay when selected */}
-			{isActive && (
-				<motion.div
-					initial={{ opacity: 0 }}
-					animate={{ opacity: 0.15 }}
-					transition={{ duration: 0.4 }}
-					className={styles["DetailsCard-bgGlow"]}
-				/>
-			)}
-		</motion.button>
+			{/* Footer */}
+			<div className={styles.footer}>
+				<span className={styles.footerText}>
+					{isActive ? (t("active_assessment") || "Selected View") : (t("view_details") || "View Details")}
+				</span>
+				<ChevronRight size={13} strokeWidth={2.5} className={styles.footerIcon} />
+			</div>
+		</button>
 	);
 };
+
