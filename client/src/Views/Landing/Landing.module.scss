@@ -1,6 +1,6 @@
 // ─── Brand (shared across themes) ────────────────────────────────────────────
-$brand: #007c72;
-$brand-hover: #006158;
+$brand: #064e3b;
+$brand-hover: #04382b;
 
 $radius-sm: 8px;
 $radius-md: 12px;
@@ -16,8 +16,8 @@ $max-width: 1200px;
 	--lp-text-secondary: #cbd5e1;
 	--lp-text-muted: #94a3b8;
 	--lp-border: #243044;
-	--lp-brand-tint: rgba(0, 166, 157, 0.14);
-	--lp-brand-text: #5eead4;
+	--lp-brand-tint: rgba(6, 78, 59, 0.25);
+	--lp-brand-text: #34d399;
 	--lp-nav-bg: rgba(10, 14, 26, 0.92);
 	--lp-footer-bg: #060912;
 	--lp-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
@@ -34,8 +34,8 @@ $max-width: 1200px;
 	--lp-text-secondary: #475569;
 	--lp-text-muted: #64748b;
 	--lp-border: #e2e8f0;
-	--lp-brand-tint: #e6f4f3;
-	--lp-brand-text: #004d46;
+	--lp-brand-tint: rgba(6, 78, 59, 0.08);
+	--lp-brand-text: #064e3b;
 	--lp-nav-bg: rgba(255, 255, 255, 0.92);
 	--lp-footer-bg: #0f172a;
 	--lp-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
@@ -93,8 +93,8 @@ $max-width: 1200px;
 	transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
 
 	&:hover {
-		border-color: $brand;
-		color: $brand;
+		border-color: var(--lp-brand-text);
+		color: var(--lp-brand-text);
 		background: var(--lp-brand-tint);
 	}
 }
@@ -434,7 +434,7 @@ $max-width: 1200px;
 	transition: color 0.2s ease;
 
 	&:hover {
-		color: $brand;
+		color: var(--lp-brand-text);
 	}
 }
 
@@ -489,13 +489,13 @@ $max-width: 1200px;
 	transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
 
 	&:hover {
-		border-color: $brand;
-		color: $brand;
+		border-color: var(--lp-brand-text);
+		color: var(--lp-brand-text);
 	}
 
 	&.menuToggleOpen {
-		border-color: $brand;
-		color: $brand;
+		border-color: var(--lp-brand-text);
+		color: var(--lp-brand-text);
 		background: var(--lp-brand-tint);
 	}
 }
@@ -587,8 +587,8 @@ $max-width: 1200px;
 	transition: border-color 0.2s ease, color 0.2s ease;
 
 	&:hover {
-		border-color: $brand;
-		color: $brand;
+		border-color: var(--lp-brand-text);
+		color: var(--lp-brand-text);
 	}
 }
 
@@ -618,7 +618,7 @@ $max-width: 1200px;
 	&:hover,
 	&:active {
 		background: var(--lp-brand-tint);
-		color: $brand;
+		color: var(--lp-brand-text);
 	}
 }
 
@@ -758,7 +758,7 @@ $max-width: 1200px;
 
 .typewriter {
 	display: block;
-	color: $brand;
+	color: var(--lp-brand-text);
 	min-height: 1.15em;
 }
 
@@ -768,7 +768,7 @@ $max-width: 1200px;
 	height: 0.9em;
 	margin-left: 2px;
 	vertical-align: text-bottom;
-	background: $brand;
+	background: var(--lp-brand-text);
 	animation: blink 1s step-end infinite;
 }
 
@@ -852,7 +852,7 @@ $max-width: 1200px;
 	animation: badgeBob 3.5s ease-in-out infinite;
 
 	svg {
-		color: $brand;
+		color: var(--lp-brand-text);
 		flex-shrink: 0;
 	}
 }
@@ -951,7 +951,7 @@ $max-width: 1200px;
 	width: 56px;
 	height: 56px;
 	margin-bottom: 20px;
-	color: $brand;
+	color: var(--lp-brand-text);
 	background: var(--lp-brand-tint);
 	border-radius: $radius-md;
 }
@@ -1029,7 +1029,7 @@ $max-width: 1200px;
 	flex-shrink: 0;
 	width: 48px;
 	height: 48px;
-	color: $brand;
+	color: var(--lp-brand-text);
 	background: var(--lp-brand-tint);
 	border-radius: $radius-md;
 }
@@ -1107,7 +1107,7 @@ $max-width: 1200px;
 	flex-shrink: 0;
 	font-size: 0.875rem;
 	font-weight: 700;
-	color: $brand;
+	color: var(--lp-brand-text);
 	font-variant-numeric: tabular-nums;
 }
 
@@ -1174,7 +1174,7 @@ $max-width: 1200px;
 		color: var(--lp-text);
 
 		svg {
-			color: $brand;
+			color: var(--lp-brand-text);
 		}
 	}
 
@@ -1273,7 +1273,7 @@ $max-width: 1200px;
 	cursor: pointer;
 
 	&:hover {
-		color: $brand;
+		color: var(--lp-brand-text);
 	}
 }
 
@@ -1285,7 +1285,7 @@ $max-width: 1200px;
 
 .faqOpen .faqChevron {
 	transform: rotate(180deg);
-	color: $brand;
+	color: var(--lp-brand-text);
 }
 
 .faqAnswer {
@@ -1367,7 +1367,7 @@ $max-width: 1200px;
 .builderRole {
 	font-size: 0.875rem;
 	font-weight: 500;
-	color: $brand;
+	color: var(--lp-brand-text);
 }
 
 .builderBio {
@@ -1411,8 +1411,8 @@ $max-width: 1200px;
 	transition: color 0.2s ease, border-color 0.2s ease;
 
 	&:hover {
-		color: $brand;
-		border-color: $brand;
+		color: var(--lp-brand-text);
+		border-color: var(--lp-brand-text);
 	}
 }
 
@@ -1540,7 +1540,7 @@ $max-width: 1200px;
 	width: 56px;
 	height: 56px;
 	margin-bottom: 16px;
-	color: $brand;
+	color: var(--lp-brand-text);
 	background: var(--lp-brand-tint);
 	border-radius: 50%;
 }

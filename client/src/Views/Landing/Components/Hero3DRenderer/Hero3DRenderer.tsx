@@ -31,7 +31,7 @@ const BiometricCore = () => {
 		<group ref={groupRef}>
 			{/* Central Brain/Core Sphere */}
 			<Sphere args={[2, 32, 32]}>
-				<meshBasicMaterial color='#a855f7' transparent opacity={0.8} />
+				<meshBasicMaterial color='#10b981' transparent opacity={0.8} />
 			</Sphere>
 
 			{/* Biometric node points */}
@@ -39,7 +39,7 @@ const BiometricCore = () => {
 				<mesh key={i} position={pos}>
 					<sphereGeometry args={[0.4, 8, 8]} />
 					<meshBasicMaterial
-						color={i % 2 === 0 ? "#a855f7" : "#c084fc"}
+						color={i % 2 === 0 ? "#10b981" : "#34d399"}
 						transparent
 						opacity={0.6}
 					/>
@@ -49,7 +49,7 @@ const BiometricCore = () => {
 			{/* Connection lines (simplified) */}
 			<lineSegments>
 				<edgesGeometry args={[new THREE.IcosahedronGeometry(25, 1)]} />
-				<lineBasicMaterial color='#a855f7' transparent opacity={0.1} />
+				<lineBasicMaterial color='#34d399' transparent opacity={0.15} />
 			</lineSegments>
 		</group>
 	);
@@ -87,7 +87,7 @@ const FloatingDust = ({ count }: { count: number }) => {
 			</bufferGeometry>
 			<pointsMaterial
 				size={0.5}
-				color='#c084fc'
+				color='#34d399'
 				transparent
 				opacity={0.4}
 				sizeAttenuation

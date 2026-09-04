@@ -199,7 +199,7 @@ function LandingBackground() {
 
 		const draw = () => {
 			const light = isLightTheme();
-			const rgb = light ? "0, 124, 114" : "0, 166, 157";
+			const rgb = light ? "6, 78, 59" : "52, 211, 153";
 			const lineAlpha = light ? 0.07 : 0.14;
 			const dotAlpha = light ? 0.28 : 0.5;
 			const maxDist = 130;
