@@ -9,6 +9,7 @@ import {
 	AlertTriangle,
 	ArrowDownRight,
 	ArrowUpRight,
+	Bell,
 	Brain,
 	Check,
 	CheckCircle2,
@@ -17,19 +18,26 @@ import {
 	ChevronRight,
 	ChevronUp,
 	Clock,
+	Database,
 	Droplet,
+	ExternalLink,
+	FileText,
 	Heart,
 	History,
 	Mic,
 	MicOff,
 	Pill,
 	Plus,
+	RefreshCw,
 	Search,
 	Send,
+	Settings,
 	ShieldAlert,
+	ShieldCheck,
 	Sparkles,
 	Stethoscope,
 	User,
+	Volume2,
 	Wind,
 	X,
 } from "lucide-react";
@@ -246,6 +254,17 @@ export const DoctorPortal = () => {
 	const [showProblemHistory, setShowProblemHistory] = useState(true);
 	const recognitionRef = useRef<any>(null);
 
+	// Doctor Profile Menu & Clinical Settings State
+	const [isDoctorMenuOpen, setIsDoctorMenuOpen] = useState(false);
+	const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+	const [activeSettingsTab, setActiveSettingsTab] = useState<
+		"ehr" | "alerts" | "orders" | "voice" | "security"
+	>("ehr");
+	const [ehrSyncing, setEhrSyncing] = useState(false);
+
+	const doctorMenuRef = useRef<HTMLDivElement>(null);
+	const patientDropdownRef = useRef<HTMLDivElement>(null);
+
 	// Panel Collapsible State - auto collapse on smaller screens for immediate 3D twin visibility
 	const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState(() =>
 		typeof window !== "undefined" ? window.innerWidth <= 900 : false,
@@ -264,6 +283,35 @@ export const DoctorPortal = () => {
 		window.addEventListener("resize", handleResize);
 		return () => window.removeEventListener("resize", handleResize);
 	}, []);
+
+	// Click outside handlers
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				doctorMenuRef.current &&
+				!doctorMenuRef.current.contains(event.target as Node)
+			) {
+				setIsDoctorMenuOpen(false);
+			}
+			if (
+				patientDropdownRef.current &&
+				!patientDropdownRef.current.contains(event.target as Node)
+			) {
+				setIsDropdownOpen(false);
+			}
+		};
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => document.removeEventListener("mousedown", handleClickOutside);
+	}, []);
+
+	const handleTriggerEhrSync = () => {
+		setEhrSyncing(true);
+		setTimeout(() => {
+			setEhrSyncing(false);
+			toast.success("EHR FHIR v4 synchronization completed. 3 patient records updated with latest lab telemetry.");
+		}, 1400);
+	};
 
 	const selectedPatient =
 		patients.find((p) => p.id === selectedPatientId) || patients[0];
@@ -413,7 +461,7 @@ export const DoctorPortal = () => {
 				</div>
 
 				{/* Center Patient Switcher Selector */}
-				<div className={styles.patientSwitcherWrapper}>
+				<div className={styles.patientSwitcherWrapper} ref={patientDropdownRef}>
 					<button
 						type='button'
 						className={styles.patientSwitcherBtn}
@@ -500,7 +548,7 @@ export const DoctorPortal = () => {
 					)}
 				</div>
 
-				{/* Header Right Controls */}
+				{/* Header Right Controls: KPIs + Doctor Profile & Settings Menu */}
 				<div className={styles.headerControls}>
 					<div className={styles.kpiPills}>
 						<div className={styles.kpiPill}>
@@ -513,15 +561,176 @@ export const DoctorPortal = () => {
 						</div>
 					</div>
 
-					<button
-						type='button'
-						className={styles.patientViewBtn}
-						onClick={() => navigate(paths.dashboard.root)}
-						title='Switch to Patient Mode'
-					>
-						<User size={14} />
-						<span className={styles.patientBtnLabel}>Patient Mode</span>
-					</button>
+					{/* Doctor Profile & Clinical Features Dropdown */}
+					<div className={styles.doctorMenuWrapper} ref={doctorMenuRef}>
+						<button
+							type='button'
+							className={`${styles.doctorTriggerBtn} ${isDoctorMenuOpen ? styles.doctorTriggerBtnActive : ""}`}
+							onClick={() => setIsDoctorMenuOpen(!isDoctorMenuOpen)}
+							title="Doctor Profile & Clinical Settings"
+						>
+							<div className={styles.doctorAvatarBadge}>
+								<span>{doctor.doctorName.replace("Dr. ", "").split(" ").map((n: string) => n[0]).join("").slice(0, 2) || "MD"}</span>
+								<span className={styles.onlineDot} />
+							</div>
+							<div className={styles.doctorMetaHeader}>
+								<span className={styles.doctorNameHeader}>{doctor.doctorName}</span>
+								<span className={styles.doctorRoleHeader}>{doctor.title || "Attending Physician"}</span>
+							</div>
+							<ChevronDown size={14} className={`${styles.menuChevron} ${isDoctorMenuOpen ? styles.menuChevronRotated : ""}`} />
+						</button>
+
+						{isDoctorMenuOpen && (
+							<div className={styles.doctorMenuDropdown}>
+								{/* Doctor Profile Hero */}
+								<div className={styles.doctorMenuHero}>
+									<div className={styles.doctorMenuHeroAvatar}>
+										{doctor.doctorName.replace("Dr. ", "").split(" ").map((n: string) => n[0]).join("").slice(0, 2) || "MD"}
+									</div>
+									<div className={styles.doctorMenuHeroInfo}>
+										<div className={styles.heroName}>{doctor.doctorName}</div>
+										<div className={styles.heroDept}>{doctor.hospitalName} · {doctor.department}</div>
+										<div className={styles.heroCredentials}>
+											<span className={styles.verifiedBadge}>
+												<ShieldCheck size={11} /> NPI #1849204812 · Verified
+											</span>
+										</div>
+									</div>
+								</div>
+
+								<div className={styles.menuDivider} />
+
+								{/* Clinical Features & Access List */}
+								<div className={styles.doctorMenuItems}>
+									<button
+										type='button'
+										className={styles.doctorMenuItem}
+										onClick={() => {
+											setActiveSettingsTab("ehr");
+											setIsSettingsModalOpen(true);
+											setIsDoctorMenuOpen(false);
+										}}
+									>
+										<div className={styles.menuItemIcon} style={{ background: "rgba(0, 168, 150, 0.15)", color: "#00a896" }}>
+											<Database size={15} />
+										</div>
+										<div className={styles.menuItemText}>
+											<span className={styles.menuItemTitle}>EHR & FHIR Sync</span>
+											<span className={styles.menuItemSub}>Epic / Cerner live sync status</span>
+										</div>
+										<span className={styles.statusPillLive}>Live</span>
+									</button>
+
+									<button
+										type='button'
+										className={styles.doctorMenuItem}
+										onClick={() => {
+											setActiveSettingsTab("alerts");
+											setIsSettingsModalOpen(true);
+											setIsDoctorMenuOpen(false);
+										}}
+									>
+										<div className={styles.menuItemIcon} style={{ background: "rgba(245, 158, 11, 0.15)", color: "#f59e0b" }}>
+											<Bell size={15} />
+										</div>
+										<div className={styles.menuItemText}>
+											<span className={styles.menuItemTitle}>Triage Thresholds & Alerts</span>
+											<span className={styles.menuItemSub}>ApoB & arrhythmia triggers</span>
+										</div>
+										<ChevronRight size={13} style={{ color: "rgba(255,255,255,0.4)" }} />
+									</button>
+
+									<button
+										type='button'
+										className={styles.doctorMenuItem}
+										onClick={() => {
+											setActiveSettingsTab("orders");
+											setIsSettingsModalOpen(true);
+											setIsDoctorMenuOpen(false);
+										}}
+									>
+										<div className={styles.menuItemIcon} style={{ background: "rgba(14, 165, 233, 0.15)", color: "#0ea5e9" }}>
+											<FileText size={15} />
+										</div>
+										<div className={styles.menuItemText}>
+											<span className={styles.menuItemTitle}>Order Sets & Formulary</span>
+											<span className={styles.menuItemSub}>90-day lab & prescription sets</span>
+										</div>
+										<ChevronRight size={13} style={{ color: "rgba(255,255,255,0.4)" }} />
+									</button>
+
+									<button
+										type='button'
+										className={styles.doctorMenuItem}
+										onClick={() => {
+											setActiveSettingsTab("voice");
+											setIsSettingsModalOpen(true);
+											setIsDoctorMenuOpen(false);
+										}}
+									>
+										<div className={styles.menuItemIcon} style={{ background: "rgba(139, 92, 246, 0.15)", color: "#8b5cf6" }}>
+											<Volume2 size={15} />
+										</div>
+										<div className={styles.menuItemText}>
+											<span className={styles.menuItemTitle}>Voice AI Dictation</span>
+											<span className={styles.menuItemSub}>Continuous speech & lexicon</span>
+										</div>
+										<ChevronRight size={13} style={{ color: "rgba(255,255,255,0.4)" }} />
+									</button>
+
+									<button
+										type='button'
+										className={styles.doctorMenuItem}
+										onClick={() => {
+											setActiveSettingsTab("security");
+											setIsSettingsModalOpen(true);
+											setIsDoctorMenuOpen(false);
+										}}
+									>
+										<div className={styles.menuItemIcon} style={{ background: "rgba(16, 185, 129, 0.15)", color: "#10b981" }}>
+											<ShieldCheck size={15} />
+										</div>
+										<div className={styles.menuItemText}>
+											<span className={styles.menuItemTitle}>HIPAA Audit & Credentials</span>
+											<span className={styles.menuItemSub}>Active session & AES-256 logs</span>
+										</div>
+										<ChevronRight size={13} style={{ color: "rgba(255,255,255,0.4)" }} />
+									</button>
+								</div>
+
+								<div className={styles.menuDivider} />
+
+								{/* Bottom Switch to Patient View & Settings */}
+								<div className={styles.doctorMenuFooter}>
+									<button
+										type='button'
+										className={styles.doctorSettingsBtn}
+										onClick={() => {
+											setActiveSettingsTab("ehr");
+											setIsSettingsModalOpen(true);
+											setIsDoctorMenuOpen(false);
+										}}
+									>
+										<Settings size={14} />
+										<span>Portal Settings</span>
+									</button>
+
+									<button
+										type='button'
+										className={styles.patientModeItem}
+										onClick={() => {
+											setIsDoctorMenuOpen(false);
+											navigate(paths.dashboard.root);
+										}}
+									>
+										<User size={14} />
+										<span>Switch to Patient Mode</span>
+										<ExternalLink size={12} style={{ marginLeft: "auto", opacity: 0.7 }} />
+									</button>
+								</div>
+							</div>
+						)}
+					</div>
 				</div>
 			</header>
 
@@ -921,7 +1130,369 @@ export const DoctorPortal = () => {
 				</div>
 			)}
 
-			{/* 5. Bottom Floating Organ System Bar */}
+			{/* 5. Doctor Clinical Settings & Feature Hub Modal */}
+			{isSettingsModalOpen && (
+				<div className={styles.modalOverlay} onClick={() => setIsSettingsModalOpen(false)}>
+					<div className={`${styles.modalContent} ${styles.settingsModalContent}`} onClick={(e) => e.stopPropagation()}>
+						<div className={styles.modalHeader}>
+							<div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+								<div className={styles.settingsModalIconBadge}>
+									<Settings size={18} style={{ color: "#00a896" }} />
+								</div>
+								<div>
+									<h2>Doctor Portal Settings & Features</h2>
+									<p style={{ margin: 0, fontSize: "0.74rem", color: "rgba(255,255,255,0.5)" }}>
+										{doctor.doctorName} · {doctor.hospitalName} ({doctor.department})
+									</p>
+								</div>
+							</div>
+							<button
+								type='button'
+								className={styles.closeBtn}
+								onClick={() => setIsSettingsModalOpen(false)}
+							>
+								<X size={18} />
+							</button>
+						</div>
+
+						<div className={styles.settingsModalBody}>
+							{/* Tab Navigation */}
+							<div className={styles.settingsTabsList}>
+								<button
+									type='button'
+									className={`${styles.settingsTabBtn} ${activeSettingsTab === "ehr" ? styles.settingsTabBtnActive : ""}`}
+									onClick={() => setActiveSettingsTab("ehr")}
+								>
+									<Database size={15} />
+									<span>EHR & FHIR Sync</span>
+								</button>
+								<button
+									type='button'
+									className={`${styles.settingsTabBtn} ${activeSettingsTab === "alerts" ? styles.settingsTabBtnActive : ""}`}
+									onClick={() => setActiveSettingsTab("alerts")}
+								>
+									<Bell size={15} />
+									<span>Triage & Alerts</span>
+								</button>
+								<button
+									type='button'
+									className={`${styles.settingsTabBtn} ${activeSettingsTab === "orders" ? styles.settingsTabBtnActive : ""}`}
+									onClick={() => setActiveSettingsTab("orders")}
+								>
+									<FileText size={15} />
+									<span>Order Sets & Formularies</span>
+								</button>
+								<button
+									type='button'
+									className={`${styles.settingsTabBtn} ${activeSettingsTab === "voice" ? styles.settingsTabBtnActive : ""}`}
+									onClick={() => setActiveSettingsTab("voice")}
+								>
+									<Volume2 size={15} />
+									<span>Voice AI Dictation</span>
+								</button>
+								<button
+									type='button'
+									className={`${styles.settingsTabBtn} ${activeSettingsTab === "security" ? styles.settingsTabBtnActive : ""}`}
+									onClick={() => setActiveSettingsTab("security")}
+								>
+									<ShieldCheck size={15} />
+									<span>HIPAA & Credentials</span>
+								</button>
+							</div>
+
+							{/* Tab Content Panel */}
+							<div className={styles.settingsTabContent}>
+								{/* TAB 1: EHR & FHIR SYNC */}
+								{activeSettingsTab === "ehr" && (
+									<div className={styles.settingsSection}>
+										<div className={styles.sectionHeader}>
+											<div>
+												<h3>EHR & Health System Interoperability</h3>
+												<p>Real-time FHIR v4 bidirectional synchronization with hospital EHR networks.</p>
+											</div>
+											<button
+												type='button'
+												className={styles.syncNowBtn}
+												onClick={handleTriggerEhrSync}
+												disabled={ehrSyncing}
+											>
+												<RefreshCw size={14} className={ehrSyncing ? styles.spinning : ""} />
+												<span>{ehrSyncing ? "Syncing Records..." : "Sync EHR Now"}</span>
+											</button>
+										</div>
+
+										<div className={styles.integrationCardsGrid}>
+											<div className={styles.integrationCard}>
+												<div className={styles.integrationHeader}>
+													<div className={styles.intIconTitle}>
+														<Database size={16} style={{ color: "#00a896" }} />
+														<span style={{ fontWeight: 700 }}>Epic Systems FHIR API</span>
+													</div>
+													<span className={styles.statusPillLive}>Connected</span>
+												</div>
+												<div className={styles.integrationMeta}>
+													<div>Endpoint: <code>https://fhir.metropolitanmed.org/r4</code></div>
+													<div>Protocol: US Core STU3 (LOINC, SNOMED-CT, RxNorm)</div>
+													<div>Last sync: Just now · Auto-sync active (every 5m)</div>
+												</div>
+											</div>
+
+											<div className={styles.integrationCard}>
+												<div className={styles.integrationHeader}>
+													<div className={styles.intIconTitle}>
+														<Activity size={16} style={{ color: "#0ea5e9" }} />
+														<span style={{ fontWeight: 700 }}>Telemetry & Wearable Stream</span>
+													</div>
+													<span className={styles.statusPillLive}>Active</span>
+												</div>
+												<div className={styles.integrationMeta}>
+													<div>Stream: Apple HealthKit / Withings Cloud API</div>
+													<div>Ingestion: Real-time PPG, Blood Pressure, Glucose</div>
+													<div>Connected Patients: 3 active monitoring pipelines</div>
+												</div>
+											</div>
+										</div>
+
+										<div className={styles.settingsCardBox}>
+											<div className={styles.settingRow}>
+												<div>
+													<div className={styles.settingTitle}>Auto-Import Daily Biometrics</div>
+													<div className={styles.settingDesc}>Automatically fetch home-logged symptoms and blood pressures into patient charts.</div>
+												</div>
+												<input type="checkbox" defaultChecked className={styles.toggleCheckbox} />
+											</div>
+											<div className={styles.settingRow}>
+												<div>
+													<div className={styles.settingTitle}>EHR Clinical Note Auto-Append</div>
+													<div className={styles.settingDesc}>Push all care advice and doctor notes directly to patient EHR encounter history.</div>
+												</div>
+												<input type="checkbox" defaultChecked className={styles.toggleCheckbox} />
+											</div>
+										</div>
+									</div>
+								)}
+
+								{/* TAB 2: TRIAGE & ALERTS */}
+								{activeSettingsTab === "alerts" && (
+									<div className={styles.settingsSection}>
+										<div className={styles.sectionHeader}>
+											<div>
+												<h3>Clinical Triage Thresholds & Notifications</h3>
+												<p>Automated telemetry alarms and notification escalation protocols for urgent patient conditions.</p>
+											</div>
+										</div>
+
+										<div className={styles.settingsCardBox}>
+											<div className={styles.settingRow}>
+												<div>
+													<div className={styles.settingTitle}>ApoB Critical Elevated Threshold</div>
+													<div className={styles.settingDesc}>Trigger urgent doctor notification when patient ApoB exceeds this level.</div>
+												</div>
+												<div className={styles.settingControl}>
+													<span className={styles.thresholdVal}>120 mg/dL</span>
+												</div>
+											</div>
+
+											<div className={styles.settingRow}>
+												<div>
+													<div className={styles.settingTitle}>Resting Heart Rate Triage Spike</div>
+													<div className={styles.settingDesc}>Flag patient in red banner if resting HR exceeds threshold for over 15 minutes.</div>
+												</div>
+												<div className={styles.settingControl}>
+													<span className={styles.thresholdVal}>105 bpm</span>
+												</div>
+											</div>
+
+											<div className={styles.settingRow}>
+												<div>
+													<div className={styles.settingTitle}>Home Blood Pressure Red Flag</div>
+													<div className={styles.settingDesc}>Escalate triage priority when systolic reading exceeds threshold.</div>
+												</div>
+												<div className={styles.settingControl}>
+													<span className={styles.thresholdVal}>150 mmHg</span>
+												</div>
+											</div>
+
+											<div className={styles.settingRow}>
+												<div>
+													<div className={styles.settingTitle}>Emergency SMS & Pager Escalation</div>
+													<div className={styles.settingDesc}>Dispatch immediate SMS alert to on-call cardiology team for Red Severity symptoms.</div>
+												</div>
+												<input type="checkbox" defaultChecked className={styles.toggleCheckbox} />
+											</div>
+										</div>
+									</div>
+								)}
+
+								{/* TAB 3: ORDER SETS & FORMULARIES */}
+								{activeSettingsTab === "orders" && (
+									<div className={styles.settingsSection}>
+										<div className={styles.sectionHeader}>
+											<div>
+												<h3>Clinical Order Sets & Fast Protocols</h3>
+												<p>Pre-configured standard order sets for fast lab scheduling and pharmacotherapy prescription.</p>
+											</div>
+										</div>
+
+										<div className={styles.orderSetsList}>
+											<div className={styles.orderSetCard}>
+												<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+													<div style={{ fontWeight: 700, fontSize: "0.88rem", color: "#00a896" }}>
+														90-Day Advanced Lipid & Inflammatory Panel
+													</div>
+													<span className={styles.badgeOptimal}>Standard Protocol</span>
+												</div>
+												<div style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.7)", marginTop: "4px" }}>
+													Markers: ApoB, LDL-P, hs-CRP, Fasting Lipid Panel, eGFR, Liver Panel (ALT/AST).
+												</div>
+												<div style={{ marginTop: "8px", display: "flex", gap: "8px" }}>
+													<button
+														type='button'
+														className={styles.orderSetApplyBtn}
+														onClick={() => {
+															handleOrderRetest();
+															setIsSettingsModalOpen(false);
+														}}
+													>
+														<Plus size={13} /> Order for {selectedPatient.name}
+													</button>
+												</div>
+											</div>
+
+											<div className={styles.orderSetCard}>
+												<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+													<div style={{ fontWeight: 700, fontSize: "0.88rem", color: "#0ea5e9" }}>
+														Atrial Fibrillation Rhythm Assessment & Patch
+													</div>
+													<span className={styles.badgeWarning}>Cardio Protocol</span>
+												</div>
+												<div style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.7)", marginTop: "4px" }}>
+													Order: 14-Day Continuous ECG Adhesive Patch + Serum Potassium & Magnesium Check.
+												</div>
+												<div style={{ marginTop: "8px", display: "flex", gap: "8px" }}>
+													<button
+														type='button'
+														className={styles.orderSetApplyBtn}
+														onClick={() => {
+															toast.success(`14-Day ECG Patch order queued for ${selectedPatient.name}.`);
+															setIsSettingsModalOpen(false);
+														}}
+													>
+														<Plus size={13} /> Order for {selectedPatient.name}
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								)}
+
+								{/* TAB 4: VOICE AI DICTATION */}
+								{activeSettingsTab === "voice" && (
+									<div className={styles.settingsSection}>
+										<div className={styles.sectionHeader}>
+											<div>
+												<h3>Voice AI Dictation & Clinical Speech Model</h3>
+												<p>Configured for hands-free clinical advice generation and real-time medical entity parsing.</p>
+											</div>
+										</div>
+
+										<div className={styles.settingsCardBox}>
+											<div className={styles.settingRow}>
+												<div>
+													<div className={styles.settingTitle}>Continuous Speech Recognition</div>
+													<div className={styles.settingDesc}>Enables real-time streaming voice-to-text without word truncation.</div>
+												</div>
+												<input type="checkbox" defaultChecked className={styles.toggleCheckbox} />
+											</div>
+
+											<div className={styles.settingRow}>
+												<div>
+													<div className={styles.settingTitle}>Cardiology & Pharmacology Lexicon</div>
+													<div className={styles.settingDesc}>Enhance phoneme recognition for drug names (e.g., Metoprolol, Atorvastatin, Lisinopril).</div>
+												</div>
+												<span className={styles.badgeOptimal}>Active</span>
+											</div>
+
+											<div className={styles.settingRow}>
+												<div>
+													<div className={styles.settingTitle}>Background Noise Suppression</div>
+													<div className={styles.settingDesc}>Filter hospital ambient sounds and room reverberation during voice dictation.</div>
+												</div>
+												<input type="checkbox" defaultChecked className={styles.toggleCheckbox} />
+											</div>
+										</div>
+									</div>
+								)}
+
+								{/* TAB 5: HIPAA & SECURITY */}
+								{activeSettingsTab === "security" && (
+									<div className={styles.settingsSection}>
+										<div className={styles.sectionHeader}>
+											<div>
+												<h3>HIPAA Compliance, Audit Trail & Credentials</h3>
+												<p>Active physician verification, access logging, and cryptographic transport protection.</p>
+											</div>
+										</div>
+
+										<div className={styles.credentialsGrid}>
+											<div className={styles.credentialCard}>
+												<div className={styles.credLabel}>Practicing Physician</div>
+												<div className={styles.credValue}>{doctor.doctorName}</div>
+												<div className={styles.credSub}>{doctor.title} · {doctor.hospitalName}</div>
+											</div>
+											<div className={styles.credentialCard}>
+												<div className={styles.credLabel}>Medical License & NPI</div>
+												<div className={styles.credValue}>MD-882914</div>
+												<div className={styles.credSub}>NPI #1849204812 · Board Certified</div>
+											</div>
+											<div className={styles.credentialCard}>
+												<div className={styles.credLabel}>Data Encryption</div>
+												<div className={styles.credValue}>AES-256-GCM</div>
+												<div className={styles.credSub}>TLS 1.3 In-Transit · Zero-Knowledge Storage</div>
+											</div>
+										</div>
+
+										<div className={styles.settingsCardBox} style={{ marginTop: "16px" }}>
+											<div style={{ fontSize: "0.82rem", fontWeight: 700, marginBottom: "8px", color: "rgba(255,255,255,0.8)" }}>
+												Recent HIPAA Audit Access Trail:
+											</div>
+											<div className={styles.auditLogList}>
+												<div className={styles.auditLogRow}>
+													<span>Marcus Vance (MRN-84920) chart accessed for Triage Review</span>
+													<span style={{ color: "rgba(255,255,255,0.4)" }}>Today, 09:14 AM</span>
+												</div>
+												<div className={styles.auditLogRow}>
+													<span>Elena Rostova (MRN-67219) lab panel telemetry viewed</span>
+													<span style={{ color: "rgba(255,255,255,0.4)" }}>Today, 08:42 AM</span>
+												</div>
+												<div className={styles.auditLogRow}>
+													<span>EHR FHIR v4 synchronization performed</span>
+													<span style={{ color: "rgba(255,255,255,0.4)" }}>Today, 08:30 AM</span>
+												</div>
+											</div>
+										</div>
+									</div>
+								)}
+							</div>
+						</div>
+
+						<div className={styles.modalFooter}>
+							<button
+								type='button'
+								className={styles.btnActionPrimary}
+								onClick={() => {
+									setIsSettingsModalOpen(false);
+									toast.success("Doctor clinical settings and preferences saved.");
+								}}
+							>
+								<Check size={14} /> Save & Close Settings
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
+
+			{/* 6. Bottom Floating Organ System Bar */}
 			<div className={styles.bottomOrganBar}>
 				<button
 					type='button'
