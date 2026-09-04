@@ -142,7 +142,7 @@ const mockPatients: ClinicalPatient[] = [
 		status: "monitoring",
 		primaryDiagnosis: "Pre-Diabetes & Thyroid Fatigue",
 		lastSync: "2 hours ago",
-		defaultOrgan: "gastroenterolgy",
+		defaultOrgan: "total",
 		symptoms: [
 			{
 				id: "sym-3",
@@ -906,13 +906,6 @@ export const DoctorPortal = () => {
 					onClick={() => setSelectedOrganSystem("total")}
 				>
 					<User size={14} /> Full Body (Overview)
-				</button>
-				<button
-					type='button'
-					className={`${styles.organPill} ${selectedOrganSystem === "gastroenterolgy" || selectedOrganSystem === "Gastroenterolgy" ? styles.organPillActive : ""}`}
-					onClick={() => setSelectedOrganSystem("gastroenterolgy")}
-				>
-					<Activity size={14} /> Metabolic & Liver
 				</button>
 				<button
 					type='button'
