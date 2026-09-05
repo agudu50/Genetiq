@@ -1938,17 +1938,6 @@ ${report.soapNote.plan}
 						<span className={styles.btnAiInsightsText}>AI Insights</span>
 					</button>
 
-					{/* Quick Patient Dashboard Switcher (Desktop) */}
-					<button
-						type="button"
-						className={styles.navLinkBtn}
-						onClick={() => navigate(paths.dashboard.root)}
-						title="Switch to Patient Dashboard View"
-					>
-						<User size={14} />
-						<span className={styles.navLinkBtnText}>Patient View</span>
-					</button>
-
 					{/* KPI Pills */}
 					<div className={styles.kpiPills}>
 						<div className={styles.kpiPill} title="Urgent Triage Cases">
