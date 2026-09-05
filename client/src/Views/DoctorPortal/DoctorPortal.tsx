@@ -1680,7 +1680,10 @@ ${report.soapNote.plan}
 	return (
 		<div className={`${styles.clinicalStage} ${isLeftPanelCollapsed ? styles.leftCollapsed : ""}`}>
 			{/* 1. Full-Screen 3D Digital Twin Stage */}
-			<div className={styles.canvasFullStage}>
+			<div
+				className={styles.canvasFullStage}
+				data-patient-status={selectedPatient.status}
+			>
 				<CameraProvider>
 					<MainScene selectedCategory={selectedOrganSystem} showSidebar={false} gender={selectedPatient.gender} />
 				</CameraProvider>
@@ -1729,13 +1732,12 @@ ${report.soapNote.plan}
 							<div className={styles.patientIconCircle}>
 								<User size={13} />
 								<span
-									className={`${styles.patientStatusDot} ${
-										selectedPatient.status === "urgent"
+									className={`${styles.patientStatusDot} ${selectedPatient.status === "urgent"
 											? styles.dotUrgent
 											: selectedPatient.status === "monitoring"
-											? styles.dotWarning
-											: styles.dotOptimal
-									}`}
+												? styles.dotWarning
+												: styles.dotOptimal
+										}`}
 								/>
 							</div>
 							<span className={styles.patientName}>
@@ -1799,8 +1801,8 @@ ${report.soapNote.plan}
 													p.status === "urgent"
 														? styles.badgeUrgent
 														: p.status === "monitoring"
-														? styles.badgeWarning
-														: styles.badgeOptimal
+															? styles.badgeWarning
+															: styles.badgeOptimal
 												}
 											>
 												{p.status === "urgent" ? "Urgent" : p.status === "monitoring" ? "Monitored" : "Stable"}
@@ -2132,20 +2134,19 @@ ${report.soapNote.plan}
 							<div className={styles.cardTagGroup}>
 								<span className={styles.cardTagLabel}>Assigned Patient</span>
 								<span
-									className={`${styles.patientStatusPillBadge} ${
-										selectedPatient.status === "urgent"
+									className={`${styles.patientStatusPillBadge} ${selectedPatient.status === "urgent"
 											? styles.statusUrgent
 											: selectedPatient.status === "monitoring"
-											? styles.statusWarning
-											: styles.statusOptimal
-									}`}
+												? styles.statusWarning
+												: styles.statusOptimal
+										}`}
 								>
 									<span className={styles.statusPulseDot} />
 									{selectedPatient.status === "urgent"
 										? "Urgent Case"
 										: selectedPatient.status === "monitoring"
-										? "Monitoring"
-										: "Stable"}
+											? "Monitoring"
+											: "Stable"}
 								</span>
 							</div>
 							<button
@@ -2163,13 +2164,12 @@ ${report.soapNote.plan}
 							<div className={styles.patientAvatarHero}>
 								{selectedPatient.name.split(" ").map((n) => n[0]).join("")}
 								<span
-									className={`${styles.avatarStatusBeacon} ${
-										selectedPatient.status === "urgent"
+									className={`${styles.avatarStatusBeacon} ${selectedPatient.status === "urgent"
 											? styles.beaconUrgent
 											: selectedPatient.status === "monitoring"
-											? styles.beaconWarning
-											: styles.beaconOptimal
-									}`}
+												? styles.beaconWarning
+												: styles.beaconOptimal
+										}`}
 								/>
 							</div>
 							<div className={styles.patientInfo}>
@@ -2392,8 +2392,8 @@ ${report.soapNote.plan}
 													m.status === "elevated"
 														? styles.badgeUrgent
 														: m.status === "low"
-														? styles.badgeWarning
-														: styles.badgeOptimal
+															? styles.badgeWarning
+															: styles.badgeOptimal
 												}
 											>
 												{m.status === "elevated" ? (
@@ -2949,7 +2949,7 @@ ${report.soapNote.plan}
 							</div>
 						</div>
 
-										<div className={styles.modalFooter}>
+						<div className={styles.modalFooter}>
 							<button
 								type='button'
 								className={styles.btnActionPrimary}
@@ -3092,10 +3092,10 @@ ${report.soapNote.plan}
 														appt.mode === "telehealth"
 															? styles.modeBadgeTelehealth
 															: appt.mode === "in-person"
-															? styles.modeBadgeInPerson
-															: appt.mode === "phone"
-															? styles.modeBadgePhone
-															: styles.modeBadgeAi
+																? styles.modeBadgeInPerson
+																: appt.mode === "phone"
+																	? styles.modeBadgePhone
+																	: styles.modeBadgeAi
 													}
 												>
 													{appt.mode === "telehealth" && <Video size={12} />}
@@ -3106,10 +3106,10 @@ ${report.soapNote.plan}
 														{appt.mode === "telehealth"
 															? "Video Call (Online)"
 															: appt.mode === "in-person"
-															? "In-Person Clinic"
-															: appt.mode === "phone"
-															? "Audio Phone"
-															: "AI Consultation"}
+																? "In-Person Clinic"
+																: appt.mode === "phone"
+																	? "Audio Phone"
+																	: "AI Consultation"}
 													</span>
 												</span>
 
@@ -3118,8 +3118,8 @@ ${report.soapNote.plan}
 														appt.status === "waiting"
 															? styles.badgeUrgentPulse
 															: appt.status === "confirmed"
-															? styles.badgeOptimal
-															: styles.badgeWarning
+																? styles.badgeOptimal
+																: styles.badgeWarning
 													}
 												>
 													{appt.status === "waiting" ? "Waiting in Room" : appt.status === "confirmed" ? "Confirmed" : "Completed"}
@@ -3253,9 +3253,8 @@ ${report.soapNote.plan}
 											<button
 												key={doc.id}
 												type='button'
-												className={`${styles.specialistCard} ${
-													newApptSpecialistId === doc.id ? styles.specialistCardActive : ""
-												}`}
+												className={`${styles.specialistCard} ${newApptSpecialistId === doc.id ? styles.specialistCardActive : ""
+													}`}
 												onClick={() => setNewApptSpecialistId(doc.id)}
 											>
 												<div className={styles.specialistAvatar}>{doc.initials}</div>
@@ -3315,9 +3314,8 @@ ${report.soapNote.plan}
 											<button
 												key={slot}
 												type='button'
-												className={`${styles.slotCardBtn} ${
-													newApptSlot === slot ? styles.slotCardBtnActive : ""
-												}`}
+												className={`${styles.slotCardBtn} ${newApptSlot === slot ? styles.slotCardBtnActive : ""
+													}`}
 												onClick={() => setNewApptSlot(slot)}
 											>
 												{slot}
@@ -3421,21 +3419,20 @@ ${report.soapNote.plan}
 
 											{/* Live Status Beacon */}
 											<div
-												className={`${styles.aiStatusBeaconPill} ${
-													selectedPatient.status === "urgent"
+												className={`${styles.aiStatusBeaconPill} ${selectedPatient.status === "urgent"
 														? styles.aiBeaconUrgent
 														: selectedPatient.status === "monitoring"
-														? styles.aiBeaconWarning
-														: styles.aiBeaconOptimal
-												}`}
+															? styles.aiBeaconWarning
+															: styles.aiBeaconOptimal
+													}`}
 											>
 												<span className={styles.aiBeaconPulse} />
 												<span>
 													{selectedPatient.status === "urgent"
 														? "Urgent Case"
 														: selectedPatient.status === "monitoring"
-														? "Monitored"
-														: "Stable Baseline"}
+															? "Monitored"
+															: "Stable Baseline"}
 												</span>
 											</div>
 										</div>
@@ -3594,8 +3591,8 @@ ${report.soapNote.plan}
 																sys.status === "Optimal"
 																	? styles.badgeOptimal
 																	: sys.status === "Monitored"
-																	? styles.badgeWarning
-																	: styles.badgeUrgent
+																		? styles.badgeWarning
+																		: styles.badgeUrgent
 															}
 														>
 															{sys.status} ({sys.score}%)
@@ -3611,8 +3608,8 @@ ${report.soapNote.plan}
 																	sys.status === "Optimal"
 																		? "#10b981"
 																		: sys.status === "Monitored"
-																		? "#f59e0b"
-																		: "#ef4444",
+																			? "#f59e0b"
+																			: "#ef4444",
 															}}
 														/>
 													</div>
@@ -3649,8 +3646,8 @@ ${report.soapNote.plan}
 																c.urgency === "high"
 																	? styles.badgeUrgent
 																	: c.urgency === "moderate"
-																	? styles.badgeWarning
-																	: styles.badgeOptimal
+																		? styles.badgeWarning
+																		: styles.badgeOptimal
 															}
 														>
 															{c.urgency === "high" ? "High Priority" : c.urgency === "moderate" ? "Moderate" : "Optimal"}
@@ -3686,8 +3683,8 @@ ${report.soapNote.plan}
 																m.status === "elevated"
 																	? styles.badgeUrgent
 																	: m.status === "low"
-																	? styles.badgeWarning
-																	: styles.badgeOptimal
+																		? styles.badgeWarning
+																		: styles.badgeOptimal
 															}
 														>
 															{m.status === "elevated" ? "Elevated" : m.status === "low" ? "Low" : "Normal"}
@@ -3759,8 +3756,8 @@ ${report.soapNote.plan}
 																	step.category === "Rx"
 																		? styles.badgePharma
 																		: step.category === "Diagnostics"
-																		? styles.badgeDiagnostics
-																		: styles.badgeCare
+																			? styles.badgeDiagnostics
+																			: styles.badgeCare
 																}
 															>
 																{step.category}
@@ -3953,7 +3950,7 @@ ${report.soapNote.plan}
 								</div>
 								<div>
 									<h2>Clinical Lab Results Ingestion Hub</h2>
-									<p style={{ margin: 0, fontSize: "0.74rem", color: "rgba(255,255,255,0.5)" }}>
+									<p className={styles.labsHubSubtitle}>
 										Real-Time HL7 FHIR Direct Telemetry · {readyLabResults.length} Ingested Diagnostic Panels
 									</p>
 								</div>
@@ -4025,7 +4022,7 @@ ${report.soapNote.plan}
 
 								if (displayLabs.length === 0) {
 									return (
-										<div style={{ textAlign: "center", padding: "40px 20px", color: "rgba(255,255,255,0.4)" }}>
+										<div className={styles.labsEmptyState}>
 											<FlaskConical size={32} style={{ marginBottom: "10px", opacity: 0.5 }} />
 											<p>No lab results match the selected filter.</p>
 										</div>
@@ -4045,7 +4042,7 @@ ${report.soapNote.plan}
 												<div>
 													<h3 className={styles.labResultPanelName}>{lab.panelName}</h3>
 													<div className={styles.labResultMetaLine}>
-														<strong style={{ color: "#ffffff" }}>{lab.patientName}</strong> ({lab.mrn})
+														<strong>{lab.patientName}</strong> ({lab.mrn})
 														<span>•</span>
 														<span>Completed: {lab.completedAt}</span>
 														<span>•</span>
@@ -4097,8 +4094,8 @@ ${report.soapNote.plan}
 														<td className={styles.labMarkerValueCell}>
 															{m.value} {m.unit}
 														</td>
-														<td style={{ color: "rgba(255,255,255,0.55)" }}>{m.refRange}</td>
-														<td style={{ color: "rgba(255,255,255,0.55)" }}>{m.priorValue || "—"}</td>
+														<td className={styles.labMarkerMutedCell}>{m.refRange}</td>
+														<td className={styles.labMarkerMutedCell}>{m.priorValue || "—"}</td>
 														<td>
 															{m.deltaPct ? (
 																<span
@@ -4106,8 +4103,8 @@ ${report.soapNote.plan}
 																		m.status === "optimal"
 																			? styles.labDeltaBadgeGood
 																			: m.status === "elevated" || m.status === "low"
-																			? styles.labDeltaBadgeWarn
-																			: styles.labDeltaBadgeNeutral
+																				? styles.labDeltaBadgeWarn
+																				: styles.labDeltaBadgeNeutral
 																	}
 																>
 																	{m.deltaPct.startsWith("-") ? (
@@ -4127,17 +4124,17 @@ ${report.soapNote.plan}
 																	m.status === "optimal"
 																		? styles.badgeOptimal
 																		: m.status === "elevated" || m.status === "critical_high"
-																		? styles.badgeUrgent
-																		: styles.badgeWarning
+																			? styles.badgeUrgent
+																			: styles.badgeWarning
 																}
 															>
 																{m.status === "optimal"
 																	? "Optimal"
 																	: m.status === "elevated"
-																	? "Elevated"
-																	: m.status === "low"
-																	? "Low"
-																	: "Critical"}
+																		? "Elevated"
+																		: m.status === "low"
+																			? "Low"
+																			: "Critical"}
 															</span>
 														</td>
 													</tr>
@@ -4188,7 +4185,7 @@ ${report.soapNote.plan}
 
 						{/* Modal Footer */}
 						<div className={styles.modalFooter} style={{ display: "flex", justifyContent: "space-between" }}>
-							<div style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.5)", display: "flex", alignItems: "center", gap: "6px" }}>
+							<div className={styles.labsHubFooterNote}>
 								<ShieldCheck size={14} style={{ color: "#10b981" }} />
 								<span>All lab telemetry encrypted in transit &amp; at rest via HIPAA AES-256</span>
 							</div>
@@ -4255,9 +4252,8 @@ ${report.soapNote.plan}
 										{LAB_PANEL_PRESETS.map((panel) => (
 											<div
 												key={panel.id}
-												className={`${styles.presetPanelCard} ${
-													orderLabPanelId === panel.id ? styles.presetPanelCardActive : ""
-												}`}
+												className={`${styles.presetPanelCard} ${orderLabPanelId === panel.id ? styles.presetPanelCardActive : ""
+													}`}
 												onClick={() => setOrderLabPanelId(panel.id)}
 											>
 												<FlaskConical size={16} className={styles.presetPanelIcon} />

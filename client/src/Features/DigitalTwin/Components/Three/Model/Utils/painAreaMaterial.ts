@@ -41,38 +41,35 @@ export const createGlowingMaterial = (
           vec2 center = vec2(0.5, 0.5);
           float dist = length(vUv - center);
           
-          // Smooth slow organic breathing cycle (calm 1.4 rad/s)
-          float slowBreath = sin(time * 1.5) * 0.5 + 0.5;
-          float gentlePulse = pow(sin(time * 1.5), 2.0) * 0.7 + pulse * 0.3;
+          // Smooth pulsating indicator
+          float gentlePulse = pow(sin(time * 2.0), 2.0) * 0.35 + pulse * 0.35;
           
-          // Dynamic radiant radius expanding and contracting gently
-          float coreRadius = 0.12 + gentlePulse * 0.05;
-          float haloRadius = 0.42 + gentlePulse * 0.08;
+          // Concentrated yet expansive clinical glow radii
+          float coreRadius = 0.12 + gentlePulse * 0.04;
+          float haloRadius = 0.34 + gentlePulse * 0.06;
           
-          // Color ramp blending from intense radiant core -> mid tone -> soft outer aura
+          // Color blending from high-intensity core to crisp mid-tone
           vec3 finalColor;
           if (dist < coreRadius) {
-              finalColor = mix(coreColor * 1.4, coreColor, dist / coreRadius);
+              finalColor = mix(coreColor * 2.2, coreColor * 1.5, dist / coreRadius);
           } else if (dist < haloRadius) {
               float t = (dist - coreRadius) / (haloRadius - coreRadius);
-              finalColor = mix(coreColor, midColor, t);
+              finalColor = mix(coreColor * 1.5, midColor, t);
           } else {
-              float t = clamp((dist - haloRadius) / (0.5 - haloRadius), 0.0, 1.0);
+              float t = clamp((dist - haloRadius) / (0.48 - haloRadius), 0.0, 1.0);
               finalColor = mix(midColor, outerColor, t);
           }
 
-          // Core brightness boost with pulsing intensity
-          float coreBrightness = smoothstep(coreRadius * 1.8, 0.0, dist) * (1.2 + gentlePulse * 0.8);
-          finalColor += coreColor * coreBrightness;
+          // Crisp center beacon
+          float pointCore = smoothstep(coreRadius * 1.2, 0.0, dist) * (2.2 + gentlePulse * 1.0);
+          finalColor += coreColor * pointCore;
 
-          // Smooth radial alpha fade to zero at border
-          float alpha = smoothstep(0.5, 0.02, dist);
-          
-          // Apply slow breathing intensity modulation
-          float breathingMultiplier = 0.75 + gentlePulse * 0.45;
+          // Organic circular falloff
+          float alpha = smoothstep(0.48, 0.03, dist);
+          float breathingMultiplier = 0.85 + gentlePulse * 0.35;
           alpha *= breathingMultiplier * intensity;
 
-          gl_FragColor = vec4(finalColor, alpha * 0.88);
+          gl_FragColor = vec4(finalColor, alpha * 0.95);
       }
   `,
 		transparent: true,
