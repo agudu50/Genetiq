@@ -3309,6 +3309,195 @@
 	}
 }
 
+.markerCard {
+	position: relative;
+	background: rgba(255, 255, 255, 0.025);
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	border-radius: 10px;
+	margin-bottom: 6px;
+	overflow: hidden;
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+	:global(html[data-theme="light"]) & {
+		background: #f8fafc;
+		border-color: #e2e8f0;
+	}
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.045);
+		border-color: rgba(255, 255, 255, 0.12);
+	}
+}
+
+.markerCardExpanded {
+	background: rgba(255, 255, 255, 0.04);
+	border-color: rgba(0, 168, 150, 0.35);
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+
+	:global(html[data-theme="light"]) & {
+		background: #ffffff;
+		border-color: #00a896;
+		box-shadow: 0 4px 14px rgba(0, 168, 150, 0.08);
+	}
+}
+
+.markerRowBtn {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 8px 10px;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	text-align: left;
+	color: inherit;
+	gap: 8px;
+}
+
+.markerLeft {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.markerNameRow {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.markerName {
+	font-size: 0.8rem;
+	font-weight: 700;
+	color: #ffffff;
+	line-height: 1.3;
+
+	:global(html[data-theme="light"]) & {
+		color: #1e293b;
+	}
+}
+
+.markerChevron {
+	color: rgba(255, 255, 255, 0.4);
+	transition: transform 0.2s ease, color 0.2s ease;
+	flex-shrink: 0;
+
+	:global(html[data-theme="light"]) & {
+		color: #94a3b8;
+	}
+}
+
+.markerChevronRotated {
+	transform: rotate(180deg);
+	color: #00a896;
+}
+
+.markerRefText {
+	font-size: 0.7rem;
+	color: rgba(255, 255, 255, 0.45);
+
+	:global(html[data-theme="light"]) & {
+		color: #64748b;
+	}
+}
+
+.markerRight {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 3px;
+	flex-shrink: 0;
+}
+
+.markerVal {
+	font-size: 0.84rem;
+	font-weight: 800;
+	color: #ffffff;
+
+	:global(html[data-theme="light"]) & {
+		color: #0f172a;
+	}
+}
+
+.markerExpandedBody {
+	padding: 8px 10px 10px 10px;
+	border-top: 1px solid rgba(255, 255, 255, 0.05);
+	background: rgba(0, 0, 0, 0.2);
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	animation: fadeIn 0.2s ease;
+
+	:global(html[data-theme="light"]) & {
+		background: #f1f5f9;
+		border-top-color: #e2e8f0;
+	}
+}
+
+.markerInsightBox {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+
+.markerInsightLabel {
+	font-size: 0.68rem;
+	font-weight: 750;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	color: #00a896;
+}
+
+.markerInsightText {
+	font-size: 0.74rem;
+	line-height: 1.45;
+	color: rgba(255, 255, 255, 0.8);
+	margin: 0;
+
+	:global(html[data-theme="light"]) & {
+		color: #334155;
+	}
+}
+
+.markerMetaGrid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 6px;
+	padding-top: 4px;
+	border-top: 1px solid rgba(255, 255, 255, 0.04);
+
+	:global(html[data-theme="light"]) & {
+		border-top-color: rgba(15, 23, 42, 0.06);
+	}
+}
+
+.markerMetaItem {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+}
+
+.markerMetaLabel {
+	font-size: 0.65rem;
+	color: rgba(255, 255, 255, 0.45);
+
+	:global(html[data-theme="light"]) & {
+		color: #64748b;
+	}
+}
+
+.markerMetaVal {
+	font-size: 0.72rem;
+	font-weight: 700;
+	color: rgba(255, 255, 255, 0.9);
+
+	:global(html[data-theme="light"]) & {
+		color: #0f172a;
+	}
+}
+
 // ─── Status Badges ───────────────────────────────────────────────────────────
 
 .badgeUrgent {

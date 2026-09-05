@@ -91,6 +91,9 @@ interface ClinicalPatient {
 		refRange: string;
 		status: "elevated" | "optimal" | "low";
 		system: string;
+		clinicalInsight?: string;
+		target?: string;
+		trend?: string;
 	}[];
 	medications: {
 		name: string;
@@ -137,11 +140,56 @@ const mockPatients: ClinicalPatient[] = [
 			{ date: "2023-11-05", title: "Elevated Fasting Glucose (108 mg/dL)", severity: 4, status: "Resolved", resolutionNote: "Advised low-glycemic dietary protocol." },
 		],
 		labMarkers: [
-			{ marker: "Apolipoprotein B (ApoB)", value: "128 mg/dL", refRange: "< 90 mg/dL", status: "elevated", system: "Heart" },
-			{ marker: "LDL Cholesterol", value: "142 mg/dL", refRange: "< 100 mg/dL", status: "elevated", system: "Heart" },
-			{ marker: "hs-CRP (Inflammation)", value: "3.4 mg/L", refRange: "< 1.0 mg/L", status: "elevated", system: "Heart" },
-			{ marker: "eGFR (Kidney)", value: "78 mL/min", refRange: "> 90 mL/min", status: "low", system: "Renal" },
-			{ marker: "Fasting Blood Glucose", value: "104 mg/dL", refRange: "70 - 99 mg/dL", status: "elevated", system: "Metabolic" },
+			{
+				marker: "Apolipoprotein B (ApoB)",
+				value: "128 mg/dL",
+				refRange: "< 90 mg/dL",
+				status: "elevated",
+				system: "Heart",
+				clinicalInsight: "Direct metric of total circulating atherogenic particle count (LDL, VLDL, IDL). Concentration > 90 mg/dL indicates elevated atherosclerotic plaque risk and vascular endothelial penetration.",
+				target: "< 80 mg/dL (High-Risk Target)",
+				trend: "+14 mg/dL vs prior 90d lab",
+			},
+			{
+				marker: "LDL Cholesterol",
+				value: "142 mg/dL",
+				refRange: "< 100 mg/dL",
+				status: "elevated",
+				system: "Heart",
+				clinicalInsight: "Primary lipid transport particle. Combined elevated LDL-C with high ApoB suggests dense atherogenic lipid profile.",
+				target: "< 70 mg/dL (Goal)",
+				trend: "+18 mg/dL vs baseline",
+			},
+			{
+				marker: "hs-CRP (Inflammation)",
+				value: "3.4 mg/L",
+				refRange: "< 1.0 mg/L",
+				status: "elevated",
+				system: "Heart",
+				clinicalInsight: "High-sensitivity biomarker of systemic vascular inflammatory stress and plaque destabilization vulnerability.",
+				target: "< 1.0 mg/L (Low Risk)",
+				trend: "+1.2 mg/L increase",
+			},
+			{
+				marker: "eGFR (Kidney)",
+				value: "78 mL/min",
+				refRange: "> 90 mL/min",
+				status: "low",
+				system: "Renal",
+				clinicalInsight: "Estimated glomerular filtration rate reflects baseline renal capacity. Requires ongoing hydration and medication review.",
+				target: "> 90 mL/min (Optimal)",
+				trend: "-6 mL/min variance",
+			},
+			{
+				marker: "Fasting Blood Glucose",
+				value: "104 mg/dL",
+				refRange: "70 - 99 mg/dL",
+				status: "elevated",
+				system: "Metabolic",
+				clinicalInsight: "Slightly elevated fasting blood sugar indicates early insulin resistance and impaired fasting tolerance.",
+				target: "< 95 mg/dL (Optimal)",
+				trend: "+4 mg/dL variance",
+			},
 		],
 		medications: [
 			{ name: "Atorvastatin", dosage: "20 mg", frequency: "Daily (Night)", adherence: 94 },
@@ -174,10 +222,46 @@ const mockPatients: ClinicalPatient[] = [
 			{ date: "2024-02-01", title: "Postprandial sugar spike (162 mg/dL)", severity: 6, status: "Monitored", resolutionNote: "Started Metformin XR 500mg." },
 		],
 		labMarkers: [
-			{ marker: "Fasting Glucose", value: "112 mg/dL", refRange: "70 - 99 mg/dL", status: "elevated", system: "Metabolic" },
-			{ marker: "HbA1c", value: "5.9 %", refRange: "< 5.7 %", status: "elevated", system: "Metabolic" },
-			{ marker: "TSH (Thyroid)", value: "4.2 uIU/mL", refRange: "0.4 - 4.0 uIU/mL", status: "elevated", system: "Endocrine" },
-			{ marker: "Vitamin D", value: "24 ng/mL", refRange: "30 - 100 ng/mL", status: "low", system: "Endocrine" },
+			{
+				marker: "Fasting Glucose",
+				value: "112 mg/dL",
+				refRange: "70 - 99 mg/dL",
+				status: "elevated",
+				system: "Metabolic",
+				clinicalInsight: "Impaired fasting glucose requiring continued Metformin titration and post-meal glucose monitoring.",
+				target: "< 99 mg/dL",
+				trend: "+6 mg/dL vs baseline",
+			},
+			{
+				marker: "HbA1c",
+				value: "5.9 %",
+				refRange: "< 5.7 %",
+				status: "elevated",
+				system: "Metabolic",
+				clinicalInsight: "3-month weighted glycemic baseline reflecting pre-diabetic glucose exposure.",
+				target: "< 5.6 %",
+				trend: "-0.2 % improvement",
+			},
+			{
+				marker: "TSH (Thyroid)",
+				value: "4.2 uIU/mL",
+				refRange: "0.4 - 4.0 uIU/mL",
+				status: "elevated",
+				system: "Endocrine",
+				clinicalInsight: "Subclinical hypothyroid elevation correlating with morning fatigue and cold intolerance.",
+				target: "1.0 - 2.5 uIU/mL",
+				trend: "+0.6 uIU/mL increase",
+			},
+			{
+				marker: "Vitamin D",
+				value: "24 ng/mL",
+				refRange: "30 - 100 ng/mL",
+				status: "low",
+				system: "Endocrine",
+				clinicalInsight: "Serum 25-hydroxyvitamin D deficit contributing to fatigue and immune-endocrine sluggishness.",
+				target: "> 40 ng/mL",
+				trend: "+2 ng/mL steady",
+			},
 		],
 		medications: [
 			{ name: "Metformin XR", dosage: "500 mg", frequency: "Daily with dinner", adherence: 98 },
@@ -210,10 +294,46 @@ const mockPatients: ClinicalPatient[] = [
 			{ date: "2024-02-10", title: "Blood pressure elevation (162/98)", severity: 8, status: "Active", resolutionNote: "Added Amlodipine 5mg." },
 		],
 		labMarkers: [
-			{ marker: "Serum Creatinine", value: "1.4 mg/dL", refRange: "0.7 - 1.3 mg/dL", status: "elevated", system: "Renal" },
-			{ marker: "eGFR", value: "58 mL/min", refRange: "> 90 mL/min", status: "low", system: "Renal" },
-			{ marker: "Blood Urea Nitrogen", value: "26 mg/dL", refRange: "7 - 20 mg/dL", status: "elevated", system: "Renal" },
-			{ marker: "Serum Potassium", value: "4.8 mEq/L", refRange: "3.5 - 5.0 mEq/L", status: "optimal", system: "Renal" },
+			{
+				marker: "Serum Creatinine",
+				value: "1.4 mg/dL",
+				refRange: "0.7 - 1.3 mg/dL",
+				status: "elevated",
+				system: "Renal",
+				clinicalInsight: "Serum creatinine elevation indicating reduced renal clearance in the setting of chronic stage 2 hypertension.",
+				target: "0.8 - 1.1 mg/dL",
+				trend: "+0.2 mg/dL increase",
+			},
+			{
+				marker: "eGFR",
+				value: "58 mL/min",
+				refRange: "> 90 mL/min",
+				status: "low",
+				system: "Renal",
+				clinicalInsight: "Stage 3a chronic renal filtration reduction. Requires cautious ACE-inhibitor dosing and blood pressure control.",
+				target: "> 60 mL/min",
+				trend: "-4 mL/min decrease",
+			},
+			{
+				marker: "Blood Urea Nitrogen",
+				value: "26 mg/dL",
+				refRange: "7 - 20 mg/dL",
+				status: "elevated",
+				system: "Renal",
+				clinicalInsight: "Elevated BUN indicating nitrogenous waste retention and potential pre-renal hypoperfusion.",
+				target: "< 20 mg/dL",
+				trend: "+3 mg/dL increase",
+			},
+			{
+				marker: "Serum Potassium",
+				value: "4.8 mEq/L",
+				refRange: "3.5 - 5.0 mEq/L",
+				status: "optimal",
+				system: "Renal",
+				clinicalInsight: "Serum potassium within safe therapeutic range under Lisinopril therapy.",
+				target: "4.0 - 4.8 mEq/L",
+				trend: "Stable",
+			},
 		],
 		medications: [
 			{ name: "Lisinopril", dosage: "20 mg", frequency: "Daily (Morning)", adherence: 82 },
@@ -235,11 +355,56 @@ const mockPatients: ClinicalPatient[] = [
 		symptoms: [],
 		problemHistory: [],
 		labMarkers: [
-			{ marker: "Apolipoprotein B (ApoB)", value: "72 mg/dL", refRange: "< 90 mg/dL", status: "optimal", system: "Heart" },
-			{ marker: "LDL Cholesterol", value: "88 mg/dL", refRange: "< 100 mg/dL", status: "optimal", system: "Heart" },
-			{ marker: "hs-CRP (Inflammation)", value: "0.4 mg/L", refRange: "< 1.0 mg/L", status: "optimal", system: "Heart" },
-			{ marker: "Fasting Glucose", value: "84 mg/dL", refRange: "70 - 99 mg/dL", status: "optimal", system: "Metabolic" },
-			{ marker: "eGFR", value: "108 mL/min", refRange: "> 90 mL/min", status: "optimal", system: "Renal" },
+			{
+				marker: "Apolipoprotein B (ApoB)",
+				value: "72 mg/dL",
+				refRange: "< 90 mg/dL",
+				status: "optimal",
+				system: "Heart",
+				clinicalInsight: "Optimal circulating atherogenic particle count indicating very low cardiovascular plaque burden risk.",
+				target: "< 80 mg/dL",
+				trend: "-4 mg/dL improvement",
+			},
+			{
+				marker: "LDL Cholesterol",
+				value: "88 mg/dL",
+				refRange: "< 100 mg/dL",
+				status: "optimal",
+				system: "Heart",
+				clinicalInsight: "Optimal LDL-C level maintaining healthy arterial intima homeostasis.",
+				target: "< 100 mg/dL",
+				trend: "Stable",
+			},
+			{
+				marker: "hs-CRP (Inflammation)",
+				value: "0.4 mg/L",
+				refRange: "< 1.0 mg/L",
+				status: "optimal",
+				system: "Heart",
+				clinicalInsight: "Extremely low systemic inflammation baseline promoting longevity resilience.",
+				target: "< 0.8 mg/L",
+				trend: "Stable",
+			},
+			{
+				marker: "Fasting Glucose",
+				value: "84 mg/dL",
+				refRange: "70 - 99 mg/dL",
+				status: "optimal",
+				system: "Metabolic",
+				clinicalInsight: "High insulin sensitivity and optimal fasting glycemic regulation.",
+				target: "75 - 90 mg/dL",
+				trend: "Optimal",
+			},
+			{
+				marker: "eGFR",
+				value: "108 mL/min",
+				refRange: "> 90 mL/min",
+				status: "optimal",
+				system: "Renal",
+				clinicalInsight: "Excellent glomerular filtration and baseline kidney function reserve.",
+				target: "> 90 mL/min",
+				trend: "Optimal",
+			},
 		],
 		medications: [
 			{ name: "Omega-3 EPA/DHA", dosage: "1000 mg", frequency: "Daily (Morning)", adherence: 96 },
@@ -428,6 +593,7 @@ export const DoctorPortal = () => {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedOrganSystem, setSelectedOrganSystem] = useState<string>("cardiovascular");
+	const [expandedMarker, setExpandedMarker] = useState<string | null>(null);
 
 	// Appointments & Patient Schedule State
 	const [appointments, setAppointments] = useState<DoctorAppointment[]>(initialAppointments);
@@ -1318,42 +1484,91 @@ export const DoctorPortal = () => {
 							</button>
 						</div>
 
-						{selectedPatient.labMarkers.map((m, idx) => (
-							<div key={idx} className={styles.markerRow}>
-								<div>
-									<div className={styles.markerName}>{m.marker}</div>
-									<div style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.45)" }}>
-										Ref: {m.refRange}
-									</div>
-								</div>
-								<div style={{ textAlign: "right" }}>
-									<div className={styles.markerVal}>{m.value}</div>
-									<span
-										className={
-											m.status === "elevated"
-												? styles.badgeUrgent
-												: m.status === "low"
-												? styles.badgeWarning
-												: styles.badgeOptimal
-										}
+						{selectedPatient.labMarkers.map((m, idx) => {
+							const isExpanded = expandedMarker === m.marker;
+							return (
+								<div
+									key={idx}
+									className={`${styles.markerCard} ${isExpanded ? styles.markerCardExpanded : ""}`}
+								>
+									<button
+										type='button'
+										className={styles.markerRowBtn}
+										onClick={() => setExpandedMarker(isExpanded ? null : m.marker)}
+										aria-expanded={isExpanded}
+										title={isExpanded ? "Click to collapse details" : "Click to view clinical details"}
 									>
-										{m.status === "elevated" ? (
-											<span style={{ display: "inline-flex", alignItems: "center", gap: "2px" }}>
-												High <ArrowUpRight size={12} strokeWidth={2.5} />
+										<div className={styles.markerLeft}>
+											<div className={styles.markerNameRow}>
+												<span className={styles.markerName}>{m.marker}</span>
+												<ChevronDown
+													size={13}
+													className={`${styles.markerChevron} ${isExpanded ? styles.markerChevronRotated : ""}`}
+												/>
+											</div>
+											<div className={styles.markerRefText}>
+												Ref: {m.refRange}
+											</div>
+										</div>
+										<div className={styles.markerRight}>
+											<div className={styles.markerVal}>{m.value}</div>
+											<span
+												className={
+													m.status === "elevated"
+														? styles.badgeUrgent
+														: m.status === "low"
+														? styles.badgeWarning
+														: styles.badgeOptimal
+												}
+											>
+												{m.status === "elevated" ? (
+													<span style={{ display: "inline-flex", alignItems: "center", gap: "2px" }}>
+														High <ArrowUpRight size={11} strokeWidth={2.5} />
+													</span>
+												) : m.status === "low" ? (
+													<span style={{ display: "inline-flex", alignItems: "center", gap: "2px" }}>
+														Low <ArrowDownRight size={11} strokeWidth={2.5} />
+													</span>
+												) : (
+													<span style={{ display: "inline-flex", alignItems: "center", gap: "2px" }}>
+														Optimal <Check size={11} strokeWidth={2.5} />
+													</span>
+												)}
 											</span>
-										) : m.status === "low" ? (
-											<span style={{ display: "inline-flex", alignItems: "center", gap: "2px" }}>
-												Low <ArrowDownRight size={12} strokeWidth={2.5} />
-											</span>
-										) : (
-											<span style={{ display: "inline-flex", alignItems: "center", gap: "2px" }}>
-												Optimal <Check size={12} strokeWidth={2.5} />
-											</span>
-										)}
-									</span>
+										</div>
+									</button>
+
+									{isExpanded && (
+										<div className={styles.markerExpandedBody}>
+											{m.clinicalInsight && (
+												<div className={styles.markerInsightBox}>
+													<span className={styles.markerInsightLabel}>Clinical Interpretation:</span>
+													<p className={styles.markerInsightText}>{m.clinicalInsight}</p>
+												</div>
+											)}
+											<div className={styles.markerMetaGrid}>
+												{m.target && (
+													<div className={styles.markerMetaItem}>
+														<span className={styles.markerMetaLabel}>Target Goal:</span>
+														<span className={styles.markerMetaVal}>{m.target}</span>
+													</div>
+												)}
+												{m.trend && (
+													<div className={styles.markerMetaItem}>
+														<span className={styles.markerMetaLabel}>90-Day Trend:</span>
+														<span className={styles.markerMetaVal}>{m.trend}</span>
+													</div>
+												)}
+												<div className={styles.markerMetaItem}>
+													<span className={styles.markerMetaLabel}>Organ System:</span>
+													<span className={styles.markerMetaVal}>{m.system}</span>
+												</div>
+											</div>
+										</div>
+									)}
 								</div>
-							</div>
-						))}
+							);
+						})}
 
 						<div style={{ marginTop: "10px" }}>
 							<button
