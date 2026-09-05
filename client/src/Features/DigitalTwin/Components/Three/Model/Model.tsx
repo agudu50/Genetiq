@@ -31,6 +31,7 @@ import { setSymptomsInput } from "@/App/Redux/triageSlice";
 // mounts and BodyModelContent/CardioModelContent call useLoader(), the cache
 // is already warm and they resolve without an extra network round-trip.
 useLoader.preload(OBJLoader, "/assets/models/normal/normal.obj");
+useLoader.preload(OBJLoader, "/assets/models/female/female.obj");
 useLoader.preload(OBJLoader, "/assets/models/cardio/cardio.obj");
 
 interface ExtendedModelProps extends ModelProps {
@@ -60,6 +61,7 @@ interface InternalModelProps {
 	handlePointerDown: () => void;
 	handlePointerUp: (event: ThreeEvent<PointerEvent>) => void;
 	groupRef: React.RefObject<THREE.Group>;
+	gender?: string;
 }
 
 const BodyModelContent = memo(function BodyModelContent({
@@ -70,17 +72,23 @@ const BodyModelContent = memo(function BodyModelContent({
 	handlePointerDown,
 	handlePointerUp,
 	groupRef,
+	gender,
 }: InternalModelProps) {
 	// Non-suspending OBJ load — model renders instantly with placeholder geometry
 	const [model, setModel] = useState<THREE.Group | null>(null);
 	const matRef = useRef<THREE.MeshStandardMaterial | null>(null);
+
+	const isFemale = gender?.toLowerCase() === "female";
+	const modelPath = isFemale
+		? "/assets/models/female/female.obj"
+		: "/assets/models/normal/normal.obj";
 
 	useEffect(() => {
 		let mounted = true;
 		const loader = new OBJLoader();
 		// loadAsync goes through THREE's DefaultLoadingManager which checks the
 		// fetch cache primed by useLoader.preload — resolves quickly if already cached
-		loader.loadAsync("/assets/models/normal/normal.obj").then((obj) => {
+		loader.loadAsync(modelPath).then((obj) => {
 			if (!mounted) return;
 			const mat = createBodyMaterial(textures as Partial<BodyModelTextures>);
 			mat.transparent = true;
@@ -88,10 +96,8 @@ const BodyModelContent = memo(function BodyModelContent({
 			matRef.current = mat;
 			obj.traverse((child) => {
 				if (child instanceof THREE.Mesh) {
-					if (child.name === "Body_final") {
-						child.raycast = new THREE.Mesh().raycast;
-						child.userData.clickable = true;
-					}
+					child.raycast = new THREE.Mesh().raycast;
+					child.userData.clickable = true;
 					child.material = mat;
 				}
 			});
@@ -101,7 +107,7 @@ const BodyModelContent = memo(function BodyModelContent({
 			mounted = false;
 		};
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [modelPath]);
 
 	// Patch material in-place as textures arrive — no shader recompilation
 	useEffect(() => {
@@ -189,6 +195,7 @@ function Model({
 	onModelChange,
 	isPaused = false,
 	selectedCategory: propCategory,
+	gender: propGender,
 }: ExtendedModelProps & { isPaused?: boolean }) {
 	const cardioTextures = useCardioTextures();
 	const bodyTextures = useBodyTextures();
@@ -199,6 +206,7 @@ function Model({
 	);
 	const selectedCategory = propCategory !== undefined ? propCategory : reduxCategory;
 	const user = useSelector((state: RootState) => state.user);
+	const effectiveGender = propGender || user?.gender || "Male";
 	const activeAlerts = useSelector(
 		(state: RootState) => state.triage.activeAlerts,
 	);
@@ -734,6 +742,7 @@ function Model({
 					handlePointerDown={handlePointerDown}
 					handlePointerUp={handlePointerUp}
 					groupRef={groupRef}
+					gender={effectiveGender}
 				/>
 			) : (
 				<CardioModelContent

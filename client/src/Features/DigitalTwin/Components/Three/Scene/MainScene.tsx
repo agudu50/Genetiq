@@ -23,6 +23,7 @@ interface MainSceneProps {
 	onSidebarSelectionMade?: () => void;
 	isPaused?: boolean;
 	showSidebar?: boolean;
+	gender?: string;
 }
 
 const MainScene: React.FC<MainSceneProps> = ({
@@ -32,6 +33,7 @@ const MainScene: React.FC<MainSceneProps> = ({
 	onSidebarSelectionMade,
 	isPaused = false,
 	showSidebar = true,
+	gender,
 }) => {
 	const { cameraState, setCameraState } = useCamera();
 	const { backgroundId, preset, selectBackground, wrapperStyle } =
@@ -197,6 +199,7 @@ const MainScene: React.FC<MainSceneProps> = ({
 								isHidden={isModelHidden}
 								isPaused={isPaused}
 								selectedCategory={selectedCategory}
+								gender={gender}
 							/>
 						)}
 						<Model
@@ -210,6 +213,7 @@ const MainScene: React.FC<MainSceneProps> = ({
 							onModelChange={handleModelChange}
 							isPaused={isPaused}
 							selectedCategory={selectedCategory}
+							gender={gender}
 						/>
 					</Suspense>
 				</Canvas>

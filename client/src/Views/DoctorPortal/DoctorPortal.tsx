@@ -1682,7 +1682,7 @@ ${report.soapNote.plan}
 			{/* 1. Full-Screen 3D Digital Twin Stage */}
 			<div className={styles.canvasFullStage}>
 				<CameraProvider>
-					<MainScene selectedCategory={selectedOrganSystem} showSidebar={false} />
+					<MainScene selectedCategory={selectedOrganSystem} showSidebar={false} gender={selectedPatient.gender} />
 				</CameraProvider>
 			</div>
 

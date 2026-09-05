@@ -80,6 +80,7 @@ const Dashboard = () => {
 	const selectedCategory = useSelector(
 		(state: RootState) => state.category.selectedCategory,
 	);
+	const userGender = useSelector((state: RootState) => state.user.gender);
 	const [category, setCategory] = useState(selectedCategory || "total");
 
 	useEffect(() => {
@@ -307,6 +308,7 @@ const Dashboard = () => {
 										isPaused={
 											!isModelVisible || (isMobile && isDrawerOpen)
 										}
+										gender={userGender}
 									/>
 								</Suspense>
 							</div>

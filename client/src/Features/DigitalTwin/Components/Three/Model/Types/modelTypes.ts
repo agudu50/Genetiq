@@ -6,6 +6,7 @@ export interface ModelProps {
 	scale?: [number, number, number];
 	color?: string;
 	modelType?: "body" | "cardio";
+	gender?: "Male" | "Female" | "male" | "female" | string;
 }
 
 export interface TextureSet {
