@@ -1715,7 +1715,7 @@ ${report.soapNote.plan}
 							className={styles.logoImage}
 							width="38"
 							height="38"
-							fetchPriority="high"
+							loading="eager"
 						/>
 					</div>
 					<div className={styles.hospitalMeta}>

@@ -625,7 +625,7 @@ export default function Landing() {
 							className={styles.logoImage}
 							width={36}
 							height={36}
-							fetchPriority='high'
+							loading='eager'
 						/>
 						<span className={styles.logoText}>Genetiq</span>
 					</div>
@@ -773,7 +773,6 @@ export default function Landing() {
 						className={styles.heroImage}
 						width={440}
 						height={420}
-						fetchPriority='high'
 						loading='eager'
 						decoding='async'
 					/>
