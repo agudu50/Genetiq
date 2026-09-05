@@ -99,88 +99,115 @@ export function derivePatient3DGlowConfig(patient: Patient3DData): Patient3DGlow
 	// 2. Identify affected systems from symptoms and lab markers
 	const affectedSystems = new Map<string, SystemGlowConfig>();
 
-	// Color palette definitions
-	const RED_COLORS = {
-		core: new THREE.Color(0xff2222),
-		mid: new THREE.Color(0xee1111),
-		outer: new THREE.Color(0x990000),
+	// Distinct clinical color palettes for each organ issue
+	const CARDIO_COLORS = {
+		core: new THREE.Color(0xfbbf24), // Golden Amber (Cardiovascular / Heart)
+		mid: new THREE.Color(0xf59e0b),
+		outer: new THREE.Color(0xb45309),
 	};
-	const AMBER_COLORS = {
-		core: new THREE.Color(0xffaa00),
-		mid: new THREE.Color(0xff7700),
-		outer: new THREE.Color(0x993300),
+	const RENAL_COLORS = {
+		core: new THREE.Color(0xfb923c), // Warm Tangerine / Coral (Renal / Kidneys)
+		mid: new THREE.Color(0xea580c),
+		outer: new THREE.Color(0x9a3412),
 	};
-	const VIOLET_COLORS = {
-		core: new THREE.Color(0xe879f9), // Bright Fuchsia / Violet
-		mid: new THREE.Color(0xa855f7),
-		outer: new THREE.Color(0x6b21a8),
+	const RESP_COLORS = {
+		core: new THREE.Color(0x38bdf8), // Electric Cyan (Respiratory / Lungs)
+		mid: new THREE.Color(0x0284c7),
+		outer: new THREE.Color(0x0369a1),
+	};
+	const ENDO_COLORS = {
+		core: new THREE.Color(0xc084fc), // Vivid Amethyst (Endocrine / Metabolism / Thyroid)
+		mid: new THREE.Color(0x9333ea),
+		outer: new THREE.Color(0x581c87),
+	};
+	const NEURO_COLORS = {
+		core: new THREE.Color(0x818cf8), // Electric Indigo (Neurological / Brain / Fatigue)
+		mid: new THREE.Color(0x4f46e5),
+		outer: new THREE.Color(0x312e81),
+	};
+	const GASTRO_COLORS = {
+		core: new THREE.Color(0x34d399), // Emerald (Digestive / Gastrointestinal)
+		mid: new THREE.Color(0x059669),
+		outer: new THREE.Color(0x064e3b),
 	};
 	const EMERALD_COLORS = {
 		core: new THREE.Color(0x34d399), // Mint / Emerald
 		mid: new THREE.Color(0x10b981),
 		outer: new THREE.Color(0x064e3b),
 	};
-	const CYAN_COLORS = {
-		core: new THREE.Color(0x38bdf8), // Sky / Cyan
-		mid: new THREE.Color(0x06b6d4),
-		outer: new THREE.Color(0x164e63),
-	};
 
 	const symptoms = patient.symptoms || [];
 	const labMarkers = patient.labMarkers || [];
 
-	// Map symptoms to 3D system keys
+	// Map symptoms to 3D system keys with distinct organ colors
 	symptoms.forEach((s) => {
 		const name = s.name.toLowerCase();
 		const isRed = s.urgency === "Red";
 		const speed = isRed ? 3.0 : 2.0;
-		const colors = isRed ? RED_COLORS : AMBER_COLORS;
 		const urgencyLevel = isRed ? "urgent" : "warning";
 
-		if (name.includes("palpitation") || name.includes("shortness of breath") || name.includes("chest")) {
-			// Cardiovascular & Respiratory
+		if (name.includes("palpitation") || name.includes("chest") || name.includes("heart")) {
+			// Cardiovascular → Golden Amber
 			affectedSystems.set("cardiovascular", {
 				systemKey: "cardiovascular",
 				systemName: "Cardiovascular",
 				urgency: urgencyLevel,
-				coreColor: colors.core,
-				midColor: colors.mid,
-				outerColor: colors.outer,
+				coreColor: CARDIO_COLORS.core,
+				midColor: CARDIO_COLORS.mid,
+				outerColor: CARDIO_COLORS.outer,
 				pulseSpeed: speed,
-				intensity: isRed ? 1.6 : 1.2,
-				label: s.name,
-			});
-			affectedSystems.set("Pulmonology", {
-				systemKey: "Pulmonology",
-				systemName: "Respiratory",
-				urgency: urgencyLevel,
-				coreColor: colors.core,
-				midColor: colors.mid,
-				outerColor: colors.outer,
-				pulseSpeed: speed,
-				intensity: isRed ? 1.5 : 1.1,
+				intensity: isRed ? 1.6 : 1.3,
 				label: s.name,
 			});
 		}
 
+		if (name.includes("shortness of breath") || name.includes("breath") || name.includes("cough")) {
+			// Respiratory → Electric Cyan
+			affectedSystems.set("Pulmonology", {
+				systemKey: "Pulmonology",
+				systemName: "Respiratory",
+				urgency: urgencyLevel,
+				coreColor: RESP_COLORS.core,
+				midColor: RESP_COLORS.mid,
+				outerColor: RESP_COLORS.outer,
+				pulseSpeed: speed,
+				intensity: 1.3,
+				label: s.name,
+			});
+		}
 
-		if (name.includes("fatigue") || name.includes("cold") || name.includes("thyroid")) {
-			// Endocrine / Thyroid
+		if (name.includes("fatigue") || name.includes("stress") || name.includes("headache") || name.includes("dizzi")) {
+			// Neurological / Cognitive → Electric Indigo
+			affectedSystems.set("StressManagement", {
+				systemKey: "StressManagement",
+				systemName: "Neurological",
+				urgency: urgencyLevel,
+				coreColor: NEURO_COLORS.core,
+				midColor: NEURO_COLORS.mid,
+				outerColor: NEURO_COLORS.outer,
+				pulseSpeed: speed,
+				intensity: 1.3,
+				label: s.name,
+			});
+		}
+
+		if (name.includes("cold") || name.includes("thyroid") || name.includes("heat")) {
+			// Endocrine / Thyroid → Vivid Amethyst
 			affectedSystems.set("Endocrinology", {
 				systemKey: "Endocrinology",
 				systemName: "Endocrine",
 				urgency: urgencyLevel,
-				coreColor: VIOLET_COLORS.core,
-				midColor: VIOLET_COLORS.mid,
-				outerColor: VIOLET_COLORS.outer,
+				coreColor: ENDO_COLORS.core,
+				midColor: ENDO_COLORS.mid,
+				outerColor: ENDO_COLORS.outer,
 				pulseSpeed: speed,
-				intensity: 1.4,
+				intensity: 1.3,
 				label: s.name,
 			});
 		}
 	});
 
-	// Map lab markers to 3D system keys
+	// Map lab markers to 3D system keys with distinct organ colors
 	labMarkers.forEach((m) => {
 		const isElevatedOrLow = m.status === "elevated" || m.status === "low" || m.status === "critical_high";
 		if (!isElevatedOrLow) return;
@@ -188,62 +215,78 @@ export function derivePatient3DGlowConfig(patient: Patient3DData): Patient3DGlow
 		const sys = (m.system || "").toLowerCase();
 		const marker = m.marker.toLowerCase();
 		const isCritical = m.status === "critical_high" || marker.includes("creatinine") || marker.includes("troponin") || marker.includes("apob");
-		const speed = isCritical ? 3.0 : 2.0;
-		const colors = isCritical ? RED_COLORS : AMBER_COLORS;
+		const speed = isCritical ? 2.8 : 2.0;
 		const urgencyLevel = isCritical ? "urgent" : "warning";
 
 		if (sys.includes("heart") || sys.includes("cardio") || marker.includes("apob") || marker.includes("ldl") || marker.includes("crp")) {
+			// Cardiovascular → Golden Amber
 			affectedSystems.set("cardiovascular", {
 				systemKey: "cardiovascular",
 				systemName: "Cardiovascular",
 				urgency: urgencyLevel,
-				coreColor: colors.core,
-				midColor: colors.mid,
-				outerColor: colors.outer,
-				pulseSpeed: speed,
-				intensity: isCritical ? 1.6 : 1.2,
-				label: `${m.marker}: ${m.value}`,
-			});
-		}
-
-		if (sys.includes("renal") || sys.includes("kidney") || marker.includes("egfr") || marker.includes("creatinine") || marker.includes("bun")) {
-			// Renal / Kidneys
-			affectedSystems.set("Pulmonology1", {
-				systemKey: "Pulmonology1",
-				systemName: "Renal",
-				urgency: urgencyLevel,
-				coreColor: colors.core,
-				midColor: colors.mid,
-				outerColor: colors.outer,
+				coreColor: CARDIO_COLORS.core,
+				midColor: CARDIO_COLORS.mid,
+				outerColor: CARDIO_COLORS.outer,
 				pulseSpeed: speed,
 				intensity: isCritical ? 1.6 : 1.3,
 				label: `${m.marker}: ${m.value}`,
 			});
 		}
 
-		if (sys.includes("endocrine") || sys.includes("thyroid") || marker.includes("tsh") || marker.includes("vitamin d")) {
-			affectedSystems.set("Endocrinology", {
-				systemKey: "Endocrinology",
-				systemName: "Endocrine",
+		if (sys.includes("renal") || sys.includes("kidney") || marker.includes("egfr") || marker.includes("creatinine") || marker.includes("bun")) {
+			// Renal / Kidneys → Warm Tangerine / Coral
+			affectedSystems.set("Pulmonology1", {
+				systemKey: "Pulmonology1",
+				systemName: "Renal",
 				urgency: urgencyLevel,
-				coreColor: VIOLET_COLORS.core,
-				midColor: VIOLET_COLORS.mid,
-				outerColor: VIOLET_COLORS.outer,
+				coreColor: RENAL_COLORS.core,
+				midColor: RENAL_COLORS.mid,
+				outerColor: RENAL_COLORS.outer,
 				pulseSpeed: speed,
-				intensity: 1.4,
+				intensity: isCritical ? 1.6 : 1.3,
 				label: `${m.marker}: ${m.value}`,
 			});
 		}
 
-		if (sys.includes("metabolic") || marker.includes("glucose") || marker.includes("hba1c") || marker.includes("sugar")) {
-			// Digestive / Metabolic
+		if (sys.includes("resp") || sys.includes("lung") || marker.includes("spo2") || marker.includes("oxygen")) {
+			// Respiratory → Electric Cyan
+			affectedSystems.set("Pulmonology", {
+				systemKey: "Pulmonology",
+				systemName: "Respiratory",
+				urgency: urgencyLevel,
+				coreColor: RESP_COLORS.core,
+				midColor: RESP_COLORS.mid,
+				outerColor: RESP_COLORS.outer,
+				pulseSpeed: speed,
+				intensity: 1.3,
+				label: `${m.marker}: ${m.value}`,
+			});
+		}
+
+		if (sys.includes("endocrine") || sys.includes("thyroid") || marker.includes("tsh") || marker.includes("glucose") || marker.includes("hba1c")) {
+			// Endocrine / Metabolic → Vivid Amethyst
+			affectedSystems.set("Endocrinology", {
+				systemKey: "Endocrinology",
+				systemName: "Endocrine",
+				urgency: urgencyLevel,
+				coreColor: ENDO_COLORS.core,
+				midColor: ENDO_COLORS.mid,
+				outerColor: ENDO_COLORS.outer,
+				pulseSpeed: speed,
+				intensity: 1.3,
+				label: `${m.marker}: ${m.value}`,
+			});
+		}
+
+		if (sys.includes("metabolic") || sys.includes("digestive") || sys.includes("liver") || marker.includes("alt") || marker.includes("ast") || marker.includes("bilirubin")) {
+			// Digestive / Gastrointestinal → Emerald
 			affectedSystems.set("Gastroenterolgy", {
 				systemKey: "Gastroenterolgy",
 				systemName: "Metabolic / Digestive",
 				urgency: urgencyLevel,
-				coreColor: AMBER_COLORS.core,
-				midColor: AMBER_COLORS.mid,
-				outerColor: AMBER_COLORS.outer,
+				coreColor: GASTRO_COLORS.core,
+				midColor: GASTRO_COLORS.mid,
+				outerColor: GASTRO_COLORS.outer,
 				pulseSpeed: speed,
 				intensity: 1.3,
 				label: `${m.marker}: ${m.value}`,
@@ -264,17 +307,6 @@ export function derivePatient3DGlowConfig(patient: Patient3DData): Patient3DGlow
 			intensity: 0.9,
 			label: "Optimal Sinus Rhythm & Cellular Tone",
 		});
-		affectedSystems.set("Pulmonology", {
-			systemKey: "Pulmonology",
-			systemName: "Respiratory",
-			urgency: "optimal",
-			coreColor: CYAN_COLORS.core,
-			midColor: CYAN_COLORS.mid,
-			outerColor: CYAN_COLORS.outer,
-			pulseSpeed: 1.1,
-			intensity: 0.8,
-			label: "Optimal Oxygenation & Tidal Volume",
-		});
 	}
 
 	// 3. Custom cardio model hotspots based on the patient's condition
@@ -282,15 +314,21 @@ export function derivePatient3DGlowConfig(patient: Patient3DData): Patient3DGlow
 	const diagnosis = (patient.primaryDiagnosis || "").toLowerCase();
 
 	if (patient.id === "pt-101" || diagnosis.includes("fibrillation") || diagnosis.includes("apob")) {
-		// Marcus Vance: High ApoB, AFib, hs-CRP
+		// Marcus Vance: High ApoB, AFib, hs-CRP — uniform yellow/golden-amber glow matching full body
+		const uniformGlow = {
+			core: new THREE.Color(0xfbbf24),
+			mid: new THREE.Color(0xf59e0b),
+			outer: new THREE.Color(0x92400e),
+		};
+
 		cardioHotspots.push({
 			id: "apob",
 			title: "ApoB 128 mg/dL & LDL Atheroma Burden",
 			position: [0.8, 21.2, 3.2],
 			scale: 3.6,
-			coreColor: new THREE.Color(0xf59e0b),
-			midColor: new THREE.Color(0xd97706),
-			outerColor: new THREE.Color(0x78350f),
+			coreColor: uniformGlow.core,
+			midColor: uniformGlow.mid,
+			outerColor: uniformGlow.outer,
 			pulseSpeed: 2.2,
 			intensity: 1.4,
 			label: "Coronary Artery / LAD Atheroma",
@@ -300,11 +338,11 @@ export function derivePatient3DGlowConfig(patient: Patient3DData): Patient3DGlow
 			title: "Paroxysmal Atrial Fibrillation Arrhythmia",
 			position: [-1.4, 23.8, 2.0],
 			scale: 3.5,
-			coreColor: new THREE.Color(0xef4444),
-			midColor: new THREE.Color(0xdc2626),
-			outerColor: new THREE.Color(0x7f1d1d),
-			pulseSpeed: 3.6,
-			intensity: 1.7,
+			coreColor: uniformGlow.core,
+			midColor: uniformGlow.mid,
+			outerColor: uniformGlow.outer,
+			pulseSpeed: 2.5,
+			intensity: 1.4,
 			label: "Sinoatrial Node / Right Atrium",
 		});
 		cardioHotspots.push({
@@ -312,11 +350,11 @@ export function derivePatient3DGlowConfig(patient: Patient3DData): Patient3DGlow
 			title: "hs-CRP 3.4 mg/L Inflammatory Stress",
 			position: [1.2, 18.8, 2.8],
 			scale: 3.4,
-			coreColor: new THREE.Color(0xf43f5e),
-			midColor: new THREE.Color(0xe11d48),
-			outerColor: new THREE.Color(0x881337),
-			pulseSpeed: 2.5,
-			intensity: 1.5,
+			coreColor: uniformGlow.core,
+			midColor: uniformGlow.mid,
+			outerColor: uniformGlow.outer,
+			pulseSpeed: 2.2,
+			intensity: 1.4,
 			label: "Myocardial Micro-Vascular Bed",
 		});
 	} else if (patient.id === "pt-103" || diagnosis.includes("hypertension")) {

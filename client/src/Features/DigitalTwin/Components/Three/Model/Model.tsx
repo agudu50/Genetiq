@@ -44,6 +44,7 @@ interface ExtendedModelProps extends ModelProps {
 	isHidden?: boolean;
 	startFadeIn?: boolean;
 	patientData?: Patient3DData;
+	selectedCategory?: string | null;
 	onModelChange?: (
 		type: "body" | "cardio",
 		cameraConfig: {
@@ -259,15 +260,15 @@ function Model({
 			};
 
 			const defaultPalette: Record<string, [number, number, number]> = {
-				Respiratory: [0x00ffff, 0x0088ff, 0x002288],
-				Digestive: [0xff8800, 0xff4400, 0x882200],
-				Endocrine: [0xd946ef, 0xa855f7, 0x6b21a8],
-				Renal: [0xffff00, 0x888800, 0x444400],
-				Urological: [0xffff00, 0xaaaa00, 0x555500],
-				Neurological: [0xff00aa, 0xaa00aa, 0x550055],
-				Musculoskeletal: [0x00ffaa, 0x00aa55, 0x005522],
-				Cardiovascular: [0xff2222, 0xcc0000, 0x660000],
-				Hematology: [0xff3366, 0xcc1144, 0x660022],
+				Cardiovascular: [0xfbbf24, 0xf59e0b, 0xb45309], // Golden Amber
+				Respiratory: [0x38bdf8, 0x0284c7, 0x0369a1],    // Electric Cyan
+				Renal: [0xfb923c, 0xea580c, 0x9a3412],          // Warm Tangerine / Coral
+				Endocrine: [0xc084fc, 0x9333ea, 0x581c87],      // Vivid Amethyst
+				Neurological: [0x818cf8, 0x4f46e5, 0x312e81],   // Electric Indigo
+				Digestive: [0x34d399, 0x059669, 0x064e3b],      // Emerald
+				Musculoskeletal: [0x2dd4bf, 0x0d9488, 0x115e59],// Mint
+				Urological: [0xfacc15, 0xca8a04, 0x713f12],     // Yellow Ochre
+				Hematology: [0xf43f5e, 0xe11d48, 0x881337],     // Ruby Rose
 			};
 
 			const pMats: Record<string, THREE.ShaderMaterial> = {};
@@ -304,15 +305,15 @@ function Model({
 			if (alert) {
 				if (alert.urgency === "Red")
 					return [
-						new THREE.Color(0xff0000),
-						new THREE.Color(0xaa0000),
-						new THREE.Color(0x550000),
+						new THREE.Color(0xef4444),
+						new THREE.Color(0xdc2626),
+						new THREE.Color(0x7f1d1d),
 					] as [THREE.Color, THREE.Color, THREE.Color];
 				if (alert.urgency === "Yellow")
 					return [
-						new THREE.Color(0xffaa00),
-						new THREE.Color(0xff6600),
-						new THREE.Color(0xaa3300),
+						new THREE.Color(0xfbbf24),
+						new THREE.Color(0xf59e0b),
+						new THREE.Color(0xb45309),
 					] as [THREE.Color, THREE.Color, THREE.Color];
 			}
 
@@ -345,7 +346,7 @@ function Model({
 				}
 			}
 
-			// 3. Clinical Profile Highlights for Marcus Vance / Patient
+			// 3. Clinical Profile Highlights with distinct organ colors
 			const isCardio =
 				system === "Cardiovascular" &&
 				(user?.medicalConditions?.some((c: string) =>
@@ -356,9 +357,9 @@ function Model({
 					));
 			if (isCardio) {
 				return [
-					new THREE.Color(0xfbbf24), // Vibrant Yellow / Golden-Amber Chest Glow
+					new THREE.Color(0xfbbf24), // Vibrant Golden-Amber Chest Glow
 					new THREE.Color(0xf59e0b),
-					new THREE.Color(0x92400e),
+					new THREE.Color(0xb45309),
 				] as [THREE.Color, THREE.Color, THREE.Color];
 			}
 
@@ -369,8 +370,8 @@ function Model({
 				);
 			if (isRenal) {
 				return [
-					new THREE.Color(0xfb923c), // Amber / Orange Glow
-					new THREE.Color(0xf97316),
+					new THREE.Color(0xfb923c), // Warm Tangerine / Coral Glow
+					new THREE.Color(0xea580c),
 					new THREE.Color(0x9a3412),
 				] as [THREE.Color, THREE.Color, THREE.Color];
 			}
@@ -382,7 +383,7 @@ function Model({
 				);
 			if (isResp) {
 				return [
-					new THREE.Color(0x00f0ff), // Cyan / Azure Glow
+					new THREE.Color(0x38bdf8), // Electric Cyan / Azure Glow
 					new THREE.Color(0x0284c7),
 					new THREE.Color(0x0369a1),
 				] as [THREE.Color, THREE.Color, THREE.Color];
@@ -395,9 +396,9 @@ function Model({
 				);
 			if (isNeuro) {
 				return [
-					new THREE.Color(0xa855f7), // Soft Violet / Indigo Glow (No Red)
-					new THREE.Color(0x7e22ce),
-					new THREE.Color(0x3b0764),
+					new THREE.Color(0x818cf8), // Electric Indigo / Cobalt Glow
+					new THREE.Color(0x4f46e5),
+					new THREE.Color(0x312e81),
 				] as [THREE.Color, THREE.Color, THREE.Color];
 			}
 
@@ -408,9 +409,9 @@ function Model({
 				);
 			if (isEndo) {
 				return [
-					new THREE.Color(0xffb703), // Golden Amber Glow
-					new THREE.Color(0xfb8500),
-					new THREE.Color(0x9a3412),
+					new THREE.Color(0xc084fc), // Vivid Amethyst / Violet Glow
+					new THREE.Color(0x9333ea),
+					new THREE.Color(0x581c87),
 				] as [THREE.Color, THREE.Color, THREE.Color];
 			}
 
@@ -423,31 +424,31 @@ function Model({
 
 		const baseMaterials: Record<string, THREE.ShaderMaterial> = {
 			Cardiovascular: createGlowingMaterial(
-				...getColor("Cardiovascular", [0xfbbf24, 0xf59e0b, 0x92400e]),
+				...getColor("Cardiovascular", [0xfbbf24, 0xf59e0b, 0xb45309]),
 			),
 			Respiratory: createGlowingMaterial(
-				...getColor("Respiratory", [0x00ffff, 0x0088ff, 0x002288]),
+				...getColor("Respiratory", [0x38bdf8, 0x0284c7, 0x0369a1]),
 			),
 			Digestive: createGlowingMaterial(
-				...getColor("Digestive", [0xff8800, 0xff4400, 0x882200]),
+				...getColor("Digestive", [0x34d399, 0x059669, 0x064e3b]),
 			),
 			Endocrine: createGlowingMaterial(
-				...getColor("Endocrine", [0xff00ff, 0x8800ff, 0x440088]),
+				...getColor("Endocrine", [0xc084fc, 0x9333ea, 0x581c87]),
 			),
 			Renal: createGlowingMaterial(
-				...getColor("Renal", [0xffff00, 0x888800, 0x444400]),
+				...getColor("Renal", [0xfb923c, 0xea580c, 0x9a3412]),
 			),
 			Urological: createGlowingMaterial(
-				...getColor("Urological", [0xffff00, 0xaaaa00, 0x555500]),
+				...getColor("Urological", [0xfacc15, 0xca8a04, 0x713f12]),
 			),
 			Neurological: createGlowingMaterial(
-				...getColor("Neurological", [0xa855f7, 0x7e22ce, 0x3b0764]),
+				...getColor("Neurological", [0x818cf8, 0x4f46e5, 0x312e81]),
 			),
 			Musculoskeletal: createGlowingMaterial(
-				...getColor("Musculoskeletal", [0x00ffaa, 0x00aa55, 0x005522]),
+				...getColor("Musculoskeletal", [0x2dd4bf, 0x0d9488, 0x115e59]),
 			),
-			Cardiovascular: createGlowingMaterial(
-				...getColor("Cardiovascular", [0xff2222, 0xcc0000, 0x660000]),
+			Hematology: createGlowingMaterial(
+				...getColor("Hematology", [0xf43f5e, 0xe11d48, 0x881337]),
 			),
 			General: painAreaMaterial,
 		};
@@ -489,116 +490,108 @@ function Model({
 				{
 					position: [0.8, 17.5, 2.2],
 					rotation: [0, 0, 0],
-					scale: 8.5,
+					scale: 2.6,
 					material: materials.Cardiovascular,
-				}, // Heart
+				}, // Heart Hotspot Point
 			],
 			Cardiovascular: [
 				{
 					position: [0.8, 17.5, 2.2],
 					rotation: [0, 0, 0],
-					scale: 8.5,
+					scale: 2.6,
 					material: materials.Cardiovascular,
-				}, // Heart
+				}, // Heart Hotspot Point
 			],
 			CardioLoad: [
 				{
 					position: [0.8, 17.5, 2.2],
 					rotation: [0, 0, 0],
-					scale: 8.5,
+					scale: 2.6,
 					material: materials.Cardiovascular,
-				}, // Heart
+				}, // Heart Hotspot Point
 			],
 			Pulmonology: [
 				{
 					position: [-1.8, 15, 1.8],
 					rotation: [0, 0, 0],
-					scale: 8,
+					scale: 2.4,
 					material: materials.Respiratory,
-				}, // Left Lung
+				}, // Left Lung Point
 				{
 					position: [1.8, 15, 1.8],
 					rotation: [0, 0, 0],
-					scale: 8,
+					scale: 2.4,
 					material: materials.Respiratory,
-				}, // Right Lung
+				}, // Right Lung Point
 			],
 			Gastroenterolgy: [
 				{
 					position: [0, 10, 2.5],
 					rotation: [0, 0, 0],
-					scale: 10,
+					scale: 2.5,
 					material: materials.Digestive,
-				}, // Stomach/Intestines
+				}, // Digestive Point
 			],
 			Endocrinology: [
 				{
 					position: [0, 24, 1.8],
 					rotation: [-0.2, 0, 0],
-					scale: 5,
+					scale: 2.2,
 					material: materials.Endocrine,
-				}, // Thyroid
+				}, // Thyroid Point
 			],
 			Pulmonology1: [
 				// Renal
 				{
 					position: [-2, 8, -1.8],
 					rotation: [0, Math.PI, 0],
-					scale: 6,
+					scale: 2.3,
 					material: materials.Renal,
-				}, // Left Kidney
+				}, // Left Kidney Point
 				{
 					position: [2, 8, -1.8],
 					rotation: [0, Math.PI, 0],
-					scale: 6,
+					scale: 2.3,
 					material: materials.Renal,
-				}, // Right Kidney
+				}, // Right Kidney Point
 			],
 			Urology: [
 				{
 					position: [0, 0, 1.5],
 					rotation: [0, 0, 0],
-					scale: 7,
+					scale: 2.2,
 					material: materials.Urological,
-				}, // Bladder/Pelvis
+				}, // Bladder Point
 			],
 			StressManagement: [
 				// Neurological
 				{
 					position: [0, 31, 1],
 					rotation: [-0.2, 0, 0],
-					scale: 11,
+					scale: 2.4,
 					material: materials.Neurological,
-				}, // Brain
+				}, // Brain Point
 			],
 			UlnaRadiusAlt: [
 				// Musculoskeletal
 				{
 					position: [-6, 15, 0],
 					rotation: [0, 0, 0],
-					scale: 6,
+					scale: 2.2,
 					material: materials.Musculoskeletal,
-				}, // Left Arm/Shoulder
+				}, // Left Joint Point
 				{
 					position: [6, 15, 0],
 					rotation: [0, 0, 0],
-					scale: 6,
+					scale: 2.2,
 					material: materials.Musculoskeletal,
-				}, // Right Arm/Shoulder
-			],
-			cardiovascular: [
-				{
-					position: [0.8, 18, 1.8],
-					rotation: [0, 0, 0],
-					scale: 7,
-					material: materials.Cardiovascular || materials.Respiratory,
-				},
+				}, // Right Joint Point
 			],
 			Hematology: [
 				{
 					position: [0, 15, 1.5],
 					rotation: [0, 0, 0],
-					scale: 12,
+					scale: 2.8,
 					material: materials.Hematology || materials.Respiratory,
 				},
 			],
@@ -610,13 +603,13 @@ function Model({
 			string,
 			{ position: [number, number, number]; rotation: [number, number, number]; scale: number }[]
 		> = {
-			// Hematology → full-body circulatory glow (torso center)
+			// Hematology → torso center point
 			Hematology: [
-				{ position: [0, 15, 1.5], rotation: [0, 0, 0], scale: 12 },
+				{ position: [0, 15, 1.5], rotation: [0, 0, 0], scale: 2.8 },
 			],
-			// Cardiovascular → heart region
+			// Cardiovascular → heart region point
 			cardiovascular: [
-				{ position: [0.8, 18, 1.8], rotation: [0, 0, 0], scale: 7 }, // Heart
+				{ position: [0.8, 17.5, 2.2], rotation: [0, 0, 0], scale: 2.6 },
 			],
 		};
 
@@ -689,22 +682,15 @@ function Model({
 	};
 
 	const cardioHotspotMaterials = useMemo(() => {
+		const uniformGlow = createGlowingMaterial(
+			new THREE.Color(0xfbbf24), // Vibrant Yellow / Golden-Amber
+			new THREE.Color(0xf59e0b),
+			new THREE.Color(0x92400e),
+		);
 		return {
-			apobLdl: createGlowingMaterial(
-				new THREE.Color(0xf59e0b), // Amber (ApoB & LDL Plaque)
-				new THREE.Color(0xd97706),
-				new THREE.Color(0x78350f),
-			),
-			afib: createGlowingMaterial(
-				new THREE.Color(0xf97316), // Orange (Atrial Fibrillation Arrhythmia)
-				new THREE.Color(0xea580c),
-				new THREE.Color(0x9a3412),
-			),
-			hscrp: createGlowingMaterial(
-				new THREE.Color(0xef4444), // Red (hs-CRP Inflammation)
-				new THREE.Color(0xb91c1c),
-				new THREE.Color(0x7f1d1d),
-			),
+			apobLdl: uniformGlow,
+			afib: uniformGlow,
+			hscrp: uniformGlow,
 		};
 	}, []);
 
@@ -882,7 +868,7 @@ function Model({
 								position={[0.8, 21.2, 3.2]}
 								onClick={(e) => handleMeshClick(e, "Cardiovascular")}
 							>
-								<planeGeometry args={[3.5, 3.5, 32, 32]} />
+								<planeGeometry args={[1.5, 1.5, 32, 32]} />
 								<primitive attach='material' object={cardioHotspotMaterials.apobLdl} />
 							</mesh>
 
@@ -891,7 +877,7 @@ function Model({
 								position={[-1.4, 23.8, 2.0]}
 								onClick={(e) => handleMeshClick(e, "Cardiovascular")}
 							>
-								<planeGeometry args={[3.2, 3.2, 32, 32]} />
+								<planeGeometry args={[1.4, 1.4, 32, 32]} />
 								<primitive attach='material' object={cardioHotspotMaterials.afib} />
 							</mesh>
 
@@ -900,7 +886,7 @@ function Model({
 								position={[1.2, 18.8, 2.8]}
 								onClick={(e) => handleMeshClick(e, "Cardiovascular")}
 							>
-								<planeGeometry args={[3.4, 3.4, 32, 32]} />
+								<planeGeometry args={[1.4, 1.4, 32, 32]} />
 								<primitive attach='material' object={cardioHotspotMaterials.hscrp} />
 							</mesh>
 						</>
@@ -908,25 +894,123 @@ function Model({
 				</group>
 			)}
 
-			{/* Patient-specific full body glowing hotspots (when viewing total overview or when patient is assigned) */}
+			{/* 1. Full Body (Overview) Active Clinical Hotspots & Organ Systems */}
 			{shouldShowPainArea &&
-				patientGlow &&
-				(selectedCategory === "total" || !selectedCategory) &&
-				Array.from(patientGlow.affectedSystems.entries()).map(([sysKey]) => {
-					const features = systemFeatures[sysKey];
-					if (!features) return null;
-					return features.map((feature, idx) => (
-						<mesh
-							key={`patient-glow-total-${sysKey}-${idx}`}
-							position={feature.position}
-							rotation={feature.rotation}
-							onClick={(e) => handleMeshClick(e, sysKey)}
-						>
-							<planeGeometry args={[feature.scale, feature.scale, 32, 32]} />
-							<primitive attach='material' object={feature.material} />
-						</mesh>
-					));
-				})}
+				(selectedCategory === "total" || !selectedCategory) && (
+					<group>
+						{patientGlow ? (
+							Array.from(patientGlow.affectedSystems.entries()).map(([sysKey]) => {
+								const features = systemFeatures[sysKey];
+								if (!features) return null;
+								return features.map((feature, idx) => (
+									<mesh
+										key={`patient-glow-total-${sysKey}-${idx}`}
+										position={feature.position}
+										rotation={feature.rotation}
+										onClick={(e) => handleMeshClick(e, sysKey)}
+									>
+										<planeGeometry args={[feature.scale, feature.scale, 32, 32]} />
+										<primitive attach='material' object={feature.material} />
+									</mesh>
+								));
+							})
+						) : (
+							<>
+								{/* Cardiovascular System: Heart (Golden Amber Glow) */}
+								{systemFeatures.cardiovascular?.map((feature, idx) => (
+									<mesh
+										key={`overview-cardio-${idx}`}
+										position={feature.position}
+										rotation={feature.rotation}
+										onClick={(e) => handleMeshClick(e, "Cardiovascular")}
+									>
+										<planeGeometry args={[feature.scale, feature.scale, 32, 32]} />
+										<primitive attach='material' object={feature.material} />
+									</mesh>
+								))}
+
+								{/* Renal System: Kidneys (Warm Tangerine Glow) */}
+								{systemFeatures.Pulmonology1?.map((feature, idx) => (
+									<mesh
+										key={`overview-renal-${idx}`}
+										position={feature.position}
+										rotation={feature.rotation}
+										onClick={(e) => handleMeshClick(e, "Pulmonology1")}
+									>
+										<planeGeometry args={[feature.scale, feature.scale, 32, 32]} />
+										<primitive attach='material' object={feature.material} />
+									</mesh>
+								))}
+
+								{/* Respiratory System: Lungs (Electric Cyan Glow) */}
+								{systemFeatures.Pulmonology?.map((feature, idx) => (
+									<mesh
+										key={`overview-resp-${idx}`}
+										position={feature.position}
+										rotation={feature.rotation}
+										onClick={(e) => handleMeshClick(e, "Pulmonology")}
+									>
+										<planeGeometry args={[feature.scale, feature.scale, 32, 32]} />
+										<primitive attach='material' object={feature.material} />
+									</mesh>
+								))}
+
+								{/* Neurological System: Brain (Electric Indigo Glow) */}
+								{systemFeatures.StressManagement?.map((feature, idx) => (
+									<mesh
+										key={`overview-neuro-${idx}`}
+										position={feature.position}
+										rotation={feature.rotation}
+										onClick={(e) => handleMeshClick(e, "StressManagement")}
+									>
+										<planeGeometry args={[feature.scale, feature.scale, 32, 32]} />
+										<primitive attach='material' object={feature.material} />
+									</mesh>
+								))}
+
+								{/* Endocrine System: Thyroid / Metabolism (Vivid Amethyst Glow) */}
+								{systemFeatures.Endocrinology?.map((feature, idx) => (
+									<mesh
+										key={`overview-endo-${idx}`}
+										position={feature.position}
+										rotation={feature.rotation}
+										onClick={(e) => handleMeshClick(e, "Endocrinology")}
+									>
+										<planeGeometry args={[feature.scale, feature.scale, 32, 32]} />
+										<primitive attach='material' object={feature.material} />
+									</mesh>
+								))}
+
+								{/* Additional lab findings */}
+								{Array.from(labHighlights.entries()).map(([systemKey]) => {
+									if (
+										systemKey === "cardiovascular" ||
+										systemKey === "Cardiovascular" ||
+										systemKey === "Pulmonology1" ||
+										systemKey === "Pulmonology" ||
+										systemKey === "StressManagement" ||
+										systemKey === "Endocrinology"
+									) {
+										return null;
+									}
+									const features = systemFeatures[systemKey];
+									if (!features) return null;
+									return features.map((feature, idx) => (
+										<mesh
+											key={`overview-lab-${systemKey}-${idx}`}
+											position={feature.position}
+											rotation={feature.rotation}
+											onClick={(e) => handleMeshClick(e, systemKey)}
+										>
+											<planeGeometry args={[feature.scale, feature.scale, 32, 32]} />
+											<primitive attach='material' object={feature.material} />
+										</mesh>
+									));
+								})}
+							</>
+						)}
+					</group>
+				)}
 
 			{/* Category-based pain areas — when a specific system has an active alert or lab finding or patient finding */}
 			{shouldShowPainArea &&
