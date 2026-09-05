@@ -75,6 +75,7 @@ export const createGlowingMaterial = (
 		transparent: true,
 		blending: THREE.AdditiveBlending,
 		depthWrite: false,
+		depthTest: false,
 		side: THREE.DoubleSide,
 	});
 };

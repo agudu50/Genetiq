@@ -226,6 +226,7 @@ function Model({
 	const selectedCategory = propCategory !== undefined ? propCategory : reduxCategory;
 	const user = useSelector((state: RootState) => state.user);
 	const effectiveGender = propGender || user?.gender || "Male";
+	const isFemale = effectiveGender?.toLowerCase() === "female";
 	const activeAlerts = useSelector(
 		(state: RootState) => state.triage.activeAlerts,
 	);
@@ -506,85 +507,85 @@ function Model({
 		> = {
 			cardiovascular: [
 				{
-					position: [0.8, 17.5, 2.2],
+					position: isFemale ? [0.8, 17.5, 4.6] : [0.8, 17.5, 2.2],
 					rotation: [0, 0, 0],
-					scale: 2.6,
+					scale: isFemale ? 2.8 : 2.6,
 					material: materials.Cardiovascular,
 				}, // Heart Hotspot Point
 			],
 			Cardiovascular: [
 				{
-					position: [0.8, 17.5, 2.2],
+					position: isFemale ? [0.8, 17.5, 4.6] : [0.8, 17.5, 2.2],
 					rotation: [0, 0, 0],
-					scale: 2.6,
+					scale: isFemale ? 2.8 : 2.6,
 					material: materials.Cardiovascular,
 				}, // Heart Hotspot Point
 			],
 			CardioLoad: [
 				{
-					position: [0.8, 17.5, 2.2],
+					position: isFemale ? [0.8, 17.5, 4.6] : [0.8, 17.5, 2.2],
 					rotation: [0, 0, 0],
-					scale: 2.6,
+					scale: isFemale ? 2.8 : 2.6,
 					material: materials.Cardiovascular,
 				}, // Heart Hotspot Point
 			],
 			Pulmonology: [
 				{
-					position: [-1.8, 15, 1.8],
+					position: isFemale ? [-2.0, 15, 4.2] : [-1.8, 15, 1.8],
 					rotation: [0, 0, 0],
-					scale: 2.4,
+					scale: isFemale ? 2.6 : 2.4,
 					material: materials.Respiratory,
 				}, // Left Lung Point
 				{
-					position: [1.8, 15, 1.8],
+					position: isFemale ? [2.0, 15, 4.2] : [1.8, 15, 1.8],
 					rotation: [0, 0, 0],
-					scale: 2.4,
+					scale: isFemale ? 2.6 : 2.4,
 					material: materials.Respiratory,
 				}, // Right Lung Point
 			],
 			Gastroenterolgy: [
 				{
-					position: [0, 10, 2.5],
+					position: isFemale ? [0, 10, 3.2] : [0, 10, 2.5],
 					rotation: [0, 0, 0],
-					scale: 2.5,
+					scale: isFemale ? 2.6 : 2.5,
 					material: materials.Digestive,
 				}, // Digestive Point
 			],
 			Endocrinology: [
 				{
-					position: [0, 24, 1.8],
+					position: isFemale ? [0, 24, 3.4] : [0, 24, 1.8],
 					rotation: [-0.2, 0, 0],
-					scale: 2.2,
+					scale: isFemale ? 2.4 : 2.2,
 					material: materials.Endocrine,
 				}, // Thyroid Point
 			],
 			Pulmonology1: [
 				// Renal
 				{
-					position: [-2, 8, -1.8],
+					position: isFemale ? [-2, 8, -2.2] : [-2, 8, -1.8],
 					rotation: [0, Math.PI, 0],
-					scale: 2.3,
+					scale: isFemale ? 2.4 : 2.3,
 					material: materials.Renal,
 				}, // Left Kidney Point
 				{
-					position: [2, 8, -1.8],
+					position: isFemale ? [2, 8, -2.2] : [2, 8, -1.8],
 					rotation: [0, Math.PI, 0],
-					scale: 2.3,
+					scale: isFemale ? 2.4 : 2.3,
 					material: materials.Renal,
 				}, // Right Kidney Point
 			],
 			Urology: [
 				{
-					position: [0, 0, 1.5],
+					position: isFemale ? [0, 0, 2.5] : [0, 0, 1.5],
 					rotation: [0, 0, 0],
-					scale: 2.2,
+					scale: isFemale ? 2.4 : 2.2,
 					material: materials.Urological,
 				}, // Bladder Point
 			],
 			StressManagement: [
 				// Neurological
 				{
-					position: [0, 31, 1],
+					position: isFemale ? [0, 30.5, 2.4] : [0, 31, 1],
 					rotation: [-0.2, 0, 0],
 					scale: 2.4,
 					material: materials.Neurological,
@@ -593,21 +594,21 @@ function Model({
 			UlnaRadiusAlt: [
 				// Musculoskeletal
 				{
-					position: [-6, 15, 0],
+					position: isFemale ? [-8, 15, 0] : [-6, 15, 0],
 					rotation: [0, 0, 0],
-					scale: 2.2,
+					scale: isFemale ? 2.4 : 2.2,
 					material: materials.Musculoskeletal,
 				}, // Left Joint Point
 				{
-					position: [6, 15, 0],
+					position: isFemale ? [8, 15, 0] : [6, 15, 0],
 					rotation: [0, 0, 0],
-					scale: 2.2,
+					scale: isFemale ? 2.4 : 2.2,
 					material: materials.Musculoskeletal,
 				}, // Right Joint Point
 			],
 			Hematology: [
 				{
-					position: [0, 15, 1.5],
+					position: isFemale ? [0, 15, 3.8] : [0, 15, 1.5],
 					rotation: [0, 0, 0],
 					scale: 2.8,
 					material: materials.Hematology || materials.Respiratory,
@@ -623,11 +624,11 @@ function Model({
 		> = {
 			// Hematology → torso center point
 			Hematology: [
-				{ position: [0, 15, 1.5], rotation: [0, 0, 0], scale: 2.8 },
+				{ position: isFemale ? [0, 15, 3.8] : [0, 15, 1.5], rotation: [0, 0, 0], scale: 2.8 },
 			],
 			// Cardiovascular → heart region point
 			cardiovascular: [
-				{ position: [0.8, 17.5, 2.2], rotation: [0, 0, 0], scale: 2.6 },
+				{ position: isFemale ? [0.8, 17.5, 4.6] : [0.8, 17.5, 2.2], rotation: [0, 0, 0], scale: isFemale ? 2.8 : 2.6 },
 			],
 		};
 
@@ -658,7 +659,7 @@ function Model({
 		}
 
 		return base;
-	}, [materials, labHighlights, patientGlow]);
+	}, [materials, labHighlights, patientGlow, isFemale]);
 
 	const handlePointerDown = () => {
 		setPointerDownTime(Date.now());
@@ -908,6 +909,7 @@ function Model({
 								<mesh
 									key={`patient-cardio-${spot.id}`}
 									position={spot.position}
+									renderOrder={15}
 									onClick={(e) =>
 										handleMeshClick(
 											e,
@@ -926,6 +928,7 @@ function Model({
 							{/* 1. Coronary Artery / LAD: ApoB 128 mg/dL & LDL 142 mg/dL Atheroma Burden (Golden Amber) */}
 							<mesh
 								position={[0.8, 21.2, 3.2]}
+								renderOrder={15}
 								onClick={(e) =>
 									handleMeshClick(
 										e,
@@ -941,6 +944,7 @@ function Model({
 							{/* 2. Sinoatrial Node / Right Atrium: Paroxysmal Atrial Fibrillation (Warm Tangerine) */}
 							<mesh
 								position={[-1.4, 23.8, 2.0]}
+								renderOrder={15}
 								onClick={(e) =>
 									handleMeshClick(
 										e,
@@ -956,6 +960,7 @@ function Model({
 							{/* 3. Pulmonary Outflow Tract: Oxygenation Perfusion (Electric Cyan) */}
 							<mesh
 								position={[-0.6, 25.4, 2.8]}
+								renderOrder={15}
 								onClick={(e) =>
 									handleMeshClick(
 										e,
@@ -971,6 +976,7 @@ function Model({
 							{/* 4. Cardiac Autonomic Plexus: Vagal / Sympathetic Tone (Electric Indigo) */}
 							<mesh
 								position={[0.2, 26.2, 1.6]}
+								renderOrder={15}
 								onClick={(e) =>
 									handleMeshClick(
 										e,
@@ -986,6 +992,7 @@ function Model({
 							{/* 5. Myocardial Micro-Vascular Bed: hs-CRP 3.4 mg/L Inflammatory Stress (Vivid Amethyst) */}
 							<mesh
 								position={[1.2, 18.8, 2.8]}
+								renderOrder={15}
 								onClick={(e) =>
 									handleMeshClick(
 										e,
@@ -1015,6 +1022,7 @@ function Model({
 										key={`patient-glow-total-${sysKey}-${idx}`}
 										position={feature.position}
 										rotation={feature.rotation}
+										renderOrder={15}
 										onClick={(e) =>
 											handleMeshClick(
 												e,
@@ -1036,6 +1044,7 @@ function Model({
 										key={`overview-cardio-${idx}`}
 										position={feature.position}
 										rotation={feature.rotation}
+										renderOrder={15}
 										onClick={(e) =>
 											handleMeshClick(
 												e,
@@ -1055,6 +1064,7 @@ function Model({
 										key={`overview-renal-${idx}`}
 										position={feature.position}
 										rotation={feature.rotation}
+										renderOrder={15}
 										onClick={(e) =>
 											handleMeshClick(
 												e,
@@ -1074,6 +1084,7 @@ function Model({
 										key={`overview-resp-${idx}`}
 										position={feature.position}
 										rotation={feature.rotation}
+										renderOrder={15}
 										onClick={(e) =>
 											handleMeshClick(
 												e,
@@ -1093,6 +1104,7 @@ function Model({
 										key={`overview-neuro-${idx}`}
 										position={feature.position}
 										rotation={feature.rotation}
+										renderOrder={15}
 										onClick={(e) =>
 											handleMeshClick(
 												e,
@@ -1112,6 +1124,7 @@ function Model({
 										key={`overview-endo-${idx}`}
 										position={feature.position}
 										rotation={feature.rotation}
+										renderOrder={15}
 										onClick={(e) =>
 											handleMeshClick(
 												e,
@@ -1144,6 +1157,7 @@ function Model({
 											key={`overview-lab-${systemKey}-${idx}`}
 											position={feature.position}
 											rotation={feature.rotation}
+											renderOrder={15}
 											onClick={(e) => handleMeshClick(e, systemKey)}
 										>
 											<planeGeometry args={[feature.scale, feature.scale, 32, 32]} />
@@ -1174,6 +1188,7 @@ function Model({
 						key={`cat-${idx}`}
 						position={feature.position}
 						rotation={feature.rotation}
+						renderOrder={15}
 						onClick={(e) => handleMeshClick(e, selectedCategory || "")}
 					>
 						<planeGeometry args={[feature.scale, feature.scale, 32, 32]} />
@@ -1194,6 +1209,7 @@ function Model({
 							key={`lab-${systemKey}-${idx}`}
 							position={feature.position}
 							rotation={feature.rotation}
+							renderOrder={15}
 							onClick={(e) => handleMeshClick(e, systemKey)}
 						>
 							<planeGeometry args={[feature.scale, feature.scale, 32, 32]} />
