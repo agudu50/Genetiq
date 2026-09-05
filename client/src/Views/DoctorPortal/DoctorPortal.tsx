@@ -181,6 +181,7 @@ const mockPatients: ClinicalPatient[] = [
 		],
 		medications: [
 			{ name: "Metformin XR", dosage: "500 mg", frequency: "Daily with dinner", adherence: 98 },
+			{ name: "Levothyroxine", dosage: "25 mcg", frequency: "Daily (Morning fasting)", adherence: 94 },
 		],
 	},
 	{
@@ -212,9 +213,11 @@ const mockPatients: ClinicalPatient[] = [
 			{ marker: "Serum Creatinine", value: "1.4 mg/dL", refRange: "0.7 - 1.3 mg/dL", status: "elevated", system: "Renal" },
 			{ marker: "eGFR", value: "58 mL/min", refRange: "> 90 mL/min", status: "low", system: "Renal" },
 			{ marker: "Blood Urea Nitrogen", value: "26 mg/dL", refRange: "7 - 20 mg/dL", status: "elevated", system: "Renal" },
+			{ marker: "Serum Potassium", value: "4.8 mEq/L", refRange: "3.5 - 5.0 mEq/L", status: "optimal", system: "Renal" },
 		],
 		medications: [
 			{ name: "Lisinopril", dosage: "20 mg", frequency: "Daily (Morning)", adherence: 82 },
+			{ name: "Amlodipine", dosage: "5 mg", frequency: "Daily (Morning)", adherence: 88 },
 		],
 	},
 	{
@@ -232,11 +235,16 @@ const mockPatients: ClinicalPatient[] = [
 		symptoms: [],
 		problemHistory: [],
 		labMarkers: [
-			{ marker: "ApoB", value: "72 mg/dL", refRange: "< 90 mg/dL", status: "optimal", system: "Heart" },
+			{ marker: "Apolipoprotein B (ApoB)", value: "72 mg/dL", refRange: "< 90 mg/dL", status: "optimal", system: "Heart" },
+			{ marker: "LDL Cholesterol", value: "88 mg/dL", refRange: "< 100 mg/dL", status: "optimal", system: "Heart" },
+			{ marker: "hs-CRP (Inflammation)", value: "0.4 mg/L", refRange: "< 1.0 mg/L", status: "optimal", system: "Heart" },
 			{ marker: "Fasting Glucose", value: "84 mg/dL", refRange: "70 - 99 mg/dL", status: "optimal", system: "Metabolic" },
 			{ marker: "eGFR", value: "108 mL/min", refRange: "> 90 mL/min", status: "optimal", system: "Renal" },
 		],
-		medications: [],
+		medications: [
+			{ name: "Omega-3 EPA/DHA", dosage: "1000 mg", frequency: "Daily (Morning)", adherence: 96 },
+			{ name: "Vitamin D3 + K2", dosage: "5000 IU", frequency: "Daily (Morning)", adherence: 95 },
+		],
 	},
 ];
 
