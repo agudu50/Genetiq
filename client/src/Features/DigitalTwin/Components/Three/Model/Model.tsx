@@ -21,6 +21,10 @@ import {
 	painAreaMaterial,
 } from "./Utils/painAreaMaterial";
 import { mapLabFindingsToBodyHighlights } from "./Utils/labBodyMapping";
+import {
+	Patient3DData,
+	derivePatient3DGlowConfig,
+} from "./Utils/patientModelMapping";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/App/Redux/store";
 import { setSymptomsInput } from "@/App/Redux/triageSlice";
@@ -39,6 +43,7 @@ interface ExtendedModelProps extends ModelProps {
 	onTransitionComplete?: () => void;
 	isHidden?: boolean;
 	startFadeIn?: boolean;
+	patientData?: Patient3DData;
 	onModelChange?: (
 		type: "body" | "cardio",
 		cameraConfig: {
@@ -99,7 +104,7 @@ const BodyModelContent = memo(function BodyModelContent({
 		return () => {
 			mounted = false;
 		};
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	// Patch material in-place as textures arrive — no shader recompilation
@@ -185,12 +190,15 @@ function Model({
 	onTransitionComplete,
 	isHidden = false,
 	startFadeIn = true,
+	patientData,
 	onModelChange,
 	isPaused = false,
 }: ExtendedModelProps & { isPaused?: boolean }) {
 	const cardioTextures = useCardioTextures();
 	const bodyTextures = useBodyTextures();
 	const groupRef = useRef<THREE.Group>(null);
+	const patientGlowLightRef = useRef<THREE.PointLight>(null);
+	const patientGlowBackLightRef = useRef<THREE.PointLight>(null);
 	const dispatch = useDispatch();
 	const selectedCategory = useSelector(
 		(state: RootState) => state.category.selectedCategory,
@@ -198,6 +206,11 @@ function Model({
 	const activeAlerts = useSelector(
 		(state: RootState) => state.triage.activeAlerts,
 	);
+
+	// ─── Patient-specific glowing telemetry (Doctor Portal) ──────────────
+	const patientGlow = useMemo(() => {
+		return patientData ? derivePatient3DGlowConfig(patientData) : null;
+	}, [patientData]);
 
 	// ─── Lab-result body highlights ──────────────────────────────────────
 	const uploadStatus = useSelector((state: RootState) => state.user.uploadStatus);
@@ -237,6 +250,57 @@ function Model({
 	const prevShouldRenderRef = useRef(shouldRender);
 
 	const materials: Record<string, THREE.ShaderMaterial> = useMemo(() => {
+		// If patientData is present (Doctor Portal), prioritize patient clinical symptoms & labs
+		if (patientGlow) {
+			const aliasMap: Record<string, string> = {
+				Respiratory: "Pulmonology",
+				Digestive: "Gastroenterolgy",
+				Endocrine: "Endocrinology",
+				Renal: "Pulmonology1",
+				Urological: "Urology",
+				Neurological: "StressManagement",
+				Musculoskeletal: "UlnaRadiusAlt",
+				Cardiovascular: "cardiovascular",
+				cardiovascular: "cardiovascular",
+				Hematology: "Hematology",
+			};
+
+			const defaultPalette: Record<string, [number, number, number]> = {
+				Respiratory: [0x00ffff, 0x0088ff, 0x002288],
+				Digestive: [0xff8800, 0xff4400, 0x882200],
+				Endocrine: [0xd946ef, 0xa855f7, 0x6b21a8],
+				Renal: [0xffff00, 0x888800, 0x444400],
+				Urological: [0xffff00, 0xaaaa00, 0x555500],
+				Neurological: [0xff00aa, 0xaa00aa, 0x550055],
+				Musculoskeletal: [0x00ffaa, 0x00aa55, 0x005522],
+				Cardiovascular: [0xff2222, 0xcc0000, 0x660000],
+				Hematology: [0xff3366, 0xcc1144, 0x660022],
+			};
+
+			const pMats: Record<string, THREE.ShaderMaterial> = {};
+			for (const sys of Object.keys(defaultPalette)) {
+				const sysKey = aliasMap[sys] || sys;
+				const customGlow = patientGlow.affectedSystems.get(sysKey) || patientGlow.affectedSystems.get(sys);
+				if (customGlow) {
+					pMats[sys] = createGlowingMaterial(
+						customGlow.coreColor,
+						customGlow.midColor,
+						customGlow.outerColor,
+					);
+				} else {
+					const std = defaultPalette[sys];
+					pMats[sys] = createGlowingMaterial(
+						new THREE.Color(std[0]),
+						new THREE.Color(std[1]),
+						new THREE.Color(std[2]),
+					);
+				}
+			}
+			pMats.General = painAreaMaterial;
+			return pMats;
+		}
+
+		// Fallback for regular Patient Dashboard / non-doctor screens
 		const getColor = (system: string, standard: [number, number, number]) => {
 			// 1. Check triage alerts (highest priority)
 			const alert = activeAlerts.find(
@@ -310,6 +374,9 @@ function Model({
 			Musculoskeletal: createGlowingMaterial(
 				...getColor("Musculoskeletal", [0x00ffaa, 0x00aa55, 0x005522]),
 			),
+			Cardiovascular: createGlowingMaterial(
+				...getColor("Cardiovascular", [0xff2222, 0xcc0000, 0x660000]),
+			),
 			General: painAreaMaterial,
 		};
 
@@ -326,7 +393,7 @@ function Model({
 		}
 
 		return baseMaterials;
-	}, [activeAlerts, labHighlights]);
+	}, [patientGlow, activeAlerts, labHighlights]);
 
 	const systemFeatures: Record<
 		string,
@@ -423,6 +490,22 @@ function Model({
 					material: materials.Musculoskeletal,
 				}, // Right Arm/Shoulder
 			],
+			cardiovascular: [
+				{
+					position: [0.8, 18, 1.8],
+					rotation: [0, 0, 0],
+					scale: 7,
+					material: materials.Cardiovascular || materials.Respiratory,
+				},
+			],
+			Hematology: [
+				{
+					position: [0, 15, 1.5],
+					rotation: [0, 0, 0],
+					scale: 12,
+					material: materials.Hematology || materials.Respiratory,
+				},
+			],
 		};
 
 		// ─── Inject lab-result highlights as additional overlay features ─────
@@ -437,7 +520,7 @@ function Model({
 			],
 			// Cardiovascular → heart region
 			cardiovascular: [
-				{ position: [1, 18, 2], rotation: [0, 0, 0], scale: 7 }, // Heart
+				{ position: [0.8, 18, 1.8], rotation: [0, 0, 0], scale: 7 }, // Heart
 			],
 		};
 
@@ -468,7 +551,7 @@ function Model({
 		}
 
 		return base;
-	}, [materials, labHighlights]);
+	}, [materials, labHighlights, patientGlow]);
 
 	const handlePointerDown = () => {
 		setPointerDownTime(Date.now());
@@ -529,6 +612,20 @@ function Model({
 		};
 	}, []);
 
+	// Patient-specific cardio glowing hotspot materials
+	const patientCardioMaterials: Record<string, THREE.ShaderMaterial> = useMemo(() => {
+		if (!patientGlow) return {};
+		const mats: Record<string, THREE.ShaderMaterial> = {};
+		for (const spot of patientGlow.cardioHotspots) {
+			mats[spot.id] = createGlowingMaterial(
+				spot.coreColor,
+				spot.midColor,
+				spot.outerColor,
+			);
+		}
+		return mats;
+	}, [patientGlow]);
+
 	useFrame((state) => {
 		if (isPaused) return;
 
@@ -586,20 +683,32 @@ function Model({
 			});
 		}
 
-		// 2. Animate all glowing materials with a smooth, slow, organic breathing cycle
-		const slowPulse = Math.sin(time * 1.5) * 0.5 + 0.5;
-		const heartPulse = Math.pow(Math.max(0.0, Math.sin(time * 1.5)), 2.0) * 0.7;
+		// 2. Animate all glowing materials with patient-specific or standard organic pulse
+		const pulseRate = patientGlow ? patientGlow.pulseSpeed : 1.5;
+		const slowPulse = Math.sin(time * pulseRate) * 0.5 + 0.5;
+		const heartPulse = Math.pow(Math.max(0.0, Math.sin(time * pulseRate)), 2.0) * 0.8;
+
+		// Animate patient biometric glow lights
+		if (patientGlowLightRef.current && patientGlow) {
+			const pulseMultiplier = Math.sin(time * pulseRate) * 0.35 + 1.0;
+			patientGlowLightRef.current.intensity = patientGlow.lightIntensity * pulseMultiplier;
+		}
+		if (patientGlowBackLightRef.current && patientGlow) {
+			const pulseMultiplier = Math.cos(time * pulseRate) * 0.25 + 0.8;
+			patientGlowBackLightRef.current.intensity = (patientGlow.lightIntensity * 0.6) * pulseMultiplier;
+		}
 
 		const allActiveMaterials = [
 			...Object.values(materials),
 			...Object.values(cardioHotspotMaterials),
+			...Object.values(patientCardioMaterials),
 		];
 
 		for (const mat of allActiveMaterials) {
 			if (mat && mat.uniforms) {
 				mat.uniforms.time.value = time;
 				mat.uniforms.pulse.value = heartPulse;
-				mat.uniforms.intensity.value = 0.8 + slowPulse * 0.4;
+				mat.uniforms.intensity.value = 0.85 + slowPulse * 0.45;
 			}
 		}
 	});
@@ -653,48 +762,87 @@ function Model({
 				/>
 			)}
 
-			{/* Cardiovascular 3D Model Clinical Hotspots (ApoB Plaque, AFib Arrhythmia, hs-CRP Inflammation) */}
+			{/* Cardiovascular 3D Model Clinical Hotspots */}
 			{shouldShowCardioHotspots && (
 				<group>
-					{/* 1. Coronary Artery / LAD: ApoB 128 mg/dL & LDL 142 mg/dL Atheroma Burden */}
-					<mesh
-						position={[0.8, 21.2, 3.2]}
-						onClick={(e) => handleMeshClick(e, "Cardiovascular")}
-					>
-						<planeGeometry args={[3.5, 3.5, 32, 32]} />
-						<primitive attach='material' object={cardioHotspotMaterials.apobLdl} />
-					</mesh>
+					{patientGlow ? (
+						patientGlow.cardioHotspots.map((spot) => {
+							const mat = patientCardioMaterials[spot.id] || cardioHotspotMaterials.apobLdl;
+							return (
+								<mesh
+									key={`patient-cardio-${spot.id}`}
+									position={spot.position}
+									onClick={(e) => handleMeshClick(e, "Cardiovascular")}
+								>
+									<planeGeometry args={[spot.scale, spot.scale, 32, 32]} />
+									<primitive attach='material' object={mat} />
+								</mesh>
+							);
+						})
+					) : (
+						<>
+							{/* 1. Coronary Artery / LAD: ApoB 128 mg/dL & LDL 142 mg/dL Atheroma Burden */}
+							<mesh
+								position={[0.8, 21.2, 3.2]}
+								onClick={(e) => handleMeshClick(e, "Cardiovascular")}
+							>
+								<planeGeometry args={[3.5, 3.5, 32, 32]} />
+								<primitive attach='material' object={cardioHotspotMaterials.apobLdl} />
+							</mesh>
 
-					{/* 2. Sinoatrial Node / Right Atrium: Paroxysmal Atrial Fibrillation */}
-					<mesh
-						position={[-1.4, 23.8, 2.0]}
-						onClick={(e) => handleMeshClick(e, "Cardiovascular")}
-					>
-						<planeGeometry args={[3.2, 3.2, 32, 32]} />
-						<primitive attach='material' object={cardioHotspotMaterials.afib} />
-					</mesh>
+							{/* 2. Sinoatrial Node / Right Atrium: Paroxysmal Atrial Fibrillation */}
+							<mesh
+								position={[-1.4, 23.8, 2.0]}
+								onClick={(e) => handleMeshClick(e, "Cardiovascular")}
+							>
+								<planeGeometry args={[3.2, 3.2, 32, 32]} />
+								<primitive attach='material' object={cardioHotspotMaterials.afib} />
+							</mesh>
 
-					{/* 3. Myocardial Micro-Vascular Bed: hs-CRP 3.4 mg/L Inflammatory Stress */}
-					<mesh
-						position={[1.2, 18.8, 2.8]}
-						onClick={(e) => handleMeshClick(e, "Cardiovascular")}
-					>
-						<planeGeometry args={[3.4, 3.4, 32, 32]} />
-						<primitive attach='material' object={cardioHotspotMaterials.hscrp} />
-					</mesh>
+							{/* 3. Myocardial Micro-Vascular Bed: hs-CRP 3.4 mg/L Inflammatory Stress */}
+							<mesh
+								position={[1.2, 18.8, 2.8]}
+								onClick={(e) => handleMeshClick(e, "Cardiovascular")}
+							>
+								<planeGeometry args={[3.4, 3.4, 32, 32]} />
+								<primitive attach='material' object={cardioHotspotMaterials.hscrp} />
+							</mesh>
+						</>
+					)}
 				</group>
 			)}
 
-			{/* Category-based pain areas — only when a specific system has an active alert or lab finding */}
+			{/* Patient-specific full body glowing hotspots (when viewing total overview or when patient is assigned) */}
+			{shouldShowPainArea &&
+				patientGlow &&
+				(selectedCategory === "total" || !selectedCategory) &&
+				Array.from(patientGlow.affectedSystems.entries()).map(([sysKey]) => {
+					const features = systemFeatures[sysKey];
+					if (!features) return null;
+					return features.map((feature, idx) => (
+						<mesh
+							key={`patient-glow-total-${sysKey}-${idx}`}
+							position={feature.position}
+							rotation={feature.rotation}
+							onClick={(e) => handleMeshClick(e, sysKey)}
+						>
+							<planeGeometry args={[feature.scale, feature.scale, 32, 32]} />
+							<primitive attach='material' object={feature.material} />
+						</mesh>
+					));
+				})}
+
+			{/* Category-based pain areas — when a specific system has an active alert or lab finding or patient finding */}
 			{shouldShowPainArea &&
 				selectedCategory &&
 				selectedCategory !== "total" &&
 				selectedCategory !== "ClinicalNotes" &&
-				(activeAlerts.some(
-					(a) =>
-						selectedCategory.includes(a.system) ||
-						a.system.includes(selectedCategory),
-				) ||
+				((patientGlow && patientGlow.affectedSystems.has(selectedCategory)) ||
+					activeAlerts.some(
+						(a) =>
+							selectedCategory.includes(a.system) ||
+							a.system.includes(selectedCategory),
+					) ||
 					labHighlights.has(selectedCategory)) &&
 				systemFeatures[selectedCategory] &&
 				systemFeatures[selectedCategory].map((feature, idx) => (
@@ -728,6 +876,29 @@ function Model({
 						</mesh>
 					));
 				})}
+
+			{/* Biometric patient-specific glowing point lights */}
+			{patientGlow && (
+				<>
+					<pointLight
+						ref={patientGlowLightRef}
+						position={[0, 16, 18]}
+						color={patientGlow.auraColor}
+						intensity={patientGlow.lightIntensity}
+						distance={90}
+						decay={2}
+					/>
+					<pointLight
+						ref={patientGlowBackLightRef}
+						position={[0, 10, -16]}
+						color={patientGlow.auraColor}
+						intensity={patientGlow.lightIntensity * 0.7}
+						distance={80}
+						decay={2}
+					/>
+				</>
+			)}
+
 			<ambientLight intensity={0.5} />
 			<directionalLight
 				position={[2, 10, 5]}

@@ -15,6 +15,7 @@ import SideBar from "../../SideBar/SideBar";
 import { useCanvasBackground } from "../../../hooks/useCanvasBackground";
 import BackgroundPicker from "./Controls/BackgroundPicker";
 import ZoomControls from "./Controls/ZoomControls";
+import { Patient3DData } from "../Model/Utils/patientModelMapping";
 import "./canvas.scss";
 interface MainSceneProps {
 	selectedCategory: string | null;
@@ -23,6 +24,7 @@ interface MainSceneProps {
 	onSidebarSelectionMade?: () => void;
 	isPaused?: boolean;
 	showSidebar?: boolean;
+	patientData?: Patient3DData;
 }
 
 const MainScene: React.FC<MainSceneProps> = ({
@@ -32,6 +34,7 @@ const MainScene: React.FC<MainSceneProps> = ({
 	onSidebarSelectionMade,
 	isPaused = false,
 	showSidebar = true,
+	patientData,
 }) => {
 	const { cameraState, setCameraState } = useCamera();
 	const { backgroundId, preset, selectBackground, wrapperStyle } =
@@ -118,7 +121,7 @@ const MainScene: React.FC<MainSceneProps> = ({
 		if (config) {
 			const targetModelType =
 				selectedCategory === "cardiovascular" ||
-				selectedCategory === "CardioLoad"
+					selectedCategory === "CardioLoad"
 					? "cardio"
 					: "body";
 			handleModelChange(targetModelType, config);
@@ -188,7 +191,7 @@ const MainScene: React.FC<MainSceneProps> = ({
 					<Suspense fallback={null}>
 						{previousModelType && (
 							<Model
-								key={`previous-${previousModelType}`}
+								key={`previous-${previousModelType}-${patientData?.id || "default"}`}
 								scale={[MODEL_ZOOM_VALUE, MODEL_ZOOM_VALUE, MODEL_ZOOM_VALUE]}
 								position={[0, (-MODEL_ZOOM_VALUE * 70) / 2 - 1 - 5, 0]}
 								modelType={previousModelType}
@@ -196,10 +199,11 @@ const MainScene: React.FC<MainSceneProps> = ({
 								onTransitionComplete={handleModelTransitionComplete}
 								isHidden={isModelHidden}
 								isPaused={isPaused}
+								patientData={patientData}
 							/>
 						)}
 						<Model
-							key={`current-${modelType}`}
+							key={`current-${modelType}-${patientData?.id || "default"}`}
 							scale={[MODEL_ZOOM_VALUE, MODEL_ZOOM_VALUE, MODEL_ZOOM_VALUE]}
 							position={[0, (-MODEL_ZOOM_VALUE * 70) / 2 - 1 - 8, 0]}
 							modelType={modelType}
@@ -208,6 +212,7 @@ const MainScene: React.FC<MainSceneProps> = ({
 							startFadeIn={startNewModelFade}
 							onModelChange={handleModelChange}
 							isPaused={isPaused}
+							patientData={patientData}
 						/>
 					</Suspense>
 				</Canvas>
