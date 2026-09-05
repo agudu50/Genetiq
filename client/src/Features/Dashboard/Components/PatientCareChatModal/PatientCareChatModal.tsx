@@ -379,7 +379,7 @@ export const PatientCareChatModal: React.FC<PatientCareChatModalProps> = ({
 								)
 							}
 						>
-							💧 "Drank 500ml water & took Metoprolol 25mg"
+							"Drank 500ml water & took Metoprolol 25mg"
 						</button>
 						<button
 							type='button'
@@ -390,7 +390,7 @@ export const PatientCareChatModal: React.FC<PatientCareChatModalProps> = ({
 								)
 							}
 						>
-							❤️ "HR down to 76 bpm, feeling much better"
+							"HR down to 76 bpm, feeling much better"
 						</button>
 						<button
 							type='button'
@@ -401,7 +401,7 @@ export const PatientCareChatModal: React.FC<PatientCareChatModalProps> = ({
 								)
 							}
 						>
-							📊 "Retook BP: 124/82 mmHg"
+							"Retook BP: 124/82 mmHg"
 						</button>
 					</div>
 				</div>
@@ -411,7 +411,7 @@ export const PatientCareChatModal: React.FC<PatientCareChatModalProps> = ({
 					<div className={styles.inputRow}>
 						<textarea
 							className={styles.replyTextarea}
-							rows={2}
+							rows={3}
 							value={replyText}
 							onChange={(e) => setReplyText(e.target.value)}
 							onKeyDown={(e) => {

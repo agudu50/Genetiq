@@ -593,7 +593,7 @@ export const ClinicalCareChatModal: React.FC<ClinicalCareChatModalProps> = ({
 					{/* Smart Template Pills */}
 					<div className={styles.templateToolbar}>
 						<div className={styles.templatesTitle}>
-							<Sparkles size={12} />
+							<Sparkles size={13} />
 							<span>Smart Clinical Templates:</span>
 						</div>
 						<div className={styles.templatesScroll}>
@@ -602,7 +602,7 @@ export const ClinicalCareChatModal: React.FC<ClinicalCareChatModalProps> = ({
 								className={styles.tplButton}
 								onClick={() => applyTemplate("cardio")}
 							>
-								<Heart size={12} style={{ color: "#ef4444" }} />
+								<Heart size={13} style={{ color: "#ef4444" }} />
 								<span>Cardio / Palpitations Protocol</span>
 							</button>
 							<button
@@ -610,7 +610,7 @@ export const ClinicalCareChatModal: React.FC<ClinicalCareChatModalProps> = ({
 								className={styles.tplButton}
 								onClick={() => applyTemplate("bp")}
 							>
-								<Activity size={12} style={{ color: "#3b82f6" }} />
+								<Activity size={13} style={{ color: "#3b82f6" }} />
 								<span>Blood Pressure Protocol</span>
 							</button>
 							<button
@@ -618,7 +618,7 @@ export const ClinicalCareChatModal: React.FC<ClinicalCareChatModalProps> = ({
 								className={styles.tplButton}
 								onClick={() => applyTemplate("glucose")}
 							>
-								<Droplet size={12} style={{ color: "#f59e0b" }} />
+								<Droplet size={13} style={{ color: "#f59e0b" }} />
 								<span>Glucose & Metabolic Advice</span>
 							</button>
 							<button
@@ -626,26 +626,17 @@ export const ClinicalCareChatModal: React.FC<ClinicalCareChatModalProps> = ({
 								className={styles.tplButton}
 								onClick={() => applyTemplate("triage")}
 							>
-								<Zap size={12} style={{ color: "#ef4444" }} />
+								<Zap size={13} style={{ color: "#ef4444" }} />
 								<span>Emergency Triage Alert</span>
 							</button>
 						</div>
 					</div>
 
-					{/* Input Box & Send Bar for Doctor */}
-					<div className={styles.inputBar}>
-						<button
-							type='button'
-							className={`${styles.voiceMicBtn} ${isVoiceRecording ? styles.voiceMicRecording : ""}`}
-							onClick={toggleVoiceInput}
-							title={isVoiceRecording ? "Stop dictation" : "Dictate via Voice"}
-						>
-							{isVoiceRecording ? <MicOff size={16} /> : <Mic size={16} />}
-						</button>
-
+					{/* Large, Spacious Clinical Advice Textarea */}
+					<div className={styles.textAreaWrapper}>
 						<textarea
-							className={styles.chatInput}
-							rows={2}
+							className={styles.chatInputLarge}
+							rows={7}
 							value={inputText}
 							onChange={(e) => setInputText(e.target.value)}
 							onKeyDown={(e) => {
@@ -654,16 +645,34 @@ export const ClinicalCareChatModal: React.FC<ClinicalCareChatModalProps> = ({
 									handleDoctorSend();
 								}
 							}}
-							placeholder='Type or dictate clinical care advice and directives to Marcus Vance (Ctrl+Enter to send)...'
+							placeholder='Type or dictate clinical care instructions to Marcus Vance (Ctrl+Enter to send)...'
 						/>
+					</div>
+
+					{/* Bottom Actions Bar */}
+					<div className={styles.composerBottomBar}>
+						<div className={styles.bottomBarLeft}>
+							<button
+								type='button'
+								className={`${styles.voiceMicBtnLarge} ${
+									isVoiceRecording ? styles.voiceMicRecording : ""
+								}`}
+								onClick={toggleVoiceInput}
+								title={isVoiceRecording ? "Stop dictation" : "Dictate via Voice"}
+							>
+								{isVoiceRecording ? <MicOff size={15} /> : <Mic size={15} />}
+								<span>{isVoiceRecording ? "Listening..." : "Dictate via Voice"}</span>
+							</button>
+							<span className={styles.shortcutHint}>Press Ctrl + Enter to dispatch</span>
+						</div>
 
 						<button
 							type='button'
-							className={styles.sendButton}
+							className={styles.sendButtonLarge}
 							onClick={() => handleDoctorSend()}
 						>
 							<Send size={15} />
-							<span>Dispatch Advice</span>
+							<span>Dispatch Advice & Care Plan</span>
 						</button>
 					</div>
 				</div>
