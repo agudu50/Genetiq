@@ -43,7 +43,6 @@ import {
 	ShieldAlert,
 	ShieldCheck,
 	Sparkles,
-	Stethoscope,
 	User,
 	UserCheck,
 	Video,
