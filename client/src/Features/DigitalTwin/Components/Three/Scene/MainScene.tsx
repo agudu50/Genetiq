@@ -15,6 +15,7 @@ import SideBar from "../../SideBar/SideBar";
 import { useCanvasBackground } from "../../../hooks/useCanvasBackground";
 import BackgroundPicker from "./Controls/BackgroundPicker";
 import ZoomControls from "./Controls/ZoomControls";
+import BiomarkerColorLegend from "./Controls/BiomarkerColorLegend";
 import { Patient3DData } from "../Model/Utils/patientModelMapping";
 import "./canvas.scss";
 interface MainSceneProps {
@@ -216,6 +217,23 @@ const MainScene: React.FC<MainSceneProps> = ({
 						/>
 					</Suspense>
 				</Canvas>
+				{/* 3D Biomarker Spectrum & Telemetry Legend */}
+				<BiomarkerColorLegend
+					patientData={patientData}
+					modelType={modelType}
+					selectedCategory={selectedCategory}
+					onSelectCategory={(sys) => {
+						const config = ZOOM_CONFIGS[sys];
+						if (config) {
+							const targetModelType =
+								sys === "cardiovascular" || sys === "CardioLoad"
+									? "cardio"
+									: "body";
+							handleModelChange(targetModelType, config);
+						}
+					}}
+				/>
+
 				<div className='canvas-controls'>
 					<BackgroundPicker value={backgroundId} onChange={selectBackground} />
 					<ZoomControls />

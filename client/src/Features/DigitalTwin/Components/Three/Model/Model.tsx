@@ -28,6 +28,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/App/Redux/store";
 import { setSymptomsInput } from "@/App/Redux/triageSlice";
+import { toast } from "react-toastify";
 
 // ─── Module-level OBJ preloads ───────────────────────────────────────────────
 // These run once when the Dashboard lazy-chunk is first imported, so the
@@ -661,9 +662,16 @@ function Model({
 	const handleMeshClick = (
 		event: ThreeEvent<MouseEvent>,
 		systemName: string,
+		detailLabel?: string,
 	) => {
 		event.stopPropagation();
 		dispatch(setSymptomsInput(systemName));
+		if (detailLabel) {
+			toast.info(`3D Biomarker: ${detailLabel}`, {
+				autoClose: 3500,
+				hideProgressBar: true,
+			});
+		}
 		if (
 			modelType === "body" &&
 			(systemName === "Cardiovascular" ||
@@ -871,7 +879,13 @@ function Model({
 								<mesh
 									key={`patient-cardio-${spot.id}`}
 									position={spot.position}
-									onClick={(e) => handleMeshClick(e, "Cardiovascular")}
+									onClick={(e) =>
+										handleMeshClick(
+											e,
+											"Cardiovascular",
+											`${spot.title} — ${spot.label}`,
+										)
+									}
 								>
 									<planeGeometry args={[spot.scale, spot.scale, 32, 32]} />
 									<primitive attach='material' object={mat} />
@@ -883,7 +897,13 @@ function Model({
 							{/* 1. Coronary Artery / LAD: ApoB 128 mg/dL & LDL 142 mg/dL Atheroma Burden (Golden Amber) */}
 							<mesh
 								position={[0.8, 21.2, 3.2]}
-								onClick={(e) => handleMeshClick(e, "Cardiovascular")}
+								onClick={(e) =>
+									handleMeshClick(
+										e,
+										"Cardiovascular",
+										"ApoB 128 mg/dL & LDL Plaque Burden (LAD Coronary Artery)",
+									)
+								}
 							>
 								<planeGeometry args={[3.8, 3.8, 32, 32]} />
 								<primitive attach='material' object={cardioHotspotMaterials.apobLdl} />
@@ -892,7 +912,13 @@ function Model({
 							{/* 2. Sinoatrial Node / Right Atrium: Paroxysmal Atrial Fibrillation (Warm Tangerine) */}
 							<mesh
 								position={[-1.4, 23.8, 2.0]}
-								onClick={(e) => handleMeshClick(e, "Cardiovascular")}
+								onClick={(e) =>
+									handleMeshClick(
+										e,
+										"Cardiovascular",
+										"Paroxysmal Atrial Fibrillation (Sinoatrial Node / Right Atrium)",
+									)
+								}
 							>
 								<planeGeometry args={[3.5, 3.5, 32, 32]} />
 								<primitive attach='material' object={cardioHotspotMaterials.afib} />
@@ -901,7 +927,13 @@ function Model({
 							{/* 3. Pulmonary Outflow Tract: Oxygenation Perfusion (Electric Cyan) */}
 							<mesh
 								position={[-0.6, 25.4, 2.8]}
-								onClick={(e) => handleMeshClick(e, "Cardiovascular")}
+								onClick={(e) =>
+									handleMeshClick(
+										e,
+										"Cardiovascular",
+										"Pulmonary Arterial Oxygenation Outflow (SpO2 96%)",
+									)
+								}
 							>
 								<planeGeometry args={[3.4, 3.4, 32, 32]} />
 								<primitive attach='material' object={cardioHotspotMaterials.pulmonaryOutflow} />
@@ -910,7 +942,13 @@ function Model({
 							{/* 4. Cardiac Autonomic Plexus: Vagal / Sympathetic Tone (Electric Indigo) */}
 							<mesh
 								position={[0.2, 26.2, 1.6]}
-								onClick={(e) => handleMeshClick(e, "Cardiovascular")}
+								onClick={(e) =>
+									handleMeshClick(
+										e,
+										"Cardiovascular",
+										"Cardiac Autonomic Ganglia (Vagal / Sympathetic Tone)",
+									)
+								}
 							>
 								<planeGeometry args={[3.5, 3.5, 32, 32]} />
 								<primitive attach='material' object={cardioHotspotMaterials.autonomicPlexus} />
@@ -919,7 +957,13 @@ function Model({
 							{/* 5. Myocardial Micro-Vascular Bed: hs-CRP 3.4 mg/L Inflammatory Stress (Vivid Amethyst) */}
 							<mesh
 								position={[1.2, 18.8, 2.8]}
-								onClick={(e) => handleMeshClick(e, "Cardiovascular")}
+								onClick={(e) =>
+									handleMeshClick(
+										e,
+										"Cardiovascular",
+										"hs-CRP 3.4 mg/L Inflammatory Stress (Myocardial Micro-Vascular Bed)",
+									)
+								}
 							>
 								<planeGeometry args={[3.6, 3.6, 32, 32]} />
 								<primitive attach='material' object={cardioHotspotMaterials.hscrp} />
@@ -934,7 +978,7 @@ function Model({
 				(selectedCategory === "total" || !selectedCategory) && (
 					<group>
 						{patientGlow ? (
-							Array.from(patientGlow.affectedSystems.entries()).map(([sysKey]) => {
+							Array.from(patientGlow.affectedSystems.entries()).map(([sysKey, sysConfig]) => {
 								const features = systemFeatures[sysKey];
 								if (!features) return null;
 								return features.map((feature, idx) => (
@@ -942,7 +986,13 @@ function Model({
 										key={`patient-glow-total-${sysKey}-${idx}`}
 										position={feature.position}
 										rotation={feature.rotation}
-										onClick={(e) => handleMeshClick(e, sysKey)}
+										onClick={(e) =>
+											handleMeshClick(
+												e,
+												sysKey,
+												`${sysConfig.systemName} (${sysConfig.label})`,
+											)
+										}
 									>
 										<planeGeometry args={[feature.scale, feature.scale, 32, 32]} />
 										<primitive attach='material' object={feature.material} />
@@ -957,7 +1007,13 @@ function Model({
 										key={`overview-cardio-${idx}`}
 										position={feature.position}
 										rotation={feature.rotation}
-										onClick={(e) => handleMeshClick(e, "Cardiovascular")}
+										onClick={(e) =>
+											handleMeshClick(
+												e,
+												"Cardiovascular",
+												"Cardiovascular System (Heart & Aorta)",
+											)
+										}
 									>
 										<planeGeometry args={[feature.scale, feature.scale, 32, 32]} />
 										<primitive attach='material' object={feature.material} />
@@ -970,7 +1026,13 @@ function Model({
 										key={`overview-renal-${idx}`}
 										position={feature.position}
 										rotation={feature.rotation}
-										onClick={(e) => handleMeshClick(e, "Pulmonology1")}
+										onClick={(e) =>
+											handleMeshClick(
+												e,
+												"Pulmonology1",
+												"Renal System (Bilateral Kidneys & Filtration)",
+											)
+										}
 									>
 										<planeGeometry args={[feature.scale, feature.scale, 32, 32]} />
 										<primitive attach='material' object={feature.material} />
@@ -983,7 +1045,13 @@ function Model({
 										key={`overview-resp-${idx}`}
 										position={feature.position}
 										rotation={feature.rotation}
-										onClick={(e) => handleMeshClick(e, "Pulmonology")}
+										onClick={(e) =>
+											handleMeshClick(
+												e,
+												"Pulmonology",
+												"Respiratory System (Bilateral Pulmonary Lobes)",
+											)
+										}
 									>
 										<planeGeometry args={[feature.scale, feature.scale, 32, 32]} />
 										<primitive attach='material' object={feature.material} />
@@ -996,7 +1064,13 @@ function Model({
 										key={`overview-neuro-${idx}`}
 										position={feature.position}
 										rotation={feature.rotation}
-										onClick={(e) => handleMeshClick(e, "StressManagement")}
+										onClick={(e) =>
+											handleMeshClick(
+												e,
+												"StressManagement",
+												"Neurological System (Cerebral Cortex & Autonomic Tone)",
+											)
+										}
 									>
 										<planeGeometry args={[feature.scale, feature.scale, 32, 32]} />
 										<primitive attach='material' object={feature.material} />
@@ -1009,7 +1083,13 @@ function Model({
 										key={`overview-endo-${idx}`}
 										position={feature.position}
 										rotation={feature.rotation}
-										onClick={(e) => handleMeshClick(e, "Endocrinology")}
+										onClick={(e) =>
+											handleMeshClick(
+												e,
+												"Endocrinology",
+												"Endocrine Axis (Thyroid & Vascular Endothelium)",
+											)
+										}
 									>
 										<planeGeometry args={[feature.scale, feature.scale, 32, 32]} />
 										<primitive attach='material' object={feature.material} />
