@@ -1489,7 +1489,7 @@ export const DoctorPortal = () => {
 								<div>
 									<h2>Doctor Portal Settings & Features</h2>
 									<p style={{ margin: 0, fontSize: "0.74rem", color: "rgba(255,255,255,0.5)" }}>
-										{doctor.doctorName} · {doctor.hospitalName} ({doctor.department})
+										{doctor.doctorName} · Genetiq ({doctor.department})
 									</p>
 								</div>
 							</div>
@@ -1554,8 +1554,8 @@ export const DoctorPortal = () => {
 									<div className={styles.settingsSection}>
 										<div className={styles.sectionHeader}>
 											<div>
-												<h3>EHR & Health System Interoperability</h3>
-												<p>Real-time FHIR v4 bidirectional synchronization with hospital EHR networks.</p>
+												<h3>EHR and Health System Connections</h3>
+												<p>Sync patient records and data between Genetiq and your connected health systems.</p>
 											</div>
 											<button
 												type='button'
@@ -1564,7 +1564,7 @@ export const DoctorPortal = () => {
 												disabled={ehrSyncing}
 											>
 												<RefreshCw size={14} className={ehrSyncing ? styles.spinning : ""} />
-												<span>{ehrSyncing ? "Syncing Records..." : "Sync EHR Now"}</span>
+												<span>{ehrSyncing ? "Syncing records..." : "Sync EHR now"}</span>
 											</button>
 										</div>
 
@@ -1578,9 +1578,9 @@ export const DoctorPortal = () => {
 													<span className={styles.statusPillLive}>Connected</span>
 												</div>
 												<div className={styles.integrationMeta}>
-													<div>Endpoint: <code>https://fhir.metropolitanmed.org/r4</code></div>
-													<div>Protocol: US Core STU3 (LOINC, SNOMED-CT, RxNorm)</div>
-													<div>Last sync: Just now · Auto-sync active (every 5m)</div>
+													<div>Endpoint: <code>https://fhir.genetiq.io/r4</code></div>
+													<div>Protocol: Standard health data exchange</div>
+													<div>Last sync: Just now · Auto-sync on</div>
 												</div>
 											</div>
 
@@ -1588,14 +1588,14 @@ export const DoctorPortal = () => {
 												<div className={styles.integrationHeader}>
 													<div className={styles.intIconTitle}>
 														<Activity size={16} style={{ color: "#0ea5e9" }} />
-														<span style={{ fontWeight: 700 }}>Telemetry & Wearable Stream</span>
+														<span style={{ fontWeight: 700 }}>Telemetry and Wearables</span>
 													</div>
 													<span className={styles.statusPillLive}>Active</span>
 												</div>
 												<div className={styles.integrationMeta}>
-													<div>Stream: Apple HealthKit / Withings Cloud API</div>
-													<div>Ingestion: Real-time PPG, Blood Pressure, Glucose</div>
-													<div>Connected Patients: 3 active monitoring pipelines</div>
+													<div>Source: Apple Health / Withings</div>
+													<div>Data: heart rate, blood pressure, glucose</div>
+													<div>Connected patients: 3 active streams</div>
 												</div>
 											</div>
 										</div>
@@ -1603,15 +1603,15 @@ export const DoctorPortal = () => {
 										<div className={styles.settingsCardBox}>
 											<div className={styles.settingRow}>
 												<div>
-													<div className={styles.settingTitle}>Auto-Import Daily Biometrics</div>
-													<div className={styles.settingDesc}>Automatically fetch home-logged symptoms and blood pressures into patient charts.</div>
+													<div className={styles.settingTitle}>Daily biometrics auto-import</div>
+													<div className={styles.settingDesc}>Pull home-reported symptoms and blood pressure readings into each patient chart.</div>
 												</div>
 												<input type="checkbox" defaultChecked className={styles.toggleCheckbox} />
 											</div>
 											<div className={styles.settingRow}>
 												<div>
-													<div className={styles.settingTitle}>EHR Clinical Note Auto-Append</div>
-													<div className={styles.settingDesc}>Push all care advice and doctor notes directly to patient EHR encounter history.</div>
+													<div className={styles.settingTitle}>Clinical notes auto-save</div>
+													<div className={styles.settingDesc}>Send care plans and doctor notes directly to each patient’s record.</div>
 												</div>
 												<input type="checkbox" defaultChecked className={styles.toggleCheckbox} />
 											</div>
