@@ -21,26 +21,17 @@ import {
 	Zap,
 } from "lucide-react";
 import { toast } from "react-toastify";
+import {
+	ChatMessage,
+	ChatActionItem,
+	loadChatMessages,
+	saveAndBroadcastChat,
+	dispatchNewMessage,
+	toggleMessageAction,
+	subscribeToChatUpdates,
+	getDefaultSeedMessages,
+} from "@/App/Services/PatientDoctorChatSync";
 import styles from "./ClinicalCareChatModal.module.scss";
-
-export interface ChatActionItem {
-	id: string;
-	label: string;
-	isCompleted: boolean;
-	completedAt?: string;
-}
-
-export interface ChatMessage {
-	id: string;
-	sender: "doctor" | "patient";
-	senderName: string;
-	senderRole: string;
-	timestamp: string;
-	text: string;
-	priority?: "normal" | "urgent";
-	actions?: ChatActionItem[];
-	status?: "sent" | "delivered" | "read";
-}
 
 interface ClinicalCareChatModalProps {
 	isOpen: boolean;
@@ -92,86 +83,10 @@ export const ClinicalCareChatModal: React.FC<ClinicalCareChatModalProps> = ({
 	initialAdviceText = "",
 	onAdviceDispatched,
 }) => {
-	const storageKey = `genetiq.patient_doctor_chat_${selectedPatient.id}`;
-
-	// Preloaded seed conversation
-	const getSeedMessages = (): ChatMessage[] => {
-		const isMarcus = selectedPatient.name.includes("Marcus");
-		if (isMarcus) {
-			return [
-				{
-					id: "msg-init-1",
-					sender: "patient",
-					senderName: "Marcus Vance",
-					senderRole: "Patient (App Dispatch)",
-					timestamp: "Today · 09:12 AM",
-					text: "Dr. Jenkins, I just walked up the stairs and my heart started racing suddenly. My watch is showing 118 bpm, and I feel lightheaded and short of breath. Should I take an extra Metoprolol or sit down?",
-					status: "read",
-				},
-				{
-					id: "msg-init-2",
-					sender: "doctor",
-					senderName: doctor.doctorName || "Dr. Sarah Jenkins, MD",
-					senderRole: "Attending Cardiologist",
-					timestamp: "Today · 09:15 AM",
-					priority: "urgent",
-					text: `Hello Marcus Vance,\n\nI reviewed your recent report of Palpitations & Shortness of Breath. Please sit down and rest immediately, drink 500ml of water, and ensure you have taken your morning Metoprolol 25mg.\n\nAvoid caffeine and strenuous activity today. If your shortness of breath persists beyond 15 minutes or you experience chest pressure, please call our triage nurse or emergency immediately.\n\n— ${doctor.doctorName || "Dr. Sarah Jenkins, MD"}`,
-					actions: [
-						{ id: "act-1", label: "Sit down and rest quietly immediately", isCompleted: true, completedAt: "09:18 AM" },
-						{ id: "act-2", label: "Drink 500ml of fresh water", isCompleted: true, completedAt: "09:18 AM" },
-						{ id: "act-3", label: "Confirm morning Metoprolol 25mg intake", isCompleted: true, completedAt: "09:19 AM" },
-						{ id: "act-4", label: "Recheck Resting HR in 15 mins (Call triage if SOB persists)", isCompleted: true, completedAt: "09:34 AM" },
-					],
-					status: "read",
-				},
-				{
-					id: "msg-init-3",
-					sender: "patient",
-					senderName: "Marcus Vance",
-					senderRole: "Patient (App Dispatch)",
-					timestamp: "Today · 09:19 AM",
-					text: "Understood Dr. Jenkins. I just sat down on the couch, drank 500ml of water, and confirmed my morning Metoprolol 25mg. Resting now.",
-					status: "read",
-				},
-				{
-					id: "msg-init-4",
-					sender: "patient",
-					senderName: "Marcus Vance",
-					senderRole: "Patient (App Dispatch)",
-					timestamp: "Today · 09:34 AM",
-					text: "Update: It's been 15 minutes. My resting heart rate has dropped down to 76 bpm. The palpitations have settled and my breathing is completely back to normal. Thank you for the swift guidance!",
-					status: "read",
-				},
-			];
-		}
-
-		return [
-			{
-				id: "msg-gen-1",
-				sender: "patient",
-				senderName: selectedPatient.name,
-				senderRole: "Patient (App Dispatch)",
-				timestamp: "Today · 09:00 AM",
-				text: `Hello Dr. ${doctor.doctorName.replace(/^Dr\.\s*/i, "")}, reporting my morning vitals and symptoms for triage review.`,
-				status: "read",
-			},
-		];
-	};
+	const patientId = selectedPatient.id || "pt-101";
 
 	// State
-	const [messages, setMessages] = useState<ChatMessage[]>(() => {
-		try {
-			const saved = localStorage.getItem(storageKey);
-			if (saved) {
-				const parsed = JSON.parse(saved);
-				if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-			}
-		} catch (e) {
-			console.error("Error loading chat messages:", e);
-		}
-		return getSeedMessages();
-	});
-
+	const [messages, setMessages] = useState<ChatMessage[]>(() => loadChatMessages(patientId));
 	const [inputText, setInputText] = useState(initialAdviceText);
 	const [isVoiceRecording, setIsVoiceRecording] = useState(false);
 	const [showHistoryDropdown, setShowHistoryDropdown] = useState(false);
@@ -179,37 +94,13 @@ export const ClinicalCareChatModal: React.FC<ClinicalCareChatModalProps> = ({
 	const chatEndRef = useRef<HTMLDivElement>(null);
 	const recognitionRef = useRef<any>(null);
 
-	// Load & listen to storage events across tabs or patient replies
+	// Real-time synchronization across all components & tabs
 	useEffect(() => {
-		const loadMessages = () => {
-			try {
-				const saved = localStorage.getItem(storageKey);
-				if (saved) {
-					const parsed = JSON.parse(saved);
-					if (Array.isArray(parsed) && parsed.length > 0) {
-						setMessages(parsed);
-						return;
-					}
-				}
-			} catch (e) {
-				console.error(e);
-			}
-			setMessages(getSeedMessages());
-		};
-
-		loadMessages();
-		window.addEventListener("storage", loadMessages);
-		return () => window.removeEventListener("storage", loadMessages);
-	}, [selectedPatient.id]);
-
-	// Auto save
-	useEffect(() => {
-		try {
-			localStorage.setItem(storageKey, JSON.stringify(messages));
-		} catch (e) {
-			console.error("Error saving chat messages:", e);
-		}
-	}, [messages, storageKey]);
+		const unsubscribe = subscribeToChatUpdates(patientId, (updated) => {
+			setMessages(updated);
+		});
+		return () => unsubscribe();
+	}, [patientId]);
 
 	// Auto scroll to bottom
 	useEffect(() => {
@@ -288,16 +179,6 @@ export const ClinicalCareChatModal: React.FC<ClinicalCareChatModalProps> = ({
 		}
 	};
 
-	const getFormattedTimestamp = () => {
-		const now = new Date();
-		const hours = now.getHours();
-		const minutes = now.getMinutes();
-		const ampm = hours >= 12 ? "PM" : "AM";
-		const formattedHours = hours % 12 || 12;
-		const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-		return `Today · ${formattedHours}:${formattedMinutes} ${ampm}`;
-	};
-
 	// Apply smart templates directly to input
 	const applyTemplate = (type: "cardio" | "bp" | "glucose" | "triage") => {
 		if (type === "cardio") {
@@ -338,65 +219,34 @@ export const ClinicalCareChatModal: React.FC<ClinicalCareChatModalProps> = ({
 			  ]
 			: undefined;
 
-		const newMessage: ChatMessage = {
-			id: `msg-${Date.now()}`,
+		dispatchNewMessage(patientId, {
 			sender: "doctor",
 			senderName: doctor.doctorName || "Dr. Sarah Jenkins, MD",
 			senderRole: "Attending Cardiologist",
-			timestamp: getFormattedTimestamp(),
 			priority: isCardio ? "urgent" : "normal",
 			text,
 			actions,
-			status: "sent",
-		};
+			status: "read",
+		});
 
-		setMessages((prev) => [...prev, newMessage]);
 		if (!overrideText) setInputText("");
 		toast.success(`Care advice dispatched to ${selectedPatient.name}'s Genetiq app!`);
 
 		if (onAdviceDispatched) {
 			onAdviceDispatched(text);
 		}
-
-		// Update delivery status
-		setTimeout(() => {
-			setMessages((prev) =>
-				prev.map((m) => (m.id === newMessage.id ? { ...m, status: "read" } : m)),
-			);
-		}, 1200);
 	};
 
 	// Toggle action item completion in chat
 	const handleToggleAction = (msgId: string, actionId: string) => {
-		setMessages((prev) =>
-			prev.map((msg) => {
-				if (msg.id !== msgId || !msg.actions) return msg;
-				const updatedActions = msg.actions.map((act) => {
-					if (act.id !== actionId) return act;
-					const nextCompleted = !act.isCompleted;
-					return {
-						...act,
-						isCompleted: nextCompleted,
-						completedAt: nextCompleted
-							? new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-							: undefined,
-					};
-				});
-				return { ...msg, actions: updatedActions };
-			}),
-		);
+		toggleMessageAction(patientId, msgId, actionId);
 		toast.success("Action requirement status updated.");
 	};
 
 	const handleResetConversation = () => {
 		if (window.confirm("Reset this chat thread back to default records?")) {
-			const fresh = getSeedMessages();
-			setMessages(fresh);
-			try {
-				localStorage.setItem(storageKey, JSON.stringify(fresh));
-			} catch (e) {
-				console.error(e);
-			}
+			const fresh = getDefaultSeedMessages(selectedPatient.name, doctor.doctorName);
+			saveAndBroadcastChat(patientId, fresh);
 			toast.info("Conversation reset.");
 		}
 	};

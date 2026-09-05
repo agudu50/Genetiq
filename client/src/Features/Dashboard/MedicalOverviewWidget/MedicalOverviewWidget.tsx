@@ -18,7 +18,13 @@ import {
 	AlertCircle,
 	ChevronRight,
 } from "lucide-react";
-import { PatientCareChatModal, ChatMessage } from "../Components/PatientCareChatModal/PatientCareChatModal";
+import {
+	subscribeToChatUpdates,
+	loadChatMessages,
+	toggleMessageAction,
+	ChatMessage,
+} from "@/App/Services/PatientDoctorChatSync";
+import { PatientCareChatModal } from "../Components/PatientCareChatModal/PatientCareChatModal";
 
 type Tab = "conditions" | "medications" | "symptoms" | "labs";
 
@@ -29,85 +35,30 @@ export const MedicalOverviewWidget = () => {
 	const uploadRecords = useSelector((state: RootState) => state.uploadHistory.records);
 	const [activeTab, setActiveTab] = useState<Tab>("conditions");
 	const [isDoctorChatOpen, setIsDoctorChatOpen] = useState(false);
-	const [latestDoctorMessage, setLatestDoctorMessage] = useState<ChatMessage | null>(null);
 
 	const patientId = "pt-101";
-	const storageKey = `genetiq.patient_doctor_chat_${patientId}`;
 
-	// Load latest doctor response
-	const loadLatestDoctorResponse = () => {
-		try {
-			const saved = localStorage.getItem(storageKey);
-			if (saved) {
-				const parsed: ChatMessage[] = JSON.parse(saved);
-				if (Array.isArray(parsed) && parsed.length > 0) {
-					const doctorMsgs = parsed.filter((m) => m.sender === "doctor");
-					if (doctorMsgs.length > 0) {
-						setLatestDoctorMessage(doctorMsgs[doctorMsgs.length - 1]);
-						return;
-					}
-				}
-			}
-		} catch (e) {
-			console.error(e);
-		}
+	const [latestDoctorMessage, setLatestDoctorMessage] = useState<ChatMessage | null>(() => {
+		const allMsgs = loadChatMessages(patientId);
+		const docMsgs = allMsgs.filter((m) => m.sender === "doctor");
+		return docMsgs.length > 0 ? docMsgs[docMsgs.length - 1] : null;
+	});
 
-		// Fallback default advice from Dr. Sarah Jenkins
-		setLatestDoctorMessage({
-			id: "msg-init-2",
-			sender: "doctor",
-			senderName: "Dr. Sarah Jenkins, MD",
-			senderRole: "Attending Cardiologist",
-			timestamp: "Today · 09:15 AM",
-			priority: "urgent",
-			text: "Hello Marcus Vance,\n\nI reviewed your recent report of Palpitations & Shortness of Breath. Please sit down and rest immediately, drink 500ml of water, and ensure you have taken your morning Metoprolol 25mg.\n\nAvoid caffeine and strenuous activity today. If your shortness of breath persists beyond 15 minutes or you experience chest pressure, please call our triage nurse or emergency immediately.\n\n— Dr. Sarah Jenkins, MD",
-			actions: [
-				{ id: "act-1", label: "Sit down and rest quietly immediately", isCompleted: true, completedAt: "09:18 AM" },
-				{ id: "act-2", label: "Drink 500ml of fresh water", isCompleted: true, completedAt: "09:18 AM" },
-				{ id: "act-3", label: "Confirm morning Metoprolol 25mg intake", isCompleted: true, completedAt: "09:19 AM" },
-				{ id: "act-4", label: "Recheck Resting HR in 15 mins (Call triage if SOB persists)", isCompleted: true, completedAt: "09:34 AM" },
-			],
-			status: "read",
-		});
-	};
-
+	// Subscribe to real-time chat updates across tabs & components
 	useEffect(() => {
-		loadLatestDoctorResponse();
-		window.addEventListener("storage", loadLatestDoctorResponse);
-		return () => window.removeEventListener("storage", loadLatestDoctorResponse);
-	}, []);
+		const unsubscribe = subscribeToChatUpdates(patientId, (allMsgs) => {
+			const docMsgs = allMsgs.filter((m) => m.sender === "doctor");
+			if (docMsgs.length > 0) {
+				setLatestDoctorMessage(docMsgs[docMsgs.length - 1]);
+			}
+		});
+		return () => unsubscribe();
+	}, [patientId]);
 
 	// Toggle action on the widget card
 	const handleToggleActionFromWidget = (actionId: string) => {
 		if (!latestDoctorMessage || !latestDoctorMessage.actions) return;
-
-		try {
-			const saved = localStorage.getItem(storageKey);
-			let allMsgs: ChatMessage[] = saved ? JSON.parse(saved) : [];
-			if (allMsgs.length === 0 && latestDoctorMessage) allMsgs = [latestDoctorMessage];
-
-			const updated = allMsgs.map((m) => {
-				if (m.id !== latestDoctorMessage.id || !m.actions) return m;
-				const newActs = m.actions.map((act) => {
-					if (act.id !== actionId) return act;
-					const nextDone = !act.isCompleted;
-					return {
-						...act,
-						isCompleted: nextDone,
-						completedAt: nextDone
-							? new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-							: undefined,
-					};
-				});
-				return { ...m, actions: newActs };
-			});
-
-			localStorage.setItem(storageKey, JSON.stringify(updated));
-			const currentDoc = updated.find((m) => m.id === latestDoctorMessage.id);
-			if (currentDoc) setLatestDoctorMessage(currentDoc);
-		} catch (e) {
-			console.error(e);
-		}
+		toggleMessageAction(patientId, latestDoctorMessage.id, actionId);
 	};
 
 	const medicalConditions = Array.isArray(user?.medicalConditions) ? user.medicalConditions : [];

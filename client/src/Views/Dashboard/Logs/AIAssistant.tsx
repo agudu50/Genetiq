@@ -25,6 +25,13 @@ import {
 } from "@/App/Services/GemmaService";
 import type { GemmaLanguage, GemmaAnalysisResult } from "@/App/Services/GemmaService";
 import { useGemmaConnection } from "@/App/Hooks/useGemmaConnection";
+import {
+	subscribeToChatUpdates,
+	dispatchNewMessage,
+	toggleMessageAction,
+	loadChatMessages,
+	ChatMessage,
+} from "@/App/Services/PatientDoctorChatSync";
 import styles from "./AIAssistant.module.scss";
 import { renderRecommendationIcon } from "@/App/Utils/renderRecommendationIcon";
 
@@ -425,136 +432,26 @@ export default function AIAssistant() {
 	);
 }
 
-// ─── Tab 1: Live Doctor & Patient Chat ─────────────────────────────────────────
-
-interface ActionTask {
-	id: string;
-	label: string;
-	isCompleted: boolean;
-	completedAt?: string;
-}
-
-interface DoctorEhrMsg {
-	id: string;
-	sender: "doctor" | "patient";
-	senderName: string;
-	senderRole: string;
-	timestamp: string;
-	text: string;
-	priority?: "normal" | "urgent";
-	actions?: ActionTask[];
-	status?: string;
-}
-
 function ChatSection({ language }: { language: GemmaLanguage }) {
-	const storageKey = "genetiq.patient_doctor_chat_pt-101";
-	const [doctorMessages, setDoctorMessages] = useState<DoctorEhrMsg[]>([]);
+	const patientId = "pt-101";
+	const [doctorMessages, setDoctorMessages] = useState<ChatMessage[]>(() => loadChatMessages(patientId));
 	const [input, setInput] = useState("");
 	const chatEnd = useRef<HTMLDivElement>(null);
 
-	const getSeedMessages = (): DoctorEhrMsg[] => [
-		{
-			id: "msg-init-1",
-			sender: "patient",
-			senderName: "Marcus Vance",
-			senderRole: "Patient (App Dispatch)",
-			timestamp: "Today · 09:12 AM",
-			text: "Dr. Jenkins, I just walked up the stairs and my heart started racing suddenly. My watch is showing 118 bpm, and I feel lightheaded and short of breath. Should I take an extra Metoprolol or sit down?",
-			status: "read",
-		},
-		{
-			id: "msg-init-2",
-			sender: "doctor",
-			senderName: "Dr. Sarah Jenkins, MD",
-			senderRole: "Attending Cardiologist",
-			timestamp: "Today · 09:15 AM",
-			priority: "urgent",
-			text: "Hello Marcus Vance,\n\nI reviewed your recent report of Palpitations & Shortness of Breath. Please sit down and rest immediately, drink 500ml of water, and ensure you have taken your morning Metoprolol 25mg.\n\nAvoid caffeine and strenuous activity today. If your shortness of breath persists beyond 15 minutes or you experience chest pressure, please call our triage nurse or emergency immediately.\n\n— Dr. Sarah Jenkins, MD",
-			actions: [
-				{ id: "act-1", label: "Sit down and rest quietly immediately", isCompleted: true, completedAt: "09:18 AM" },
-				{ id: "act-2", label: "Drink 500ml of fresh water", isCompleted: true, completedAt: "09:18 AM" },
-				{ id: "act-3", label: "Confirm morning Metoprolol 25mg intake", isCompleted: true, completedAt: "09:19 AM" },
-				{ id: "act-4", label: "Recheck Resting HR in 15 mins (Call triage if SOB persists)", isCompleted: true, completedAt: "09:34 AM" },
-			],
-			status: "read",
-		},
-		{
-			id: "msg-init-3",
-			sender: "patient",
-			senderName: "Marcus Vance",
-			senderRole: "Patient (App Dispatch)",
-			timestamp: "Today · 09:19 AM",
-			text: "Understood Dr. Jenkins. I just sat down on the couch, drank 500ml of water, and confirmed my morning Metoprolol 25mg. Resting now.",
-			status: "read",
-		},
-		{
-			id: "msg-init-4",
-			sender: "patient",
-			senderName: "Marcus Vance",
-			senderRole: "Patient (App Dispatch)",
-			timestamp: "Today · 09:34 AM",
-			text: "Update: It's been 15 minutes. My resting heart rate has dropped down to 76 bpm. The palpitations have settled and my breathing is completely back to normal. Thank you for the swift guidance!",
-			status: "read",
-		},
-	];
-
-	// Load doctor messages from EHR storage
-	const loadDoctorEhr = () => {
-		try {
-			const saved = localStorage.getItem(storageKey);
-			if (saved) {
-				const parsed = JSON.parse(saved);
-				if (Array.isArray(parsed) && parsed.length > 0) {
-					setDoctorMessages(parsed);
-					return;
-				}
-			}
-		} catch (e) {
-			console.error(e);
-		}
-
-		// Fallback seed
-		const seed = getSeedMessages();
-		setDoctorMessages(seed);
-	};
-
 	useEffect(() => {
-		loadDoctorEhr();
-		window.addEventListener("storage", loadDoctorEhr);
-		return () => window.removeEventListener("storage", loadDoctorEhr);
-	}, []);
+		const unsubscribe = subscribeToChatUpdates(patientId, (updated) => {
+			setDoctorMessages(updated);
+		});
+		return () => unsubscribe();
+	}, [patientId]);
 
 	useEffect(() => {
 		chatEnd.current?.scrollIntoView({ behavior: "smooth" });
 	}, [doctorMessages]);
 
-	// Toggle action task checklist
+	// Toggle action task checklist in real time
 	const handleToggleTask = (msgId: string, actionId: string) => {
-		setDoctorMessages((prev) => {
-			const updated = prev.map((m) => {
-				if (m.id !== msgId || !m.actions) return m;
-				const nextActs = m.actions.map((act) => {
-					if (act.id !== actionId) return act;
-					const nextDone = !act.isCompleted;
-					return {
-						...act,
-						isCompleted: nextDone,
-						completedAt: nextDone
-							? new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-							: undefined,
-					};
-				});
-				return { ...m, actions: nextActs };
-			});
-
-			try {
-				localStorage.setItem(storageKey, JSON.stringify(updated));
-				window.dispatchEvent(new Event("storage"));
-			} catch (e) {
-				console.error(e);
-			}
-			return updated;
-		});
+		toggleMessageAction(patientId, msgId, actionId);
 	};
 
 	const quickChips = [
@@ -571,33 +468,11 @@ function ChatSection({ language }: { language: GemmaLanguage }) {
 		if (!msg) return;
 		setInput("");
 
-		const now = new Date();
-		const hours = now.getHours();
-		const minutes = now.getMinutes();
-		const ampm = hours >= 12 ? "PM" : "AM";
-		const formattedHours = hours % 12 || 12;
-		const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-		const nowStr = `Today · ${formattedHours}:${formattedMinutes} ${ampm}`;
-
-		const patientEhrReply: DoctorEhrMsg = {
-			id: `msg-pat-${Date.now()}`,
+		dispatchNewMessage(patientId, {
 			sender: "patient",
 			senderName: "Marcus Vance",
 			senderRole: "Patient (App Dispatch)",
-			timestamp: nowStr,
 			text: msg,
-			status: "read",
-		};
-
-		setDoctorMessages((prev) => {
-			const nextList = [...prev, patientEhrReply];
-			try {
-				localStorage.setItem(storageKey, JSON.stringify(nextList));
-				window.dispatchEvent(new Event("storage"));
-			} catch (e) {
-				console.error(e);
-			}
-			return nextList;
 		});
 	};
 
