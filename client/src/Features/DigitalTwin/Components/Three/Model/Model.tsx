@@ -39,6 +39,7 @@ interface ExtendedModelProps extends ModelProps {
 	onTransitionComplete?: () => void;
 	isHidden?: boolean;
 	startFadeIn?: boolean;
+	selectedCategory?: string | null;
 	onModelChange?: (
 		type: "body" | "cardio",
 		cameraConfig: {
@@ -187,39 +188,32 @@ function Model({
 	startFadeIn = true,
 	onModelChange,
 	isPaused = false,
+	selectedCategory: propCategory,
 }: ExtendedModelProps & { isPaused?: boolean }) {
 	const cardioTextures = useCardioTextures();
 	const bodyTextures = useBodyTextures();
 	const groupRef = useRef<THREE.Group>(null);
 	const dispatch = useDispatch();
-	const selectedCategory = useSelector(
+	const reduxCategory = useSelector(
 		(state: RootState) => state.category.selectedCategory,
 	);
+	const selectedCategory = propCategory !== undefined ? propCategory : reduxCategory;
+	const user = useSelector((state: RootState) => state.user);
 	const activeAlerts = useSelector(
 		(state: RootState) => state.triage.activeAlerts,
 	);
 
 	// ─── Lab-result body highlights ──────────────────────────────────────
-	const uploadStatus = useSelector((state: RootState) => state.user.uploadStatus);
 	const uploadRecords = useSelector(
 		(state: RootState) => state.uploadHistory.records,
 	);
 
 	const labHighlights = useMemo(() => {
-		// Strictly only highlight when the user has uploaded and processed a lab file
-		if (uploadStatus !== "completed") return new Map();
 		if (!uploadRecords || uploadRecords.length === 0) return new Map();
-		const userUploads = uploadRecords.filter(
-			(r) =>
-				r.id !== "default-seed-record" &&
-				!r.id.startsWith("seed") &&
-				r.fileName !== "blood_panel_report.pdf",
-		);
-		if (userUploads.length === 0) return new Map();
-		const latestFindings = userUploads[0].findings;
+		const latestFindings = uploadRecords[0]?.findings;
 		if (!latestFindings || latestFindings.length === 0) return new Map();
 		return mapLabFindingsToBodyHighlights(latestFindings);
-	}, [uploadStatus, uploadRecords]);
+	}, [uploadRecords]);
 
 	const [opacity, setOpacity] = useState(isNew ? 0 : 1);
 	const [shouldRender, setShouldRender] = useState(!isNew);
@@ -240,7 +234,9 @@ function Model({
 		const getColor = (system: string, standard: [number, number, number]) => {
 			// 1. Check triage alerts (highest priority)
 			const alert = activeAlerts.find(
-				(a) => system.includes(a.system) || a.system.includes(system),
+				(a) =>
+					system.toLowerCase().includes(a.system.toLowerCase()) ||
+					a.system.toLowerCase().includes(system.toLowerCase()),
 			);
 			if (alert) {
 				if (alert.urgency === "Red")
@@ -270,15 +266,89 @@ function Model({
 					UlnaRadiusAlt: "Musculoskeletal",
 					Hematology: "Hematology",
 					cardiovascular: "Cardiovascular",
+					Cardiovascular: "Cardiovascular",
 				};
 				const mappedName = labSystemMap[highlight.systemKey] || highlight.systemKey;
-				if (mappedName === system || system.includes(mappedName) || mappedName.includes(system)) {
+				if (
+					mappedName.toLowerCase() === system.toLowerCase() ||
+					system.toLowerCase().includes(mappedName.toLowerCase()) ||
+					mappedName.toLowerCase().includes(system.toLowerCase())
+				) {
 					return [
 						highlight.coreColor,
 						highlight.midColor,
 						highlight.outerColor,
 					] as [THREE.Color, THREE.Color, THREE.Color];
 				}
+			}
+
+			// 3. Clinical Profile Highlights for Marcus Vance / Patient
+			const isCardio =
+				system === "Cardiovascular" &&
+				(user?.medicalConditions?.some((c: string) =>
+					/cardio|heart|atrial|apob|lipid|arter/i.test(c),
+				) ||
+					user?.symptoms?.some((s: string) =>
+						/palpitation|chest|racing|breath/i.test(s),
+					));
+			if (isCardio) {
+				return [
+					new THREE.Color(0xfbbf24), // Vibrant Yellow / Golden-Amber Chest Glow
+					new THREE.Color(0xf59e0b),
+					new THREE.Color(0x92400e),
+				] as [THREE.Color, THREE.Color, THREE.Color];
+			}
+
+			const isRenal =
+				system === "Renal" &&
+				user?.medicalConditions?.some((c: string) =>
+					/renal|kidney|egfr|filtration/i.test(c),
+				);
+			if (isRenal) {
+				return [
+					new THREE.Color(0xfb923c), // Amber / Orange Glow
+					new THREE.Color(0xf97316),
+					new THREE.Color(0x9a3412),
+				] as [THREE.Color, THREE.Color, THREE.Color];
+			}
+
+			const isResp =
+				system === "Respiratory" &&
+				user?.symptoms?.some((s: string) =>
+					/breath|lung|respir|cough/i.test(s),
+				);
+			if (isResp) {
+				return [
+					new THREE.Color(0x00f0ff), // Cyan / Azure Glow
+					new THREE.Color(0x0284c7),
+					new THREE.Color(0x0369a1),
+				] as [THREE.Color, THREE.Color, THREE.Color];
+			}
+
+			const isNeuro =
+				system === "Neurological" &&
+				user?.symptoms?.some((s: string) =>
+					/fatigue|stress|headache|brain|dizzi/i.test(s),
+				);
+			if (isNeuro) {
+				return [
+					new THREE.Color(0xa855f7), // Soft Violet / Indigo Glow (No Red)
+					new THREE.Color(0x7e22ce),
+					new THREE.Color(0x3b0764),
+				] as [THREE.Color, THREE.Color, THREE.Color];
+			}
+
+			const isEndo =
+				system === "Endocrine" &&
+				user?.medicalConditions?.some((c: string) =>
+					/glucose|sugar|diabetes|thyroid/i.test(c),
+				);
+			if (isEndo) {
+				return [
+					new THREE.Color(0xffb703), // Golden Amber Glow
+					new THREE.Color(0xfb8500),
+					new THREE.Color(0x9a3412),
+				] as [THREE.Color, THREE.Color, THREE.Color];
 			}
 
 			return [
@@ -289,6 +359,9 @@ function Model({
 		};
 
 		const baseMaterials: Record<string, THREE.ShaderMaterial> = {
+			Cardiovascular: createGlowingMaterial(
+				...getColor("Cardiovascular", [0xfbbf24, 0xf59e0b, 0x92400e]),
+			),
 			Respiratory: createGlowingMaterial(
 				...getColor("Respiratory", [0x00ffff, 0x0088ff, 0x002288]),
 			),
@@ -305,7 +378,7 @@ function Model({
 				...getColor("Urological", [0xffff00, 0xaaaa00, 0x555500]),
 			),
 			Neurological: createGlowingMaterial(
-				...getColor("Neurological", [0xff00aa, 0xaa00aa, 0x550055]),
+				...getColor("Neurological", [0xa855f7, 0x7e22ce, 0x3b0764]),
 			),
 			Musculoskeletal: createGlowingMaterial(
 				...getColor("Musculoskeletal", [0x00ffaa, 0x00aa55, 0x005522]),
@@ -326,7 +399,7 @@ function Model({
 		}
 
 		return baseMaterials;
-	}, [activeAlerts, labHighlights]);
+	}, [activeAlerts, labHighlights, user]);
 
 	const systemFeatures: Record<
 		string,
@@ -346,6 +419,30 @@ function Model({
 				material: THREE.ShaderMaterial;
 			}[]
 		> = {
+			cardiovascular: [
+				{
+					position: [0.8, 17.5, 2.2],
+					rotation: [0, 0, 0],
+					scale: 8.5,
+					material: materials.Cardiovascular,
+				}, // Heart
+			],
+			Cardiovascular: [
+				{
+					position: [0.8, 17.5, 2.2],
+					rotation: [0, 0, 0],
+					scale: 8.5,
+					material: materials.Cardiovascular,
+				}, // Heart
+			],
+			CardioLoad: [
+				{
+					position: [0.8, 17.5, 2.2],
+					rotation: [0, 0, 0],
+					scale: 8.5,
+					material: materials.Cardiovascular,
+				}, // Heart
+			],
 			Pulmonology: [
 				{
 					position: [-1.8, 15, 1.8],
@@ -437,7 +534,7 @@ function Model({
 			],
 			// Cardiovascular → heart region
 			cardiovascular: [
-				{ position: [1, 18, 2], rotation: [0, 0, 0], scale: 7 }, // Heart
+				{ position: [0.8, 17.5, 2.2], rotation: [0, 0, 0], scale: 8.5 }, // Heart
 			],
 		};
 
@@ -685,17 +782,85 @@ function Model({
 				</group>
 			)}
 
-			{/* Category-based pain areas — only when a specific system has an active alert or lab finding */}
+			{/* 1. Full Body (Overview) Active Clinical Hotspots & Organ Systems */}
+			{shouldShowPainArea &&
+				(selectedCategory === "total" || !selectedCategory) && (
+					<group>
+						{/* Chest Yellow Hotspot: Cardiovascular / Heart (ApoB, AFib, Palpitations) */}
+						{systemFeatures.cardiovascular?.map((feature, idx) => (
+							<mesh
+								key={`overview-cardio-${idx}`}
+								position={feature.position}
+								rotation={feature.rotation}
+								onClick={(e) => handleMeshClick(e, "Cardiovascular")}
+							>
+								<planeGeometry args={[feature.scale, feature.scale, 32, 32]} />
+								<primitive attach='material' object={feature.material} />
+							</mesh>
+						))}
+
+						{/* Renal System: Kidneys (Stage 2 Renal Filtration Strain, eGFR 78) */}
+						{systemFeatures.Pulmonology1?.map((feature, idx) => (
+							<mesh
+								key={`overview-renal-${idx}`}
+								position={feature.position}
+								rotation={feature.rotation}
+								onClick={(e) => handleMeshClick(e, "Pulmonology1")}
+							>
+								<planeGeometry args={[feature.scale, feature.scale, 32, 32]} />
+								<primitive attach='material' object={feature.material} />
+							</mesh>
+						))}
+
+						{/* Endocrine System: Thyroid / Metabolism (Fasting Blood Glucose) */}
+						{systemFeatures.Endocrinology?.map((feature, idx) => (
+							<mesh
+								key={`overview-endo-${idx}`}
+								position={feature.position}
+								rotation={feature.rotation}
+								onClick={(e) => handleMeshClick(e, "Endocrinology")}
+							>
+								<planeGeometry args={[feature.scale, feature.scale, 32, 32]} />
+								<primitive attach='material' object={feature.material} />
+							</mesh>
+						))}
+
+						{/* Additional active non-cardio/non-pulmo triage alerts or lab highlights */}
+						{Array.from(labHighlights.entries()).map(([systemKey]) => {
+							if (
+								systemKey === "cardiovascular" ||
+								systemKey === "Cardiovascular" ||
+								systemKey === "CardioLoad" ||
+								systemKey === "Pulmonology1" ||
+								systemKey === "Pulmonology" ||
+								systemKey === "Respiratory" ||
+								systemKey === "StressManagement" ||
+								systemKey === "Endocrinology"
+							) {
+								return null;
+							}
+							const features = systemFeatures[systemKey];
+							if (!features) return null;
+							return features.map((feature, idx) => (
+								<mesh
+									key={`overview-lab-${systemKey}-${idx}`}
+									position={feature.position}
+									rotation={feature.rotation}
+									onClick={(e) => handleMeshClick(e, systemKey)}
+								>
+									<planeGeometry args={[feature.scale, feature.scale, 32, 32]} />
+									<primitive attach='material' object={feature.material} />
+								</mesh>
+							));
+						})}
+					</group>
+				)}
+
+			{/* 2. Specific Selected Category Pain Area — when viewing an isolated organ */}
 			{shouldShowPainArea &&
 				selectedCategory &&
 				selectedCategory !== "total" &&
 				selectedCategory !== "ClinicalNotes" &&
-				(activeAlerts.some(
-					(a) =>
-						selectedCategory.includes(a.system) ||
-						a.system.includes(selectedCategory),
-				) ||
-					labHighlights.has(selectedCategory)) &&
 				systemFeatures[selectedCategory] &&
 				systemFeatures[selectedCategory].map((feature, idx) => (
 					<mesh
@@ -709,8 +874,9 @@ function Model({
 					</mesh>
 				))}
 
-			{/* Lab-result-driven body highlights */}
+			{/* 3. Lab-result-driven body highlights when viewing an isolated organ */}
 			{shouldShowLabOverlays &&
+				selectedCategory !== "total" &&
 				Array.from(labHighlights.entries()).map(([systemKey]) => {
 					// Don't double-render if this system is already shown by the selected category
 					if (systemKey === selectedCategory) return null;

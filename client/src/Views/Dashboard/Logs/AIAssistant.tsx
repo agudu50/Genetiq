@@ -16,6 +16,8 @@ import {
 	Flame,
 	Square,
 	CheckCircle2,
+	Play,
+	RotateCcw,
 } from "lucide-react";
 import {
 	analyzeLabResults,
@@ -30,6 +32,9 @@ import {
 	dispatchNewMessage,
 	toggleMessageAction,
 	loadChatMessages,
+	saveAndBroadcastChat,
+	getDefaultSeedMessages,
+	generateDoctorReply,
 	ChatMessage,
 } from "@/App/Services/PatientDoctorChatSync";
 import styles from "./AIAssistant.module.scss";
@@ -436,6 +441,8 @@ function ChatSection({ language }: { language: GemmaLanguage }) {
 	const patientId = "pt-101";
 	const [doctorMessages, setDoctorMessages] = useState<ChatMessage[]>(() => loadChatMessages(patientId));
 	const [input, setInput] = useState("");
+	const [isSimulating, setIsSimulating] = useState(false);
+	const [isDoctorTyping, setIsDoctorTyping] = useState(false);
 	const chatEnd = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -447,7 +454,7 @@ function ChatSection({ language }: { language: GemmaLanguage }) {
 
 	useEffect(() => {
 		chatEnd.current?.scrollIntoView({ behavior: "smooth" });
-	}, [doctorMessages]);
+	}, [doctorMessages, isDoctorTyping]);
 
 	// Toggle action task checklist in real time
 	const handleToggleTask = (msgId: string, actionId: string) => {
@@ -463,6 +470,91 @@ function ChatSection({ language }: { language: GemmaLanguage }) {
 		LOCALIZED_TEXTS[language].quick_chips_pregnancy,
 	];
 
+	// Run full live consultation demo sequence in real time
+	const handleRunLiveSimulation = () => {
+		if (isSimulating) return;
+		setIsSimulating(true);
+
+		// Step 0: Clear thread
+		saveAndBroadcastChat(patientId, []);
+
+		// Step 1: Marcus reports palpitation & high heart rate
+		setTimeout(() => {
+			dispatchNewMessage(patientId, {
+				sender: "patient",
+				senderName: "Marcus Vance",
+				senderRole: "Patient (App Dispatch)",
+				timestamp: "Today · 09:12 AM",
+				text: "Dr. Jenkins, I just walked up the stairs and my heart started racing suddenly. My watch is showing 118 bpm, and I feel lightheaded and short of breath. Should I take an extra Metoprolol or sit down?",
+			});
+		}, 300);
+
+		// Step 2: Doctor typing indicator & Urgent Directive dispatch
+		setTimeout(() => {
+			setIsDoctorTyping(true);
+		}, 1200);
+
+		setTimeout(() => {
+			setIsDoctorTyping(false);
+			dispatchNewMessage(patientId, {
+				sender: "doctor",
+				senderName: "Dr. Sarah Jenkins, MD",
+				senderRole: "Attending Cardiologist",
+				timestamp: "Today · 09:15 AM",
+				priority: "urgent",
+				text: "Hello Marcus Vance,\n\nI reviewed your recent report of Palpitations & Shortness of Breath. Please sit down and rest immediately, drink 500ml of water, and ensure you have taken your morning Metoprolol 25mg.\n\nAvoid caffeine and strenuous activity today. If your shortness of breath persists beyond 15 minutes or you experience chest pressure, please call our triage nurse or emergency immediately.\n\n— Dr. Sarah Jenkins, MD",
+				actions: [
+					{ id: "act-1", label: "Sit down and rest quietly immediately", isCompleted: false },
+					{ id: "act-2", label: "Drink 500ml of fresh water", isCompleted: false },
+					{ id: "act-3", label: "Confirm morning Metoprolol 25mg intake", isCompleted: false },
+					{ id: "act-4", label: "Recheck Resting HR in 15 mins (Call triage if SOB persists)", isCompleted: false },
+				],
+			});
+		}, 2600);
+
+		// Step 3: Marcus fulfills directives 1, 2, 3 and updates doctor
+		setTimeout(() => {
+			const msgs = loadChatMessages(patientId);
+			const docMsg = msgs.find((m) => m.sender === "doctor" && m.actions);
+			if (docMsg) {
+				toggleMessageAction(patientId, docMsg.id, "act-1");
+				toggleMessageAction(patientId, docMsg.id, "act-2");
+				toggleMessageAction(patientId, docMsg.id, "act-3");
+			}
+			dispatchNewMessage(patientId, {
+				sender: "patient",
+				senderName: "Marcus Vance",
+				senderRole: "Patient (App Dispatch)",
+				timestamp: "Today · 09:19 AM",
+				text: "Understood Dr. Jenkins. I just sat down on the couch, drank 500ml of water, and confirmed my morning Metoprolol 25mg. Resting now.",
+			});
+		}, 4600);
+
+		// Step 4: Marcus checks 15-min HR directive and reports 76 bpm recovery
+		setTimeout(() => {
+			const msgs = loadChatMessages(patientId);
+			const docMsg = msgs.find((m) => m.sender === "doctor" && m.actions);
+			if (docMsg) {
+				toggleMessageAction(patientId, docMsg.id, "act-4");
+			}
+			dispatchNewMessage(patientId, {
+				sender: "patient",
+				senderName: "Marcus Vance",
+				senderRole: "Patient (App Dispatch)",
+				timestamp: "Today · 09:34 AM",
+				text: "Update: It's been 15 minutes. My resting heart rate has dropped down to 76 bpm. The palpitations have settled and my breathing is completely back to normal. Thank you for the swift guidance!",
+			});
+			setIsSimulating(false);
+		}, 7000);
+	};
+
+	const handleReset = () => {
+		const fresh = getDefaultSeedMessages();
+		saveAndBroadcastChat(patientId, fresh);
+		setIsDoctorTyping(false);
+		setIsSimulating(false);
+	};
+
 	const send = (text?: string) => {
 		const msg = (text || input).trim();
 		if (!msg) return;
@@ -474,6 +566,14 @@ function ChatSection({ language }: { language: GemmaLanguage }) {
 			senderRole: "Patient (App Dispatch)",
 			text: msg,
 		});
+
+		// Trigger realistic Dr. Sarah Jenkins response
+		setIsDoctorTyping(true);
+		setTimeout(() => {
+			setIsDoctorTyping(false);
+			const doctorReply = generateDoctorReply(msg);
+			dispatchNewMessage(patientId, doctorReply);
+		}, 1300);
 	};
 
 	return (
@@ -494,9 +594,31 @@ function ChatSection({ language }: { language: GemmaLanguage }) {
 						</div>
 					</div>
 				</div>
-				<span className={styles.ehrSyncBadge}>
-					● Live EHR Sync
-				</span>
+
+				<div className={styles.doctorBarRight}>
+					<button
+						className={`${styles.simBtn} ${isSimulating ? styles.simBtnActive : ""}`}
+						onClick={handleRunLiveSimulation}
+						disabled={isSimulating}
+						title="Simulate full live episode in real time"
+					>
+						<Play size={13} />
+						<span>{isSimulating ? "Simulating Live Flow..." : "Simulate Live Episode"}</span>
+					</button>
+
+					<button
+						className={styles.resetBtn}
+						onClick={handleReset}
+						title="Reset thread back to defaults"
+					>
+						<RotateCcw size={12} />
+						<span>Reset</span>
+					</button>
+
+					<span className={styles.ehrSyncBadge}>
+						● Live EHR Sync
+					</span>
+				</div>
 			</div>
 
 			{/* Message Timeline */}
@@ -567,6 +689,22 @@ function ChatSection({ language }: { language: GemmaLanguage }) {
 						</div>
 					);
 				})}
+
+				{/* Real-time Doctor Typing Indicator */}
+				{isDoctorTyping && (
+					<div className={styles.typingIndicatorRow}>
+						<div className={styles.doctorMsgAvatar}>
+							<Stethoscope size={15} />
+						</div>
+						<div className={styles.typingDots}>
+							<div className={styles.dot} />
+							<div className={styles.dot} />
+							<div className={styles.dot} />
+						</div>
+						<span>Dr. Sarah Jenkins is reviewing and preparing clinical response...</span>
+					</div>
+				)}
+
 				<div ref={chatEnd} />
 			</div>
 
@@ -587,7 +725,11 @@ function ChatSection({ language }: { language: GemmaLanguage }) {
 					onKeyDown={(e) => e.key === "Enter" && send()}
 					placeholder={LOCALIZED_TEXTS[language].placeholder}
 				/>
-				<button onClick={() => send()} disabled={!input.trim()} title='Send live message to Dr. Jenkins'>
+				<button
+					onClick={() => send()}
+					disabled={!input.trim()}
+					title="Send live message to Dr. Jenkins"
+				>
 					<Send size={16} />
 				</button>
 			</div>

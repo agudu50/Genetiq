@@ -196,6 +196,7 @@ const MainScene: React.FC<MainSceneProps> = ({
 								onTransitionComplete={handleModelTransitionComplete}
 								isHidden={isModelHidden}
 								isPaused={isPaused}
+								selectedCategory={selectedCategory}
 							/>
 						)}
 						<Model
@@ -208,6 +209,7 @@ const MainScene: React.FC<MainSceneProps> = ({
 							startFadeIn={startNewModelFade}
 							onModelChange={handleModelChange}
 							isPaused={isPaused}
+							selectedCategory={selectedCategory}
 						/>
 					</Suspense>
 				</Canvas>

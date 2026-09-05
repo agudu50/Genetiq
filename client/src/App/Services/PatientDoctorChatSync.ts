@@ -251,3 +251,91 @@ export const subscribeToChatUpdates = (
 		}
 	};
 };
+
+/**
+ * Context-aware clinical reply generator for Dr. Sarah Jenkins
+ */
+export const generateDoctorReply = (
+	patientText: string,
+	patientName: string = "Marcus Vance",
+	doctorName: string = "Dr. Sarah Jenkins, MD",
+): Omit<ChatMessage, "id" | "timestamp"> => {
+	const lower = patientText.toLowerCase();
+
+	if (
+		lower.includes("118") ||
+		lower.includes("racing") ||
+		lower.includes("stairs") ||
+		lower.includes("short of breath") ||
+		lower.includes("palpitation")
+	) {
+		return {
+			sender: "doctor",
+			senderName: doctorName,
+			senderRole: "Attending Cardiologist",
+			priority: "urgent",
+			text: `Hello ${patientName},\n\nI reviewed your recent report of Palpitations & Shortness of Breath. Please sit down and rest immediately, drink 500ml of water, and ensure you have taken your morning Metoprolol 25mg.\n\nAvoid caffeine and strenuous activity today. If your shortness of breath persists beyond 15 minutes or you experience chest pressure, please call our triage nurse or emergency immediately.\n\n— ${doctorName}`,
+			actions: [
+				{ id: `act-${Date.now()}-1`, label: "Sit down and rest quietly immediately", isCompleted: true, completedAt: "09:18 AM" },
+				{ id: `act-${Date.now()}-2`, label: "Drink 500ml of fresh water", isCompleted: true, completedAt: "09:18 AM" },
+				{ id: `act-${Date.now()}-3`, label: "Confirm morning Metoprolol 25mg intake", isCompleted: true, completedAt: "09:19 AM" },
+				{ id: `act-${Date.now()}-4`, label: "Recheck Resting HR in 15 mins (Call triage if SOB persists)", isCompleted: true, completedAt: "09:34 AM" },
+			],
+			status: "read",
+		};
+	}
+
+	if (
+		lower.includes("couch") ||
+		lower.includes("water") ||
+		lower.includes("resting") ||
+		lower.includes("drank") ||
+		lower.includes("confirmed")
+	) {
+		return {
+			sender: "doctor",
+			senderName: doctorName,
+			senderRole: "Attending Cardiologist",
+			priority: "normal",
+			text: `Well done, ${patientName}. Keeping hydrated and resting quietly will allow the Metoprolol to take full effect. Please keep monitoring your pulse and let me know your resting heart rate in 15 minutes.\n\n— ${doctorName}`,
+			status: "read",
+		};
+	}
+
+	if (
+		lower.includes("76") ||
+		lower.includes("normal") ||
+		lower.includes("better") ||
+		lower.includes("settled") ||
+		lower.includes("thank you")
+	) {
+		return {
+			sender: "doctor",
+			senderName: doctorName,
+			senderRole: "Attending Cardiologist",
+			priority: "normal",
+			text: `Excellent update, ${patientName}! Your heart rate stabilizing at 76 bpm confirms a positive response. Please remain well hydrated and refrain from heavy exertion for the rest of the day. Contact our clinic immediately if any symptoms return.\n\n— ${doctorName}`,
+			status: "read",
+		};
+	}
+
+	if (lower.includes("bp") || lower.includes("124/82") || lower.includes("blood pressure")) {
+		return {
+			sender: "doctor",
+			senderName: doctorName,
+			senderRole: "Attending Cardiologist",
+			priority: "normal",
+			text: `Great reading, ${patientName}. 124/82 mmHg is in optimal target range for your cardiovascular profile. Maintain your regular morning medication schedule.\n\n— ${doctorName}`,
+			status: "read",
+		};
+	}
+
+	return {
+		sender: "doctor",
+		senderName: doctorName,
+		senderRole: "Attending Cardiologist",
+		priority: "normal",
+		text: `Thank you for your update, ${patientName}. I have recorded this in your EHR log. Continue following your prescribed cardiovascular plan and reach out if you notice any unusual symptoms.\n\n— ${doctorName}`,
+		status: "read",
+	};
+};
