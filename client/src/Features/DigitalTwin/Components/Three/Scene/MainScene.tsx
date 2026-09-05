@@ -25,7 +25,7 @@ interface MainSceneProps {
 	onSidebarSelectionMade?: () => void;
 	isPaused?: boolean;
 	showSidebar?: boolean;
-	patientData?: Patient3DData;
+	gender?: string;
 }
 
 const MainScene: React.FC<MainSceneProps> = ({
@@ -35,7 +35,7 @@ const MainScene: React.FC<MainSceneProps> = ({
 	onSidebarSelectionMade,
 	isPaused = false,
 	showSidebar = true,
-	patientData,
+	gender,
 }) => {
 	const { cameraState, setCameraState } = useCamera();
 	const { backgroundId, preset, selectBackground, wrapperStyle } =
@@ -200,7 +200,8 @@ const MainScene: React.FC<MainSceneProps> = ({
 								onTransitionComplete={handleModelTransitionComplete}
 								isHidden={isModelHidden}
 								isPaused={isPaused}
-								patientData={patientData}
+								selectedCategory={selectedCategory}
+								gender={gender}
 							/>
 						)}
 						<Model
@@ -213,7 +214,8 @@ const MainScene: React.FC<MainSceneProps> = ({
 							startFadeIn={startNewModelFade}
 							onModelChange={handleModelChange}
 							isPaused={isPaused}
-							patientData={patientData}
+							selectedCategory={selectedCategory}
+							gender={gender}
 						/>
 					</Suspense>
 				</Canvas>
