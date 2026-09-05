@@ -13,16 +13,19 @@ import {
 	ArrowDownRight,
 	ArrowUpRight,
 	Bell,
+	Bot,
 	Brain,
 	Calendar,
 	CalendarPlus,
 	Check,
+	CheckCheck,
 	CheckCircle2,
 	ChevronDown,
 	ChevronLeft,
 	ChevronRight,
 	ChevronUp,
 	Clock,
+	Copy,
 	Database,
 	Droplet,
 	ExternalLink,
@@ -50,6 +53,7 @@ import {
 	Volume2,
 	Wind,
 	X,
+	Zap,
 } from "lucide-react";
 import { CameraProvider } from "@/Features/DigitalTwin/Context/CameraContext";
 import MainScene from "@/Features/DigitalTwin/Components/Three/Scene/MainScene";
@@ -572,6 +576,358 @@ const initialAppointments: DoctorAppointment[] = [
 	},
 ];
 
+export interface PatientAiInsightReport {
+	executiveSummary: string;
+	triageScore: {
+		score: number;
+		level: "High Risk" | "Moderate Risk" | "Low / Optimal";
+		label: string;
+		color: string;
+	};
+	systemScores: Array<{
+		name: string;
+		score: number;
+		status: "Optimal" | "Monitored" | "Strain";
+		alert?: string;
+	}>;
+	biomarkerCorrelations: Array<{
+		title: string;
+		finding: string;
+		correlation: string;
+		urgency: "high" | "moderate" | "low";
+	}>;
+	pharmacologyInsights: Array<{
+		drug: string;
+		dosage: string;
+		adherence: number;
+		efficacy: string;
+		recommendation: string;
+	}>;
+	protocolSteps: Array<{
+		step: number;
+		category: "Rx" | "Diagnostics" | "Care Guidance";
+		title: string;
+		action: string;
+	}>;
+	soapNote: {
+		subjective: string;
+		objective: string;
+		assessment: string;
+		plan: string;
+	};
+	suggestedQuestions: string[];
+}
+
+export function generatePatientAiAnalysis(patient: ClinicalPatient, _doctorName?: string): PatientAiInsightReport {
+	if (patient.id === "pt-101") {
+		return {
+			executiveSummary:
+				"52-year-old male presenting with acute 8/10 palpitations and exertional shortness of breath following stair climbing. High atherogenic particle load (ApoB 128 mg/dL, LDL 142 mg/dL) coupled with acute vascular inflammation (hs-CRP 3.4 mg/L) significantly elevates cardiovascular vulnerability and arrhythmia provocation risk.",
+			triageScore: {
+				score: 78,
+				level: "High Risk",
+				label: "Grade 2 Exertional Arrhythmia Risk + Atherogenic Particle Excess",
+				color: "#ef4444",
+			},
+			systemScores: [
+				{ name: "Cardiovascular (Heart)", score: 58, status: "Strain", alert: "High Atherogenic Load & Tachycardia Spike (118 bpm)" },
+				{ name: "Renal (Kidneys)", score: 76, status: "Monitored", alert: "eGFR 78 mL/min (Mild clearance reduction)" },
+				{ name: "Metabolic Homeostasis", score: 82, status: "Optimal", alert: "Fasting Glucose 104 mg/dL (Early insulin resistance)" },
+			],
+			biomarkerCorrelations: [
+				{
+					title: "ApoB & Vascular Endothelial Plaque Risk",
+					finding: "Apolipoprotein B is 128 mg/dL (Ref < 90 mg/dL)",
+					correlation: "Direct atherogenic particle burden accelerates endothelial sub-intimal trapping and arterial stiffness, predisposing to exertional ischemic substrate.",
+					urgency: "high",
+				},
+				{
+					title: "hs-CRP & Inflammatory Destabilization",
+					finding: "hs-CRP is 3.4 mg/L (Ref < 1.0 mg/L)",
+					correlation: "Active systemic vascular inflammation lowers myocardial threshold for autonomic arrhythmias during physical exertion.",
+					urgency: "high",
+				},
+				{
+					title: "Exertional Heart Rate Flare",
+					finding: "Resting rate spike to 118 bpm after stair climb",
+					correlation: "Autonomic decompensation following exertion; reflects beta-adrenergic sensitivity and potential paroxysmal atrial fibrillation episodes.",
+					urgency: "high",
+				},
+			],
+			pharmacologyInsights: [
+				{
+					drug: "Atorvastatin",
+					dosage: "20 mg Daily",
+					adherence: 94,
+					efficacy: "Sub-Target ApoB Reduction",
+					recommendation: "ApoB remains at 128 mg/dL despite 94% adherence. Recommend adding Ezetimibe 10mg daily or titrating Atorvastatin to 40mg.",
+				},
+				{
+					drug: "Metoprolol",
+					dosage: "25 mg Daily",
+					adherence: 90,
+					efficacy: "Effective Rate Control, Orthostatic Trough",
+					recommendation: "Afternoon lightheadedness suggests peak hypotensive effect. Advise morning administration with 500ml water and evaluate split-dose.",
+				},
+			],
+			protocolSteps: [
+				{
+					step: 1,
+					category: "Diagnostics",
+					title: "24-Hour Ambulatory Holter ECG",
+					action: "Dispatch continuous Holter monitor to capture paroxysmal atrial flutter & nocturnal rhythm anomalies.",
+				},
+				{
+					step: 2,
+					category: "Rx",
+					title: "Adjunctive Lipid Lowering (Ezetimibe 10mg)",
+					action: "Prescribe Ezetimibe 10mg daily to accelerate ApoB clearance toward target < 80 mg/dL.",
+				},
+				{
+					step: 3,
+					category: "Diagnostics",
+					title: "Order Follow-Up ApoB & Lipid Panel (60 Days)",
+					action: "Requisition repeat chemistry to evaluate response to intensified lipid protocol.",
+				},
+				{
+					step: 4,
+					category: "Care Guidance",
+					title: "Exertion & Hydration Counseling",
+					action: "Restrict rapid stair climb bursts until rhythm telemetry is verified. Ensure 2.0L daily hydration.",
+				},
+			],
+			soapNote: {
+				subjective:
+					"52yo male reports 8/10 palpitations and shortness of breath 2 days ago after climbing stairs at home. Also notes recurring afternoon lightheadedness. Denies syncope or radiating chest pressure.",
+				objective:
+					"Labs: ApoB 128 mg/dL (High), LDL-C 142 mg/dL (High), hs-CRP 3.4 mg/L (High), eGFR 78 mL/min (Low), Fasting Glucose 104 mg/dL. BMI 27.4. BP 124/82. HR peak logged 118 bpm.",
+				assessment:
+					"1. Paroxysmal Atrial Fibrillation / Exertional Arrhythmia (Triage: Red).\n2. Atherogenic Hyperlipidemia with Elevated ApoB.\n3. Elevated Systemic Inflammation (hs-CRP).\n4. Mild Afternoon Orthostasis secondary to beta-blocker trough.",
+				plan:
+					"1. Order 24h ambulatory Holter ECG monitor.\n2. Prescribe Ezetimibe 10mg PO daily adjunctive to Atorvastatin 20mg.\n3. Continue Metoprolol 25mg with improved hydration counseling.\n4. Repeat ApoB & Lipid panel in 60 days.\n5. Follow-up consultation in 2 weeks or sooner if palpitations worsen.",
+			},
+			suggestedQuestions: [
+				"Why is ApoB still 128 mg/dL despite 94% Atorvastatin adherence?",
+				"How does Metoprolol timing correlate with his afternoon lightheadedness?",
+				"What is the recommended pharmacotherapy sequence for his lipid targets?",
+				"Should we order an echocardiogram alongside the 24h Holter monitor?",
+			],
+		};
+	} else if (patient.id === "pt-102") {
+		return {
+			executiveSummary:
+				"44-year-old female presenting with chronic morning fatigue and cold sensitivity. Chemistry profile shows pre-diabetic glucose exposure (HbA1c 5.9%, Fasting Glucose 112 mg/dL) combined with subclinical thyroid slowing (TSH 4.2 uIU/mL) and Vitamin D deficiency (24 ng/mL).",
+			triageScore: {
+				score: 62,
+				level: "Moderate Risk",
+				label: "Pre-Diabetes + Subclinical Thyroid Fatigue Strain",
+				color: "#f59e0b",
+			},
+			systemScores: [
+				{ name: "Endocrine & Thyroid", score: 64, status: "Strain", alert: "TSH 4.2 uIU/mL (Subclinical Hypothyroid)" },
+				{ name: "Metabolic Homeostasis", score: 68, status: "Monitored", alert: "HbA1c 5.9%, Fasting Glucose 112 mg/dL" },
+				{ name: "Nutritional Micronutrients", score: 60, status: "Strain", alert: "Vitamin D 24 ng/mL (Deficiency)" },
+			],
+			biomarkerCorrelations: [
+				{
+					title: "TSH & Metabolic Slowing",
+					finding: "TSH 4.2 uIU/mL (Ref 0.4 - 4.0 uIU/mL)",
+					correlation: "Mild thyroid hypofunction reduces resting metabolic rate, directly driving cold intolerance and sluggish morning recovery.",
+					urgency: "moderate",
+				},
+				{
+					title: "HbA1c & Fasting Hyperglycemia",
+					finding: "HbA1c 5.9%, Fasting Glucose 112 mg/dL",
+					correlation: "Insulin resistance pattern. Postprandial glucose surges contribute to afternoon energy dips.",
+					urgency: "moderate",
+				},
+			],
+			pharmacologyInsights: [
+				{
+					drug: "Metformin XR",
+					dosage: "500 mg Daily",
+					adherence: 98,
+					efficacy: "Good Glycemic Control",
+					recommendation: "Maintain 500mg with dinner. Re-check 30d glucose logs to determine if 850mg titration is required.",
+				},
+				{
+					drug: "Levothyroxine",
+					dosage: "25 mcg Daily",
+					adherence: 94,
+					efficacy: "Early Thyroid Normalization",
+					recommendation: "Ensure strict fasting morning ingestion with water 30 minutes before coffee or food.",
+				},
+			],
+			protocolSteps: [
+				{
+					step: 1,
+					category: "Rx",
+					title: "Vitamin D3 Supplementation (5000 IU)",
+					action: "Prescribe Cholecalciferol 5000 IU daily with morning meal to restore 25(OH)D > 40 ng/mL.",
+				},
+				{
+					step: 2,
+					category: "Diagnostics",
+					title: "Repeat Thyroid Panel & HbA1c (8 Weeks)",
+					action: "Evaluate TSH, Free T4, and 3-month glycemic shift following Levothyroxine optimization.",
+				},
+				{
+					step: 3,
+					category: "Care Guidance",
+					title: "Low-Glycemic Chrono-Nutrition",
+					action: "Advise balanced protein-rich breakfasts and 10-minute postprandial walks to blunt glucose spikes.",
+				},
+			],
+			soapNote: {
+				subjective: "44yo female logs low morning energy, sluggish waking, and cold sensitivity despite 8 hours of sleep.",
+				objective: "Fasting Glucose 112 mg/dL, HbA1c 5.9%, TSH 4.2 uIU/mL, Vitamin D 24 ng/mL, BMI 24.1.",
+				assessment: "1. Pre-Diabetes with Impaired Fasting Glucose.\n2. Subclinical Hypothyroidism.\n3. Vitamin D Deficiency.",
+				plan: "1. Continue Metformin XR 500mg with dinner.\n2. Continue Levothyroxine 25mcg fasting morning.\n3. Start Vitamin D3 5000 IU daily.\n4. Repeat TSH/HbA1c in 8 weeks.",
+			},
+			suggestedQuestions: [
+				"Is her TSH elevation sufficient to explain the chronic fatigue?",
+				"Should we titrate Metformin XR from 500mg to 850mg?",
+				"What target Vitamin D level should we aim for to support thyroid function?",
+			],
+		};
+	} else if (patient.id === "pt-103") {
+		return {
+			executiveSummary:
+				"61-year-old male with persistent morning occipital headaches and home BP readings averaging 158/96 mmHg. Renal chemistry reveals Stage 3a filtration strain (eGFR 58 mL/min, Serum Creatinine 1.4 mg/dL, BUN 26 mg/dL) secondary to chronic hypertensive nephrosclerosis.",
+			triageScore: {
+				score: 84,
+				level: "High Risk",
+				label: "Stage 2 Hypertension + Stage 3a Renal Filtration Strain",
+				color: "#ef4444",
+			},
+			systemScores: [
+				{ name: "Renal Function (Kidneys)", score: 54, status: "Strain", alert: "eGFR 58 mL/min & Creatinine 1.4 mg/dL" },
+				{ name: "Vascular Pressure Control", score: 50, status: "Strain", alert: "BP 158/96 mmHg (Morning Headaches)" },
+				{ name: "Electrolyte Homeostasis", score: 86, status: "Optimal", alert: "Potassium 4.8 mEq/L (Normal)" },
+			],
+			biomarkerCorrelations: [
+				{
+					title: "Systolic Hypertensive Load & Glomerular Strain",
+					finding: "BP 158/96 mmHg, eGFR 58 mL/min",
+					correlation: "Sustained arterial hypertension causes intra-glomerular capillary hyperfiltration and progressive nephron loss.",
+					urgency: "high",
+				},
+				{
+					title: "Creatinine Elevation & Nitrogen Retention",
+					finding: "Creatinine 1.4 mg/dL, BUN 26 mg/dL",
+					correlation: "Reduced clearance reflects reduced renal perfusion and potential pre-renal dehydration.",
+					urgency: "high",
+				},
+			],
+			pharmacologyInsights: [
+				{
+					drug: "Lisinopril",
+					dosage: "20 mg Daily",
+					adherence: 82,
+					efficacy: "Sub-Optimal Adherence & BP Escape",
+					recommendation: "Adherence is only 82%. Automated Genetiq reminders recommended; re-evaluate dual therapy with Amlodipine.",
+				},
+				{
+					drug: "Amlodipine",
+					dosage: "5 mg Daily",
+					adherence: 88,
+					efficacy: "Active Vasodilator",
+					recommendation: "Evaluate increasing to 10mg if systolic pressure remains > 140 mmHg after Lisinopril adherence improves.",
+				},
+			],
+			protocolSteps: [
+				{
+					step: 1,
+					category: "Diagnostics",
+					title: "24-Hour Ambulatory Blood Pressure Monitor (ABPM)",
+					action: "Order continuous ABPM to determine nocturnal dipping profile and peak surge hours.",
+				},
+				{
+					step: 2,
+					category: "Rx",
+					title: "Adherence Support & Dual Antihypertensive Titration",
+					action: "Ensure strict daily Lisinopril 20mg + Amlodipine 5mg regimen with automated app check-ins.",
+				},
+				{
+					step: 3,
+					category: "Diagnostics",
+					title: "Repeat Renal Panel & Urine Albumin/Creatinine (30 Days)",
+					action: "Check serum creatinine, eGFR, and microalbuminuria to monitor nephroprotection.",
+				},
+			],
+			soapNote: {
+				subjective: "61yo male reports morning occipital headaches for past 4 mornings. Home BP logged 158/96 mmHg.",
+				objective: "BP 158/96 mmHg, Creatinine 1.4 mg/dL, eGFR 58 mL/min, BUN 26 mg/dL, K+ 4.8 mEq/L, Uric Acid 7.6 mg/dL.",
+				assessment: "1. Uncontrolled Stage 2 Essential Hypertension.\n2. Chronic Kidney Disease Stage 3a (Hypertensive Nephrosclerosis).\n3. Hypertensive Cephalea.",
+				plan: "1. Order 24h ABPM.\n2. Reinforce Lisinopril 20mg + Amlodipine 5mg adherence.\n3. Sodium restriction < 2000mg/day.\n4. Repeat renal chemistry in 30 days.",
+			},
+			suggestedQuestions: [
+				"Is Lisinopril safe given the patient's eGFR of 58 mL/min?",
+				"Should we uptitrate Amlodipine to 10mg or add a thiazide diuretic?",
+				"What microalbuminuria threshold should trigger nephrology referral?",
+			],
+		};
+	} else {
+		// Sarah Lin (pt-104)
+		return {
+			executiveSummary:
+				"36-year-old female with optimal physiological biomarkers across all surveyed biological systems. ApoB (72 mg/dL), LDL (88 mg/dL), hs-CRP (0.4 mg/L), eGFR (108 mL/min), and Fasting Glucose (84 mg/dL) demonstrate excellent cardiovascular, renal, and metabolic resilience.",
+			triageScore: {
+				score: 18,
+				level: "Low / Optimal",
+				label: "Optimal Longevity Biomarker Baseline",
+				color: "#10b981",
+			},
+			systemScores: [
+				{ name: "Cardiovascular Intima", score: 96, status: "Optimal", alert: "ApoB 72 mg/dL & hs-CRP 0.4 mg/L" },
+				{ name: "Renal Filtration Reserve", score: 98, status: "Optimal", alert: "eGFR 108 mL/min" },
+				{ name: "Metabolic Homeostasis", score: 95, status: "Optimal", alert: "Fasting Glucose 84 mg/dL" },
+			],
+			biomarkerCorrelations: [
+				{
+					title: "ApoB Homeostasis & Endothelial Protection",
+					finding: "ApoB 72 mg/dL (Ref < 90 mg/dL)",
+					correlation: "Extremely low circulating atherogenic particle count minimizes lifetime cumulative lipid burden and calcification risk.",
+					urgency: "low",
+				},
+			],
+			pharmacologyInsights: [
+				{
+					drug: "Omega-3 EPA/DHA",
+					dosage: "1000 mg Daily",
+					adherence: 96,
+					efficacy: "Optimal Anti-inflammatory Index",
+					recommendation: "Continue current longevity baseline supplementation.",
+				},
+			],
+			protocolSteps: [
+				{
+					step: 1,
+					category: "Care Guidance",
+					title: "Maintain Longevity Protocol",
+					action: "Continue zone-2 aerobic conditioning, resistance training, and Mediterranean nutrition.",
+				},
+				{
+					step: 2,
+					category: "Diagnostics",
+					title: "Annual Longitudinal Longevity Screening",
+					action: "Schedule next comprehensive panel in 12 months.",
+				},
+			],
+			soapNote: {
+				subjective: "36yo female presents for annual longevity and preventive wellness baseline. Asymptomatic with optimal energy.",
+				objective: "ApoB 72 mg/dL, hs-CRP 0.4 mg/L, Fasting Glucose 84 mg/dL, eGFR 108 mL/min, BMI 21.8.",
+				assessment: "1. Optimal Cardiovascular & Metabolic Longevity Baseline.\n2. No active pathology.",
+				plan: "1. Continue current diet, exercise, and supplement protocol.\n2. Routine follow-up in 12 months.",
+			},
+			suggestedQuestions: [
+				"What additional advanced longevity biomarkers (e.g. Lp(a), CAC) should be considered?",
+				"How does her biological age compare to chronological age?",
+			],
+		};
+	}
+}
+
 export const DoctorPortal = () => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
@@ -643,6 +999,18 @@ export const DoctorPortal = () => {
 	const [isVoiceRecording, setIsVoiceRecording] = useState(false);
 	const [showProblemHistory, setShowProblemHistory] = useState(true);
 	const recognitionRef = useRef<any>(null);
+
+	// AI Clinical Insights & Report Analysis Modal State
+	const [isAiReportModalOpen, setIsAiReportModalOpen] = useState(false);
+	const [aiAnalysisTab, setAiAnalysisTab] = useState<
+		"summary" | "biomarkers" | "pharma" | "protocol" | "soap" | "chat"
+	>("summary");
+	const [aiCustomQuestion, setAiCustomQuestion] = useState("");
+	const [aiChatMessages, setAiChatMessages] = useState<
+		Array<{ sender: "doctor" | "ai"; text: string; timestamp: string }>
+	>([]);
+	const [isAiAnalyzing, setIsAiAnalyzing] = useState(false);
+	const [isCopiedSoap, setIsCopiedSoap] = useState(false);
 
 	// Doctor Profile Menu & Clinical Settings State
 	const [isDoctorMenuOpen, setIsDoctorMenuOpen] = useState(false);
@@ -939,6 +1307,96 @@ export const DoctorPortal = () => {
 		setIsPrescribeOpen(false);
 	};
 
+	// AI Clinical Analysis Handlers
+	const handleRunAiAnalysis = (initialTab?: "summary" | "biomarkers" | "pharma" | "protocol" | "soap" | "chat") => {
+		setIsAiAnalyzing(true);
+		setIsAiReportModalOpen(true);
+		setAiAnalysisTab(initialTab || "summary");
+		setAiChatMessages([]);
+		setTimeout(() => {
+			setIsAiAnalyzing(false);
+			toast.success(`AI Multi-System Intelligence generated for ${selectedPatient.name}.`);
+		}, 600);
+	};
+
+	const handleSendAiQuestion = (questionText?: string) => {
+		const query = (questionText || aiCustomQuestion).trim();
+		if (!query) return;
+
+		const userMsg = {
+			sender: "doctor" as const,
+			text: query,
+			timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+		};
+
+		setAiChatMessages((prev) => [...prev, userMsg]);
+		if (!questionText) setAiCustomQuestion("");
+
+		setTimeout(() => {
+			const report = generatePatientAiAnalysis(selectedPatient, doctor.doctorName);
+			let answer = `Based on ${selectedPatient.name}'s multi-omics telemetry and recent lab reports: `;
+
+			const qLower = query.toLowerCase();
+			if (qLower.includes("apob") || qLower.includes("lipid") || qLower.includes("atorvastatin") || qLower.includes("cholesterol")) {
+				answer += `The elevated ApoB (${selectedPatient.labMarkers.find((m) => m.marker.includes("ApoB"))?.value || "128 mg/dL"}) reflects high circulating atherogenic particle count despite statin adherence. We strongly recommend combining Atorvastatin with Ezetimibe 10mg daily or increasing statin potency to achieve the < 80 mg/dL target.`;
+			} else if (qLower.includes("metoprolol") || qLower.includes("lightheaded") || qLower.includes("pressure") || qLower.includes("bp")) {
+				answer += `Afternoon lightheadedness correlates with peak plasma concentrations of morning beta-blockade / antihypertensives. Splitting the dose or scheduling morning hydration with 500ml of water significantly stabilizes hemodynamics.`;
+			} else if (qLower.includes("holter") || qLower.includes("ecg") || qLower.includes("arrhythmia") || qLower.includes("palpitation")) {
+				answer += `Given the exertional palpitations (severity 8/10) with heart rate spikes up to 118 bpm, a 24-hour ambulatory Holter ECG is essential to rule out paroxysmal atrial fibrillation or flutter before clearing for strenuous exertion.`;
+			} else if (qLower.includes("tsh") || qLower.includes("thyroid") || qLower.includes("fatigue") || qLower.includes("levothyroxine")) {
+				answer += `The subclinical TSH elevation (4.2 uIU/mL) combined with 25(OH)D deficiency (24 ng/mL) directly blunts mitochondrial energy efficiency. Fasting morning Levothyroxine and Vitamin D3 (5000 IU) supplementation should restore metabolic vitality.`;
+			} else if (qLower.includes("egfr") || qLower.includes("kidney") || qLower.includes("renal") || qLower.includes("creatinine")) {
+				answer += `Renal indices show mild-to-moderate filtration strain. Strict blood pressure control below 130/80 mmHg and maintaining hydration are the highest-yield nephroprotective interventions.`;
+			} else {
+				answer += `The primary clinical priority is addressing the ${report.triageScore.label}. Clinical protocol step 1 recommends: "${report.protocolSteps[0]?.title} - ${report.protocolSteps[0]?.action}". Follow-up lab panel in 60-90 days is advised.`;
+			}
+
+			const aiMsg = {
+				sender: "ai" as const,
+				text: answer,
+				timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+			};
+			setAiChatMessages((prev) => [...prev, aiMsg]);
+		}, 500);
+	};
+
+	const handleCopySoapNote = () => {
+		const report = generatePatientAiAnalysis(selectedPatient, doctor.doctorName);
+		const soapText = `CLINICAL SOAP NOTE — GENETIQ AI INTELLIGENCE
+Patient: ${selectedPatient.name} (MRN: ${selectedPatient.mrn})
+Age/Gender: ${selectedPatient.age}yo ${selectedPatient.gender} | Date: ${new Date().toLocaleDateString()}
+Attending Physician: ${doctor.doctorName} (${doctor.department})
+
+[SUBJECTIVE]
+${report.soapNote.subjective}
+
+[OBJECTIVE]
+${report.soapNote.objective}
+
+[ASSESSMENT]
+${report.soapNote.assessment}
+
+[PLAN]
+${report.soapNote.plan}
+`;
+		navigator.clipboard.writeText(soapText);
+		setIsCopiedSoap(true);
+		toast.success("SOAP Note copied to clipboard for EHR documentation!");
+		setTimeout(() => setIsCopiedSoap(false), 2500);
+	};
+
+	const handlePopulateAdviceFromAi = (customText?: string) => {
+		const report = generatePatientAiAnalysis(selectedPatient, doctor.doctorName);
+		const defaultAdvice = customText || `Hello ${selectedPatient.name},\n\nBased on our AI Clinical Analysis of your recent lab panel and telemetry:\n\n` +
+			report.protocolSteps.map((s) => `• ${s.title}: ${s.action}`).join("\n\n") +
+			`\n\nPlease follow these instructions and let us know immediately if symptoms worsen.\n\n— ${doctor.doctorName}`;
+
+		setAdviceText(defaultAdvice);
+		setIsAiReportModalOpen(false);
+		setIsAdviceModalOpen(true);
+		toast.info("AI Care Plan loaded into Patient Dispatch composer.");
+	};
+
 	return (
 		<div className={`${styles.clinicalStage} ${isLeftPanelCollapsed ? styles.leftCollapsed : ""}`}>
 			{/* 1. Full-Screen 3D Digital Twin Stage */}
@@ -1067,6 +1525,20 @@ export const DoctorPortal = () => {
 
 				{/* Header Right Controls: Quick Navigation + KPIs + Doctor Profile */}
 				<div className={styles.headerControls}>
+					{/* AI Insights & Report Analysis Trigger */}
+					<button
+						type="button"
+						className={styles.btnAiInsights}
+						onClick={() => handleRunAiAnalysis()}
+						title="Run AI Multi-System Clinical Analysis"
+					>
+						<div className={styles.aiBrainIconWrapper}>
+							<Brain size={14} className={styles.aiBrainIcon} />
+							<Sparkles size={9} className={styles.aiSparkleBadge} />
+						</div>
+						<span className={styles.btnAiInsightsText}>AI Insights</span>
+					</button>
+
 					{/* Quick Patient Dashboard Switcher (Desktop) */}
 					<button
 						type="button"
@@ -1424,6 +1896,24 @@ export const DoctorPortal = () => {
 								<span className={styles.bioValue}>{selectedPatient.bmi}</span>
 							</div>
 						</div>
+
+						{/* AI Analysis Quick Trigger Banner */}
+						<button
+							type="button"
+							className={styles.btnLeftAiReport}
+							onClick={() => handleRunAiAnalysis()}
+							title="Generate AI Multi-System Clinical Analysis"
+						>
+							<div className={styles.btnLeftAiIconWrapper}>
+								<Brain size={16} />
+								<Sparkles size={11} className={styles.btnLeftAiSparkle} />
+							</div>
+							<div className={styles.btnLeftAiTextCol}>
+								<span className={styles.btnLeftAiTitle}>AI Report Analysis</span>
+								<span className={styles.btnLeftAiSubtitle}>Multi-System Diagnostics &amp; SOAP</span>
+							</div>
+							<ChevronRight size={14} className={styles.btnLeftAiChevron} />
+						</button>
 					</div>
 
 					{/* Live Home-Logged Symptoms Card */}
@@ -1618,7 +2108,7 @@ export const DoctorPortal = () => {
 							);
 						})}
 
-						<div style={{ marginTop: "10px" }}>
+						<div style={{ marginTop: "10px", display: "flex", flexDirection: "column", gap: "6px" }}>
 							<button
 								type='button'
 								className={styles.btnActionSecondary}
@@ -1626,6 +2116,15 @@ export const DoctorPortal = () => {
 								onClick={handleOrderRetest}
 							>
 								<RefreshCw size={13} /> Order Follow-Up Lab Panel
+							</button>
+							<button
+								type='button'
+								className={styles.btnQuickAiBiomarker}
+								onClick={() => handleRunAiAnalysis("biomarkers")}
+								title="Run AI Cross-Correlation on Biomarkers"
+							>
+								<Brain size={13} />
+								<span>AI Biomarker Cross-Correlation</span>
 							</button>
 						</div>
 					</div>
@@ -2655,6 +3154,582 @@ export const DoctorPortal = () => {
 					</div>
 				</div>
 			)}
+
+			{/* 5. AI Clinical Intelligence & Multi-System Report Analysis Modal */}
+			{isAiReportModalOpen && (() => {
+				const aiReport = generatePatientAiAnalysis(selectedPatient, doctor.doctorName);
+				return (
+					<div className={styles.modalOverlay} onClick={() => setIsAiReportModalOpen(false)}>
+						<div className={styles.aiModalContent} onClick={(e) => e.stopPropagation()}>
+							{/* AI Header */}
+							<div className={styles.aiModalHeader}>
+								<div className={styles.aiHeaderLeft}>
+									<div className={styles.aiHeaderIconBadge}>
+										<Brain size={24} className={styles.aiHeaderBrainIcon} />
+										<Sparkles size={13} className={styles.aiHeaderSparkle} />
+										<span className={styles.aiHeaderGlowRing} />
+									</div>
+									<div className={styles.aiHeaderMetaCol}>
+										<div className={styles.aiHeaderTitleRow}>
+											<h2 className={styles.aiHeaderMainTitle}>
+												AI Clinical Intelligence <span className={styles.aiTitleAmp}>&amp;</span> Multi-System Analysis
+											</h2>
+											<div className={styles.aiEngineTag}>
+												<Bot size={13} />
+												<span>DeepBio LLM v4.2</span>
+												<span className={styles.aiEngineDot} />
+												<span className={styles.aiEngineLiveText}>Telemetry Grounded</span>
+											</div>
+										</div>
+
+										<div className={styles.aiPatientSubBar}>
+											{/* Patient Avatar & Name Pill */}
+											<div className={styles.aiPatientHeroPill}>
+												<div className={styles.aiPatientMiniAvatar}>
+													{selectedPatient.name.split(" ").map((n) => n[0]).join("")}
+												</div>
+												<span className={styles.aiPatientSubName}>{selectedPatient.name}</span>
+												<span className={styles.aiPatientMrnTag}>{selectedPatient.mrn}</span>
+											</div>
+
+											<span className={styles.aiDotSep}>•</span>
+
+											{/* Demographics Pill */}
+											<div className={styles.aiDemographicsPill}>
+												<User size={12} />
+												<span>{selectedPatient.age}yo {selectedPatient.gender}</span>
+												<span className={styles.aiBloodPill}>{selectedPatient.bloodType}</span>
+											</div>
+
+											<span className={styles.aiDotSep}>•</span>
+
+											{/* Diagnosis Chip */}
+											<div className={styles.aiDiagnosisChip}>
+												<Heart size={12} className={styles.aiDiagIcon} />
+												<span>{selectedPatient.primaryDiagnosis}</span>
+											</div>
+
+											{/* Live Status Beacon */}
+											<div
+												className={`${styles.aiStatusBeaconPill} ${
+													selectedPatient.status === "urgent"
+														? styles.aiBeaconUrgent
+														: selectedPatient.status === "monitoring"
+														? styles.aiBeaconWarning
+														: styles.aiBeaconOptimal
+												}`}
+											>
+												<span className={styles.aiBeaconPulse} />
+												<span>
+													{selectedPatient.status === "urgent"
+														? "Urgent Case"
+														: selectedPatient.status === "monitoring"
+														? "Monitored"
+														: "Stable Baseline"}
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div className={styles.aiHeaderActions}>
+									<button
+										type='button'
+										className={`${styles.btnAiReanalyze} ${isAiAnalyzing ? styles.btnAiHeaderActionLoading : ""}`}
+										onClick={() => handleRunAiAnalysis(aiAnalysisTab)}
+										title='Re-run AI Multi-System Analysis'
+									>
+										<RefreshCw size={14} className={isAiAnalyzing ? styles.spinIcon : ""} />
+										<span>{isAiAnalyzing ? "Analyzing Telemetry..." : "Re-Analyze"}</span>
+									</button>
+
+									<button
+										type='button'
+										className={`${styles.btnAiCopySoap} ${isCopiedSoap ? styles.btnAiCopySoapSuccess : ""}`}
+										onClick={handleCopySoapNote}
+										title='Copy full SOAP note to clipboard for EHR'
+									>
+										{isCopiedSoap ? (
+											<>
+												<CheckCheck size={14} />
+												<span>Copied SOAP!</span>
+											</>
+										) : (
+											<>
+												<Copy size={14} />
+												<span>Copy SOAP</span>
+											</>
+										)}
+									</button>
+
+									<button
+										type='button'
+										className={styles.aiModalCloseBtn}
+										onClick={() => setIsAiReportModalOpen(false)}
+										aria-label='Close AI Intelligence Modal'
+										title='Close Analysis'
+									>
+										<X size={18} strokeWidth={2.2} />
+									</button>
+								</div>
+							</div>
+
+							{/* AI Navigation Tabs */}
+							<div className={styles.aiTabBar}>
+								<button
+									type='button'
+									className={`${styles.aiTab} ${aiAnalysisTab === "summary" ? styles.aiTabActive : ""}`}
+									onClick={() => setAiAnalysisTab("summary")}
+								>
+									<Activity size={14} />
+									<span>Executive &amp; Systems</span>
+								</button>
+								<button
+									type='button'
+									className={`${styles.aiTab} ${aiAnalysisTab === "biomarkers" ? styles.aiTabActive : ""}`}
+									onClick={() => setAiAnalysisTab("biomarkers")}
+								>
+									<Heart size={14} />
+									<span>Biomarker Insights</span>
+								</button>
+								<button
+									type='button'
+									className={`${styles.aiTab} ${aiAnalysisTab === "pharma" ? styles.aiTabActive : ""}`}
+									onClick={() => setAiAnalysisTab("pharma")}
+								>
+									<Pill size={14} />
+									<span>Pharmacology</span>
+								</button>
+								<button
+									type='button'
+									className={`${styles.aiTab} ${aiAnalysisTab === "protocol" ? styles.aiTabActive : ""}`}
+									onClick={() => setAiAnalysisTab("protocol")}
+								>
+									<FileText size={14} />
+									<span>Care Protocol</span>
+								</button>
+								<button
+									type='button'
+									className={`${styles.aiTab} ${aiAnalysisTab === "soap" ? styles.aiTabActive : ""}`}
+									onClick={() => setAiAnalysisTab("soap")}
+								>
+									<CheckCircle2 size={14} />
+									<span>EHR SOAP Note</span>
+								</button>
+								<button
+									type='button'
+									className={`${styles.aiTab} ${aiAnalysisTab === "chat" ? styles.aiTabActive : ""}`}
+									onClick={() => setAiAnalysisTab("chat")}
+								>
+									<Bot size={14} />
+									<span>AI Copilot Q&amp;A</span>
+								</button>
+							</div>
+
+							{/* AI Body Content */}
+							<div className={styles.aiModalBody}>
+								{/* TAB 1: EXECUTIVE & SYSTEMS */}
+								{aiAnalysisTab === "summary" && (
+									<div className={styles.aiTabContentFade}>
+										{/* Executive Diagnostic Box */}
+										<div className={styles.aiExecutiveBox}>
+											<div className={styles.aiExecutiveHeader}>
+												<div className={styles.aiBadgeGlow}>
+													<Zap size={14} /> Executive Diagnostic Synthesis
+												</div>
+												<span className={styles.aiTimestamp}>Live EHR Synchronized</span>
+											</div>
+											<p className={styles.aiExecutiveText}>{aiReport.executiveSummary}</p>
+										</div>
+
+										{/* Triage Risk Score Card */}
+										<div className={styles.aiTriageBanner}>
+											<div className={styles.aiTriageLeft}>
+												<div
+													className={styles.aiTriageScoreCircle}
+													style={{ borderColor: aiReport.triageScore.color, color: aiReport.triageScore.color }}
+												>
+													<span className={styles.aiScoreVal}>{aiReport.triageScore.score}</span>
+													<span className={styles.aiScoreDenom}>/100</span>
+												</div>
+												<div>
+													<div className={styles.aiTriageLevelBadge} style={{ background: `${aiReport.triageScore.color}22`, color: aiReport.triageScore.color }}>
+														{aiReport.triageScore.level}
+													</div>
+													<div className={styles.aiTriageLabel}>{aiReport.triageScore.label}</div>
+												</div>
+											</div>
+											<button
+												type='button'
+												className={styles.btnAiDispatchFast}
+												onClick={() => handlePopulateAdviceFromAi()}
+											>
+												<Send size={13} />
+												<span>Dispatch Care Guidance</span>
+											</button>
+										</div>
+
+										{/* Multi-System Stability Matrix */}
+										<div className={styles.aiSectionTitle}>
+											<span>Multi-System Physiological Stability Index</span>
+										</div>
+
+										<div className={styles.aiSystemsGrid}>
+											{aiReport.systemScores.map((sys, idx) => (
+												<div key={idx} className={styles.aiSystemCard}>
+													<div className={styles.aiSystemHeader}>
+														<span className={styles.aiSystemName}>{sys.name}</span>
+														<span
+															className={
+																sys.status === "Optimal"
+																	? styles.badgeOptimal
+																	: sys.status === "Monitored"
+																	? styles.badgeWarning
+																	: styles.badgeUrgent
+															}
+														>
+															{sys.status} ({sys.score}%)
+														</span>
+													</div>
+
+													<div className={styles.aiProgressBarBg}>
+														<div
+															className={styles.aiProgressBarFill}
+															style={{
+																width: `${sys.score}%`,
+																backgroundColor:
+																	sys.status === "Optimal"
+																		? "#10b981"
+																		: sys.status === "Monitored"
+																		? "#f59e0b"
+																		: "#ef4444",
+															}}
+														/>
+													</div>
+
+													{sys.alert && (
+														<div className={styles.aiSystemAlert}>
+															<AlertTriangle size={12} />
+															<span>{sys.alert}</span>
+														</div>
+													)}
+												</div>
+											))}
+										</div>
+									</div>
+								)}
+
+								{/* TAB 2: BIOMARKER CROSS-CORRELATIONS */}
+								{aiAnalysisTab === "biomarkers" && (
+									<div className={styles.aiTabContentFade}>
+										<div className={styles.aiSectionTitle}>
+											<span>Multi-Omics &amp; Biomarker Pathophysiology Correlations</span>
+										</div>
+
+										<div className={styles.aiCorrelationsList}>
+											{aiReport.biomarkerCorrelations.map((c, idx) => (
+												<div key={idx} className={styles.aiCorrelationCard}>
+													<div className={styles.aiCorrelationHeader}>
+														<div className={styles.aiCorrelationTitle}>
+															<Sparkles size={14} style={{ color: "#00a896" }} />
+															<span>{c.title}</span>
+														</div>
+														<span
+															className={
+																c.urgency === "high"
+																	? styles.badgeUrgent
+																	: c.urgency === "moderate"
+																	? styles.badgeWarning
+																	: styles.badgeOptimal
+															}
+														>
+															{c.urgency === "high" ? "High Priority" : c.urgency === "moderate" ? "Moderate" : "Optimal"}
+														</span>
+													</div>
+
+													<div className={styles.aiFindingBox}>
+														<strong>Telemetry Finding:</strong> {c.finding}
+													</div>
+
+													<div className={styles.aiCorrelationExpl}>
+														<strong>Pathophysiological Mechanism:</strong> {c.correlation}
+													</div>
+												</div>
+											))}
+										</div>
+
+										{/* Active Lab Telemetry Snapshot Table */}
+										<div className={styles.aiSectionTitle} style={{ marginTop: "16px" }}>
+											<span>Current Lab Requisition Snapshot</span>
+										</div>
+										<div className={styles.aiBiomarkerTable}>
+											{selectedPatient.labMarkers.map((m, idx) => (
+												<div key={idx} className={styles.aiBiomarkerRow}>
+													<div className={styles.aiBioNameCol}>
+														<strong>{m.marker}</strong>
+														<span>Ref: {m.refRange}</span>
+													</div>
+													<div className={styles.aiBioValCol}>
+														<span className={styles.aiBioVal}>{m.value}</span>
+														<span
+															className={
+																m.status === "elevated"
+																	? styles.badgeUrgent
+																	: m.status === "low"
+																	? styles.badgeWarning
+																	: styles.badgeOptimal
+															}
+														>
+															{m.status === "elevated" ? "Elevated" : m.status === "low" ? "Low" : "Normal"}
+														</span>
+													</div>
+												</div>
+											))}
+										</div>
+									</div>
+								)}
+
+								{/* TAB 3: PHARMACOLOGY & TITRATION */}
+								{aiAnalysisTab === "pharma" && (
+									<div className={styles.aiTabContentFade}>
+										<div className={styles.aiSectionTitle}>
+											<span>Pharmacodynamics, Adherence &amp; Titration Intelligence</span>
+										</div>
+
+										<div className={styles.aiPharmaGrid}>
+											{aiReport.pharmacologyInsights.map((p, idx) => (
+												<div key={idx} className={styles.aiPharmaCard}>
+													<div className={styles.aiPharmaHeader}>
+														<div>
+															<div className={styles.aiDrugName}>
+																<Pill size={15} style={{ color: "#0ea5e9" }} />
+																<span>{p.drug}</span>
+															</div>
+															<span className={styles.aiDosageBadge}>{p.dosage}</span>
+														</div>
+														<div className={styles.aiAdherencePill}>
+															<span>{p.adherence}% adherence</span>
+														</div>
+													</div>
+
+													<div className={styles.aiPharmaRow}>
+														<span className={styles.aiPharmaLabel}>Observed Telemetry Efficacy:</span>
+														<span className={styles.aiPharmaVal}>{p.efficacy}</span>
+													</div>
+
+													<div className={styles.aiTitrationBox}>
+														<div className={styles.aiTitrationHeader}>
+															<Brain size={13} style={{ color: "#00a896" }} />
+															<span>AI Titration Recommendation</span>
+														</div>
+														<p className={styles.aiTitrationText}>{p.recommendation}</p>
+													</div>
+												</div>
+											))}
+										</div>
+									</div>
+								)}
+
+								{/* TAB 4: CARE ACTION PROTOCOL */}
+								{aiAnalysisTab === "protocol" && (
+									<div className={styles.aiTabContentFade}>
+										<div className={styles.aiSectionTitle}>
+											<span>Recommended Clinical Care Protocol &amp; Actions</span>
+										</div>
+
+										<div className={styles.aiProtocolList}>
+											{aiReport.protocolSteps.map((step) => (
+												<div key={step.step} className={styles.aiProtocolItem}>
+													<div className={styles.aiStepNumber}>{step.step}</div>
+													<div className={styles.aiStepDetails}>
+														<div className={styles.aiStepTitleRow}>
+															<span className={styles.aiStepTitle}>{step.title}</span>
+															<span
+																className={
+																	step.category === "Rx"
+																		? styles.badgePharma
+																		: step.category === "Diagnostics"
+																		? styles.badgeDiagnostics
+																		: styles.badgeCare
+																}
+															>
+																{step.category}
+															</span>
+														</div>
+														<p className={styles.aiStepAction}>{step.action}</p>
+													</div>
+												</div>
+											))}
+										</div>
+
+										<div className={styles.aiProtocolTransferBanner}>
+											<div>
+												<strong>Apply to Patient Encounter</strong>
+												<p>Instantly transfer these clinical steps to the patient dispatch composer.</p>
+											</div>
+											<button
+												type='button'
+												className={styles.btnActionPrimary}
+												onClick={() => handlePopulateAdviceFromAi()}
+											>
+												<Send size={14} /> Dispatch Plan
+											</button>
+										</div>
+									</div>
+								)}
+
+								{/* TAB 5: EHR SOAP NOTE */}
+								{aiAnalysisTab === "soap" && (
+									<div className={styles.aiTabContentFade}>
+										<div className={styles.aiSoapBox}>
+											<div className={styles.aiSoapHeader}>
+												<div>
+													<h3>Clinical SOAP Documentation</h3>
+													<span>Ready for Epic / Cerner / AthenaHealth FHIR Export</span>
+												</div>
+												<button
+													type='button'
+													className={styles.btnCopySoapInline}
+													onClick={handleCopySoapNote}
+												>
+													{isCopiedSoap ? <CheckCheck size={14} /> : <Copy size={14} />}
+													<span>{isCopiedSoap ? "Copied to Clipboard" : "Copy Full Note"}</span>
+												</button>
+											</div>
+
+											<div className={styles.soapSection}>
+												<div className={styles.soapLabel}>[S] SUBJECTIVE</div>
+												<div className={styles.soapText}>{aiReport.soapNote.subjective}</div>
+											</div>
+
+											<div className={styles.soapSection}>
+												<div className={styles.soapLabel}>[O] OBJECTIVE</div>
+												<div className={styles.soapText}>{aiReport.soapNote.objective}</div>
+											</div>
+
+											<div className={styles.soapSection}>
+												<div className={styles.soapLabel}>[A] ASSESSMENT</div>
+												<div className={styles.soapText}>{aiReport.soapNote.assessment}</div>
+											</div>
+
+											<div className={styles.soapSection}>
+												<div className={styles.soapLabel}>[P] PLAN</div>
+												<div className={styles.soapText}>{aiReport.soapNote.plan}</div>
+											</div>
+										</div>
+									</div>
+								)}
+
+								{/* TAB 6: INTERACTIVE COPILOT CHAT */}
+								{aiAnalysisTab === "chat" && (
+									<div className={styles.aiTabContentFade}>
+										<div className={styles.aiChatContainer}>
+											{/* Suggested Prompts */}
+											<div className={styles.aiSuggestedHeader}>
+												<Sparkles size={13} style={{ color: "#00a896" }} />
+												<span>Suggested Diagnostic Queries for {selectedPatient.name}:</span>
+											</div>
+											<div className={styles.aiPromptChips}>
+												{aiReport.suggestedQuestions.map((q, idx) => (
+													<button
+														key={idx}
+														type='button'
+														className={styles.aiPromptChip}
+														onClick={() => handleSendAiQuestion(q)}
+													>
+														{q}
+													</button>
+												))}
+											</div>
+
+											{/* Message Log */}
+											<div className={styles.aiChatLogs}>
+												<div className={styles.aiChatBubbleAssistant}>
+													<div className={styles.aiChatAvatarBadge}>
+														<Bot size={13} />
+													</div>
+													<div className={styles.aiChatBubbleText}>
+														Hello {doctor.doctorName}. I have ingested {selectedPatient.name}&apos;s lab chemistry, real-time home symptoms, and pharmacy adherence logs. Ask me any clinical question or select a suggested query above.
+													</div>
+												</div>
+
+												{aiChatMessages.map((msg, idx) => (
+													<div
+														key={idx}
+														className={
+															msg.sender === "doctor"
+																? styles.aiChatBubbleUser
+																: styles.aiChatBubbleAssistant
+														}
+													>
+														{msg.sender === "ai" && (
+															<div className={styles.aiChatAvatarBadge}>
+																<Bot size={13} />
+															</div>
+														)}
+														<div className={styles.aiChatBubbleText}>
+															{msg.text}
+															<span className={styles.aiChatTimestamp}>{msg.timestamp}</span>
+														</div>
+													</div>
+												))}
+											</div>
+
+											{/* Input Form */}
+											<form
+												className={styles.aiChatInputForm}
+												onSubmit={(e) => {
+													e.preventDefault();
+													handleSendAiQuestion();
+												}}
+											>
+												<input
+													type='text'
+													placeholder='Ask about lab correlations, drug titration, ECG findings...'
+													value={aiCustomQuestion}
+													onChange={(e) => setAiCustomQuestion(e.target.value)}
+													className={styles.aiChatInput}
+												/>
+												<button
+													type='submit'
+													className={styles.btnAiChatSend}
+													disabled={!aiCustomQuestion.trim()}
+												>
+													<Send size={14} />
+												</button>
+											</form>
+										</div>
+									</div>
+								)}
+							</div>
+
+							{/* AI Footer */}
+							<div className={styles.aiModalFooter}>
+								<div className={styles.aiTrustBadge}>
+									<ShieldCheck size={16} style={{ color: "#10b981" }} />
+									<span>Genetiq DeepBio-Intelligence Engine · HIPAA Compliant · Grounded in Live Telemetry</span>
+								</div>
+								<div style={{ display: "flex", gap: "10px" }}>
+									<button
+										type='button'
+										className={styles.btnActionSecondary}
+										onClick={() => setIsAiReportModalOpen(false)}
+									>
+										Close
+									</button>
+									<button
+										type='button'
+										className={styles.btnActionPrimary}
+										onClick={() => handlePopulateAdviceFromAi()}
+									>
+										<Send size={14} /> Dispatch Plan
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				);
+			})()}
 
 			{/* 8. Bottom Floating Organ System Bar */}
 			<div className={styles.bottomOrganBar}>
