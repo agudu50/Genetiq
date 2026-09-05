@@ -89,7 +89,7 @@ export const RegisterForm = ({ animate = false }: { animate?: boolean }) => {
 			dispatch(
 				setDoctorProfile({
 					doctorName: name.startsWith("Dr.") ? name : `Dr. ${name}`,
-					hospitalName: hospitalName.trim() || "Metropolitan Health Center",
+					hospitalName: hospitalName.trim() || "Genetiq",
 					department: department || "Cardiology & Internal Medicine",
 					title: "Attending Physician",
 				}),
@@ -186,7 +186,7 @@ export const RegisterForm = ({ animate = false }: { animate?: boolean }) => {
 								<input
 									id='reg-hospital'
 									type='text'
-									placeholder='e.g. Metropolitan Medical Center'
+											placeholder='e.g. Genetiq'
 									value={hospitalName}
 									onChange={(e) => setHospitalName(e.target.value)}
 									required

@@ -121,3 +121,57 @@
 	}
 }
 
+// ─── Mobile Responsive ────────────────────────────────────────────────────────
+
+@media (max-width: 768px) {
+	.switcherContainer {
+		width: 62px;
+		height: 32px;
+		border-radius: 100px;
+		padding: 2px;
+	}
+
+	.indicator {
+		width: 26px;
+		height: 26px;
+		top: 2px;
+		left: 2px;
+
+		transform: translateX(28px);
+
+		.light & {
+			transform: translateX(0);
+		}
+	}
+
+	.sunIcon,
+	.moonIcon {
+		width: 13px;
+		height: 13px;
+	}
+}
+
+@media (max-width: 480px) {
+	.switcherContainer {
+		width: 56px;
+		height: 30px;
+		padding: 2px;
+	}
+
+	.indicator {
+		width: 24px;
+		height: 24px;
+		transform: translateX(24px);
+
+		.light & {
+			transform: translateX(0);
+		}
+	}
+
+	.sunIcon,
+	.moonIcon {
+		width: 12px;
+		height: 12px;
+	}
+}
+

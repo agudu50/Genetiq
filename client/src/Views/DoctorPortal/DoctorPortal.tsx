@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
+import { resetUser } from "@/App/Redux/userSlice";
 import { paths } from "@/App/Routes/Paths";
 import { toast } from "react-toastify";
 import ThemeSwitcher from "@/Features/Structural/ThemeSwitcher/ThemeSwitcher";
+import { AuthCredentials } from "@/App/Services/AuthCredentials";
 import {
 	Activity,
 	AlertTriangle,
@@ -27,6 +29,7 @@ import {
 	FileText,
 	Heart,
 	History,
+	LogOut,
 	MapPin,
 	Mic,
 	MicOff,
@@ -398,10 +401,11 @@ const initialAppointments: DoctorAppointment[] = [
 
 export const DoctorPortal = () => {
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 	const user = useSelector((state: RootState) => state.user);
 	const doctor = user.doctorProfile || {
 		doctorName: "Dr. Sarah Jenkins, MD",
-		hospitalName: "Metropolitan Medical Center",
+		hospitalName: "Genetiq",
 		department: "Cardiology & Internal Medicine",
 		title: "Attending Physician",
 	};
@@ -741,7 +745,14 @@ export const DoctorPortal = () => {
 			<header className={styles.topHeader}>
 				<div className={styles.brandArea}>
 					<div className={styles.brandLogo}>
-						<Stethoscope size={20} />
+						<img
+							src="/assets/genetiq-logo.jpeg"
+							alt="Genetiq Logo"
+							className={styles.logoImage}
+							width="36"
+							height="36"
+							fetchPriority="high"
+						/>
 					</div>
 					<div className={styles.hospitalMeta}>
 						<h1 className={styles.hospitalTitle}>{doctor.hospitalName}</h1>
@@ -850,20 +861,6 @@ export const DoctorPortal = () => {
 						</div>
 					</div>
 
-					{/* Direct Appointments / Schedule Quick Trigger */}
-					<button
-						type='button'
-						className={styles.scheduleHeaderBtn}
-						onClick={() => setIsScheduleModalOpen(true)}
-						title='View Booked Patient Appointments & Schedules'
-					>
-						<Calendar size={14} style={{ color: "#ffffff" }} />
-						<span className={styles.scheduleBtnText}>Appointments</span>
-						<span className={styles.scheduleCountBadge}>
-							{appointments.filter((a) => a.status === "waiting" || a.date.includes("Today")).length} Today
-						</span>
-					</button>
-
 					{/* Theme Switcher */}
 					<ThemeSwitcher />
 
@@ -901,6 +898,20 @@ export const DoctorPortal = () => {
 								</div>
 
 								<div className={styles.menuDivider} />
+
+								{/* Direct Appointments / Schedule Quick Trigger */}
+								<button
+									type='button'
+									className={styles.scheduleHeaderBtn}
+									onClick={() => setIsScheduleModalOpen(true)}
+									title='View Booked Patient Appointments & Schedules'
+								>
+									<Calendar size={14} style={{ color: "#ffffff" }} />
+									<span className={styles.scheduleBtnText}>Appointments</span>
+									<span className={styles.scheduleCountBadge}>
+										{appointments.filter((a) => a.status === "waiting" || a.date.includes("Today")).length} Today
+									</span>
+								</button>
 
 								{/* Clinical Features & Access List */}
 								<div className={styles.doctorMenuItems}>
@@ -1048,6 +1059,21 @@ export const DoctorPortal = () => {
 										<User size={14} />
 										<span>Switch to Patient Mode</span>
 										<ExternalLink size={12} style={{ marginLeft: "auto", opacity: 0.7 }} />
+									</button>
+
+									<button
+										type='button'
+										className={styles.doctorSettingsBtn}
+										onClick={() => {
+											setIsDoctorMenuOpen(false);
+											AuthCredentials.logout();
+											dispatch(resetUser());
+											toast.success("You have been signed out.");
+											navigate(paths.auth.login, { replace: true });
+										}}
+									>
+										<LogOut size={14} />
+										<span>Log out</span>
 									</button>
 								</div>
 							</div>

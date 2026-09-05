@@ -51,7 +51,7 @@ const defaultUserState: UserState = {
 	accountType: "patient",
 	doctorProfile: {
 		doctorName: "Dr. Sarah Jenkins, MD",
-		hospitalName: "Metropolitan Health Center",
+		hospitalName: "Genetiq",
 		department: "Cardiology & Internal Medicine",
 		title: "Attending Physician",
 	},

@@ -63,14 +63,20 @@
 .brandLogo {
 	width: 36px;
 	height: 36px;
-	border-radius: 10px;
-	background: #064e3b;
-	border: 1px solid rgba(255, 255, 255, 0.2);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: #ffffff;
-	box-shadow: 0 4px 14px rgba(6, 78, 59, 0.4);
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.logoImage {
+	width: 36px;
+	height: 36px;
+	border-radius: 8px;
+	object-fit: cover;
+	display: block;
+	border: 1px solid var(--lp-border);
 }
 
 .hospitalMeta {
@@ -2721,36 +2727,55 @@
 
 @media (max-width: 768px) {
 	.topHeader {
-		padding: 0 10px;
-		height: 56px;
-		gap: 6px;
+		padding: 0 12px;
+		height: 70px;
+		gap: 12px;
 	}
 
 	.brandArea {
-		gap: 6px;
+		gap: 10px;
 		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		min-width: fit-content;
 	}
 
 	.brandLogo {
-		width: 28px;
-		height: 28px;
+		width: 36px;
+		height: 36px;
 		border-radius: 8px;
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: contain;
+		}
 		svg {
-			width: 15px;
-			height: 15px;
+			width: 20px;
+			height: 20px;
 		}
 	}
 
 	.hospitalTitle {
-		font-size: 0.78rem !important;
-		max-width: 80px;
+		font-size: 0.95rem !important;
+		font-weight: 700;
+		max-width: 180px;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
 
 	.hospitalSubtitle {
-		display: none;
+		display: block;
+		font-size: 0.7rem;
+		max-width: 180px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		opacity: 0.8;
 	}
 
 	.patientSwitcherWrapper {
@@ -2762,11 +2787,12 @@
 	}
 
 	.patientSwitcherBtn {
-		padding: 5px 10px;
-		gap: 5px;
+		padding: 6px 12px;
+		gap: 6px;
 		border-radius: 20px;
 		max-width: 100%;
 		background: rgba(255, 255, 255, 0.08);
+		font-size: 0.75rem;
 
 		:global(html[data-theme="light"]) & {
 			background: #f1f5f9;
@@ -2776,34 +2802,98 @@
 
 	.activePatientPill {
 		gap: 5px;
-		font-size: 0.76rem;
+		font-size: 0.75rem;
 		min-width: 0;
+		display: flex;
+		align-items: center;
+		svg {
+			width: 13px;
+			height: 13px;
+			flex-shrink: 0;
+		}
 	}
 
 	.patientNameFull {
-		display: none;
-	}
-
-	.patientNameMobile {
 		display: inline;
-		font-size: 0.76rem;
+		font-size: 0.75rem;
 		font-weight: 700;
-		max-width: 90px;
+		max-width: 140px;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
 
+	.patientNameMobile {
+		display: none;
+	}
+
 	.patientDropdownMenu {
 		position: fixed;
-		top: 58px;
-		left: 8px;
-		right: 8px;
+		top: 75px;
+		left: 12px;
+		right: 12px;
 		width: auto;
 		transform: none;
-		max-height: calc(100dvh - 70px);
+		max-height: calc(100dvh - 85px);
 		z-index: 1000;
 		border-radius: 16px;
+	}
+
+	.headerControls {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		flex-shrink: 0;
+	}
+
+	.kpiPills {
+		display: none !important;
+	}
+
+	.scheduleHeaderBtn {
+		padding: 6px 10px;
+		border-radius: 20px;
+		font-size: 0.75rem;
+		gap: 5px;
+		flex-shrink: 0;
+		background: #064e3b;
+		border: 1px solid #064e3b;
+		white-space: nowrap;
+
+		svg {
+			width: 13px;
+			height: 13px;
+		}
+	}
+
+	.scheduleBtnText {
+		display: inline !important;
+	}
+
+	.scheduleCountBadge {
+		display: inline !important;
+		font-size: 0.7rem;
+	}
+
+	.doctorMenuWrapper {
+		flex-shrink: 0;
+	}
+
+	.doctorTriggerBtn {
+		width: 40px;
+		height: 40px;
+		padding: 0;
+		flex-shrink: 0;
+	}
+
+	.doctorAvatarBadge {
+		width: 100%;
+		height: 100%;
+		font-size: 0.75rem;
+
+		span:first-child {
+			font-weight: 700;
+		}
 	}
 
 	.patientBtnLabel {
@@ -2934,6 +3024,83 @@
 		button {
 			width: 100%;
 		}
+	}
+}
+
+// ─── Ultra-Mobile Optimization (Under 480px) ─────────────────────────────────
+
+@media (max-width: 480px) {
+	.topHeader {
+		padding: 8px;
+		height: 70px;
+		gap: 8px;
+	}
+
+	.brandArea {
+		gap: 8px;
+		flex-shrink: 0;
+	}
+
+	.brandLogo {
+		width: 32px;
+		height: 32px;
+		min-width: 32px;
+	}
+
+	.hospitalTitle {
+		font-size: 0.9rem !important;
+		max-width: 110px;
+	}
+
+	.hospitalSubtitle {
+		font-size: 0.65rem;
+		max-width: 110px;
+	}
+
+	.patientSwitcherBtn {
+		padding: 5px 10px;
+		border-radius: 18px;
+		font-size: 0.7rem;
+		gap: 4px;
+	}
+
+	.patientNameFull {
+		max-width: 100px;
+		font-size: 0.7rem;
+	}
+
+	.headerControls {
+		gap: 6px;
+	}
+
+	.scheduleHeaderBtn {
+		padding: 5px 8px;
+		border-radius: 16px;
+		font-size: 0.7rem;
+		gap: 4px;
+
+		svg {
+			width: 11px;
+			height: 11px;
+		}
+	}
+
+	.scheduleBtnText {
+		display: inline !important;
+		font-size: 0.65rem;
+	}
+
+	.scheduleCountBadge {
+		font-size: 0.6rem;
+	}
+
+	.doctorTriggerBtn {
+		width: 36px;
+		height: 36px;
+	}
+
+	.doctorAvatarBadge {
+		font-size: 0.7rem;
 	}
 }
 
