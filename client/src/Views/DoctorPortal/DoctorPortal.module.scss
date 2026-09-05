@@ -31,79 +31,189 @@
 }
 
 // ─── Floating Top Header ─────────────────────────────────────────────────────
+// Premium glassmorphic navigation bar matching the main dashboard aesthetic
 
 .topHeader {
 	position: absolute;
 	top: 0;
 	left: 0;
 	right: 0;
-	height: 70px;
-	z-index: 30;
+	height: 56px;
+	z-index: 60;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 0 28px;
-	background: rgba(11, 17, 29, 0.75);
-	backdrop-filter: blur(20px);
-	-webkit-backdrop-filter: blur(20px);
+	padding: 0 20px;
+	box-sizing: border-box;
+
+	// Glassmorphic Backdrop System
+	background: #121212;
+	backdrop-filter: blur(20px) saturate(180%);
+	-webkit-backdrop-filter: blur(20px) saturate(180%);
 	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 
 	:global(html[data-theme="light"]) & {
-		background: rgba(255, 255, 255, 0.85);
-		border-bottom-color: rgba(0, 0, 0, 0.08);
+		background: rgba(255, 255, 255, 0.88);
+		backdrop-filter: blur(16px) saturate(190%);
+		-webkit-backdrop-filter: blur(16px) saturate(190%);
+		border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+		box-shadow: 0 2px 14px rgba(0, 0, 0, 0.04);
+	}
+
+	@media (max-width: 1024px) {
+		padding: 0 16px;
+		height: 52px;
+	}
+
+	@media (max-width: 768px) {
+		padding: 0 12px;
+		height: 48px;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+	}
+
+	@media (max-width: 480px) {
+		padding: 0 8px;
+		height: 46px;
 	}
 }
+
+// ─── Brand Area & Logo ───
 
 .brandArea {
 	display: flex;
 	align-items: center;
-	gap: 14px;
+	gap: 12px;
+	cursor: pointer;
+	flex-shrink: 0;
+	outline: none;
+	user-select: none;
+	transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+	&:hover {
+		transform: scale(1.02);
+
+		.logoImage {
+			filter: drop-shadow(0 0 14px rgba(0, 168, 150, 0.5));
+			transform: rotate(3deg);
+		}
+
+		.hospitalTitle {
+			opacity: 0.95;
+		}
+	}
 }
 
 .brandLogo {
-	width: 36px;
-	height: 36px;
+	width: 38px;
+	height: 38px;
+	aspect-ratio: 1 / 1;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	border-radius: 8px;
+	border-radius: 50%;
 	overflow: hidden;
+	flex-shrink: 0;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+	@media (max-width: 768px) {
+		width: 32px;
+		height: 32px;
+	}
 }
 
 .logoImage {
-	width: 36px;
-	height: 36px;
-	border-radius: 8px;
+	width: 100%;
+	height: 100%;
+	aspect-ratio: 1 / 1;
+	border-radius: 50%;
 	object-fit: cover;
 	display: block;
-	border: 1px solid var(--lp-border);
+	filter: drop-shadow(0 4px 10px rgba(0, 168, 150, 0.25));
+	transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+	@media (max-width: 768px) {
+		width: 32px;
+		height: 32px;
+	}
 }
 
 .hospitalMeta {
 	display: flex;
 	flex-direction: column;
+	gap: 1px;
+}
 
-	.hospitalTitle {
-		font-size: 0.95rem;
-		font-weight: 800;
-		color: #ffffff;
-		letter-spacing: -0.02em;
-		margin: 0;
+.hospitalTitleRow {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
 
-		:global(html[data-theme="light"]) & {
-			color: #ffffff;
-		}
+.hospitalTitle {
+	font-size: 1.22rem;
+	font-weight: 850;
+	letter-spacing: -0.03em;
+	font-family: 'Outfit', 'Inter', -apple-system, sans-serif;
+	margin: 0;
+	line-height: 1.15;
+	background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	transition: all 0.3s ease;
+
+	:global(html[data-theme="light"]) & {
+		background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+		-webkit-background-clip: text;
+		background-clip: text;
+		-webkit-text-fill-color: transparent;
 	}
 
-	.hospitalSubtitle {
-		font-size: 0.74rem;
-		color: rgba(255, 255, 255, 0.85);
-		font-weight: 500;
-		margin: 0;
+	@media (max-width: 768px) {
+		font-size: 1.1rem;
+	}
+}
 
-		:global(html[data-theme="light"]) & {
-			color: rgba(255, 255, 255, 0.85);
-		}
+.clinicalBadge {
+	display: inline-flex;
+	align-items: center;
+	font-size: 0.64rem;
+	font-weight: 800;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	padding: 2px 7px;
+	border-radius: 6px;
+	background: rgba(0, 168, 150, 0.14);
+	border: 1px solid rgba(0, 168, 150, 0.3);
+	color: #2dd4bf;
+
+	:global(html[data-theme="light"]) & {
+		background: rgba(6, 78, 59, 0.08);
+		border-color: rgba(6, 78, 59, 0.2);
+		color: #064e3b;
+	}
+
+	@media (max-width: 900px) {
+		display: none;
+	}
+}
+
+.hospitalSubtitle {
+	font-size: 0.72rem;
+	color: rgba(255, 255, 255, 0.6);
+	font-weight: 550;
+	margin: 0;
+	letter-spacing: -0.01em;
+	white-space: nowrap;
+
+	:global(html[data-theme="light"]) & {
+		color: #64748b;
+	}
+
+	@media (max-width: 640px) {
+		display: none;
 	}
 }
 
@@ -111,31 +221,56 @@
 
 .patientSwitcherWrapper {
 	position: relative;
+	display: flex;
+	align-items: center;
+	min-width: 0;
 }
 
 .patientSwitcherBtn {
 	display: flex;
 	align-items: center;
-	gap: 12px;
-	padding: 8px 18px;
-	background: rgba(255, 255, 255, 0.06);
-	border: 1px solid rgba(255, 255, 255, 0.12);
+	gap: 10px;
+	padding: 6px 14px 6px 8px;
+	background: rgba(255, 255, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.1);
 	border-radius: 30px;
 	color: #ffffff;
 	cursor: pointer;
-	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+	transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+	outline: none;
+	user-select: none;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+	min-width: 0;
 
 	:global(html[data-theme="light"]) & {
-		background: #ffffff;
-		border-color: #cbd5e1;
+		background: rgba(15, 23, 42, 0.03);
+		border-color: rgba(15, 23, 42, 0.08);
 		color: #0f172a;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 	}
 
 	&:hover {
-		background: rgba(255, 255, 255, 0.1);
-		border-color: #00a896;
+		background: rgba(255, 255, 255, 0.09);
+		border-color: rgba(0, 168, 150, 0.5);
+		box-shadow: 0 4px 16px rgba(0, 168, 150, 0.2);
 		transform: translateY(-1px);
+
+		:global(html[data-theme="light"]) & {
+			background: #ffffff;
+			border-color: rgba(6, 78, 59, 0.35);
+			box-shadow: 0 4px 14px rgba(6, 78, 59, 0.12);
+		}
+	}
+
+	@media (max-width: 768px) {
+		padding: 4px 10px 4px 6px;
+		gap: 6px;
+		border-radius: 20px;
+	}
+
+	@media (max-width: 480px) {
+		padding: 4px 8px 4px 5px;
+		gap: 5px;
 	}
 }
 
@@ -143,53 +278,222 @@
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	font-size: 0.88rem;
+	font-size: 0.84rem;
 	font-weight: 700;
+	min-width: 0;
+
+	@media (max-width: 768px) {
+		gap: 6px;
+		font-size: 0.78rem;
+	}
 }
 
-.patientNameMobile {
-	display: none;
+.patientIconCircle {
+	position: relative;
+	width: 26px;
+	height: 26px;
+	border-radius: 50%;
+	background: rgba(0, 168, 150, 0.18);
+	border: 1px solid rgba(0, 168, 150, 0.35);
+	color: #2dd4bf;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+
+	:global(html[data-theme="light"]) & {
+		background: rgba(6, 78, 59, 0.1);
+		border-color: rgba(6, 78, 59, 0.25);
+		color: #064e3b;
+	}
+
+	@media (max-width: 768px) {
+		width: 24px;
+		height: 24px;
+	}
 }
 
-.patientNameFull {
-	display: inline;
+.patientStatusDot {
+	position: absolute;
+	bottom: -1px;
+	right: -1px;
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	border: 1.5px solid #0b111d;
+
+	:global(html[data-theme="light"]) & {
+		border-color: #ffffff;
+	}
+
+	&.dotUrgent {
+		background: #ef4444;
+		box-shadow: 0 0 6px rgba(239, 68, 68, 0.9);
+	}
+
+	&.dotWarning {
+		background: #f59e0b;
+		box-shadow: 0 0 6px rgba(245, 158, 11, 0.9);
+	}
+
+	&.dotOptimal {
+		background: #10b981;
+		box-shadow: 0 0 6px rgba(16, 185, 129, 0.9);
+	}
 }
+
+.patientName {
+	font-size: 0.84rem;
+	font-weight: 700;
+	color: #ffffff;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: inline-block;
+
+	:global(html[data-theme="light"]) & {
+		color: #0f172a;
+	}
+
+	@media (max-width: 900px) {
+		font-size: 0.8rem;
+		max-width: 130px;
+	}
+
+	@media (max-width: 480px) {
+		font-size: 0.78rem;
+		max-width: 100px;
+	}
+}
+
+.patientMrn {
+	color: rgba(255, 255, 255, 0.55);
+	font-weight: 500;
+	font-size: 0.76rem;
+
+	:global(html[data-theme="light"]) & {
+		color: #64748b;
+	}
+
+	@media (max-width: 900px) {
+		display: none !important;
+	}
+}
+
+.patientStatusBadge {
+	display: inline-flex;
+	align-items: center;
+
+	@media (max-width: 600px) {
+		display: none;
+	}
+}
+
+.patientChevron {
+	color: rgba(255, 255, 255, 0.5);
+	flex-shrink: 0;
+	transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+	:global(html[data-theme="light"]) & {
+		color: #64748b;
+	}
+}
+
+.patientChevronRotated {
+	transform: rotate(180deg);
+}
+
+// ─── Patient Switcher Dropdown Menu ───
 
 .patientDropdownMenu {
 	position: absolute;
-	top: calc(100% + 10px);
+	top: calc(100% + 8px);
 	left: 50%;
 	transform: translateX(-50%);
 	width: 380px;
 	max-height: 480px;
+	
+	// Glassmorphism matching profile dropdown
 	background: rgba(15, 23, 42, 0.95);
-	backdrop-filter: blur(24px);
-	-webkit-backdrop-filter: blur(24px);
-	border: 1px solid rgba(255, 255, 255, 0.14);
-	border-radius: 18px;
-	box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55);
+	backdrop-filter: blur(24px) saturate(200%);
+	-webkit-backdrop-filter: blur(24px) saturate(200%);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 20px;
+	box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55), 0 0 30px rgba(0, 168, 150, 0.08);
 	padding: 14px;
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
 	z-index: 100;
-	animation: popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	animation: popIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 
 	:global(html[data-theme="light"]) & {
-		background: rgba(255, 255, 255, 0.98);
-		border-color: #cbd5e1;
-		box-shadow: 0 20px 48px rgba(0, 0, 0, 0.15);
+		background: rgba(255, 255, 255, 0.96);
+		border-color: rgba(15, 23, 42, 0.08);
+		box-shadow: 0 20px 50px rgba(15, 23, 42, 0.1), 0 0 24px rgba(6, 78, 59, 0.05);
+	}
+
+	@media (max-width: 768px) {
+		position: fixed;
+		top: 54px;
+		left: 10px;
+		right: 10px;
+		transform: none;
+		width: auto;
+		max-width: calc(100vw - 20px);
+		max-height: calc(100dvh - 66px);
+	}
+
+	@media (max-width: 480px) {
+		top: 50px;
+		left: 6px;
+		right: 6px;
+		max-width: calc(100vw - 12px);
+		max-height: calc(100dvh - 60px);
 	}
 }
 
 @keyframes popIn {
 	from {
 		opacity: 0;
-		transform: translate(-50%, -8px) scale(0.96);
+		transform: translate(-50%, -8px) scale(0.97);
 	}
 	to {
 		opacity: 1;
 		transform: translate(-50%, 0) scale(1);
+	}
+}
+
+.dropdownHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 2px 4px;
+}
+
+.dropdownSectionTitle {
+	font-size: 0.68rem;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: #94a3b8;
+
+	:global(html[data-theme="light"]) & {
+		color: #64748b;
+	}
+}
+
+.dropdownCountBadge {
+	font-size: 0.65rem;
+	font-weight: 750;
+	padding: 2px 8px;
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.06);
+	color: rgba(255, 255, 255, 0.7);
+
+	:global(html[data-theme="light"]) & {
+		background: rgba(15, 23, 42, 0.04);
+		color: #64748b;
 	}
 }
 
@@ -200,29 +504,48 @@
 
 	input {
 		width: 100%;
-		background: rgba(255, 255, 255, 0.05);
-		border: 1px solid rgba(255, 255, 255, 0.1);
-		border-radius: 10px;
-		padding: 8px 12px 8px 34px;
+		background: rgba(255, 255, 255, 0.04);
+		border: 1px solid rgba(255, 255, 255, 0.08);
+		border-radius: 12px;
+		padding: 9px 12px 9px 34px;
 		font-size: 0.82rem;
 		color: #ffffff;
 		outline: none;
+		transition: all 0.2s ease;
+		box-sizing: border-box;
 
 		:global(html[data-theme="light"]) & {
-			background: #f1f5f9;
+			background: #f8fafc;
 			border-color: #e2e8f0;
 			color: #0f172a;
 		}
 
 		&:focus {
-			border-color: #007c72;
+			border-color: #00a896;
+			background: rgba(255, 255, 255, 0.08);
+			box-shadow: 0 0 12px rgba(0, 168, 150, 0.25);
+
+			:global(html[data-theme="light"]) & {
+				background: #ffffff;
+				border-color: #064e3b;
+				box-shadow: 0 0 12px rgba(6, 78, 59, 0.15);
+			}
+		}
+
+		&::placeholder {
+			color: rgba(255, 255, 255, 0.35);
+
+			:global(html[data-theme="light"]) & {
+				color: #94a3b8;
+			}
 		}
 	}
 
 	.searchIcon {
 		position: absolute;
-		left: 10px;
+		left: 11px;
 		color: rgba(255, 255, 255, 0.4);
+		pointer-events: none;
 
 		:global(html[data-theme="light"]) & {
 			color: #94a3b8;
@@ -233,50 +556,204 @@
 .dropdownList {
 	display: flex;
 	flex-direction: column;
-	gap: 6px;
+	gap: 4px;
 	overflow-y: auto;
-	max-height: 360px;
+	max-height: 320px;
+	scrollbar-width: thin;
+
+	&::-webkit-scrollbar {
+		width: 4px;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: rgba(255, 255, 255, 0.15);
+		border-radius: 4px;
+	}
 }
 
 .dropdownItem {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 10px 12px;
-	border-radius: 10px;
+	padding: 9px 12px;
+	border-radius: 12px;
 	background: rgba(255, 255, 255, 0.02);
 	border: 1px solid transparent;
 	cursor: pointer;
-	transition: all 0.15s;
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
 	:global(html[data-theme="light"]) & {
-		background: #f8fafc;
+		background: rgba(15, 23, 42, 0.02);
 	}
 
 	&:hover {
-		background: rgba(0, 124, 114, 0.12);
-		border-color: rgba(0, 124, 114, 0.3);
+		background: rgba(0, 168, 150, 0.12);
+		border-color: rgba(0, 168, 150, 0.3);
+		transform: translateX(2px);
+
+		:global(html[data-theme="light"]) & {
+			background: rgba(6, 78, 59, 0.06);
+			border-color: rgba(6, 78, 59, 0.2);
+		}
 	}
 }
 
 .dropdownItemActive {
-	background: rgba(0, 124, 114, 0.18) !important;
-	border-color: #007c72 !important;
+	background: rgba(0, 168, 150, 0.18) !important;
+	border-color: rgba(0, 168, 150, 0.4) !important;
+
+	:global(html[data-theme="light"]) & {
+		background: rgba(6, 78, 59, 0.1) !important;
+		border-color: rgba(6, 78, 59, 0.35) !important;
+	}
 }
 
-// ─── Right Controls in Header ────────────────────────────────────────────────
+.dropdownItemLeft {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.dropdownPatientName {
+	font-size: 0.84rem;
+	font-weight: 750;
+	color: #ffffff;
+
+	:global(html[data-theme="light"]) & {
+		color: #0f172a;
+	}
+}
+
+.dropdownPatientMeta {
+	font-size: 0.72rem;
+	color: rgba(255, 255, 255, 0.55);
+
+	:global(html[data-theme="light"]) & {
+		color: #64748b;
+	}
+}
+
+// ─── Header Right Controls ───────────────────────────────────────────────────
 
 .headerControls {
 	display: flex;
 	align-items: center;
-	gap: 12px;
+	gap: 10px;
+	flex-shrink: 0;
+
+	@media (max-width: 768px) {
+		gap: 6px;
+	}
 }
+
+// ─── Quick Nav Link Button (Patient View) ───
+
+.navLinkBtn {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 7px 14px;
+	border-radius: 20px;
+	background: rgba(255, 255, 255, 0.04);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	color: #e2e8f0;
+	font-size: 0.78rem;
+	font-weight: 650;
+	cursor: pointer;
+	transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+	outline: none;
+	white-space: nowrap;
+
+	:global(html[data-theme="light"]) & {
+		background: rgba(15, 23, 42, 0.03);
+		border-color: rgba(15, 23, 42, 0.06);
+		color: #334155;
+	}
+
+	svg {
+		color: #2dd4bf;
+
+		:global(html[data-theme="light"]) & {
+			color: #064e3b;
+		}
+	}
+
+	&:hover {
+		background: rgba(0, 168, 150, 0.14);
+		border-color: rgba(0, 168, 150, 0.4);
+		color: #ffffff;
+		transform: translateY(-1px);
+
+		:global(html[data-theme="light"]) & {
+			background: rgba(6, 78, 59, 0.08);
+			border-color: rgba(6, 78, 59, 0.2);
+			color: #064e3b;
+		}
+	}
+
+	@media (max-width: 1024px) {
+		display: none;
+	}
+}
+
+.navLinkBtnText {
+	font-weight: 650;
+}
+
+// ─── Direct Schedule / Appointments Header Button ───
+
+.scheduleHeaderBtn {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 7px 14px;
+	border-radius: 20px;
+	background: #064e3b;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	color: #ffffff;
+	font-size: 0.78rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+	backdrop-filter: blur(8px);
+	box-shadow: 0 2px 10px rgba(6, 78, 59, 0.35);
+	outline: none;
+	white-space: nowrap;
+
+	&:hover {
+		background: #04382b;
+		border-color: rgba(52, 211, 153, 0.4);
+		transform: translateY(-1px);
+		box-shadow: 0 4px 14px rgba(6, 78, 59, 0.5);
+	}
+
+	@media (max-width: 860px) {
+		display: none;
+	}
+}
+
+.scheduleBtnText {
+	display: inline;
+}
+
+.scheduleCountBadge {
+	font-size: 0.65rem;
+	font-weight: 850;
+	background: #10b981;
+	color: #ffffff;
+	padding: 1px 7px;
+	border-radius: 10px;
+	letter-spacing: 0.02em;
+}
+
+// ─── KPI Pills ───
 
 .kpiPills {
 	display: flex;
-	gap: 8px;
+	gap: 6px;
 
-	@media (max-width: 900px) {
+	@media (max-width: 1140px) {
 		display: none;
 	}
 }
@@ -285,91 +762,66 @@
 	display: flex;
 	align-items: center;
 	gap: 6px;
-	padding: 5px 12px;
-	border-radius: 20px;
-	font-size: 0.76rem;
-	font-weight: 700;
-	background: rgba(255, 255, 255, 0.05);
-	border: 1px solid rgba(255, 255, 255, 0.08);
-
-	:global(html[data-theme="light"]) & {
-		background: #f1f5f9;
-		border-color: #e2e8f0;
-	}
-}
-
-.scheduleHeaderBtn {
-	display: flex;
-	align-items: center;
-	gap: 7px;
 	padding: 6px 12px;
 	border-radius: 20px;
-	background: #064e3b;
-	border: 1px solid #064e3b;
-	color: #ffffff;
-	font-size: 0.76rem;
+	font-size: 0.75rem;
 	font-weight: 700;
-	cursor: pointer;
-	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-	backdrop-filter: blur(8px);
-	box-shadow: 0 2px 8px rgba(6, 78, 59, 0.35);
+	background: rgba(255, 255, 255, 0.04);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	color: rgba(255, 255, 255, 0.85);
 
 	:global(html[data-theme="light"]) & {
-		background: #064e3b;
-		border-color: #064e3b;
-		color: #ffffff;
+		background: rgba(15, 23, 42, 0.03);
+		border-color: rgba(15, 23, 42, 0.06);
+		color: #334155;
 	}
-
-	&:hover {
-		background: #04382b;
-		border-color: #04382b;
-		transform: translateY(-1px);
-		box-shadow: 0 4px 12px rgba(6, 78, 59, 0.5);
-	}
-}
-
-.scheduleBtnText {
-	@media (max-width: 540px) {
-		display: none;
-	}
-}
-
-.scheduleCountBadge {
-	font-size: 0.65rem;
-	font-weight: 800;
-	background: #10b981;
-	color: #ffffff;
-	padding: 1px 7px;
-	border-radius: 10px;
-	letter-spacing: 0.02em;
 }
 
 // ─── Doctor Profile Trigger & Features Dropdown ──────────────────────────────
 
 .doctorMenuWrapper {
 	position: relative;
+	display: flex;
+	align-items: center;
 }
 
 .doctorTriggerBtn {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 2px;
+	width: 44px;
+	height: 44px;
+	padding: 0;
 	border-radius: 50%;
-	background: transparent;
-	border: 2px solid rgba(255, 255, 255, 0.3);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	background: rgba(255, 255, 255, 0.04);
 	cursor: pointer;
-	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	outline: none;
+	box-sizing: border-box;
 
-	&:hover {
-		transform: scale(1.06);
-		border-color: #ffffff;
+	:global(html[data-theme="light"]) & {
+		background: rgba(255, 255, 255, 0.8);
+		border-color: rgba(15, 23, 42, 0.08);
 	}
-}
 
-.doctorTriggerBtnActive {
-	transform: scale(1.06);
-	border-color: #ffffff !important;
+	&:hover, &.doctorTriggerBtnActive {
+		border-color: rgba(6, 78, 59, 0.5);
+		background: rgba(255, 255, 255, 0.08);
+		box-shadow: 0 0 16px rgba(6, 78, 59, 0.3);
+		transform: scale(1.04);
+
+		:global(html[data-theme="light"]) & {
+			background: #ffffff;
+			border-color: rgba(6, 78, 59, 0.4);
+			box-shadow: 0 0 16px rgba(6, 78, 59, 0.2);
+		}
+	}
+
+	@media (max-width: 768px) {
+		width: 38px;
+		height: 38px;
+	}
 }
 
 .doctorAvatarBadge {
@@ -378,84 +830,111 @@
 	height: 36px;
 	border-radius: 50%;
 	background: #064e3b;
-	border: 1px solid rgba(255, 255, 255, 0.2);
 	color: #ffffff;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	font-size: 0.82rem;
 	font-weight: 800;
-	letter-spacing: 0.04em;
-	box-shadow: 0 2px 8px rgba(6, 78, 59, 0.4);
-	transition: all 0.2s ease;
+	letter-spacing: 0.02em;
+	box-shadow: 0 2px 8px rgba(6, 78, 59, 0.35);
+
+	@media (max-width: 768px) {
+		width: 30px;
+		height: 30px;
+		font-size: 0.74rem;
+	}
 }
 
 .onlineDot {
 	position: absolute;
-	bottom: 0px;
-	right: 0px;
+	bottom: -1px;
+	right: -1px;
 	width: 10px;
 	height: 10px;
 	border-radius: 50%;
 	background: #10b981;
 	border: 2px solid #064e3b;
-	box-shadow: 0 0 5px rgba(16, 185, 129, 0.8);
+	box-shadow: 0 0 8px rgba(16, 185, 129, 0.9);
 
 	:global(html[data-theme="light"]) & {
 		border-color: #ffffff;
 	}
 }
 
-// ─── Doctor Dropdown Menu ───────────────────────────────────────────────────
-
-.menuChevron {
-	color: rgba(255, 255, 255, 0.5);
-	transition: transform 0.2s ease;
-
-	:global(html[data-theme="light"]) & {
-		color: #64748b;
-	}
-}
-
-.menuChevronRotated {
-	transform: rotate(180deg);
-}
-
-// ─── Doctor Dropdown Menu ───────────────────────────────────────────────────
+// ─── Doctor Menu Dropdown Hub ────────────────────────────────────────────────
 
 .doctorMenuDropdown {
 	position: absolute;
 	top: calc(100% + 8px);
 	right: 0;
-	width: 320px;
-	background: rgba(13, 20, 32, 0.95);
-	border: 1px solid rgba(255, 255, 255, 0.12);
-	border-radius: 16px;
-	padding: 12px;
-	box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(16, 185, 129, 0.2);
-	backdrop-filter: blur(20px);
+	width: 350px;
+	max-height: calc(100vh - 74px);
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	-webkit-overflow-scrolling: touch;
+	scrollbar-width: thin;
+	scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+	
+	// Ultra glassmorphic drawer matching profile hub
+	background: rgba(15, 23, 42, 0.96);
+	backdrop-filter: blur(24px) saturate(200%);
+	-webkit-backdrop-filter: blur(24px) saturate(200%);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 20px;
+	padding: 14px;
+	box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45), 0 0 30px rgba(0, 168, 150, 0.06);
 	z-index: 100;
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
-	animation: dropdownFadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+	animation: dropdownFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+	&::-webkit-scrollbar {
+		width: 5px;
+	}
+
+	&::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: rgba(255, 255, 255, 0.2);
+		border-radius: 4px;
+	}
 
 	:global(html[data-theme="light"]) & {
-		background: rgba(255, 255, 255, 0.98);
-		border-color: #e2e8f0;
-		box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
+		background: rgba(255, 255, 255, 0.96);
+		border-color: rgba(15, 23, 42, 0.08);
+		box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+		scrollbar-color: rgba(15, 23, 42, 0.15) transparent;
+
+		&::-webkit-scrollbar-thumb {
+			background: rgba(15, 23, 42, 0.15);
+		}
+	}
+
+	@media (max-width: 768px) {
+		position: fixed;
+		top: 54px;
+		right: 10px;
+		max-height: calc(100vh - 66px);
 	}
 
 	@media (max-width: 480px) {
-		width: calc(100vw - 24px);
-		right: -8px;
+		width: auto;
+		position: fixed;
+		top: 50px;
+		right: 6px;
+		left: 6px;
+		max-height: calc(100vh - 60px);
 	}
 }
 
 @keyframes dropdownFadeIn {
 	from {
 		opacity: 0;
-		transform: translateY(-6px) scale(0.98);
+		transform: translateY(-8px) scale(0.97);
 	}
 	to {
 		opacity: 1;
@@ -467,19 +946,19 @@
 	display: flex;
 	align-items: center;
 	gap: 12px;
-	padding: 6px 4px;
+	padding: 4px 6px;
 }
 
 .doctorMenuHeroAvatar {
-	width: 40px;
-	height: 40px;
+	width: 44px;
+	height: 44px;
 	border-radius: 50%;
 	background: #064e3b;
 	color: #ffffff;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 0.9rem;
+	font-size: 0.95rem;
 	font-weight: 800;
 	flex-shrink: 0;
 	box-shadow: 0 2px 8px rgba(6, 78, 59, 0.35);
@@ -491,7 +970,7 @@
 }
 
 .heroName {
-	font-size: 0.88rem;
+	font-size: 0.92rem;
 	font-weight: 800;
 	color: #ffffff;
 	white-space: nowrap;
@@ -504,8 +983,8 @@
 }
 
 .heroDept {
-	font-size: 0.72rem;
-	color: rgba(255, 255, 255, 0.55);
+	font-size: 0.74rem;
+	color: rgba(255, 255, 255, 0.6);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -523,22 +1002,133 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
-	font-size: 0.65rem;
-	font-weight: 700;
+	font-size: 0.66rem;
+	font-weight: 750;
 	color: #10b981;
 	background: rgba(16, 185, 129, 0.12);
 	border: 1px solid rgba(16, 185, 129, 0.25);
-	padding: 2px 6px;
+	padding: 2px 8px;
 	border-radius: 6px;
+}
+
+.dropdownCloseBtn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.08);
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	color: #ffffff;
+	cursor: pointer;
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+	align-self: flex-start;
+	flex-shrink: 0;
+	outline: none;
+	padding: 0;
+
+	svg {
+		width: 16px !important;
+		height: 16px !important;
+		stroke: currentColor !important;
+		stroke-width: 2.5px !important;
+		display: block !important;
+		flex-shrink: 0;
+	}
+
+	:global(html[data-theme="light"]) & {
+		background: rgba(15, 23, 42, 0.06);
+		border-color: rgba(15, 23, 42, 0.12);
+		color: #1e293b;
+	}
+
+	&:hover {
+		background: rgba(239, 68, 68, 0.18);
+		border-color: rgba(239, 68, 68, 0.4);
+		color: #ef4444;
+		transform: scale(1.08);
+
+		:global(html[data-theme="light"]) & {
+			background: rgba(239, 68, 68, 0.12);
+			border-color: rgba(239, 68, 68, 0.35);
+			color: #dc2626;
+		}
+	}
+}
+
+.doctorMenuThemeRow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 8px 12px;
+	border-radius: 12px;
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	margin-top: 4px;
+
+	:global(html[data-theme="light"]) & {
+		background: rgba(15, 23, 42, 0.02);
+		border-color: rgba(15, 23, 42, 0.04);
+	}
+}
+
+.themeRowLabel {
+	font-size: 0.78rem;
+	font-weight: 700;
+	color: rgba(255, 255, 255, 0.85);
+
+	:global(html[data-theme="light"]) & {
+		color: #334155;
+	}
 }
 
 .menuDivider {
 	height: 1px;
-	background: rgba(255, 255, 255, 0.08);
-	margin: 4px 0;
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		rgba(255, 255, 255, 0.1) 50%,
+		transparent 100%
+	);
+	margin: 6px 0;
 
 	:global(html[data-theme="light"]) & {
-		background: #e2e8f0;
+		background: linear-gradient(
+			90deg,
+			transparent 0%,
+			rgba(15, 23, 42, 0.08) 50%,
+			transparent 100%
+		);
+	}
+}
+
+.dropdownActionBtn {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px 12px;
+	border-radius: 12px;
+	background: rgba(6, 78, 59, 0.2);
+	border: 1px solid rgba(6, 78, 59, 0.4);
+	color: #ffffff;
+	font-size: 0.8rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+	outline: none;
+
+	:global(html[data-theme="light"]) & {
+		background: rgba(6, 78, 59, 0.08);
+		border-color: rgba(6, 78, 59, 0.2);
+		color: #064e3b;
+	}
+
+	&:hover {
+		background: #064e3b;
+		color: #ffffff;
+		transform: translateY(-1px);
+		box-shadow: 0 4px 12px rgba(6, 78, 59, 0.35);
 	}
 }
 
@@ -552,35 +1142,39 @@
 	display: flex;
 	align-items: center;
 	gap: 10px;
-	padding: 8px 10px;
-	border-radius: 10px;
-	background: transparent;
-	border: 1px solid transparent;
+	padding: 9px 10px;
+	border-radius: 12px;
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 255, 255, 0.03);
 	color: #ffffff;
 	cursor: pointer;
 	text-align: left;
 	width: 100%;
-	transition: all 0.15s ease;
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
 	:global(html[data-theme="light"]) & {
+		background: rgba(15, 23, 42, 0.02);
+		border-color: rgba(15, 23, 42, 0.03);
 		color: #0f172a;
 	}
 
 	&:hover {
 		background: rgba(255, 255, 255, 0.06);
 		border-color: rgba(255, 255, 255, 0.1);
+		transform: translateX(2px);
 
 		:global(html[data-theme="light"]) & {
-			background: #f1f5f9;
-			border-color: #cbd5e1;
+			background: rgba(6, 78, 59, 0.06);
+			border-color: rgba(6, 78, 59, 0.15);
+			color: #064e3b;
 		}
 	}
 }
 
 .menuItemIcon {
-	width: 28px;
-	height: 28px;
-	border-radius: 8px;
+	width: 30px;
+	height: 30px;
+	border-radius: 10px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -597,12 +1191,12 @@
 .menuItemTitle {
 	font-size: 0.78rem;
 	font-weight: 700;
-	line-height: 1.2;
+	line-height: 1.25;
 }
 
 .menuItemSub {
-	font-size: 0.67rem;
-	color: rgba(255, 255, 255, 0.45);
+	font-size: 0.68rem;
+	color: rgba(255, 255, 255, 0.5);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -616,9 +1210,9 @@
 	font-size: 0.64rem;
 	font-weight: 800;
 	color: #10b981;
-	background: rgba(16, 185, 129, 0.12);
-	border: 1px solid rgba(16, 185, 129, 0.25);
-	padding: 2px 6px;
+	background: rgba(16, 185, 129, 0.14);
+	border: 1px solid rgba(16, 185, 129, 0.3);
+	padding: 2px 7px;
 	border-radius: 10px;
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
@@ -627,36 +1221,37 @@
 .doctorMenuFooter {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
-	padding-top: 2px;
+	gap: 6px;
+	padding-top: 4px;
 }
 
 .doctorSettingsBtn {
 	display: flex;
 	align-items: center;
-	gap: 8px;
-	padding: 8px 10px;
-	border-radius: 10px;
-	background: rgba(255, 255, 255, 0.04);
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	color: rgba(255, 255, 255, 0.8);
-	font-size: 0.76rem;
-	font-weight: 600;
+	gap: 10px;
+	padding: 9px 12px;
+	border-radius: 12px;
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	color: rgba(255, 255, 255, 0.85);
+	font-size: 0.78rem;
+	font-weight: 650;
 	cursor: pointer;
-	transition: all 0.15s;
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
 	:global(html[data-theme="light"]) & {
-		background: #f8fafc;
-		border-color: #e2e8f0;
+		background: rgba(15, 23, 42, 0.02);
+		border-color: rgba(15, 23, 42, 0.04);
 		color: #334155;
 	}
 
 	&:hover {
 		background: rgba(255, 255, 255, 0.08);
 		color: #ffffff;
+		transform: translateX(2px);
 
 		:global(html[data-theme="light"]) & {
-			background: #f1f5f9;
+			background: rgba(15, 23, 42, 0.05);
 			color: #0f172a;
 		}
 	}
@@ -665,22 +1260,115 @@
 .patientModeItem {
 	display: flex;
 	align-items: center;
-	gap: 8px;
-	padding: 8px 12px;
-	border-radius: 10px;
+	gap: 10px;
+	padding: 9px 12px;
+	border-radius: 12px;
 	background: #064e3b;
-	border: none;
+	border: 1px solid rgba(255, 255, 255, 0.1);
 	color: #ffffff;
 	font-size: 0.78rem;
 	font-weight: 700;
 	cursor: pointer;
-	transition: all 0.2s;
-	box-shadow: 0 4px 12px rgba(6, 78, 59, 0.3);
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+	box-shadow: 0 4px 12px rgba(6, 78, 59, 0.35);
 
 	&:hover {
 		background: #04382b;
 		transform: translateY(-1px);
+		box-shadow: 0 6px 16px rgba(6, 78, 59, 0.45);
 	}
+}
+
+.logoutBtn {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 9px 12px;
+	border-radius: 12px;
+	background: rgba(239, 68, 68, 0.06);
+	border: 1px solid rgba(239, 68, 68, 0.15);
+	color: #f87171;
+	font-size: 0.78rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+	&:hover {
+		background: rgba(239, 68, 68, 0.14);
+		border-color: rgba(239, 68, 68, 0.3);
+		color: #fca5a5;
+		transform: translateX(2px);
+	}
+}
+
+// ─── Status Badges ───────────────────────────────────────────────────────────
+
+.badgeUrgent {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 0.68rem;
+	font-weight: 800;
+	padding: 2px 8px;
+	border-radius: 20px;
+	background: rgba(239, 68, 68, 0.18);
+	color: #ef4444;
+	border: 1px solid rgba(239, 68, 68, 0.35);
+	line-height: 1.3;
+	white-space: nowrap;
+
+	:global(html[data-theme="light"]) & {
+		background: rgba(239, 68, 68, 0.1);
+		border-color: rgba(239, 68, 68, 0.25);
+		color: #dc2626;
+	}
+}
+
+.badgeWarning {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 0.68rem;
+	font-weight: 800;
+	padding: 2px 8px;
+	border-radius: 20px;
+	background: rgba(245, 158, 11, 0.18);
+	color: #f59e0b;
+	border: 1px solid rgba(245, 158, 11, 0.35);
+	line-height: 1.3;
+	white-space: nowrap;
+
+	:global(html[data-theme="light"]) & {
+		background: rgba(245, 158, 11, 0.1);
+		border-color: rgba(245, 158, 11, 0.25);
+		color: #d97706;
+	}
+}
+
+.badgeOptimal {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 0.68rem;
+	font-weight: 800;
+	padding: 2px 8px;
+	border-radius: 20px;
+	background: rgba(16, 185, 129, 0.18);
+	color: #10b981;
+	border: 1px solid rgba(16, 185, 129, 0.35);
+	line-height: 1.3;
+	white-space: nowrap;
+
+	:global(html[data-theme="light"]) & {
+		background: rgba(16, 185, 129, 0.1);
+		border-color: rgba(16, 185, 129, 0.25);
+		color: #059669;
+	}
+}
+
+.badgeText {
+	font-weight: 800;
+	letter-spacing: 0.02em;
 }
 
 // ─── Settings Modal Layout & Tab Controls ────────────────────────────────────
@@ -1799,14 +2487,35 @@
 
 .floatingLayout {
 	position: absolute;
-	top: 82px;
-	bottom: 80px;
+	top: 68px;
+	bottom: 20px;
 	left: 20px;
 	right: 20px;
 	z-index: 30;
 	display: flex;
 	justify-content: space-between;
 	pointer-events: none; // Allows interacting with 3D model behind empty spaces
+
+	@media (max-width: 1024px) {
+		top: 62px;
+		bottom: 16px;
+		left: 14px;
+		right: 14px;
+	}
+
+	@media (max-width: 768px) {
+		top: 56px;
+		bottom: 12px;
+		left: 8px;
+		right: 8px;
+	}
+
+	@media (max-width: 480px) {
+		top: 52px;
+		bottom: 10px;
+		left: 6px;
+		right: 6px;
+	}
 }
 
 .leftPanel {
@@ -1828,6 +2537,11 @@
 		transform: translateX(-340px);
 		opacity: 0;
 		pointer-events: none;
+	}
+
+	@media (max-width: 768px) {
+		width: 100%;
+		max-width: calc(100vw - 16px);
 	}
 
 	&::-webkit-scrollbar {
@@ -1860,6 +2574,11 @@
 		pointer-events: none;
 	}
 
+	@media (max-width: 768px) {
+		width: 100%;
+		max-width: calc(100vw - 16px);
+	}
+
 	&::-webkit-scrollbar {
 		width: 4px;
 	}
@@ -1875,14 +2594,14 @@
 	display: flex;
 	align-items: center;
 	gap: 6px;
-	padding: 8px 14px;
+	padding: 7px 12px;
 	border-radius: 30px;
 	background: rgba(11, 17, 29, 0.9);
 	border: 1px solid rgba(255, 255, 255, 0.14);
 	backdrop-filter: blur(16px);
 	-webkit-backdrop-filter: blur(16px);
 	color: #ffffff;
-	font-size: 0.78rem;
+	font-size: 0.76rem;
 	font-weight: 700;
 	cursor: pointer;
 	pointer-events: auto;
@@ -1902,16 +2621,51 @@
 		border-color: #007c72;
 		transform: translateY(-1px);
 	}
+
+	@media (max-width: 768px) {
+		padding: 5px 10px;
+		font-size: 0.72rem;
+	}
 }
 
 .expandToggleBtnLeft {
-	top: 86px;
+	top: 68px;
 	left: 20px;
+
+	@media (max-width: 1024px) {
+		top: 62px;
+		left: 14px;
+	}
+
+	@media (max-width: 768px) {
+		top: 56px;
+		left: 8px;
+	}
+
+	@media (max-width: 480px) {
+		top: 52px;
+		left: 6px;
+	}
 }
 
 .expandToggleBtnRight {
-	top: 86px;
+	top: 68px;
 	right: 20px;
+
+	@media (max-width: 1024px) {
+		top: 62px;
+		right: 14px;
+	}
+
+	@media (max-width: 768px) {
+		top: 56px;
+		right: 8px;
+	}
+
+	@media (max-width: 480px) {
+		top: 52px;
+		right: 6px;
+	}
 }
 
 .panelCollapseBtn {
@@ -2676,20 +3430,16 @@
 @media (max-width: 1024px) {
 	.topHeader {
 		padding: 0 16px;
-		height: 64px;
-	}
-
-	.hospitalSubtitle {
-		display: none;
+		height: 52px;
 	}
 
 	.patientSwitcherBtn {
-		padding: 6px 12px;
+		padding: 5px 12px;
 		font-size: 0.8rem;
 	}
 
 	.floatingLayout {
-		top: 72px;
+		top: 62px;
 		bottom: 72px;
 		left: 12px;
 		right: 12px;
@@ -2709,12 +3459,12 @@
 	}
 
 	.expandToggleBtnLeft {
-		top: 72px;
+		top: 62px;
 		left: 12px;
 	}
 
 	.expandToggleBtnRight {
-		top: 72px;
+		top: 62px;
 		right: 12px;
 	}
 
@@ -2728,12 +3478,12 @@
 @media (max-width: 768px) {
 	.topHeader {
 		padding: 0 12px;
-		height: 70px;
-		gap: 12px;
+		height: 48px;
+		gap: 8px;
 	}
 
 	.brandArea {
-		gap: 10px;
+		gap: 8px;
 		flex-shrink: 0;
 		display: flex;
 		align-items: center;
@@ -2741,9 +3491,10 @@
 	}
 
 	.brandLogo {
-		width: 36px;
-		height: 36px;
-		border-radius: 8px;
+		width: 30px;
+		height: 30px;
+		border-radius: 50%;
+		overflow: hidden;
 		flex-shrink: 0;
 		display: flex;
 		align-items: center;
@@ -2751,31 +3502,15 @@
 		img {
 			width: 100%;
 			height: 100%;
-			object-fit: contain;
-		}
-		svg {
-			width: 20px;
-			height: 20px;
+			object-fit: cover;
+			border-radius: 50%;
 		}
 	}
 
 	.hospitalTitle {
-		font-size: 0.95rem !important;
-		font-weight: 700;
-		max-width: 180px;
+		font-size: 0.92rem !important;
+		font-weight: 750;
 		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	.hospitalSubtitle {
-		display: block;
-		font-size: 0.7rem;
-		max-width: 180px;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		opacity: 0.8;
 	}
 
 	.patientSwitcherWrapper {
@@ -2787,12 +3522,12 @@
 	}
 
 	.patientSwitcherBtn {
-		padding: 6px 12px;
-		gap: 6px;
+		padding: 4px 10px;
+		gap: 5px;
 		border-radius: 20px;
 		max-width: 100%;
 		background: rgba(255, 255, 255, 0.08);
-		font-size: 0.75rem;
+		font-size: 0.74rem;
 
 		:global(html[data-theme="light"]) & {
 			background: #f1f5f9;
@@ -2802,7 +3537,7 @@
 
 	.activePatientPill {
 		gap: 5px;
-		font-size: 0.75rem;
+		font-size: 0.74rem;
 		min-width: 0;
 		display: flex;
 		align-items: center;
@@ -2813,36 +3548,40 @@
 		}
 	}
 
-	.patientNameFull {
-		display: inline;
-		font-size: 0.75rem;
+	.patientName {
+		font-size: 0.74rem;
 		font-weight: 700;
-		max-width: 140px;
+		max-width: 120px;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
 
-	.patientNameMobile {
-		display: none;
-	}
-
 	.patientDropdownMenu {
 		position: fixed;
-		top: 75px;
-		left: 12px;
-		right: 12px;
+		top: 54px;
+		left: 10px;
+		right: 10px;
 		width: auto;
 		transform: none;
-		max-height: calc(100dvh - 85px);
+		max-height: calc(100dvh - 66px);
 		z-index: 1000;
 		border-radius: 16px;
+	}
+
+	.doctorMenuDropdown {
+		position: fixed;
+		top: 54px;
+		right: 10px;
+		width: min(340px, calc(100vw - 20px));
+		max-height: calc(100dvh - 66px);
+		z-index: 1000;
 	}
 
 	.headerControls {
 		display: flex;
 		align-items: center;
-		gap: 8px;
+		gap: 6px;
 		flex-shrink: 0;
 	}
 
@@ -2850,29 +3589,8 @@
 		display: none !important;
 	}
 
-	.scheduleHeaderBtn {
-		padding: 6px 10px;
-		border-radius: 20px;
-		font-size: 0.75rem;
-		gap: 5px;
-		flex-shrink: 0;
-		background: #064e3b;
-		border: 1px solid #064e3b;
-		white-space: nowrap;
-
-		svg {
-			width: 13px;
-			height: 13px;
-		}
-	}
-
-	.scheduleBtnText {
-		display: inline !important;
-	}
-
-	.scheduleCountBadge {
-		display: inline !important;
-		font-size: 0.7rem;
+	.navLinkBtn {
+		display: none !important;
 	}
 
 	.doctorMenuWrapper {
@@ -2880,44 +3598,25 @@
 	}
 
 	.doctorTriggerBtn {
-		width: 40px;
-		height: 40px;
+		width: 34px;
+		height: 34px;
 		padding: 0;
 		flex-shrink: 0;
 	}
 
 	.doctorAvatarBadge {
-		width: 100%;
-		height: 100%;
-		font-size: 0.75rem;
+		width: 32px;
+		height: 32px;
+		font-size: 0.74rem;
 
 		span:first-child {
 			font-weight: 700;
 		}
 	}
 
-	.patientBtnLabel {
-		display: none;
-	}
-
-	.patientViewBtn {
-		width: 32px;
-		height: 32px;
-		padding: 0;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border-radius: 8px;
-		flex-shrink: 0;
-		svg {
-			width: 15px;
-			height: 15px;
-		}
-	}
-
 	.floatingLayout {
 		position: fixed;
-		top: 60px;
+		top: 56px;
 		bottom: 56px;
 		left: 0;
 		right: 0;
@@ -2927,13 +3626,13 @@
 	.leftPanel,
 	.rightPanel {
 		position: fixed;
-		top: 60px;
+		top: 56px;
 		bottom: 56px;
 		left: 8px;
 		right: 8px;
 		width: auto;
 		height: auto !important;
-		max-height: calc(100dvh - 116px);
+		max-height: calc(100dvh - 120px);
 		max-width: none;
 		z-index: 45;
 		overflow-y: auto;
@@ -2963,19 +3662,19 @@
 	}
 
 	.expandToggleBtn {
-		padding: 6px 10px;
+		padding: 5px 10px;
 		font-size: 0.72rem;
 		gap: 4px;
 		border-radius: 20px;
 	}
 
 	.expandToggleBtnLeft {
-		top: 66px;
+		top: 56px;
 		left: 8px;
 	}
 
 	.expandToggleBtnRight {
-		top: 66px;
+		top: 56px;
 		right: 8px;
 	}
 
@@ -3031,76 +3730,94 @@
 
 @media (max-width: 480px) {
 	.topHeader {
-		padding: 8px;
-		height: 70px;
-		gap: 8px;
+		padding: 0 8px;
+		height: 46px;
+		gap: 6px;
 	}
 
 	.brandArea {
-		gap: 8px;
+		gap: 6px;
 		flex-shrink: 0;
 	}
 
 	.brandLogo {
-		width: 32px;
-		height: 32px;
-		min-width: 32px;
+		width: 28px;
+		height: 28px;
+		min-width: 28px;
 	}
 
 	.hospitalTitle {
-		font-size: 0.9rem !important;
-		max-width: 110px;
-	}
-
-	.hospitalSubtitle {
-		font-size: 0.65rem;
-		max-width: 110px;
+		font-size: 0.88rem !important;
+		max-width: 90px;
 	}
 
 	.patientSwitcherBtn {
-		padding: 5px 10px;
-		border-radius: 18px;
-		font-size: 0.7rem;
-		gap: 4px;
-	}
-
-	.patientNameFull {
-		max-width: 100px;
-		font-size: 0.7rem;
-	}
-
-	.headerControls {
-		gap: 6px;
-	}
-
-	.scheduleHeaderBtn {
-		padding: 5px 8px;
+		padding: 4px 8px;
 		border-radius: 16px;
 		font-size: 0.7rem;
 		gap: 4px;
-
-		svg {
-			width: 11px;
-			height: 11px;
-		}
 	}
 
-	.scheduleBtnText {
-		display: inline !important;
-		font-size: 0.65rem;
+	.patientName {
+		max-width: 95px;
+		font-size: 0.7rem;
 	}
 
-	.scheduleCountBadge {
-		font-size: 0.6rem;
+	.patientDropdownMenu {
+		top: 50px;
+		left: 6px;
+		right: 6px;
+		max-width: calc(100vw - 12px);
+		max-height: calc(100dvh - 60px);
+	}
+
+	.doctorMenuDropdown {
+		top: 50px;
+		left: 6px;
+		right: 6px;
+		width: auto;
+		max-height: calc(100dvh - 60px);
+	}
+
+	.headerControls {
+		gap: 4px;
 	}
 
 	.doctorTriggerBtn {
-		width: 36px;
-		height: 36px;
+		width: 32px;
+		height: 32px;
 	}
 
 	.doctorAvatarBadge {
+		width: 30px;
+		height: 30px;
 		font-size: 0.7rem;
+	}
+
+	.floatingLayout {
+		top: 52px;
+		bottom: 50px;
+		left: 0;
+		right: 0;
+	}
+
+	.leftPanel,
+	.rightPanel {
+		top: 52px;
+		bottom: 50px;
+		left: 6px;
+		right: 6px;
+		max-height: calc(100dvh - 108px);
+	}
+
+	.expandToggleBtnLeft {
+		top: 52px;
+		left: 6px;
+	}
+
+	.expandToggleBtnRight {
+		top: 52px;
+		right: 6px;
 	}
 }
 

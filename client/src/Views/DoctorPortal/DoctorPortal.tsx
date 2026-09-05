@@ -742,70 +742,80 @@ export const DoctorPortal = () => {
 
 			{/* 2. Top Floating Header & Patient Selector */}
 			<header className={styles.topHeader}>
-				<div className={styles.brandArea}>
+				<div
+					className={styles.brandArea}
+					onClick={() => navigate(paths.dashboard.root)}
+					title="Return to Patient Dashboard"
+					role="button"
+					tabIndex={0}
+					onKeyDown={(e) => {
+						if (e.key === "Enter" || e.key === " ") {
+							navigate(paths.dashboard.root);
+						}
+					}}
+				>
 					<div className={styles.brandLogo}>
 						<img
 							src="/assets/genetiq-logo.jpeg"
 							alt="Genetiq Logo"
 							className={styles.logoImage}
-							width="36"
-							height="36"
+							width="38"
+							height="38"
 							fetchPriority="high"
 						/>
 					</div>
 					<div className={styles.hospitalMeta}>
-						<h1 className={styles.hospitalTitle}>{doctor.hospitalName}</h1>
-						<p className={styles.hospitalSubtitle}>Clinical Suite · {doctor.department}</p>
+						<h1 className={styles.hospitalTitle}>Genetiq</h1>
 					</div>
 				</div>
 
 				{/* Center Patient Switcher Selector */}
 				<div className={styles.patientSwitcherWrapper} ref={patientDropdownRef}>
 					<button
-						type='button'
+						type="button"
 						className={styles.patientSwitcherBtn}
 						onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+						aria-haspopup="listbox"
+						aria-expanded={isDropdownOpen}
+						title="Switch Active Clinical Patient"
 					>
 						<div className={styles.activePatientPill}>
-							<User size={14} style={{ color: "#00a896", flexShrink: 0 }} />
-							<span className={styles.patientNameFull}>{selectedPatient.name} ({selectedPatient.mrn})</span>
-							<span className={styles.patientNameMobile}>{selectedPatient.name}</span>
-							<span
-								className={
-									selectedPatient.status === "urgent"
-										? styles.badgeUrgent
-										: selectedPatient.status === "monitoring"
-										? styles.badgeWarning
-										: styles.badgeOptimal
-								}
-								style={{ display: "inline-flex", alignItems: "center", gap: "3px" }}
-							>
-								{selectedPatient.status === "urgent" ? (
-									<>
-										<ShieldAlert size={11} /> <span className={styles.badgeText}>Urgent</span>
-									</>
-								) : selectedPatient.status === "monitoring" ? (
-									<>
-										<AlertTriangle size={11} /> <span className={styles.badgeText}>Monitored</span>
-									</>
-								) : (
-									<>
-										<CheckCircle2 size={11} /> <span className={styles.badgeText}>Stable</span>
-									</>
-								)}
+							<div className={styles.patientIconCircle}>
+								<User size={13} />
+								<span
+									className={`${styles.patientStatusDot} ${
+										selectedPatient.status === "urgent"
+											? styles.dotUrgent
+											: selectedPatient.status === "monitoring"
+											? styles.dotWarning
+											: styles.dotOptimal
+									}`}
+								/>
+							</div>
+							<span className={styles.patientName}>
+								{selectedPatient.name}
+								<span className={styles.patientMrn}> ({selectedPatient.mrn})</span>
 							</span>
 						</div>
-						<ChevronDown size={13} style={{ opacity: 0.6, flexShrink: 0 }} />
+						<ChevronDown
+							size={13}
+							className={`${styles.patientChevron} ${isDropdownOpen ? styles.patientChevronRotated : ""}`}
+						/>
 					</button>
 
 					{/* Dropdown Menu */}
 					{isDropdownOpen && (
 						<div className={styles.patientDropdownMenu}>
+							<div className={styles.dropdownHeader}>
+								<span className={styles.dropdownSectionTitle}>Assigned Patients</span>
+								<span className={styles.dropdownCountBadge}>{patients.length} Total</span>
+							</div>
+
 							<div className={styles.dropdownSearch}>
 								<Search size={14} className={styles.searchIcon} />
 								<input
-									type='text'
-									placeholder='Search assigned patients...'
+									type="text"
+									placeholder="Search name, MRN, or diagnosis..."
 									value={searchQuery}
 									onChange={(e) => setSearchQuery(e.target.value)}
 									autoFocus
@@ -823,10 +833,10 @@ export const DoctorPortal = () => {
 											setIsDropdownOpen(false);
 										}}
 									>
-										<div>
-											<div style={{ fontSize: "0.85rem", fontWeight: 700 }}>{p.name}</div>
-											<div style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.5)" }}>
-												{p.age}y · {p.gender} · {p.primaryDiagnosis}
+										<div className={styles.dropdownItemLeft}>
+											<div className={styles.dropdownPatientName}>{p.name}</div>
+											<div className={styles.dropdownPatientMeta}>
+												{p.mrn} · {p.age}y {p.gender[0]} · {p.primaryDiagnosis}
 											</div>
 										</div>
 										<span
@@ -838,7 +848,7 @@ export const DoctorPortal = () => {
 													: styles.badgeOptimal
 											}
 										>
-											{p.status === "urgent" ? "Urgent" : p.status === "monitoring" ? "Monitoring" : "Stable"}
+											{p.status === "urgent" ? "Urgent" : p.status === "monitoring" ? "Monitored" : "Stable"}
 										</span>
 									</div>
 								))}
@@ -847,26 +857,35 @@ export const DoctorPortal = () => {
 					)}
 				</div>
 
-				{/* Header Right Controls: KPIs + Schedule + Doctor Profile & Settings Menu */}
+				{/* Header Right Controls: Quick Navigation + KPIs + Doctor Profile */}
 				<div className={styles.headerControls}>
+					{/* Quick Patient Dashboard Switcher (Desktop) */}
+					<button
+						type="button"
+						className={styles.navLinkBtn}
+						onClick={() => navigate(paths.dashboard.root)}
+						title="Switch to Patient Dashboard View"
+					>
+						<User size={14} />
+						<span className={styles.navLinkBtnText}>Patient View</span>
+					</button>
+
+					{/* KPI Pills */}
 					<div className={styles.kpiPills}>
-						<div className={styles.kpiPill}>
+						<div className={styles.kpiPill} title="Urgent Triage Cases">
 							<ShieldAlert size={13} style={{ color: "#ef4444" }} />
-							<span>2 Urgent</span>
+							<span>{patients.filter((p) => p.status === "urgent").length} Urgent</span>
 						</div>
-						<div className={styles.kpiPill}>
+						<div className={styles.kpiPill} title="Pending Clinical Reports">
 							<AlertTriangle size={13} style={{ color: "#f59e0b" }} />
 							<span>6 Reports</span>
 						</div>
 					</div>
 
-					{/* Theme Switcher */}
-					<ThemeSwitcher />
-
 					{/* Doctor Profile & Clinical Features Dropdown */}
 					<div className={styles.doctorMenuWrapper} ref={doctorMenuRef}>
 						<button
-							type='button'
+							type="button"
 							className={`${styles.doctorTriggerBtn} ${isDoctorMenuOpen ? styles.doctorTriggerBtnActive : ""}`}
 							onClick={() => setIsDoctorMenuOpen(!isDoctorMenuOpen)}
 							title={`${doctor.doctorName} · Doctor Profile & Settings`}
@@ -894,19 +913,37 @@ export const DoctorPortal = () => {
 											</span>
 										</div>
 									</div>
+									<button
+										type="button"
+										className={styles.dropdownCloseBtn}
+										onClick={() => setIsDoctorMenuOpen(false)}
+										title="Close Menu"
+										aria-label="Close Profile Menu"
+									>
+										<X size={16} strokeWidth={2.5} />
+									</button>
+								</div>
+
+								{/* Appearance Theme Switcher Row */}
+								<div className={styles.doctorMenuThemeRow}>
+									<span className={styles.themeRowLabel}>Appearance</span>
+									<ThemeSwitcher />
 								</div>
 
 								<div className={styles.menuDivider} />
 
 								{/* Direct Appointments / Schedule Quick Trigger */}
 								<button
-									type='button'
-									className={styles.scheduleHeaderBtn}
-									onClick={() => setIsScheduleModalOpen(true)}
-									title='View Booked Patient Appointments & Schedules'
+									type="button"
+									className={styles.dropdownActionBtn}
+									onClick={() => {
+										setIsScheduleModalOpen(true);
+										setIsDoctorMenuOpen(false);
+									}}
+									title="View Booked Patient Appointments & Schedules"
 								>
-									<Calendar size={14} style={{ color: "#ffffff" }} />
-									<span className={styles.scheduleBtnText}>Appointments</span>
+									<Calendar size={14} />
+									<span>Appointments Schedule</span>
 									<span className={styles.scheduleCountBadge}>
 										{appointments.filter((a) => a.status === "waiting" || a.date.includes("Today")).length} Today
 									</span>
@@ -915,27 +952,7 @@ export const DoctorPortal = () => {
 								{/* Clinical Features & Access List */}
 								<div className={styles.doctorMenuItems}>
 									<button
-										type='button'
-										className={styles.doctorMenuItem}
-										onClick={() => {
-											setIsScheduleModalOpen(true);
-											setIsDoctorMenuOpen(false);
-										}}
-									>
-										<div className={styles.menuItemIcon} style={{ background: "rgba(0, 168, 150, 0.15)", color: "#00a896" }}>
-											<Calendar size={15} />
-										</div>
-										<div className={styles.menuItemText}>
-											<span className={styles.menuItemTitle}>Patient Appointments & Schedule</span>
-											<span className={styles.menuItemSub}>{appointments.length} booked consultations</span>
-										</div>
-										<span className={styles.statusPillLive}>
-											{appointments.filter((a) => a.status === "waiting").length > 0 ? "1 Waiting" : "Active"}
-										</span>
-									</button>
-
-									<button
-										type='button'
+										type="button"
 										className={styles.doctorMenuItem}
 										onClick={() => {
 											setActiveSettingsTab("ehr");
@@ -947,14 +964,14 @@ export const DoctorPortal = () => {
 											<Database size={15} />
 										</div>
 										<div className={styles.menuItemText}>
-											<span className={styles.menuItemTitle}>EHR & FHIR Sync</span>
+											<span className={styles.menuItemTitle}>EHR &amp; FHIR Sync</span>
 											<span className={styles.menuItemSub}>Epic / Cerner live sync status</span>
 										</div>
 										<span className={styles.statusPillLive}>Live</span>
 									</button>
 
 									<button
-										type='button'
+										type="button"
 										className={styles.doctorMenuItem}
 										onClick={() => {
 											setActiveSettingsTab("alerts");
@@ -966,14 +983,14 @@ export const DoctorPortal = () => {
 											<Bell size={15} />
 										</div>
 										<div className={styles.menuItemText}>
-											<span className={styles.menuItemTitle}>Triage Thresholds & Alerts</span>
-											<span className={styles.menuItemSub}>ApoB & arrhythmia triggers</span>
+											<span className={styles.menuItemTitle}>Triage Thresholds &amp; Alerts</span>
+											<span className={styles.menuItemSub}>ApoB &amp; arrhythmia triggers</span>
 										</div>
 										<ChevronRight size={13} style={{ color: "rgba(255,255,255,0.4)" }} />
 									</button>
 
 									<button
-										type='button'
+										type="button"
 										className={styles.doctorMenuItem}
 										onClick={() => {
 											setActiveSettingsTab("orders");
@@ -985,14 +1002,14 @@ export const DoctorPortal = () => {
 											<FileText size={15} />
 										</div>
 										<div className={styles.menuItemText}>
-											<span className={styles.menuItemTitle}>Order Sets & Formulary</span>
-											<span className={styles.menuItemSub}>90-day lab & prescription sets</span>
+											<span className={styles.menuItemTitle}>Order Sets &amp; Formulary</span>
+											<span className={styles.menuItemSub}>90-day lab &amp; prescription sets</span>
 										</div>
 										<ChevronRight size={13} style={{ color: "rgba(255,255,255,0.4)" }} />
 									</button>
 
 									<button
-										type='button'
+										type="button"
 										className={styles.doctorMenuItem}
 										onClick={() => {
 											setActiveSettingsTab("voice");
@@ -1005,13 +1022,13 @@ export const DoctorPortal = () => {
 										</div>
 										<div className={styles.menuItemText}>
 											<span className={styles.menuItemTitle}>Voice AI Dictation</span>
-											<span className={styles.menuItemSub}>Continuous speech & lexicon</span>
+											<span className={styles.menuItemSub}>Continuous speech &amp; lexicon</span>
 										</div>
 										<ChevronRight size={13} style={{ color: "rgba(255,255,255,0.4)" }} />
 									</button>
 
 									<button
-										type='button'
+										type="button"
 										className={styles.doctorMenuItem}
 										onClick={() => {
 											setActiveSettingsTab("security");
@@ -1023,8 +1040,8 @@ export const DoctorPortal = () => {
 											<ShieldCheck size={15} />
 										</div>
 										<div className={styles.menuItemText}>
-											<span className={styles.menuItemTitle}>HIPAA Audit & Credentials</span>
-											<span className={styles.menuItemSub}>Active session & AES-256 logs</span>
+											<span className={styles.menuItemTitle}>HIPAA Audit &amp; Credentials</span>
+											<span className={styles.menuItemSub}>Active session &amp; AES-256 logs</span>
 										</div>
 										<ChevronRight size={13} style={{ color: "rgba(255,255,255,0.4)" }} />
 									</button>
@@ -1032,10 +1049,10 @@ export const DoctorPortal = () => {
 
 								<div className={styles.menuDivider} />
 
-								{/* Bottom Switch to Patient View & Settings */}
+								{/* Bottom Switch to Patient View & Settings & Logout */}
 								<div className={styles.doctorMenuFooter}>
 									<button
-										type='button'
+										type="button"
 										className={styles.doctorSettingsBtn}
 										onClick={() => {
 											setActiveSettingsTab("ehr");
@@ -1048,7 +1065,7 @@ export const DoctorPortal = () => {
 									</button>
 
 									<button
-										type='button'
+										type="button"
 										className={styles.patientModeItem}
 										onClick={() => {
 											setIsDoctorMenuOpen(false);
@@ -1056,7 +1073,7 @@ export const DoctorPortal = () => {
 										}}
 									>
 										<User size={14} />
-										<span>Switch to Patient Mode</span>
+										<span>Patient Dashboard</span>
 										<ExternalLink size={12} style={{ marginLeft: "auto", opacity: 0.7 }} />
 									</button>
 
