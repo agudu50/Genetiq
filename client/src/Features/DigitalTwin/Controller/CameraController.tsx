@@ -3,6 +3,9 @@ import { useCamera } from "../Context/CameraContext";
 import { Vector3 } from "three";
 import { useRef, useEffect } from "react";
 
+const _tempTarget = new Vector3();
+const _tempRotated = new Vector3();
+
 const CameraController = () => {
 	const { camera } = useThree();
 	const { cameraState } = useCamera();
@@ -15,12 +18,12 @@ const CameraController = () => {
 	const currentYRef = useRef(0);
 	const lastTargetZoomRef = useRef(cameraState.targetZoom);
 	const zoomStartTimeRef = useRef(Date.now());
-	const POSITION_LERP_FACTOR = 0.025;
-	const Y_LERP_FACTOR = 0.03;
+	const POSITION_LERP_FACTOR = 0.04;
+	const Y_LERP_FACTOR = 0.05;
 
 	// Zoom control constants
-	const ZOOM_SPEED = 0.035;
-	const ZOOM_THRESHOLD = 0.005;
+	const ZOOM_SPEED = 0.05;
+	const ZOOM_THRESHOLD = 0.001;
 
 	useEffect(() => {
 		if (lastTargetZoomRef.current !== cameraState.targetZoom) {
@@ -74,20 +77,20 @@ const CameraController = () => {
 		currentYRef.current +=
 			(targetYRef.current - currentYRef.current) * Y_LERP_FACTOR;
 
-		const targetPosition = new Vector3(
+		_tempTarget.set(
 			cameraState.targetPosition[0],
 			currentYRef.current,
 			cameraState.targetPosition[2],
 		);
 
-		const distance = targetPosition.length() || 200; // Default distance if zero
-		const rotatedPosition = new Vector3(
+		const distance = _tempTarget.length() || 200; // Default distance if zero
+		_tempRotated.set(
 			Math.sin(rotationRef.current) * distance,
 			currentYRef.current,
 			Math.cos(rotationRef.current) * distance,
 		);
 
-		currentPositionRef.current.lerp(rotatedPosition, POSITION_LERP_FACTOR);
+		currentPositionRef.current.lerp(_tempRotated, POSITION_LERP_FACTOR);
 		camera.position.copy(currentPositionRef.current);
 		camera.lookAt(0, currentYRef.current, 0);
 
@@ -95,12 +98,13 @@ const CameraController = () => {
 		const zoomDiff = cameraState.targetZoom - currentZoomRef.current;
 		if (Math.abs(zoomDiff) > ZOOM_THRESHOLD) {
 			currentZoomRef.current += zoomDiff * ZOOM_SPEED;
-		} else {
+			camera.zoom = currentZoomRef.current;
+			camera.updateProjectionMatrix();
+		} else if (camera.zoom !== cameraState.targetZoom) {
 			currentZoomRef.current = cameraState.targetZoom;
+			camera.zoom = currentZoomRef.current;
+			camera.updateProjectionMatrix();
 		}
-
-		camera.zoom = currentZoomRef.current;
-		camera.updateProjectionMatrix();
 	});
 
 	return null;

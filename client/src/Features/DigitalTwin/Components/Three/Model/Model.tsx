@@ -1,4 +1,3 @@
-import { Clone } from "@react-three/drei";
 import { useFrame, useLoader } from "@react-three/fiber";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import { useRef, useEffect, useState, useMemo, memo } from "react";
@@ -94,21 +93,26 @@ const BodyModelContent = memo(function BodyModelContent({
 		const loader = new OBJLoader();
 		// loadAsync goes through THREE's DefaultLoadingManager which checks the
 		// fetch cache primed by useLoader.preload — resolves quickly if already cached
-		loader.loadAsync(modelPath).then((obj) => {
-			if (!mounted) return;
-			const mat = createBodyMaterial(textures as Partial<BodyModelTextures>);
-			mat.transparent = true;
-			mat.depthWrite = true;
-			matRef.current = mat;
-			obj.traverse((child) => {
-				if (child instanceof THREE.Mesh) {
-					child.raycast = new THREE.Mesh().raycast;
-					child.userData.clickable = true;
-					child.material = mat;
-				}
+		loader
+			.loadAsync(modelPath)
+			.then((obj) => {
+				if (!mounted) return;
+				const mat = createBodyMaterial(textures as Partial<BodyModelTextures>);
+				mat.transparent = true;
+				mat.depthWrite = true;
+				matRef.current = mat;
+				obj.traverse((child) => {
+					if (child instanceof THREE.Mesh) {
+						child.raycast = new THREE.Mesh().raycast;
+						child.userData.clickable = true;
+						child.material = mat;
+					}
+				});
+				setModel(obj);
+			})
+			.catch((err) => {
+				console.error(`[Genetiq 3D] Failed to load model at ${modelPath}:`, err);
 			});
-			setModel(obj);
-		});
 		return () => {
 			mounted = false;
 		};
@@ -129,7 +133,7 @@ const BodyModelContent = memo(function BodyModelContent({
 			onPointerUp={handlePointerUp}
 		>
 			{model && (
-				<Clone
+				<primitive
 					object={model}
 					position={position}
 					rotation={rotation}
@@ -151,7 +155,11 @@ const CardioModelContent = memo(function CardioModelContent({
 	handlePointerUp,
 	groupRef,
 }: InternalModelProps) {
-	const model = useLoader(OBJLoader, "/assets/models/cardio/cardio.obj");
+	const rawModel = useLoader(OBJLoader, "/assets/models/cardio/cardio.obj");
+	const model = useMemo(() => {
+		if (!rawModel) return null;
+		return rawModel.clone(true);
+	}, [rawModel]);
 
 	useEffect(() => {
 		if (!model) return;
@@ -176,14 +184,16 @@ const CardioModelContent = memo(function CardioModelContent({
 			onPointerDown={handlePointerDown}
 			onPointerUp={handlePointerUp}
 		>
-			<Clone
-				object={model}
-				position={position}
-				rotation={rotation}
-				scale={scale}
-				castShadow
-				receiveShadow
-			/>
+			{model && (
+				<primitive
+					object={model}
+					position={position}
+					rotation={rotation}
+					scale={scale}
+					castShadow
+					receiveShadow
+				/>
+			)}
 		</group>
 	);
 });
@@ -237,7 +247,6 @@ function Model({
 		return mapLabFindingsToBodyHighlights(latestFindings);
 	}, [uploadRecords]);
 
-	const [opacity, setOpacity] = useState(isNew ? 0 : 1);
 	const [shouldRender, setShouldRender] = useState(!isNew);
 	const [hasFadedOut, setHasFadedOut] = useState(false);
 	// Initialize position and scale directly on the ref on mount or modelType changes
@@ -741,6 +750,17 @@ function Model({
 		return mats;
 	}, [patientGlow]);
 
+	// Pre-memoize all active glowing materials list to avoid per-frame allocations
+	const allActiveMaterials = useMemo(() => {
+		return [
+			...Object.values(materials),
+			...Object.values(cardioHotspotMaterials),
+			...Object.values(patientCardioMaterials),
+		];
+	}, [materials, cardioHotspotMaterials, patientCardioMaterials]);
+
+	const opacityRef = useRef(isNew ? 0 : 1);
+
 	useFrame((state) => {
 		if (isPaused) return;
 
@@ -753,22 +773,22 @@ function Model({
 
 		// Smoothly interpolate position and scale directly on the WebGL object ref
 		if (groupRef.current) {
-			groupRef.current.position.x += (position[0] - groupRef.current.position.x) * 0.1;
-			groupRef.current.position.y += (position[1] - groupRef.current.position.y) * 0.1;
-			groupRef.current.position.z += (position[2] - groupRef.current.position.z) * 0.1;
+			groupRef.current.position.x += (position[0] - groupRef.current.position.x) * 0.12;
+			groupRef.current.position.y += (position[1] - groupRef.current.position.y) * 0.12;
+			groupRef.current.position.z += (position[2] - groupRef.current.position.z) * 0.12;
 
-			groupRef.current.scale.x += (scale[0] - groupRef.current.scale.x) * 0.1;
-			groupRef.current.scale.y += (scale[1] - groupRef.current.scale.y) * 0.1;
-			groupRef.current.scale.z += (scale[2] - groupRef.current.scale.z) * 0.1;
+			groupRef.current.scale.x += (scale[0] - groupRef.current.scale.x) * 0.12;
+			groupRef.current.scale.y += (scale[1] - groupRef.current.scale.y) * 0.12;
+			groupRef.current.scale.z += (scale[2] - groupRef.current.scale.z) * 0.12;
 		}
 
-		// 1. Optimized Opacity & Visibility Handling
-		let currentOpacity = opacity;
+		// 1. Optimized Opacity & Visibility Handling via Ref (Zero React setState during frame ticks)
+		let currentOpacity = opacityRef.current;
 		if (isHidden) {
 			currentOpacity = 0;
 		} else if (isFading && !hasFadedOut) {
 			const fadeSpeed = 0.15;
-			currentOpacity = Math.max(0, opacity - fadeSpeed);
+			currentOpacity = Math.max(0, currentOpacity - fadeSpeed);
 			if (currentOpacity === 0) {
 				setHasFadedOut(true);
 				setShouldRender(false);
@@ -777,23 +797,27 @@ function Model({
 		} else if (isNew && startFadeIn && (!isFading || hasFadedOut)) {
 			if (shouldRender) {
 				const fadeSpeed = 0.15;
-				currentOpacity = Math.min(1, opacity + fadeSpeed);
+				currentOpacity = Math.min(1, currentOpacity + fadeSpeed);
 			}
-		} else if (!isFading && !isNew && opacity !== 1) {
+		} else if (!isFading && !isNew && currentOpacity !== 1) {
 			currentOpacity = 1;
 		}
 
-		if (currentOpacity !== opacity) {
-			setOpacity(currentOpacity);
-		}
+		const opacityChanged = Math.abs(currentOpacity - opacityRef.current) > 0.001;
+		opacityRef.current = currentOpacity;
 
 		// Direct material update via ref
-		if ((currentOpacity !== opacity || isHiddenChanged || isShouldRenderChanged) && groupRef.current) {
+		if ((opacityChanged || isHiddenChanged || isShouldRenderChanged) && groupRef.current) {
 			groupRef.current.traverse((child) => {
 				if (child instanceof THREE.Mesh && child.material) {
 					const mat = child.material as THREE.Material;
-					mat.opacity = currentOpacity;
-					mat.visible = !isHidden && shouldRender && currentOpacity > 0;
+					if (mat.opacity !== currentOpacity) {
+						mat.opacity = currentOpacity;
+					}
+					const isVis = !isHidden && shouldRender && currentOpacity > 0;
+					if (mat.visible !== isVis) {
+						mat.visible = isVis;
+					}
 				}
 			});
 		}
@@ -813,13 +837,9 @@ function Model({
 			patientGlowBackLightRef.current.intensity = (patientGlow.lightIntensity * 0.6) * pulseMultiplier;
 		}
 
-		const allActiveMaterials = [
-			...Object.values(materials),
-			...Object.values(cardioHotspotMaterials),
-			...Object.values(patientCardioMaterials),
-		];
-
-		for (const mat of allActiveMaterials) {
+		const matCount = allActiveMaterials.length;
+		for (let i = 0; i < matCount; i++) {
+			const mat = allActiveMaterials[i];
 			if (mat && mat.uniforms) {
 				mat.uniforms.time.value = time;
 				mat.uniforms.pulse.value = heartPulse;
@@ -841,11 +861,11 @@ function Model({
 	// Show pain/lab overlays when body model is visible, OR when lab highlights exist
 	const hasLabHighlights = labHighlights.size > 0;
 	const shouldShowPainArea =
-		modelType === "body" && shouldRender && !isHidden && opacity > 0;
+		modelType === "body" && shouldRender && !isHidden;
 	const shouldShowLabOverlays =
-		modelType === "body" && shouldRender && !isHidden && opacity > 0 && hasLabHighlights;
+		modelType === "body" && shouldRender && !isHidden && hasLabHighlights;
 	const shouldShowCardioHotspots =
-		modelType === "cardio" && shouldRender && !isHidden && opacity > 0;
+		modelType === "cardio" && shouldRender && !isHidden;
 
 	return (
 		<group onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}>

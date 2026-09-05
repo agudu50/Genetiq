@@ -26,6 +26,7 @@ interface MainSceneProps {
 	isPaused?: boolean;
 	showSidebar?: boolean;
 	gender?: string;
+	patientData?: Patient3DData;
 }
 
 const MainScene: React.FC<MainSceneProps> = ({
@@ -36,6 +37,7 @@ const MainScene: React.FC<MainSceneProps> = ({
 	isPaused = false,
 	showSidebar = true,
 	gender,
+	patientData,
 }) => {
 	const { cameraState, setCameraState } = useCamera();
 	const { backgroundId, preset, selectBackground, wrapperStyle } =
@@ -201,7 +203,8 @@ const MainScene: React.FC<MainSceneProps> = ({
 								isHidden={isModelHidden}
 								isPaused={isPaused}
 								selectedCategory={selectedCategory}
-								gender={gender}
+								gender={gender || patientData?.gender}
+								patientData={patientData}
 							/>
 						)}
 						<Model
@@ -215,7 +218,8 @@ const MainScene: React.FC<MainSceneProps> = ({
 							onModelChange={handleModelChange}
 							isPaused={isPaused}
 							selectedCategory={selectedCategory}
-							gender={gender}
+							gender={gender || patientData?.gender}
+							patientData={patientData}
 						/>
 					</Suspense>
 				</Canvas>

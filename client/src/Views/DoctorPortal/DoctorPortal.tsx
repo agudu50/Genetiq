@@ -1685,7 +1685,12 @@ ${report.soapNote.plan}
 				data-patient-status={selectedPatient.status}
 			>
 				<CameraProvider>
-					<MainScene selectedCategory={selectedOrganSystem} showSidebar={false} gender={selectedPatient.gender} />
+					<MainScene
+						selectedCategory={selectedOrganSystem}
+						showSidebar={false}
+						gender={selectedPatient.gender}
+						patientData={selectedPatient}
+					/>
 				</CameraProvider>
 			</div>
 
