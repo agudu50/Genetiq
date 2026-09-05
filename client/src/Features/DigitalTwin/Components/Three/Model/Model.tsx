@@ -509,6 +509,26 @@ function Model({
 		}
 	};
 
+	const cardioHotspotMaterials = useMemo(() => {
+		return {
+			apobLdl: createGlowingMaterial(
+				new THREE.Color(0xf59e0b), // Amber (ApoB & LDL Plaque)
+				new THREE.Color(0xd97706),
+				new THREE.Color(0x78350f),
+			),
+			afib: createGlowingMaterial(
+				new THREE.Color(0xf97316), // Orange (Atrial Fibrillation Arrhythmia)
+				new THREE.Color(0xea580c),
+				new THREE.Color(0x9a3412),
+			),
+			hscrp: createGlowingMaterial(
+				new THREE.Color(0xef4444), // Red (hs-CRP Inflammation)
+				new THREE.Color(0xb91c1c),
+				new THREE.Color(0x7f1d1d),
+			),
+		};
+	}, []);
+
 	useFrame((state) => {
 		if (isPaused) return;
 
@@ -517,8 +537,9 @@ function Model({
 		prevIsHiddenRef.current = isHidden;
 		prevShouldRenderRef.current = shouldRender;
 
+		const time = state.clock.getElapsedTime();
+
 		// Smoothly interpolate position and scale directly on the WebGL object ref
-		// This avoids triggering synchronous React state updates on every frame.
 		if (groupRef.current) {
 			groupRef.current.position.x += (position[0] - groupRef.current.position.x) * 0.1;
 			groupRef.current.position.y += (position[1] - groupRef.current.position.y) * 0.1;
@@ -529,7 +550,7 @@ function Model({
 			groupRef.current.scale.z += (scale[2] - groupRef.current.scale.z) * 0.1;
 		}
 
-		// 1. Optimized Opacity & Visibility Handling (using refs)
+		// 1. Optimized Opacity & Visibility Handling
 		let currentOpacity = opacity;
 		if (isHidden) {
 			currentOpacity = 0;
@@ -554,7 +575,7 @@ function Model({
 			setOpacity(currentOpacity);
 		}
 
-		// Direct material update via ref (avoids traverse on every frame, only executes when properties change)
+		// Direct material update via ref
 		if ((currentOpacity !== opacity || isHiddenChanged || isShouldRenderChanged) && groupRef.current) {
 			groupRef.current.traverse((child) => {
 				if (child instanceof THREE.Mesh && child.material) {
@@ -566,12 +587,15 @@ function Model({
 		}
 
 		// 2. Animate all glowing materials with a smooth, slow, organic breathing cycle
-		const time = state.clock.getElapsedTime();
 		const slowPulse = Math.sin(time * 1.5) * 0.5 + 0.5;
 		const heartPulse = Math.pow(Math.max(0.0, Math.sin(time * 1.5)), 2.0) * 0.7;
 
-		for (const key in materials) {
-			const mat = materials[key];
+		const allActiveMaterials = [
+			...Object.values(materials),
+			...Object.values(cardioHotspotMaterials),
+		];
+
+		for (const mat of allActiveMaterials) {
 			if (mat && mat.uniforms) {
 				mat.uniforms.time.value = time;
 				mat.uniforms.pulse.value = heartPulse;
@@ -596,6 +620,8 @@ function Model({
 		modelType === "body" && shouldRender && !isHidden && opacity > 0;
 	const shouldShowLabOverlays =
 		modelType === "body" && shouldRender && !isHidden && opacity > 0 && hasLabHighlights;
+	const shouldShowCardioHotspots =
+		modelType === "cardio" && shouldRender && !isHidden && opacity > 0;
 
 	return (
 		<group onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}>
@@ -626,6 +652,39 @@ function Model({
 					groupRef={groupRef}
 				/>
 			)}
+
+			{/* Cardiovascular 3D Model Clinical Hotspots (ApoB Plaque, AFib Arrhythmia, hs-CRP Inflammation) */}
+			{shouldShowCardioHotspots && (
+				<group>
+					{/* 1. Coronary Artery / LAD: ApoB 128 mg/dL & LDL 142 mg/dL Atheroma Burden */}
+					<mesh
+						position={[0.8, 21.2, 3.2]}
+						onClick={(e) => handleMeshClick(e, "Cardiovascular")}
+					>
+						<planeGeometry args={[3.5, 3.5, 32, 32]} />
+						<primitive attach='material' object={cardioHotspotMaterials.apobLdl} />
+					</mesh>
+
+					{/* 2. Sinoatrial Node / Right Atrium: Paroxysmal Atrial Fibrillation */}
+					<mesh
+						position={[-1.4, 23.8, 2.0]}
+						onClick={(e) => handleMeshClick(e, "Cardiovascular")}
+					>
+						<planeGeometry args={[3.2, 3.2, 32, 32]} />
+						<primitive attach='material' object={cardioHotspotMaterials.afib} />
+					</mesh>
+
+					{/* 3. Myocardial Micro-Vascular Bed: hs-CRP 3.4 mg/L Inflammatory Stress */}
+					<mesh
+						position={[1.2, 18.8, 2.8]}
+						onClick={(e) => handleMeshClick(e, "Cardiovascular")}
+					>
+						<planeGeometry args={[3.4, 3.4, 32, 32]} />
+						<primitive attach='material' object={cardioHotspotMaterials.hscrp} />
+					</mesh>
+				</group>
+			)}
+
 			{/* Category-based pain areas — only when a specific system has an active alert or lab finding */}
 			{shouldShowPainArea &&
 				selectedCategory &&
