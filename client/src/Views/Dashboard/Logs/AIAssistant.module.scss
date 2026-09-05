@@ -308,8 +308,11 @@ $teal2: #008f87;
 .chatSection {
 	display: flex;
 	flex-direction: column;
-	height: calc(100vh - 280px);
-	min-height: 480px;
+	height: calc(100vh - 250px);
+	min-height: 520px;
+	width: 100%;
+	max-width: 860px;
+	margin: 0 auto;
 	border-radius: 18px;
 	border: 1px solid rgba(255, 255, 255, 0.08);
 	background: rgba(13, 20, 36, 0.96);
@@ -422,7 +425,7 @@ $teal2: #008f87;
 .chatMessages {
 	flex: 1;
 	overflow-y: auto;
-	padding: 20px;
+	padding: 22px 24px;
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
@@ -435,9 +438,14 @@ $teal2: #008f87;
 
 .chatMsg {
 	display: flex;
-	gap: 10px;
-	max-width: 85%;
+	gap: 12px;
+	max-width: 640px;
+	width: fit-content;
 	animation: fadeInMsg 0.25s ease;
+
+	@media (max-width: 768px) {
+		max-width: 90%;
+	}
 }
 
 @keyframes fadeInMsg {
@@ -448,6 +456,7 @@ $teal2: #008f87;
 .chatUser {
 	align-self: flex-end;
 	flex-direction: row-reverse;
+	max-width: 560px;
 
 	.chatBubble {
 		background: rgba(59, 130, 246, 0.15);
@@ -466,6 +475,7 @@ $teal2: #008f87;
 
 .chatBot {
 	align-self: flex-start;
+	max-width: 660px;
 
 	.chatBubble {
 		background: rgba(0, 166, 157, 0.12);
