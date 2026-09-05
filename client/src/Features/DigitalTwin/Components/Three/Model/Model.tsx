@@ -236,19 +236,6 @@ function Model({
 	const prevIsHiddenRef = useRef(isHidden);
 	const prevShouldRenderRef = useRef(shouldRender);
 
-	const activeMaterialKey = useMemo(() => {
-		const mapping: Record<string, string> = {
-			Pulmonology: "Respiratory",
-			Gastroenterolgy: "Digestive",
-			Endocrinology: "Endocrine",
-			Pulmonology1: "Renal",
-			Urology: "Urological",
-			StressManagement: "Neurological",
-			UlnaRadiusAlt: "Musculoskeletal",
-		};
-		return mapping[selectedCategory || ""] || "General";
-	}, [selectedCategory]);
-
 	const materials: Record<string, THREE.ShaderMaterial> = useMemo(() => {
 		const getColor = (system: string, standard: [number, number, number]) => {
 			// 1. Check triage alerts (highest priority)
@@ -578,24 +565,18 @@ function Model({
 			});
 		}
 
-		// 2. Optimized Material Uniforms (selective update)
+		// 2. Animate all glowing materials with a smooth, slow, organic breathing cycle
 		const time = state.clock.getElapsedTime();
-		const updateMaterialUniforms = (mat: THREE.ShaderMaterial) => {
-			if (!mat) return;
-			mat.uniforms.time.value = time;
-			const pulse =
-				Math.pow(Math.abs(Math.sin(time * 2.0)), 3) * 0.7 +
-				Math.pow(Math.abs(Math.sin(time * 8.0)), 2) * 0.3;
-			mat.uniforms.pulse.value = pulse;
-			mat.uniforms.intensity.value = 0.7 + pulse * 0.3;
-		};
+		const slowPulse = Math.sin(time * 1.5) * 0.5 + 0.5;
+		const heartPulse = Math.pow(Math.max(0.0, Math.sin(time * 1.5)), 2.0) * 0.7;
 
-		// Only animate relevant materials
-		if (materials[activeMaterialKey]) {
-			updateMaterialUniforms(materials[activeMaterialKey]);
-		}
-		if (activeMaterialKey !== "General") {
-			updateMaterialUniforms(materials.General);
+		for (const key in materials) {
+			const mat = materials[key];
+			if (mat && mat.uniforms) {
+				mat.uniforms.time.value = time;
+				mat.uniforms.pulse.value = heartPulse;
+				mat.uniforms.intensity.value = 0.8 + slowPulse * 0.4;
+			}
 		}
 	});
 

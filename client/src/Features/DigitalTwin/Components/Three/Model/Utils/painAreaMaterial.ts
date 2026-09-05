@@ -37,61 +37,42 @@ export const createGlowingMaterial = (
       uniform vec3 midColor;
       uniform vec3 outerColor;
 
-      float rand(vec2 co) {
-          return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
-      }
-
-      float noise(vec2 p) {
-          vec2 ip = floor(p);
-          vec2 u = fract(p);
-          u = u*u*(3.0-2.0*u);
-
-          float res = mix(
-              mix(rand(ip), rand(ip+vec2(1.0,0.0)), u.x),
-              mix(rand(ip+vec2(0.0,1.0)), rand(ip+vec2(1.0,1.0)), u.x), u.y);
-          return res*res;
-      }
-
       void main() {
           vec2 center = vec2(0.5, 0.5);
           float dist = length(vUv - center);
           
-          float sharpPulse = pow(abs(sin(time * 2.0)), 3.0);
-          float rapidPulse = pow(abs(sin(time * 8.0)), 2.0);
+          // Smooth slow organic breathing cycle (calm 1.4 rad/s)
+          float slowBreath = sin(time * 1.5) * 0.5 + 0.5;
+          float gentlePulse = pow(sin(time * 1.5), 2.0) * 0.7 + pulse * 0.3;
           
-          float combinedPulse = mix(sharpPulse, rapidPulse, 0.3) * pulse * 0.05; 
+          // Dynamic radiant radius expanding and contracting gently
+          float coreRadius = 0.12 + gentlePulse * 0.05;
+          float haloRadius = 0.42 + gentlePulse * 0.08;
           
-          float noiseScale = 12.0;
-          float noiseValue = noise(vUv * noiseScale + time * 0.5);
-          
-          float coreBrightness = smoothstep(0.25, 0.0, dist) * (1.5 + combinedPulse * 0.5);
-          
+          // Color ramp blending from intense radiant core -> mid tone -> soft outer aura
           vec3 finalColor;
-          if (dist < 0.15) {
-              finalColor = mix(coreColor, midColor, dist * 6.67);
-          } else if (dist < 0.35) {
-              finalColor = mix(midColor, outerColor, (dist - 0.15) * 5.0);
+          if (dist < coreRadius) {
+              finalColor = mix(coreColor * 1.4, coreColor, dist / coreRadius);
+          } else if (dist < haloRadius) {
+              float t = (dist - coreRadius) / (haloRadius - coreRadius);
+              finalColor = mix(coreColor, midColor, t);
           } else {
-              finalColor = outerColor;
+              float t = clamp((dist - haloRadius) / (0.5 - haloRadius), 0.0, 1.0);
+              finalColor = mix(midColor, outerColor, t);
           }
 
-          float pulseEffect = 1.0 + (combinedPulse * 0.3);
-          float alpha = smoothstep(0.7, 0.0, dist);
+          // Core brightness boost with pulsing intensity
+          float coreBrightness = smoothstep(coreRadius * 1.8, 0.0, dist) * (1.2 + gentlePulse * 0.8);
+          finalColor += coreColor * coreBrightness;
+
+          // Smooth radial alpha fade to zero at border
+          float alpha = smoothstep(0.5, 0.02, dist);
           
-          float distortion = noiseValue * (0.3 + combinedPulse * 0.2);
-          alpha *= (0.9 + distortion) * pulseEffect;
+          // Apply slow breathing intensity modulation
+          float breathingMultiplier = 0.75 + gentlePulse * 0.45;
+          alpha *= breathingMultiplier * intensity;
 
-          float hotSpots = pow(noiseValue, 3.0) * combinedPulse;
-          finalColor += vec3(hotSpots * 0.3, hotSpots * 0.1, 0.0);
-          
-          finalColor += coreColor * coreBrightness * (1.0 + combinedPulse * 0.5);
-
-          float edgeFade = smoothstep(0.5, 0.0, dist);
-          alpha *= edgeFade * intensity;
-
-          alpha *= 0.8 + combinedPulse * 0.2;
-
-          gl_FragColor = vec4(finalColor, alpha * 0.9);
+          gl_FragColor = vec4(finalColor, alpha * 0.88);
       }
   `,
 		transparent: true,
