@@ -3548,8 +3548,191 @@
 	color: #fbbf24;
 }
 
-.trendNormal {
-	color: #34d399;
+// ─── Manual Prescription Inline Form ───────────────────────────────────────
+
+.btnPrescribeToggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 3px 8px;
+	background: rgba(14, 165, 233, 0.12);
+	border: 1px solid rgba(14, 165, 233, 0.3);
+	color: #38bdf8;
+	border-radius: 6px;
+	font-size: 0.68rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.2s ease;
+
+	:global(html[data-theme="light"]) & {
+		background: rgba(14, 165, 233, 0.08);
+		border-color: rgba(14, 165, 233, 0.25);
+		color: #0284c7;
+	}
+
+	&:hover {
+		background: rgba(14, 165, 233, 0.2);
+		border-color: rgba(14, 165, 233, 0.5);
+	}
+}
+
+.prescribeForm {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 10px;
+	background: rgba(0, 0, 0, 0.25);
+	border: 1px solid rgba(14, 165, 233, 0.25);
+	border-radius: 10px;
+	margin-bottom: 8px;
+	animation: fadeIn 0.2s ease;
+
+	:global(html[data-theme="light"]) & {
+		background: #f0f9ff;
+		border-color: #bae6fd;
+	}
+}
+
+.prescribeFormHeader {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 6px;
+}
+
+.prescribeFormTitle {
+	font-size: 0.72rem;
+	font-weight: 800;
+	color: #38bdf8;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+
+	:global(html[data-theme="light"]) & {
+		color: #0369a1;
+	}
+}
+
+.prescribeFormTarget {
+	font-size: 0.68rem;
+	color: rgba(255, 255, 255, 0.45);
+
+	:global(html[data-theme="light"]) & {
+		color: #64748b;
+	}
+}
+
+.prescribeFormFields {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.prescribeField {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	flex: 1;
+
+	label {
+		font-size: 0.64rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		color: rgba(255, 255, 255, 0.5);
+
+		:global(html[data-theme="light"]) & {
+			color: #64748b;
+		}
+	}
+
+	input,
+	select {
+		width: 100%;
+		padding: 6px 8px;
+		font-size: 0.76rem;
+		border-radius: 6px;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		background: rgba(255, 255, 255, 0.05);
+		color: #ffffff;
+		outline: none;
+		transition: border-color 0.15s ease;
+
+		:global(html[data-theme="light"]) & {
+			background: #ffffff;
+			border-color: #cbd5e1;
+			color: #0f172a;
+		}
+
+		&:focus {
+			border-color: #38bdf8;
+			box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
+		}
+	}
+
+	select option {
+		background: #1e293b;
+		color: #ffffff;
+
+		:global(html[data-theme="light"]) & {
+			background: #ffffff;
+			color: #0f172a;
+		}
+	}
+}
+
+.prescribeFieldRow {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 6px;
+}
+
+.prescribeFormActions {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 6px;
+	margin-top: 2px;
+}
+
+.btnCancelSmall {
+	padding: 5px 8px;
+	font-size: 0.7rem;
+	background: transparent;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 6px;
+	color: rgba(255, 255, 255, 0.6);
+	cursor: pointer;
+	transition: all 0.15s ease;
+
+	:global(html[data-theme="light"]) & {
+		border-color: #cbd5e1;
+		color: #64748b;
+	}
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.05);
+		color: #ffffff;
+	}
+}
+
+.btnSubmitPrescription {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 5px 10px;
+	font-size: 0.72rem;
+	font-weight: 750;
+	background: #0284c7;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 6px;
+	color: #ffffff;
+	cursor: pointer;
+	box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
+	transition: all 0.15s ease;
+
+	&:hover {
+		background: #0369a1;
+		transform: translateY(-1px);
+	}
 }
 
 // ─── Status Badges ───────────────────────────────────────────────────────────

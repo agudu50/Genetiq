@@ -595,6 +595,10 @@ export const DoctorPortal = () => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedOrganSystem, setSelectedOrganSystem] = useState<string>("cardiovascular");
 	const [expandedMarker, setExpandedMarker] = useState<string | null>(null);
+	const [isPrescribeOpen, setIsPrescribeOpen] = useState(false);
+	const [newMedName, setNewMedName] = useState("");
+	const [newMedDosage, setNewMedDosage] = useState("");
+	const [newMedFrequency, setNewMedFrequency] = useState("Daily (Morning)");
 
 	// Appointments & Patient Schedule State
 	const [appointments, setAppointments] = useState<DoctorAppointment[]>(initialAppointments);
@@ -904,6 +908,35 @@ export const DoctorPortal = () => {
 
 	const handleOrderRetest = () => {
 		toast.success(`90-day lab re-test order dispatched for ${selectedPatient.name}.`);
+	};
+
+	const handlePrescribeMedicine = (e: React.FormEvent) => {
+		e.preventDefault();
+		if (!newMedName.trim()) {
+			toast.error("Please enter a medication name.");
+			return;
+		}
+
+		const newMed = {
+			name: newMedName.trim(),
+			dosage: newMedDosage.trim() || "Standard Dose",
+			frequency: newMedFrequency.trim() || "Daily (Morning)",
+			adherence: 100,
+		};
+
+		setPatients((prev) =>
+			prev.map((p) =>
+				p.id === selectedPatient.id
+					? { ...p, medications: [newMed, ...p.medications] }
+					: p,
+			),
+		);
+
+		toast.success(`Prescribed ${newMed.name} (${newMed.dosage}) for ${selectedPatient.name} — Dispatched to Patient EHR & App.`);
+		setNewMedName("");
+		setNewMedDosage("");
+		setNewMedFrequency("Daily (Morning)");
+		setIsPrescribeOpen(false);
 	};
 
 	return (
@@ -1604,7 +1637,82 @@ export const DoctorPortal = () => {
 								<Pill size={16} style={{ color: "#0ea5e9" }} />
 								Medications & Home Adherence
 							</h3>
+							<button
+								type='button'
+								className={styles.btnPrescribeToggle}
+								onClick={() => setIsPrescribeOpen((prev) => !prev)}
+								title={isPrescribeOpen ? "Close prescription form" : "Prescribe medication manually"}
+							>
+								{isPrescribeOpen ? <X size={12} /> : <Plus size={12} />}
+								<span>{isPrescribeOpen ? "Cancel" : "Prescribe"}</span>
+							</button>
 						</div>
+
+						{/* Inline Manual Prescription Form */}
+						{isPrescribeOpen && (
+							<form className={styles.prescribeForm} onSubmit={handlePrescribeMedicine}>
+								<div className={styles.prescribeFormHeader}>
+									<span className={styles.prescribeFormTitle}>Manual Prescription</span>
+									<span className={styles.prescribeFormTarget}>for {selectedPatient.name}</span>
+								</div>
+
+								<div className={styles.prescribeFormFields}>
+									<div className={styles.prescribeField}>
+										<label htmlFor='newMedName'>Medication Name</label>
+										<input
+											id='newMedName'
+											type='text'
+											placeholder='e.g. Rosuvastatin, Losartan'
+											value={newMedName}
+											onChange={(e) => setNewMedName(e.target.value)}
+											autoFocus
+											required
+										/>
+									</div>
+
+									<div className={styles.prescribeFieldRow}>
+										<div className={styles.prescribeField}>
+											<label htmlFor='newMedDosage'>Dosage</label>
+											<input
+												id='newMedDosage'
+												type='text'
+												placeholder='e.g. 20 mg, 50 mg'
+												value={newMedDosage}
+												onChange={(e) => setNewMedDosage(e.target.value)}
+											/>
+										</div>
+
+										<div className={styles.prescribeField}>
+											<label htmlFor='newMedFrequency'>Frequency</label>
+											<select
+												id='newMedFrequency'
+												value={newMedFrequency}
+												onChange={(e) => setNewMedFrequency(e.target.value)}
+											>
+												<option value='Daily (Morning)'>Daily (Morning)</option>
+												<option value='Daily (Night)'>Daily (Night)</option>
+												<option value='Twice Daily'>Twice Daily</option>
+												<option value='Daily with dinner'>Daily with dinner</option>
+												<option value='As needed (PRN)'>As needed (PRN)</option>
+											</select>
+										</div>
+									</div>
+								</div>
+
+								<div className={styles.prescribeFormActions}>
+									<button
+										type='button'
+										className={styles.btnCancelSmall}
+										onClick={() => setIsPrescribeOpen(false)}
+									>
+										Cancel
+									</button>
+									<button type='submit' className={styles.btnSubmitPrescription}>
+										<Send size={12} /> Prescribe Medicine
+									</button>
+								</div>
+							</form>
+						)}
 
 						{selectedPatient.medications.length === 0 ? (
 							<div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.4)" }}>
