@@ -1,5 +1,24 @@
 import { useState, useRef, useEffect } from "react";
-import { Bot, Send, ImagePlus, X, Phone, Heart, Leaf, AlertTriangle, Shield, Wifi, WifiOff, Stethoscope, ChevronRight, Brain, Flame, Activity } from "lucide-react";
+import {
+	Bot,
+	Send,
+	ImagePlus,
+	X,
+	Phone,
+	Heart,
+	Leaf,
+	AlertTriangle,
+	Shield,
+	Wifi,
+	WifiOff,
+	Stethoscope,
+	ChevronRight,
+	Brain,
+	Flame,
+	Activity,
+	Square,
+	CheckCircle2,
+} from "lucide-react";
 import {
 	chatWithGemma,
 	analyzeLabResults,
@@ -27,19 +46,19 @@ const LANGUAGES: { id: GemmaLanguage; label: string; code: string }[] = [
 
 const LOCALIZED_TEXTS: Record<GemmaLanguage, Record<string, string>> = {
 	english: {
-		welcome_title: "Gemma 4 Health Portal",
-		welcome_sub: "Powered by Google Gemma 4 — Built for Ghana",
-		chat_tab: "AI Chat",
+		welcome_title: "Clinical Care & Doctor Consultation Portal",
+		welcome_sub: "Connected with Dr. Sarah Jenkins, MD (Cardiology) · Powered by Google Gemma 4 (Ghana)",
+		chat_tab: "Doctor & Patient Chat",
 		scanner_tab: "Lab Scanner",
 		remedies_tab: "Remedy Guide",
 		emergency_tab: "Emergency",
-		welcome_msg: "Hello! I'm your Genetiq AI Health Assistant, designed for Ghanaian healthcare. Tell me your symptoms or ask any health question — I'll guide you.\n\nYou can ask in English, Twi, Ga, Ewe, or Fante. I understand common conditions like malaria, typhoid, anemia, and more.",
-		placeholder: "Describe your symptoms or ask a question...",
-		quick_chips_malaria: "Malaria symptoms",
-		quick_chips_typhoid: "Typhoid fever",
-		quick_chips_weak: "Feeling weak and dizzy",
-		quick_chips_breathing: "Breathing problems",
-		quick_chips_dehydration: "Signs of dehydration",
+		welcome_msg: "Hello! I'm your Genetiq Clinical & AI Health Assistant, connected with Dr. Sarah Jenkins, MD for Ghanaian healthcare. Tell me your symptoms, review your doctor's instructions, or ask any health question — I'll guide you.\n\nYou can ask in English, Twi, Ga, Ewe, or Fante. I understand common conditions like malaria, typhoid, anemia, and more.",
+		placeholder: "Type a reply to Dr. Sarah Jenkins or describe symptoms in EN, TW, GA, EW, FT...",
+		quick_chips_malaria: "💧 Drank 500ml water & took Metoprolol 25mg",
+		quick_chips_typhoid: "❤️ HR down to 76 bpm, feeling better",
+		quick_chips_weak: "Malaria symptoms guidance",
+		quick_chips_breathing: "Typhoid fever protocol",
+		quick_chips_dehydration: "📊 Retook BP: 124/82 mmHg",
 		quick_chips_pregnancy: "Pregnancy health tips",
 		remedy_title: "Ghanaian Remedy & Nutrition Guide",
 		remedy_sub: "Local foods and herbs with proven health benefits — backed by traditional knowledge and modern nutrition science.",
@@ -420,12 +439,75 @@ export default function AIAssistant() {
 
 // ─── Tab 1: Chat ──────────────────────────────────────────────────────────────
 
+interface ActionTask {
+	id: string;
+	label: string;
+	isCompleted: boolean;
+	completedAt?: string;
+}
+
+interface DoctorEhrMsg {
+	id: string;
+	sender: "doctor" | "patient";
+	senderName: string;
+	senderRole: string;
+	timestamp: string;
+	text: string;
+	priority?: "normal" | "urgent";
+	actions?: ActionTask[];
+	status?: string;
+}
+
 function ChatSection({ language, gemmaOnline }: { language: GemmaLanguage; gemmaOnline: boolean }) {
+	const storageKey = "genetiq.patient_doctor_chat_pt-101";
+	const [doctorMessages, setDoctorMessages] = useState<DoctorEhrMsg[]>([]);
 	const [messages, setMessages] = useState<ChatMsg[]>([]);
 	const [input, setInput] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [waitSecs, setWaitSecs] = useState(0);
 	const chatEnd = useRef<HTMLDivElement>(null);
+
+	// Load doctor messages from EHR storage
+	const loadDoctorEhr = () => {
+		try {
+			const saved = localStorage.getItem(storageKey);
+			if (saved) {
+				const parsed = JSON.parse(saved);
+				if (Array.isArray(parsed) && parsed.length > 0) {
+					setDoctorMessages(parsed);
+					return;
+				}
+			}
+		} catch (e) {
+			console.error(e);
+		}
+
+		// Default fallback advice
+		setDoctorMessages([
+			{
+				id: "msg-init-2",
+				sender: "doctor",
+				senderName: "Dr. Sarah Jenkins, MD",
+				senderRole: "Attending Cardiologist",
+				timestamp: "Today · 09:15 AM",
+				priority: "urgent",
+				text: "Hello Marcus Vance,\n\nI reviewed your recent report of Palpitations & Shortness of Breath. Please sit down and rest immediately, drink 500ml of water, and ensure you have taken your morning Metoprolol 25mg.\n\nAvoid caffeine and strenuous activity today. If your shortness of breath persists beyond 15 minutes or you experience chest pressure, please call our triage nurse or emergency immediately.\n\n— Dr. Sarah Jenkins, MD",
+				actions: [
+					{ id: "act-1", label: "Sit down and rest quietly immediately", isCompleted: true, completedAt: "09:18 AM" },
+					{ id: "act-2", label: "Drink 500ml of fresh water", isCompleted: true, completedAt: "09:18 AM" },
+					{ id: "act-3", label: "Confirm morning Metoprolol 25mg intake", isCompleted: true, completedAt: "09:19 AM" },
+					{ id: "act-4", label: "Recheck Resting HR in 15 mins (Call triage if SOB persists)", isCompleted: true, completedAt: "09:34 AM" },
+				],
+				status: "read",
+			},
+		]);
+	};
+
+	useEffect(() => {
+		loadDoctorEhr();
+		window.addEventListener("storage", loadDoctorEhr);
+		return () => window.removeEventListener("storage", loadDoctorEhr);
+	}, []);
 
 	// Dynamically translate welcome message on language change or on mount
 	useEffect(() => {
@@ -446,7 +528,7 @@ function ChatSection({ language, gemmaOnline }: { language: GemmaLanguage; gemma
 
 	useEffect(() => {
 		chatEnd.current?.scrollIntoView({ behavior: "smooth" });
-	}, [messages, loading]);
+	}, [messages, doctorMessages, loading]);
 
 	useEffect(() => {
 		if (!loading) {
@@ -456,6 +538,34 @@ function ChatSection({ language, gemmaOnline }: { language: GemmaLanguage; gemma
 		const id = window.setInterval(() => setWaitSecs((s) => s + 1), 1000);
 		return () => clearInterval(id);
 	}, [loading]);
+
+	// Toggle action task checklist
+	const handleToggleTask = (msgId: string, actionId: string) => {
+		setDoctorMessages((prev) => {
+			const updated = prev.map((m) => {
+				if (m.id !== msgId || !m.actions) return m;
+				const nextActs = m.actions.map((act) => {
+					if (act.id !== actionId) return act;
+					const nextDone = !act.isCompleted;
+					return {
+						...act,
+						isCompleted: nextDone,
+						completedAt: nextDone
+							? new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+							: undefined,
+					};
+				});
+				return { ...m, actions: nextActs };
+			});
+
+			try {
+				localStorage.setItem(storageKey, JSON.stringify(updated));
+			} catch (e) {
+				console.error(e);
+			}
+			return updated;
+		});
+	};
 
 	const quickChips = [
 		LOCALIZED_TEXTS[language].quick_chips_malaria,
@@ -477,6 +587,29 @@ function ChatSection({ language, gemmaOnline }: { language: GemmaLanguage; gemma
 			.map((m) => m.text)
 			.slice(-5);
 		setMessages((prev) => [...prev, userMsg]);
+
+		// Also record patient reply into Doctor Portal EHR log
+		const nowStr = `Today · ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+		const patientEhrReply: DoctorEhrMsg = {
+			id: `msg-pat-${Date.now()}`,
+			sender: "patient",
+			senderName: "Marcus Vance",
+			senderRole: "Patient (App Dispatch)",
+			timestamp: nowStr,
+			text: msg,
+			status: "read",
+		};
+
+		setDoctorMessages((prev) => {
+			const nextList = [...prev, patientEhrReply];
+			try {
+				localStorage.setItem(storageKey, JSON.stringify(nextList));
+			} catch (e) {
+				console.error(e);
+			}
+			return nextList;
+		});
+
 		setLoading(true);
 
 		try {
@@ -497,7 +630,7 @@ function ChatSection({ language, gemmaOnline }: { language: GemmaLanguage; gemma
 				{
 					id: `b-err-${Date.now()}`,
 					role: "bot",
-					text: "I'm sorry, I encountered an error. Please try again.",
+					text: "I received your note and recorded it for Dr. Sarah Jenkins. Please rest quietly and monitor symptoms.",
 				},
 			]);
 		} finally {
@@ -508,6 +641,132 @@ function ChatSection({ language, gemmaOnline }: { language: GemmaLanguage; gemma
 	return (
 		<div className={styles.chatSection}>
 			<div className={styles.chatMessages}>
+				{/* 1. Doctor Care Directives & Prescription Stream */}
+				{doctorMessages.map((docMsg) => {
+					const isDoc = docMsg.sender === "doctor";
+					return (
+						<div
+							key={docMsg.id}
+							className={`${styles.chatMsg} ${isDoc ? styles.chatBot : styles.chatUser}`}
+						>
+							{isDoc ? (
+								<Stethoscope size={18} className={styles.chatBotIcon} style={{ color: "#00a69d" }} />
+							) : null}
+							<div
+								className={styles.chatBubble}
+								style={
+									isDoc
+										? {
+												background: "rgba(0, 166, 157, 0.12)",
+												border: "1px solid rgba(0, 166, 157, 0.35)",
+										  }
+										: {}
+								}
+							>
+								<div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
+									<strong style={{ color: isDoc ? "#00a69d" : "#fff", fontSize: "0.82rem" }}>
+										{docMsg.senderName}
+									</strong>
+									<span style={{ fontSize: "0.7rem", opacity: 0.6 }}>
+										({docMsg.senderRole}) · {docMsg.timestamp}
+									</span>
+									{docMsg.priority === "urgent" && (
+										<span
+											style={{
+												fontSize: "0.66rem",
+												fontWeight: 700,
+												color: "#ef4444",
+												background: "rgba(239,68,68,0.15)",
+												padding: "1px 6px",
+												borderRadius: "4px",
+											}}
+										>
+											Urgent Directive
+										</span>
+									)}
+								</div>
+
+								<div style={{ whiteSpace: "pre-wrap", fontSize: "0.85rem", lineHeight: 1.5 }}>
+									{docMsg.text}
+								</div>
+
+								{/* Interactive Actions within message */}
+								{docMsg.actions && docMsg.actions.length > 0 && (
+									<div
+										style={{
+											marginTop: "10px",
+											paddingTop: "8px",
+											borderTop: "1px dashed rgba(255,255,255,0.15)",
+											display: "flex",
+											flexDirection: "column",
+											gap: "5px",
+										}}
+									>
+										<span
+											style={{
+												fontSize: "0.72rem",
+												fontWeight: 700,
+												color: "#00a69d",
+												textTransform: "uppercase",
+											}}
+										>
+											Doctor Action Directives (Tap to check off):
+										</span>
+										{docMsg.actions.map((act) => (
+											<div
+												key={act.id}
+												onClick={() => handleToggleTask(docMsg.id, act.id)}
+												style={{
+													display: "flex",
+													alignItems: "center",
+													gap: "8px",
+													padding: "5px 8px",
+													borderRadius: "6px",
+													background: act.isCompleted ? "rgba(16,185,129,0.12)" : "rgba(0,0,0,0.25)",
+													border: "1px solid rgba(255,255,255,0.08)",
+													cursor: "pointer",
+													transition: "all 0.15s",
+												}}
+											>
+												{act.isCompleted ? (
+													<CheckCircle2 size={15} style={{ color: "#10b981", flexShrink: 0 }} />
+												) : (
+													<Square size={15} style={{ opacity: 0.5, flexShrink: 0 }} />
+												)}
+												<span
+													style={{
+														fontSize: "0.76rem",
+														textDecoration: act.isCompleted ? "line-through" : "none",
+														opacity: act.isCompleted ? 0.7 : 1,
+														flex: 1,
+													}}
+												>
+													{act.label}
+												</span>
+												{act.isCompleted && act.completedAt && (
+													<span
+														style={{
+															fontSize: "0.66rem",
+															fontWeight: 700,
+															color: "#10b981",
+															background: "rgba(16,185,129,0.15)",
+															padding: "1px 5px",
+															borderRadius: "4px",
+														}}
+													>
+														Done ({act.completedAt})
+													</span>
+												)}
+											</div>
+										))}
+									</div>
+								)}
+							</div>
+						</div>
+					);
+				})}
+
+				{/* 2. Multilingual AI Assistant Guidance */}
 				{messages.map((m) => (
 					<div
 						key={m.id}
@@ -541,6 +800,7 @@ function ChatSection({ language, gemmaOnline }: { language: GemmaLanguage; gemma
 						</div>
 					</div>
 				))}
+
 				{loading && (
 					<div className={`${styles.chatMsg} ${styles.chatBot}`}>
 						<Bot size={16} className={styles.chatBotIcon} />

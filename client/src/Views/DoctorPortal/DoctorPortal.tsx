@@ -23,7 +23,6 @@ import {
 	ChevronDown,
 	ChevronLeft,
 	ChevronRight,
-	ChevronUp,
 	Clock,
 	Copy,
 	Database,
@@ -31,12 +30,9 @@ import {
 	ExternalLink,
 	FileText,
 	Heart,
-	History,
 	Info,
 	LogOut,
 	MapPin,
-	Mic,
-	MicOff,
 	PhoneCall,
 	Pill,
 	Plus,
@@ -60,6 +56,7 @@ import {
 } from "lucide-react";
 import { CameraProvider } from "@/Features/DigitalTwin/Context/CameraContext";
 import MainScene from "@/Features/DigitalTwin/Components/Three/Scene/MainScene";
+import { ClinicalCareChatModal } from "./Components/ClinicalCareChatModal/ClinicalCareChatModal";
 import styles from "./DoctorPortal.module.scss";
 
 // ─── Patient Database ────────────────────────────────────────────────────────
@@ -1245,9 +1242,6 @@ export const DoctorPortal = () => {
 	// Advice & Clinical Dispatch Modal State
 	const [isAdviceModalOpen, setIsAdviceModalOpen] = useState(false);
 	const [adviceText, setAdviceText] = useState("");
-	const [isVoiceRecording, setIsVoiceRecording] = useState(false);
-	const [showProblemHistory, setShowProblemHistory] = useState(true);
-	const recognitionRef = useRef<any>(null);
 
 	// AI Clinical Insights & Report Analysis Modal State
 	const [isAiReportModalOpen, setIsAiReportModalOpen] = useState(false);
@@ -1439,91 +1433,6 @@ export const DoctorPortal = () => {
 			);
 		}
 		setIsAdviceModalOpen(true);
-	};
-
-	// Voice recognition handler
-	const toggleVoiceInput = () => {
-		if (isVoiceRecording) {
-			if (recognitionRef.current) {
-				recognitionRef.current.stop();
-			}
-			setIsVoiceRecording(false);
-			toast.info("Voice dictation stopped.");
-			return;
-		}
-
-		const SpeechRecognition =
-			(window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-
-		if (!SpeechRecognition) {
-			toast.error("Speech Recognition is not supported on this browser. You can type your note directly.");
-			return;
-		}
-
-		try {
-			const recognition = new SpeechRecognition();
-			recognition.continuous = true;
-			recognition.interimResults = true;
-			recognition.lang = "en-US";
-
-			recognition.onstart = () => {
-				setIsVoiceRecording(true);
-				toast.success("Listening... Speak your clinical advice now.");
-			};
-
-			recognition.onresult = (event: any) => {
-				let transcript = "";
-				for (let i = event.resultIndex; i < event.results.length; ++i) {
-					if (event.results[i].isFinal) {
-						transcript += event.results[i][0].transcript + " ";
-					}
-				}
-				if (transcript) {
-					setAdviceText((prev) => `${prev.trim()} ${transcript.trim()}`);
-				}
-			};
-
-			recognition.onerror = () => {
-				setIsVoiceRecording(false);
-			};
-
-			recognition.onend = () => {
-				setIsVoiceRecording(false);
-			};
-
-			recognitionRef.current = recognition;
-			recognition.start();
-		} catch (e) {
-			console.error(e);
-			setIsVoiceRecording(false);
-		}
-	};
-
-	// Cleanup recognition on unmount
-	useEffect(() => {
-		return () => {
-			if (recognitionRef.current) {
-				recognitionRef.current.stop();
-			}
-		};
-	}, []);
-
-	// Send advice to patient
-	const handleDispatchAdvice = () => {
-		if (!adviceText.trim()) {
-			toast.error("Please enter or dictate clinical advice.");
-			return;
-		}
-
-		// Clear urgent flag if any
-		setPatients((prev) =>
-			prev.map((p) =>
-				p.id === selectedPatient.id ? { ...p, status: "monitoring" } : p,
-			),
-		);
-
-		setIsAdviceModalOpen(false);
-		toast.success(`Clinical advice and care plan dispatched to ${selectedPatient.name}'s Genetiq app!`);
 	};
 
 	const handleAcknowledge = () => {
@@ -2678,162 +2587,21 @@ ${report.soapNote.plan}
 				</div>
 			</div>
 
-			{/* 4. Advice & Care Plan Dispatch Modal (Voice + Text + Historical Problems) */}
-			{isAdviceModalOpen && (
-				<div className={styles.modalOverlay} onClick={() => setIsAdviceModalOpen(false)}>
-					<div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-						<div className={styles.modalHeader}>
-							<h2>
-								<Send size={18} style={{ color: "#00a896" }} />
-								Clinical Care Advice & Patient Dispatch
-							</h2>
-							<button
-								type='button'
-								className={styles.closeBtn}
-								onClick={() => setIsAdviceModalOpen(false)}
-							>
-								<X size={18} />
-							</button>
-						</div>
-
-						<div className={styles.modalBody}>
-							{/* Patient target box */}
-							<div className={styles.patientTargetBox}>
-								<div>
-									<div className={styles.targetName}>Recipient: {selectedPatient.name} ({selectedPatient.mrn})</div>
-									<div className={styles.targetDetails}>{selectedPatient.primaryDiagnosis} · Age {selectedPatient.age}</div>
-								</div>
-								<span className={styles.badgeUrgent}>Direct App Dispatch</span>
-							</div>
-
-							{/* Patient Problem History Accordion */}
-							<div className={styles.historyAccordion}>
-								<div
-									className={styles.accordionTitle}
-									onClick={() => setShowProblemHistory(!showProblemHistory)}
-									style={{ cursor: "pointer" }}
-								>
-									<span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-										<History size={14} />
-										Patient Problem & Symptom History ({selectedPatient.problemHistory.length})
-									</span>
-									{showProblemHistory ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-								</div>
-
-								{showProblemHistory && (
-									<div style={{ display: "flex", flexDirection: "column", gap: "6px", marginTop: "6px" }}>
-										{selectedPatient.problemHistory.length === 0 ? (
-											<div style={{ fontSize: "0.76rem", color: "rgba(255,255,255,0.4)", padding: "4px" }}>
-												No prior unresolved issues on record.
-											</div>
-										) : (
-											selectedPatient.problemHistory.map((prob, idx) => (
-												<div key={idx} className={styles.historyItem}>
-													<div style={{ display: "flex", justifyContent: "space-between", fontWeight: 700, marginBottom: "2px" }}>
-														<span>{prob.title}</span>
-														<span style={{ color: prob.status === "Resolved" ? "#10b981" : "#f59e0b", fontSize: "0.72rem" }}>
-															{prob.status} ({prob.date})
-														</span>
-													</div>
-													{prob.resolutionNote && (
-														<div style={{ fontSize: "0.74rem", color: "rgba(255,255,255,0.55)" }}>
-															Note: {prob.resolutionNote}
-														</div>
-													)}
-												</div>
-											))
-										)}
-									</div>
-								)}
-							</div>
-
-							{/* Quick Smart Templates */}
-							<div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-								<span style={{ fontSize: "0.76rem", fontWeight: 700, color: "rgba(255,255,255,0.6)" }}>
-									Smart Clinical Templates:
-								</span>
-								<div className={styles.templatePills}>
-									<button
-										type='button'
-										className={styles.templatePill}
-										onClick={() =>
-											setAdviceText(
-												`Hello ${selectedPatient.name},\n\nPlease sit down and rest immediately, drink 500ml of water, and ensure you have taken your morning Metoprolol 25mg.\n\nAvoid caffeine and strenuous activity today. If your shortness of breath persists beyond 15 minutes, please contact emergency.\n\n— ${doctor.doctorName}`,
-											)
-										}
-									>
-										<Heart size={13} /> Cardio / Palpitations Protocol
-									</button>
-									<button
-										type='button'
-										className={styles.templatePill}
-										onClick={() =>
-											setAdviceText(
-												`Hello ${selectedPatient.name},\n\nPlease sit quietly for 10 minutes and retake your blood pressure on your left arm. Take your morning Lisinopril 20mg with a full glass of water.\n\n— ${doctor.doctorName}`,
-											)
-										}
-									>
-										<Activity size={13} /> Blood Pressure Protocol
-									</button>
-									<button
-										type='button'
-										className={styles.templatePill}
-										onClick={() =>
-											setAdviceText(
-												`Hello ${selectedPatient.name},\n\nYour recent blood glucose readings look elevated. Please ensure you take Metformin XR with your evening meal and reduce high-glycemic carbohydrates today.\n\n— ${doctor.doctorName}`,
-											)
-										}
-									>
-										<Droplet size={13} /> Glucose & Metabolic Advice
-									</button>
-								</div>
-							</div>
-
-							{/* Editable Advice Textarea with Voice Dictation */}
-							<div className={styles.adviceInputWrapper}>
-								<label>
-									<span>Doctor Care Message & Instructions</span>
-									<div className={styles.voiceControlRow}>
-										<button
-											type='button'
-											className={`${styles.voiceBtn} ${isVoiceRecording ? styles.voiceBtnRecording : ""}`}
-											onClick={toggleVoiceInput}
-										>
-											{isVoiceRecording ? <MicOff size={14} /> : <Mic size={14} />}
-											{isVoiceRecording ? "Listening..." : "Dictate via Voice"}
-										</button>
-									</div>
-								</label>
-
-								<textarea
-									className={styles.adviceTextarea}
-									value={adviceText}
-									onChange={(e) => setAdviceText(e.target.value)}
-									placeholder='Type or dictate clinical instructions to the patient...'
-								/>
-							</div>
-						</div>
-
-						<div className={styles.modalFooter}>
-							<button
-								type='button'
-								className={styles.btnActionSecondary}
-								onClick={() => setIsAdviceModalOpen(false)}
-							>
-								Cancel
-							</button>
-
-							<button
-								type='button'
-								className={styles.btnActionPrimary}
-								onClick={handleDispatchAdvice}
-							>
-								<Sparkles size={14} /> Dispatch to Patient App & Sync EHR
-							</button>
-						</div>
-					</div>
-				</div>
-			)}
+			{/* 4. Advice & Care Plan Dispatch Modal (Interactive 2-Way Patient & Doctor Chat Hub) */}
+			<ClinicalCareChatModal
+				isOpen={isAdviceModalOpen}
+				onClose={() => setIsAdviceModalOpen(false)}
+				selectedPatient={selectedPatient}
+				doctor={doctor}
+				initialAdviceText={adviceText}
+				onAdviceDispatched={(_dispatchedText) => {
+					setPatients((prev) =>
+						prev.map((p) =>
+							p.id === selectedPatient.id ? { ...p, status: "monitoring" } : p,
+						),
+					);
+				}}
+			/>
 
 			{/* 5. Doctor Clinical Settings & Feature Hub Modal */}
 			{isSettingsModalOpen && (
