@@ -907,7 +907,7 @@ export const DoctorPortal = () => {
 	};
 
 	const handleOrderRetest = () => {
-		toast.success(`90-day lab re-test order dispatched for ${selectedPatient.name}.`);
+		toast.success(`Follow-up lab biomarker panel order dispatched for ${selectedPatient.name}.`);
 	};
 
 	const handlePrescribeMedicine = (e: React.FormEvent) => {
@@ -1625,7 +1625,7 @@ export const DoctorPortal = () => {
 								style={{ width: "100%" }}
 								onClick={handleOrderRetest}
 							>
-								<Plus size={14} /> Order 90-Day Lab Re-Test
+								<RefreshCw size={13} /> Order Follow-Up Lab Panel
 							</button>
 						</div>
 					</div>
