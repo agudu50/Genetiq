@@ -148,14 +148,16 @@ const Navbar = () => {
 						>
 							{t("history_nav") || "History"}
 						</button>
-						<button
-							className={`${styles["nav-item"]} ${activeTab === "clinical_nav" ? styles["nav-active"] : ""}`}
-							onClick={() => goTo(paths.clinical)}
-							onMouseEnter={prefetchOnIntent(paths.clinical)}
-							onFocus={prefetchOnIntent(paths.clinical)}
-						>
-							Doctor Portal
-						</button>
+						{user.accountType === "doctor" && (
+							<button
+								className={`${styles["nav-item"]} ${activeTab === "clinical_nav" ? styles["nav-active"] : ""}`}
+								onClick={() => goTo(paths.clinical)}
+								onMouseEnter={prefetchOnIntent(paths.clinical)}
+								onFocus={prefetchOnIntent(paths.clinical)}
+							>
+								Doctor Portal
+							</button>
+						)}
 					</nav>
 				)}
 
@@ -216,17 +218,19 @@ const Navbar = () => {
 											{t("account_section")}
 										</span>
 										<LanguageSwitcher />
-										<button
-											type="button"
-											className={styles["footer-btn"]}
-											onClick={() => {
-												setIsProfileOpen(false);
-												goTo(paths.clinical);
-											}}
-										>
-											<Stethoscope size={18} strokeWidth={2} />
-											Clinical / Doctor Portal
-										</button>
+										{user.accountType === "doctor" && (
+											<button
+												type="button"
+												className={styles["footer-btn"]}
+												onClick={() => {
+													setIsProfileOpen(false);
+													goTo(paths.clinical);
+												}}
+											>
+												<Stethoscope size={18} strokeWidth={2} />
+												Clinical / Doctor Portal
+											</button>
+										)}
 										<button
 											type="button"
 											className={styles["footer-btn"]}
