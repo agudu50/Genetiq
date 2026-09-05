@@ -14,10 +14,14 @@ export const MedicalOverviewWidget = () => {
 	const user = useSelector((state: RootState) => state.user);
 	const [activeTab, setActiveTab] = useState<Tab>("conditions");
 
-	const conditionsCount = user.medicalConditions.length;
-	const activeMeds = user.medications.filter((m) => m.name);
+	const medicalConditions = Array.isArray(user?.medicalConditions) ? user.medicalConditions : [];
+	const medications = Array.isArray(user?.medications) ? user.medications : [];
+	const symptoms = Array.isArray(user?.symptoms) ? user.symptoms : [];
+
+	const conditionsCount = medicalConditions.length;
+	const activeMeds = medications.filter((m) => m && m.name);
 	const medicationsCount = activeMeds.length;
-	const symptomsCount = user.symptoms.length;
+	const symptomsCount = symptoms.length;
 
 	const bmiValue = useMemo(() => {
 		const h = Number(user.height);
@@ -122,8 +126,8 @@ export const MedicalOverviewWidget = () => {
 			<div className={styles.tabContent}>
 				{activeTab === "conditions" && (
 					<div className={styles.conditionsGrid}>
-						{user.medicalConditions.length > 0 ? (
-							user.medicalConditions.map((cond) => (
+						{medicalConditions.length > 0 ? (
+							medicalConditions.map((cond) => (
 								<div
 									key={cond}
 									className={styles.conditionPill}
@@ -169,8 +173,8 @@ export const MedicalOverviewWidget = () => {
 
 				{activeTab === "symptoms" && (
 					<div className={styles.symptomsGrid}>
-						{user.symptoms.length > 0 ? (
-							user.symptoms.map((sym) => (
+						{symptoms.length > 0 ? (
+							symptoms.map((sym) => (
 								<div key={sym} className={styles.symptomChip}>
 									<Activity size={14} />
 									{sym}

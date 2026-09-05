@@ -47,6 +47,9 @@ import {
 	ShieldAlert,
 	ShieldCheck,
 	Sparkles,
+	FlaskConical,
+	Microscope,
+	Eye,
 	User,
 	UserCheck,
 	Video,
@@ -415,6 +418,242 @@ const mockPatients: ClinicalPatient[] = [
 			{ name: "Omega-3 EPA/DHA", dosage: "1000 mg", frequency: "Daily (Morning)", adherence: 96 },
 			{ name: "Vitamin D3 + K2", dosage: "5000 IU", frequency: "Daily (Morning)", adherence: 95 },
 		],
+	},
+];
+
+// ─── Lab Results Notification & Ingestion Database ──────────────────────────
+
+export interface ReadyLabMarker {
+	name: string;
+	value: string;
+	unit: string;
+	refRange: string;
+	priorValue?: string;
+	deltaPct?: string;
+	status: "critical_high" | "elevated" | "optimal" | "low";
+	interpretation: string;
+}
+
+export interface ReadyLabResult {
+	id: string;
+	patientId: string;
+	patientName: string;
+	mrn: string;
+	panelName: string;
+	labProvider: string;
+	orderedAt: string;
+	completedAt: string;
+	urgency: "urgent" | "routine" | "stat";
+	isViewed: boolean;
+	isAcknowledged: boolean;
+	targetOrgan: string;
+	findingsSummary: string;
+	markers: ReadyLabMarker[];
+	recommendedNextStep: string;
+}
+
+export interface LabPanelPreset {
+	id: string;
+	name: string;
+	category: string;
+	description: string;
+	typicalTurnaround: string;
+	defaultOrgan: string;
+	markersIncluded: string[];
+}
+
+export const LAB_PANEL_PRESETS: LabPanelPreset[] = [
+	{
+		id: "apob_lipids",
+		name: "90-Day ApoB & Advanced Lipid Subfraction",
+		category: "Cardiovascular",
+		description: "Apolipoprotein B, LDL-P, hs-CRP, and total atherogenic particle density.",
+		typicalTurnaround: "12-24 Hours",
+		defaultOrgan: "cardiovascular",
+		markersIncluded: ["Apolipoprotein B (ApoB)", "LDL-P", "hs-CRP (Inflammation)", "Total Cholesterol"],
+	},
+	{
+		id: "cardiac_telemetry",
+		name: "High-Sensitivity Troponin-I & NT-proBNP",
+		category: "Cardiovascular",
+		description: "Myocardial wall stress, micro-ischemia detection, and acute arrhythmia indices.",
+		typicalTurnaround: "Stat 2-4 Hours",
+		defaultOrgan: "cardiovascular",
+		markersIncluded: ["hs-Troponin I", "NT-proBNP", "CK-MB", "D-Dimer"],
+	},
+	{
+		id: "renal_metabolic",
+		name: "Comprehensive Metabolic & eGFR Renal Panel",
+		category: "Renal & Metabolic",
+		description: "Serum Creatinine, Cystatin-C, eGFR CKD-EPI, BUN, and complete electrolyte balance.",
+		typicalTurnaround: "6-12 Hours",
+		defaultOrgan: "cardiovascular",
+		markersIncluded: ["eGFR", "Serum Creatinine", "Blood Urea Nitrogen", "Serum Potassium"],
+	},
+	{
+		id: "thyroid_endocrine",
+		name: "Advanced Endocrine & Thyroid Panel",
+		category: "Endocrine",
+		description: "Ultrasensitive TSH, Free T3, Free T4, Anti-TPO, and 25-OH Vitamin D3 levels.",
+		typicalTurnaround: "24 Hours",
+		defaultOrgan: "cardiovascular",
+		markersIncluded: ["TSH (Thyroid)", "Free T4", "Free T3", "Vitamin D"],
+	},
+	{
+		id: "genomic_pharmacogenomic",
+		name: "Multi-Omics Genetic & Drug Metabolism Screen",
+		category: "Genetics",
+		description: "CYP2C19 / CYP2D6 statin clearance kinetics and SLCO1B1 myopathy risk alleles.",
+		typicalTurnaround: "48 Hours",
+		defaultOrgan: "total",
+		markersIncluded: ["CYP2C19 *2/*3", "SLCO1B1 521T>C", "APOE E3/E4", "VKORC1"],
+	},
+];
+
+export const initialReadyLabResults: ReadyLabResult[] = [
+	{
+		id: "lab-res-101",
+		patientId: "pt-101",
+		patientName: "Marcus Vance",
+		mrn: "MRN-84920",
+		panelName: "90-Day ApoB & Comprehensive Lipid Subfraction",
+		labProvider: "Quest Diagnostics Direct · HL7 FHIR v4",
+		orderedAt: "2 days ago",
+		completedAt: "14 mins ago",
+		urgency: "routine",
+		isViewed: false,
+		isAcknowledged: false,
+		targetOrgan: "cardiovascular",
+		findingsSummary: "ApoB decreased significantly from 128 to 86 mg/dL (-32.8%) following Atorvastatin 20mg daily adherence. Approaching clinical target goal (< 80 mg/dL). High-sensitivity CRP remains mildly elevated at 2.4 mg/L.",
+		markers: [
+			{
+				name: "Apolipoprotein B (ApoB)",
+				value: "86",
+				unit: "mg/dL",
+				refRange: "< 90 mg/dL",
+				priorValue: "128 mg/dL",
+				deltaPct: "-32.8%",
+				status: "optimal",
+				interpretation: "Atherogenic particle load markedly reduced; vascular penetration risk decreased.",
+			},
+			{
+				name: "LDL Particle Number (LDL-P)",
+				value: "1,120",
+				unit: "nmol/L",
+				refRange: "< 1,000 nmol/L",
+				priorValue: "1,680 nmol/L",
+				deltaPct: "-33.3%",
+				status: "elevated",
+				interpretation: "Substantial particle reduction; low-density lipoprotein plaque burden stabilizing.",
+			},
+			{
+				name: "hs-CRP (Inflammation)",
+				value: "2.4",
+				unit: "mg/L",
+				refRange: "< 1.0 mg/L",
+				priorValue: "3.1 mg/L",
+				deltaPct: "-22.5%",
+				status: "elevated",
+				interpretation: "Residual vascular inflammation persisting; recommend anti-inflammatory lifestyle adherence.",
+			},
+			{
+				name: "Total Cholesterol",
+				value: "174",
+				unit: "mg/dL",
+				refRange: "< 200 mg/dL",
+				priorValue: "224 mg/dL",
+				deltaPct: "-22.3%",
+				status: "optimal",
+				interpretation: "Total lipid profile normalized within safe adult physiological bounds.",
+			},
+		],
+		recommendedNextStep: "Maintain Atorvastatin 20mg daily. Re-check ApoB in 60 days to confirm sustained stabilization under 80 mg/dL.",
+	},
+	{
+		id: "lab-res-102",
+		patientId: "pt-103",
+		patientName: "David K. Campbell",
+		mrn: "MRN-91044",
+		panelName: "Emergency Renal Filtration & Electrolyte Panel",
+		labProvider: "Labcorp Biometrics FHIR Direct",
+		orderedAt: "Yesterday",
+		completedAt: "45 mins ago",
+		urgency: "urgent",
+		isViewed: false,
+		isAcknowledged: false,
+		targetOrgan: "cardiovascular",
+		findingsSummary: "Serum Creatinine elevated to 1.48 mg/dL with eGFR dropping to 54 mL/min (Stage 3a CKD threshold). Potassium steady at 4.8 mEq/L under Lisinopril therapy.",
+		markers: [
+			{
+				name: "eGFR (CKD-EPI)",
+				value: "54",
+				unit: "mL/min/1.73m²",
+				refRange: "> 90 mL/min",
+				priorValue: "58 mL/min",
+				deltaPct: "-6.9%",
+				status: "low",
+				interpretation: "Moderate filtration decline; requires close blood pressure stabilization and hydration review.",
+			},
+			{
+				name: "Serum Creatinine",
+				value: "1.48",
+				unit: "mg/dL",
+				refRange: "0.7 - 1.3 mg/dL",
+				priorValue: "1.40 mg/dL",
+				deltaPct: "+5.7%",
+				status: "elevated",
+				interpretation: "Reduced clearance in setting of uncontrolled stage 2 hypertension.",
+			},
+			{
+				name: "Blood Urea Nitrogen (BUN)",
+				value: "28",
+				unit: "mg/dL",
+				refRange: "7 - 20 mg/dL",
+				priorValue: "26 mg/dL",
+				deltaPct: "+7.6%",
+				status: "elevated",
+				interpretation: "Mild azotemia present; verify oral fluid intake protocol.",
+			},
+		],
+		recommendedNextStep: "Review antihypertensive regimen with nephrology consult; repeat serum chemistry in 14 days.",
+	},
+	{
+		id: "lab-res-103",
+		patientId: "pt-102",
+		patientName: "Elena Rostova",
+		mrn: "MRN-72391",
+		panelName: "Thyroid & 25-OH Vitamin D3 Follow-Up",
+		labProvider: "Genetiq Molecular Core Laboratory",
+		orderedAt: "3 days ago",
+		completedAt: "2 hours ago",
+		urgency: "routine",
+		isViewed: true,
+		isAcknowledged: true,
+		targetOrgan: "cardiovascular",
+		findingsSummary: "TSH normalized to 2.6 uIU/mL following morning fasting Levothyroxine. 25-OH Vitamin D restored to 36 ng/mL.",
+		markers: [
+			{
+				name: "TSH (Ultrasensitive)",
+				value: "2.6",
+				unit: "uIU/mL",
+				refRange: "0.4 - 4.0 uIU/mL",
+				priorValue: "4.2 uIU/mL",
+				deltaPct: "-38.1%",
+				status: "optimal",
+				interpretation: "Euthyroid state achieved; metabolic and cognitive fatigue symptoms expected to resolve.",
+			},
+			{
+				name: "25-OH Vitamin D3",
+				value: "36",
+				unit: "ng/mL",
+				refRange: "30 - 100 ng/mL",
+				priorValue: "24 ng/mL",
+				deltaPct: "+50.0%",
+				status: "optimal",
+				interpretation: "Adequate serum 25(OH)D reserve restored; immune and bone metabolism normalized.",
+			},
+		],
+		recommendedNextStep: "Continue current Levothyroxine 25mcg and Vitamin D3 supplementation. Routine 6-month re-check.",
 	},
 ];
 
@@ -1012,6 +1251,18 @@ export const DoctorPortal = () => {
 	const [isAiAnalyzing, setIsAiAnalyzing] = useState(false);
 	const [isCopiedSoap, setIsCopiedSoap] = useState(false);
 
+	// Lab Results Ready & Clinical Ingestion Hub State
+	const [readyLabResults, setReadyLabResults] = useState<ReadyLabResult[]>(initialReadyLabResults);
+	const [isLabsHubModalOpen, setIsLabsHubModalOpen] = useState(false);
+	const [labsFilter, setLabsFilter] = useState<"all" | "unread" | "critical" | "acknowledged">("all");
+	const [isOrderLabModalOpen, setIsOrderLabModalOpen] = useState(false);
+	const [orderLabPatientId, setOrderLabPatientId] = useState("pt-101");
+	const [orderLabPanelId, setOrderLabPanelId] = useState("apob_lipids");
+	const [orderLabPriority, setOrderLabPriority] = useState<"routine" | "priority" | "stat">("routine");
+	const [orderLabProvider, setOrderLabProvider] = useState("Quest Diagnostics Direct · HL7 FHIR v4");
+	const [orderLabNotes, setOrderLabNotes] = useState("");
+	const [isDispatchingLab, setIsDispatchingLab] = useState(false);
+
 	// Doctor Profile Menu & Clinical Settings State
 	const [isDoctorMenuOpen, setIsDoctorMenuOpen] = useState(false);
 	const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
@@ -1274,8 +1525,118 @@ export const DoctorPortal = () => {
 		toast.success(`Triage alert for ${selectedPatient.name} cleared.`);
 	};
 
-	const handleOrderRetest = () => {
-		toast.success(`Follow-up lab biomarker panel order dispatched for ${selectedPatient.name}.`);
+	// Lab Results Ready & Ingestion Handlers
+	const unreadReadyLabsCount = readyLabResults.filter((l) => !l.isAcknowledged).length;
+	const selectedPatientReadyLabs = readyLabResults.filter((l) => l.patientId === selectedPatient.id);
+	const selectedPatientUnreadLab = selectedPatientReadyLabs.find((l) => !l.isAcknowledged);
+
+	const handleOpenOrderLabModal = (patientId?: string) => {
+		setOrderLabPatientId(patientId || selectedPatient.id);
+		setIsOrderLabModalOpen(true);
+	};
+
+	const handleAcknowledgeLabResult = (labId: string) => {
+		setReadyLabResults((prev) =>
+			prev.map((l) => (l.id === labId ? { ...l, isAcknowledged: true, isViewed: true } : l)),
+		);
+		toast.success("Lab result signed off and archived into Patient EHR record.");
+	};
+
+	const handleFocusPatientFromLab = (patientId: string, organ?: string) => {
+		const target = patients.find((p) => p.id === patientId);
+		if (target) {
+			setSelectedPatientId(target.id);
+			if (organ) setSelectedOrganSystem(organ);
+			setIsLabsHubModalOpen(false);
+			toast.success(`Chart & 3D Twin focused on ${target.name}.`);
+		}
+	};
+
+	const handleLaunchAiFromLab = (lab: ReadyLabResult) => {
+		handleFocusPatientFromLab(lab.patientId, lab.targetOrgan);
+		setTimeout(() => {
+			handleRunAiAnalysis("biomarkers");
+		}, 300);
+	};
+
+	const handleDispatchCarePlanFromLab = (lab: ReadyLabResult) => {
+		handleFocusPatientFromLab(lab.patientId, lab.targetOrgan);
+		setAdviceText(
+			`Hello ${lab.patientName},\n\nWe received your recent lab results for "${lab.panelName}" from ${lab.labProvider}.\n\nKey Finding: ${lab.findingsSummary}\n\nClinical Next Steps: ${lab.recommendedNextStep}\n\nPlease reach out if you have any questions or experience new symptoms.\n\n— ${doctor.doctorName}`,
+		);
+		setIsAdviceModalOpen(true);
+	};
+
+	const handleDispatchLabOrder = (e: React.FormEvent, simulateImmediate?: boolean) => {
+		e.preventDefault();
+		const targetPatient = patients.find((p) => p.id === orderLabPatientId) || selectedPatient;
+		const panelObj = LAB_PANEL_PRESETS.find((p) => p.id === orderLabPanelId) || LAB_PANEL_PRESETS[0];
+
+		setIsDispatchingLab(true);
+		setTimeout(() => {
+			setIsDispatchingLab(false);
+			setIsOrderLabModalOpen(false);
+			toast.success(`Lab Order for "${panelObj.name}" dispatched to ${orderLabProvider} for ${targetPatient.name}.`);
+
+			// Simulate lab completion after 3.5s (or immediately if chosen)
+			const delay = simulateImmediate ? 500 : 3500;
+			setTimeout(() => {
+				const newLabResult: ReadyLabResult = {
+					id: `lab-${Date.now()}`,
+					patientId: targetPatient.id,
+					patientName: targetPatient.name,
+					mrn: targetPatient.mrn,
+					panelName: panelObj.name,
+					labProvider: orderLabProvider,
+					orderedAt: "Just now",
+					completedAt: "Just now (Live FHIR Ingestion)",
+					urgency: orderLabPriority === "stat" ? "urgent" : "routine",
+					isViewed: false,
+					isAcknowledged: false,
+					targetOrgan: panelObj.defaultOrgan,
+					findingsSummary: `Automated FHIR Telemetry Ingest: All ${panelObj.markersIncluded.length} biomarkers for ${panelObj.name} processed and cross-correlated.`,
+					markers: panelObj.markersIncluded.map((markerName) => ({
+						name: markerName,
+						value: markerName.includes("ApoB") ? "78" : markerName.includes("Troponin") ? "0.01" : markerName.includes("eGFR") ? "68" : markerName.includes("TSH") ? "2.1" : "Normal",
+						unit: markerName.includes("ApoB") ? "mg/dL" : markerName.includes("Troponin") ? "ng/mL" : markerName.includes("eGFR") ? "mL/min" : markerName.includes("TSH") ? "uIU/mL" : "",
+						refRange: "Normal Bounds",
+						priorValue: targetPatient.labMarkers.find((m) => m.marker.includes(markerName.split(" ")[0]))?.value || "Baseline",
+						deltaPct: "-18.5%",
+						status: "optimal",
+						interpretation: "Biomarker stabilized within healthy therapeutic reference limits.",
+					})),
+					recommendedNextStep: "Maintain active care protocol and monitor home telemetry.",
+				};
+
+				setReadyLabResults((prev) => [newLabResult, ...prev]);
+
+				// Also update the patient's lab markers in real time if matched
+				setPatients((prev) =>
+					prev.map((p) => {
+						if (p.id !== targetPatient.id) return p;
+						return {
+							...p,
+							labMarkers: p.labMarkers.map((m) => {
+								if (panelObj.markersIncluded.some((pName) => m.marker.includes(pName.split(" ")[0]))) {
+									return {
+										...m,
+										value: m.marker.includes("ApoB") ? "78 mg/dL" : m.value,
+										status: m.marker.includes("ApoB") ? "optimal" : m.status,
+										trend: "Recent Improvement (-39 mg/dL)",
+									};
+								}
+								return m;
+							}),
+						};
+					}),
+				);
+
+				toast.info(
+					`🔔 New Lab Results Ready: "${panelObj.name}" for ${targetPatient.name} ingested via ${orderLabProvider}! Click "Labs Ready" to review.`,
+					{ autoClose: 7000 },
+				);
+			}, delay);
+		}, 800);
 	};
 
 	const handlePrescribeMedicine = (e: React.FormEvent) => {
@@ -1489,35 +1850,45 @@ ${report.soapNote.plan}
 							</div>
 
 							<div className={styles.dropdownList}>
-								{filteredDropdownPatients.map((p) => (
-									<div
-										key={p.id}
-										className={`${styles.dropdownItem} ${p.id === selectedPatient.id ? styles.dropdownItemActive : ""}`}
-										onClick={() => {
-											setSelectedPatientId(p.id);
-											setSelectedOrganSystem(p.defaultOrgan);
-											setIsDropdownOpen(false);
-										}}
-									>
-										<div className={styles.dropdownItemLeft}>
-											<div className={styles.dropdownPatientName}>{p.name}</div>
-											<div className={styles.dropdownPatientMeta}>
-												{p.mrn} · {p.age}y {p.gender[0]} · {p.primaryDiagnosis}
-											</div>
-										</div>
-										<span
-											className={
-												p.status === "urgent"
-													? styles.badgeUrgent
-													: p.status === "monitoring"
-													? styles.badgeWarning
-													: styles.badgeOptimal
-											}
+								{filteredDropdownPatients.map((p) => {
+									const hasUnreadLab = readyLabResults.some((l) => l.patientId === p.id && !l.isAcknowledged);
+									return (
+										<div
+											key={p.id}
+											className={`${styles.dropdownItem} ${p.id === selectedPatient.id ? styles.dropdownItemActive : ""}`}
+											onClick={() => {
+												setSelectedPatientId(p.id);
+												setSelectedOrganSystem(p.defaultOrgan);
+												setIsDropdownOpen(false);
+											}}
 										>
-											{p.status === "urgent" ? "Urgent" : p.status === "monitoring" ? "Monitored" : "Stable"}
-										</span>
-									</div>
-								))}
+											<div className={styles.dropdownItemLeft}>
+												<div className={styles.dropdownPatientName}>
+													{p.name}
+													{hasUnreadLab && (
+														<span className={styles.patientCardLabBadge} style={{ marginLeft: "6px" }}>
+															<FlaskConical size={9} /> Labs Ready
+														</span>
+													)}
+												</div>
+												<div className={styles.dropdownPatientMeta}>
+													{p.mrn} · {p.age}y {p.gender[0]} · {p.primaryDiagnosis}
+												</div>
+											</div>
+											<span
+												className={
+													p.status === "urgent"
+														? styles.badgeUrgent
+														: p.status === "monitoring"
+														? styles.badgeWarning
+														: styles.badgeOptimal
+												}
+											>
+												{p.status === "urgent" ? "Urgent" : p.status === "monitoring" ? "Monitored" : "Stable"}
+											</span>
+										</div>
+									);
+								})}
 							</div>
 						</div>
 					)}
@@ -1525,6 +1896,24 @@ ${report.soapNote.plan}
 
 				{/* Header Right Controls: Quick Navigation + KPIs + Doctor Profile */}
 				<div className={styles.headerControls}>
+					{/* Ready Lab Results Notification Ingestion Trigger */}
+					<button
+						type="button"
+						className={styles.btnLabsReadyHeader}
+						onClick={() => {
+							setLabsFilter("all");
+							setIsLabsHubModalOpen(true);
+						}}
+						title="Incoming Ready Lab Results & Telemetry Ingestion"
+					>
+						<FlaskConical size={14} style={{ color: "#00a896" }} />
+						<span>Labs Ready</span>
+						{unreadReadyLabsCount > 0 && (
+							<span className={styles.labsReadyBadgeCount}>{unreadReadyLabsCount} New</span>
+						)}
+						{unreadReadyLabsCount > 0 && <span className={styles.labsReadyPulseDot} />}
+					</button>
+
 					{/* AI Insights & Report Analysis Trigger */}
 					<button
 						type="button"
@@ -1555,10 +1944,6 @@ ${report.soapNote.plan}
 						<div className={styles.kpiPill} title="Urgent Triage Cases">
 							<ShieldAlert size={13} style={{ color: "#ef4444" }} />
 							<span>{patients.filter((p) => p.status === "urgent").length} Urgent</span>
-						</div>
-						<div className={styles.kpiPill} title="Pending Clinical Reports">
-							<AlertTriangle size={13} style={{ color: "#f59e0b" }} />
-							<span>6 Reports</span>
 						</div>
 					</div>
 
@@ -1626,6 +2011,24 @@ ${report.soapNote.plan}
 									<span>Appointments Schedule</span>
 									<span className={styles.scheduleCountBadge}>
 										{appointments.filter((a) => a.status === "waiting" || a.date.includes("Today")).length} Today
+									</span>
+								</button>
+
+								{/* Labs Ready Hub Quick Trigger */}
+								<button
+									type="button"
+									className={styles.dropdownActionBtn}
+									onClick={() => {
+										setLabsFilter("all");
+										setIsLabsHubModalOpen(true);
+										setIsDoctorMenuOpen(false);
+									}}
+									title="View Incoming Ready Lab Results"
+								>
+									<FlaskConical size={14} style={{ color: "#00a896" }} />
+									<span>Labs Ready Ingestion</span>
+									<span className={styles.scheduleCountBadge} style={{ background: "rgba(0,168,150,0.2)", color: "#00a896" }}>
+										{unreadReadyLabsCount} Ready
 									</span>
 								</button>
 
@@ -1865,6 +2268,19 @@ ${report.soapNote.plan}
 								<div className={styles.patientNameRow}>
 									<span className={styles.patientName}>{selectedPatient.name}</span>
 									<span className={styles.patientMrnBadge}>{selectedPatient.mrn}</span>
+									{selectedPatientUnreadLab && (
+										<button
+											type="button"
+											className={styles.patientCardLabBadge}
+											onClick={() => {
+												setLabsFilter("unread");
+												setIsLabsHubModalOpen(true);
+											}}
+											title="Patient has unread ready lab results - Click to review"
+										>
+											<FlaskConical size={10} /> Labs Ready
+										</button>
+									)}
 								</div>
 								<div className={styles.patientDiagnosisPill}>
 									<Heart size={12} className={styles.diagnosisIcon} />
@@ -2008,6 +2424,33 @@ ${report.soapNote.plan}
 							</button>
 						</div>
 
+						{/* Ingested Lab Results Notification Banner for Current Patient */}
+						{selectedPatientUnreadLab && (
+							<div className={styles.labIngestedBanner}>
+								<div className={styles.labIngestedInfo}>
+									<FlaskConical size={18} className={styles.labIngestedIcon} />
+									<div>
+										<span className={styles.labIngestedTitle}>
+											{selectedPatientUnreadLab.panelName}
+										</span>
+										<span className={styles.labIngestedMeta}>
+											Completed {selectedPatientUnreadLab.completedAt} · {selectedPatientUnreadLab.labProvider}
+										</span>
+									</div>
+								</div>
+								<button
+									type="button"
+									className={styles.btnLabBannerReview}
+									onClick={() => {
+										setLabsFilter("all");
+										setIsLabsHubModalOpen(true);
+									}}
+								>
+									<Eye size={12} /> Review
+								</button>
+							</div>
+						)}
+
 						{selectedPatient.labMarkers.map((m, idx) => {
 							const isExpanded = expandedMarker === m.marker;
 							return (
@@ -2113,7 +2556,7 @@ ${report.soapNote.plan}
 								type='button'
 								className={styles.btnActionSecondary}
 								style={{ width: "100%" }}
-								onClick={handleOrderRetest}
+								onClick={() => handleOpenOrderLabModal(selectedPatient.id)}
 							>
 								<RefreshCw size={13} /> Order Follow-Up Lab Panel
 							</button>
@@ -2613,7 +3056,7 @@ ${report.soapNote.plan}
 														type='button'
 														className={styles.orderSetApplyBtn}
 														onClick={() => {
-															handleOrderRetest();
+															handleOpenOrderLabModal(selectedPatient.id);
 															setIsSettingsModalOpen(false);
 														}}
 													>
@@ -2624,7 +3067,7 @@ ${report.soapNote.plan}
 
 											<div className={styles.orderSetCard}>
 												<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-													<div style={{ fontWeight: 700, fontSize: "0.88rem", color: "#0ea5e9" }}>
+													<div style={{ fontWeight: 700, fontSize: "0.88rem", color: "#00a896" }}>
 														Atrial Fibrillation Rhythm Assessment & Patch
 													</div>
 													<span className={styles.badgeWarning}>Cardio Protocol</span>
@@ -3731,7 +4174,428 @@ ${report.soapNote.plan}
 				);
 			})()}
 
-			{/* 8. Bottom Floating Organ System Bar */}
+			{/* 8. Clinical Lab Results Ingestion Hub Modal */}
+			{isLabsHubModalOpen && (
+				<div className={styles.modalOverlay} onClick={() => setIsLabsHubModalOpen(false)}>
+					<div className={`${styles.modalContent} ${styles.labsHubModalContent}`} onClick={(e) => e.stopPropagation()}>
+						{/* Modal Header */}
+						<div className={styles.modalHeader}>
+							<div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+								<div className={styles.scheduleModalIconBadge}>
+									<FlaskConical size={18} style={{ color: "#00a896" }} />
+								</div>
+								<div>
+									<h2>Clinical Lab Results Ingestion Hub</h2>
+									<p style={{ margin: 0, fontSize: "0.74rem", color: "rgba(255,255,255,0.5)" }}>
+										Real-Time HL7 FHIR Direct Telemetry · {readyLabResults.length} Ingested Diagnostic Panels
+									</p>
+								</div>
+							</div>
+							<div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+								<button
+									type="button"
+									className={styles.btnActionSecondary}
+									style={{ fontSize: "0.72rem", padding: "6px 10px" }}
+									onClick={() => {
+										setIsLabsHubModalOpen(false);
+										handleOpenOrderLabModal();
+									}}
+								>
+									<Plus size={13} /> Order New Lab
+								</button>
+								<button
+									type='button'
+									className={styles.aiModalCloseBtn}
+									onClick={() => setIsLabsHubModalOpen(false)}
+									aria-label="Close Labs Hub Modal"
+								>
+									<X size={18} strokeWidth={2.2} />
+								</button>
+							</div>
+						</div>
+
+						{/* Filter Tabs */}
+						<div className={styles.labsFilterTabs}>
+							<button
+								type="button"
+								className={`${styles.labsFilterTab} ${labsFilter === "all" ? styles.labsFilterTabActive : ""}`}
+								onClick={() => setLabsFilter("all")}
+							>
+								All Results ({readyLabResults.length})
+							</button>
+							<button
+								type="button"
+								className={`${styles.labsFilterTab} ${labsFilter === "unread" ? styles.labsFilterTabActive : ""}`}
+								onClick={() => setLabsFilter("unread")}
+							>
+								Unreviewed Action Items ({readyLabResults.filter((l) => !l.isAcknowledged).length})
+							</button>
+							<button
+								type="button"
+								className={`${styles.labsFilterTab} ${labsFilter === "critical" ? styles.labsFilterTabActive : ""}`}
+								onClick={() => setLabsFilter("critical")}
+							>
+								Elevated &amp; Low ({readyLabResults.filter((l) => l.urgency === "urgent" || l.markers.some((m) => m.status === "critical_high" || m.status === "elevated" || m.status === "low")).length})
+							</button>
+							<button
+								type="button"
+								className={`${styles.labsFilterTab} ${labsFilter === "acknowledged" ? styles.labsFilterTabActive : ""}`}
+								onClick={() => setLabsFilter("acknowledged")}
+							>
+								Signed Off ({readyLabResults.filter((l) => l.isAcknowledged).length})
+							</button>
+						</div>
+
+						{/* Results List */}
+						<div className={styles.labsResultsList}>
+							{(() => {
+								const displayLabs = readyLabResults.filter((l) => {
+									if (labsFilter === "unread") return !l.isAcknowledged;
+									if (labsFilter === "critical") return l.urgency === "urgent" || l.markers.some((m) => m.status === "critical_high" || m.status === "elevated" || m.status === "low");
+									if (labsFilter === "acknowledged") return l.isAcknowledged;
+									return true;
+								});
+
+								if (displayLabs.length === 0) {
+									return (
+										<div style={{ textAlign: "center", padding: "40px 20px", color: "rgba(255,255,255,0.4)" }}>
+											<FlaskConical size={32} style={{ marginBottom: "10px", opacity: 0.5 }} />
+											<p>No lab results match the selected filter.</p>
+										</div>
+									);
+								}
+
+								return displayLabs.map((lab) => (
+									<div
+										key={lab.id}
+										className={`${styles.labResultCard} ${!lab.isAcknowledged ? styles.labResultCardUnread : ""}`}
+									>
+										<div className={styles.labResultCardHeader}>
+											<div className={styles.labResultHeaderLeft}>
+												<div className={styles.labResultIconBadge}>
+													<Microscope size={20} />
+												</div>
+												<div>
+													<h3 className={styles.labResultPanelName}>{lab.panelName}</h3>
+													<div className={styles.labResultMetaLine}>
+														<strong style={{ color: "#ffffff" }}>{lab.patientName}</strong> ({lab.mrn})
+														<span>•</span>
+														<span>Completed: {lab.completedAt}</span>
+														<span>•</span>
+														<span>Provider: {lab.labProvider}</span>
+													</div>
+												</div>
+											</div>
+											<div className={styles.labResultHeaderRight}>
+												{lab.isAcknowledged ? (
+													<span className={styles.badgeLabAcknowledged}>
+														<Check size={11} /> Signed Off
+													</span>
+												) : lab.urgency === "urgent" ? (
+													<span className={styles.badgeLabUrgencyUrgent}>
+														<AlertTriangle size={11} /> Priority Review
+													</span>
+												) : (
+													<span className={styles.badgeLabUrgencyRoutine}>
+														New Ingestion
+													</span>
+												)}
+											</div>
+										</div>
+
+										{/* Findings & Interpretation */}
+										<div className={styles.labFindingsBox}>
+											<span className={styles.labFindingsLabel}>
+												<Info size={11} /> Automated Clinical Summary
+											</span>
+											<p>{lab.findingsSummary}</p>
+										</div>
+
+										{/* Biomarkers Delta Table */}
+										<table className={styles.labMarkersTable}>
+											<thead>
+												<tr>
+													<th>Biomarker</th>
+													<th>Ingested Value</th>
+													<th>Reference Range</th>
+													<th>Prior Baseline</th>
+													<th>Delta %</th>
+													<th>Status</th>
+												</tr>
+											</thead>
+											<tbody>
+												{lab.markers.map((m, mIdx) => (
+													<tr key={mIdx}>
+														<td style={{ fontWeight: 600 }}>{m.name}</td>
+														<td className={styles.labMarkerValueCell}>
+															{m.value} {m.unit}
+														</td>
+														<td style={{ color: "rgba(255,255,255,0.55)" }}>{m.refRange}</td>
+														<td style={{ color: "rgba(255,255,255,0.55)" }}>{m.priorValue || "—"}</td>
+														<td>
+															{m.deltaPct ? (
+																<span
+																	className={
+																		m.status === "optimal"
+																			? styles.labDeltaBadgeGood
+																			: m.status === "elevated" || m.status === "low"
+																			? styles.labDeltaBadgeWarn
+																			: styles.labDeltaBadgeNeutral
+																	}
+																>
+																	{m.deltaPct.startsWith("-") ? (
+																		<ArrowDownRight size={11} />
+																	) : (
+																		<ArrowUpRight size={11} />
+																	)}
+																	{m.deltaPct}
+																</span>
+															) : (
+																"—"
+															)}
+														</td>
+														<td>
+															<span
+																className={
+																	m.status === "optimal"
+																		? styles.badgeOptimal
+																		: m.status === "elevated" || m.status === "critical_high"
+																		? styles.badgeUrgent
+																		: styles.badgeWarning
+																}
+															>
+																{m.status === "optimal"
+																	? "Optimal"
+																	: m.status === "elevated"
+																	? "Elevated"
+																	: m.status === "low"
+																	? "Low"
+																	: "Critical"}
+															</span>
+														</td>
+													</tr>
+												))}
+											</tbody>
+										</table>
+
+										{/* Action Bar */}
+										<div className={styles.labResultActionsBar}>
+											<button
+												type="button"
+												className={styles.btnLabActionSecondary}
+												onClick={() => handleFocusPatientFromLab(lab.patientId, lab.targetOrgan)}
+												title="Focus on this patient's 3D twin and chart"
+											>
+												<UserCheck size={13} /> Focus 3D Twin
+											</button>
+											<button
+												type="button"
+												className={styles.btnLabActionSecondary}
+												onClick={() => handleLaunchAiFromLab(lab)}
+												title="Run AI Multi-System analysis on this lab"
+											>
+												<Brain size={13} /> AI Analysis
+											</button>
+											<button
+												type="button"
+												className={styles.btnLabActionSecondary}
+												onClick={() => handleDispatchCarePlanFromLab(lab)}
+												title="Dispatch patient care plan with these findings"
+											>
+												<Send size={13} /> Dispatch Plan
+											</button>
+											{!lab.isAcknowledged && (
+												<button
+													type="button"
+													className={styles.btnLabActionPrimary}
+													onClick={() => handleAcknowledgeLabResult(lab.id)}
+												>
+													<Check size={13} /> Sign Off Lab
+												</button>
+											)}
+										</div>
+									</div>
+								));
+							})()}
+						</div>
+
+						{/* Modal Footer */}
+						<div className={styles.modalFooter} style={{ display: "flex", justifyContent: "space-between" }}>
+							<div style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.5)", display: "flex", alignItems: "center", gap: "6px" }}>
+								<ShieldCheck size={14} style={{ color: "#10b981" }} />
+								<span>All lab telemetry encrypted in transit &amp; at rest via HIPAA AES-256</span>
+							</div>
+							<button
+								type='button'
+								className={styles.btnActionSecondary}
+								onClick={() => setIsLabsHubModalOpen(false)}
+							>
+								Close Hub
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
+
+			{/* 9. Order Clinical Lab Biomarker Panel Modal */}
+			{isOrderLabModalOpen && (
+				<div className={styles.modalOverlay} onClick={() => setIsOrderLabModalOpen(false)}>
+					<div className={`${styles.modalContent} ${styles.orderLabModalContent}`} onClick={(e) => e.stopPropagation()}>
+						{/* Header */}
+						<div className={styles.modalHeader}>
+							<div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+								<div className={styles.scheduleModalIconBadge}>
+									<RefreshCw size={18} style={{ color: "#00a896" }} />
+								</div>
+								<div>
+									<h2>Order Clinical Lab Biomarker Panel</h2>
+									<p style={{ margin: 0, fontSize: "0.74rem", color: "rgba(255,255,255,0.5)" }}>
+										Electronic Lab Requisition via Quest / Labcorp Direct HL7 Connector
+									</p>
+								</div>
+							</div>
+							<button
+								type='button'
+								className={styles.aiModalCloseBtn}
+								onClick={() => setIsOrderLabModalOpen(false)}
+							>
+								<X size={18} strokeWidth={2.2} />
+							</button>
+						</div>
+
+						<form onSubmit={(e) => handleDispatchLabOrder(e, false)}>
+							<div className={styles.orderLabBody}>
+								{/* Patient Selector */}
+								<div className={styles.formGroup}>
+									<label>Patient Target</label>
+									<select
+										className={styles.formSelect}
+										value={orderLabPatientId}
+										onChange={(e) => setOrderLabPatientId(e.target.value)}
+									>
+										{patients.map((p) => (
+											<option key={p.id} value={p.id}>
+												{p.name} ({p.mrn}) · {p.primaryDiagnosis}
+											</option>
+										))}
+									</select>
+								</div>
+
+								{/* Preset Panels Grid */}
+								<div className={styles.formGroup}>
+									<label>Select Diagnostic Panel</label>
+									<div className={styles.presetPanelsGrid}>
+										{LAB_PANEL_PRESETS.map((panel) => (
+											<div
+												key={panel.id}
+												className={`${styles.presetPanelCard} ${
+													orderLabPanelId === panel.id ? styles.presetPanelCardActive : ""
+												}`}
+												onClick={() => setOrderLabPanelId(panel.id)}
+											>
+												<FlaskConical size={16} className={styles.presetPanelIcon} />
+												<div>
+													<h4 className={styles.presetPanelTitle}>{panel.name}</h4>
+													<p className={styles.presetPanelSub}>{panel.description}</p>
+													<span style={{ display: "inline-block", marginTop: "4px", fontSize: "0.65rem", color: "#00a896", fontWeight: 600 }}>
+														Turnaround: {panel.typicalTurnaround}
+													</span>
+												</div>
+											</div>
+										))}
+									</div>
+								</div>
+
+								{/* Order Priority */}
+								<div className={styles.formGroup}>
+									<label>Diagnostic Priority</label>
+									<div className={styles.priorityButtonGroup}>
+										<button
+											type="button"
+											className={`${styles.btnPriorityOption} ${orderLabPriority === "routine" ? styles.btnPriorityOptionActive : ""}`}
+											onClick={() => setOrderLabPriority("routine")}
+										>
+											Routine (60-90 Days)
+										</button>
+										<button
+											type="button"
+											className={`${styles.btnPriorityOption} ${orderLabPriority === "priority" ? styles.btnPriorityOptionActive : ""}`}
+											onClick={() => setOrderLabPriority("priority")}
+										>
+											Priority (24-48 Hours)
+										</button>
+										<button
+											type="button"
+											className={`${styles.btnPriorityOption} ${orderLabPriority === "stat" ? styles.btnPriorityOptionActiveUrgent : ""}`}
+											onClick={() => setOrderLabPriority("stat")}
+										>
+											Stat Urgent (4 Hours)
+										</button>
+									</div>
+								</div>
+
+								{/* Lab Provider */}
+								<div className={styles.formGroup}>
+									<label>Diagnostic Network &amp; FHIR Ingestion Pipeline</label>
+									<select
+										className={styles.formSelect}
+										value={orderLabProvider}
+										onChange={(e) => setOrderLabProvider(e.target.value)}
+									>
+										<option value="Quest Diagnostics Direct · HL7 FHIR v4">Quest Diagnostics Direct (HL7 FHIR v4 Ingest)</option>
+										<option value="Labcorp Biometrics FHIR Direct">Labcorp Biometrics (Direct EHR Ingest)</option>
+										<option value="Genetiq Molecular Core Laboratory">Genetiq Molecular Core (Next-Gen Multi-Omics)</option>
+										<option value="Hospital Inpatient Stat Laboratory">Hospital Inpatient Stat Laboratory</option>
+									</select>
+								</div>
+
+								{/* Clinical Indications */}
+								<div className={styles.formGroup}>
+									<label>Clinical Indications / Requisition Notes</label>
+									<textarea
+										rows={3}
+										className={styles.formTextarea}
+										placeholder="e.g. Statin titration efficacy check; rule out secondary dyslipidemia or renal impairment."
+										value={orderLabNotes}
+										onChange={(e) => setOrderLabNotes(e.target.value)}
+									/>
+								</div>
+							</div>
+
+							<div className={styles.modalFooter} style={{ display: "flex", justifyContent: "space-between" }}>
+								<button
+									type="button"
+									className={styles.btnActionSecondary}
+									onClick={(e) => handleDispatchLabOrder(e, true)}
+									disabled={isDispatchingLab}
+									title="Dispatches and immediately generates incoming lab results for testing"
+								>
+									<Sparkles size={13} style={{ color: "#00a896" }} /> Simulate Live Ingestion
+								</button>
+
+								<div style={{ display: "flex", gap: "8px" }}>
+									<button
+										type="button"
+										className={styles.btnActionSecondary}
+										onClick={() => setIsOrderLabModalOpen(false)}
+									>
+										Cancel
+									</button>
+									<button
+										type="submit"
+										className={styles.btnActionPrimary}
+										disabled={isDispatchingLab}
+									>
+										<Send size={13} /> {isDispatchingLab ? "Dispatching..." : "Dispatch Lab Order"}
+									</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			)}
+
+			{/* 10. Bottom Floating Organ System Bar */}
 			<div className={styles.bottomOrganBar}>
 				<button
 					type='button'
