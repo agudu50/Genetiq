@@ -43,4 +43,7 @@ export const ZOOM_CONFIGS: Record<
 	Alergy: { position: [10, 25, 200], zoom: 30 },
 	OxygenSaturation: { position: [0, 0, 200], zoom: 10 },
 	cardiovascular: { position: [0, 20, 200], zoom: 15 },
+	respiratory: { position: [0, 10, 200], zoom: 43 },
+	neurological: { position: [0, 30, 200], zoom: 25 },
+	renal: { position: [0, -10, 200], zoom: 35 },
 };

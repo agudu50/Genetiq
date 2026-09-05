@@ -10,7 +10,6 @@ import {
 	AlertTriangle,
 	ArrowDownRight,
 	ArrowUpRight,
-	Bell,
 	Brain,
 	Calendar,
 	CalendarPlus,
@@ -19,18 +18,13 @@ import {
 	ChevronDown,
 	ChevronLeft,
 	ChevronRight,
-	ChevronUp,
 	Clock,
 	Database,
 	Droplet,
 	ExternalLink,
-	FileText,
 	Heart,
-	History,
-	MapPin,
 	Mic,
 	MicOff,
-	PhoneCall,
 	Pill,
 	Plus,
 	RefreshCw,
@@ -41,10 +35,8 @@ import {
 	ShieldCheck,
 	Sparkles,
 	Stethoscope,
+	Target,
 	User,
-	UserCheck,
-	Video,
-	Volume2,
 	Wind,
 	X,
 } from "lucide-react";
@@ -52,7 +44,42 @@ import { CameraProvider } from "@/Features/DigitalTwin/Context/CameraContext";
 import MainScene from "@/Features/DigitalTwin/Components/Three/Scene/MainScene";
 import styles from "./DoctorPortal.module.scss";
 
-// ─── Patient Database ────────────────────────────────────────────────────────
+// ─── System Mock Lab Biomarkers for Interactive Organ Controls ───────────────
+
+const SYSTEM_MOCK_LABS: Record<string, { marker: string; value: string; refRange: string; status: "elevated" | "optimal" | "low"; system: string }[]> = {
+	total: [
+		{ marker: "Apolipoprotein B (ApoB)", value: "94 mg/dL", refRange: "< 90 mg/dL", status: "elevated", system: "Heart" },
+		{ marker: "SpO2 (Blood Oxygen)", value: "98 %", refRange: "95 - 100 %", status: "optimal", system: "Lungs" },
+		{ marker: "Fasting Blood Glucose", value: "92 mg/dL", refRange: "70 - 99 mg/dL", status: "optimal", system: "Metabolic" },
+		{ marker: "eGFR (Kidney Filtration)", value: "88 mL/min", refRange: "> 90 mL/min", status: "low", system: "Renal" },
+	],
+	cardiovascular: [
+		{ marker: "Apolipoprotein B (ApoB)", value: "128 mg/dL", refRange: "< 90 mg/dL", status: "elevated", system: "Heart" },
+		{ marker: "LDL Cholesterol", value: "142 mg/dL", refRange: "< 100 mg/dL", status: "elevated", system: "Heart" },
+		{ marker: "hs-CRP (Inflammation)", value: "3.4 mg/L", refRange: "< 1.0 mg/L", status: "elevated", system: "Heart" },
+		{ marker: "Troponin I", value: "0.02 ng/mL", refRange: "< 0.04 ng/mL", status: "optimal", system: "Heart" },
+	],
+	respiratory: [
+		{ marker: "SpO2 (Blood Oxygen)", value: "96 %", refRange: "95 - 100 %", status: "optimal", system: "Lungs" },
+		{ marker: "FEV1 / FVC Ratio", value: "81 %", refRange: "> 75 %", status: "optimal", system: "Lungs" },
+		{ marker: "Arterial pO2", value: "92 mmHg", refRange: "80 - 100 mmHg", status: "optimal", system: "Lungs" },
+		{ marker: "Respiratory Rate", value: "18 bpm", refRange: "12 - 20 bpm", status: "optimal", system: "Lungs" },
+	],
+	neurological: [
+		{ marker: "Serum S100B Protein", value: "0.08 ug/L", refRange: "< 0.10 ug/L", status: "optimal", system: "Brain" },
+		{ marker: "Morning Cortisol", value: "18.4 ug/dL", refRange: "6.0 - 19.4 ug/dL", status: "optimal", system: "Brain" },
+		{ marker: "Sleep Architecture Index", value: "78 / 100", refRange: "> 80 / 100", status: "low", system: "Brain" },
+		{ marker: "Cognitive Stress Score", value: "6.2 / 10", refRange: "< 5.0 / 10", status: "elevated", system: "Brain" },
+	],
+	renal: [
+		{ marker: "eGFR (Kidney Filtration)", value: "58 mL/min", refRange: "> 90 mL/min", status: "low", system: "Renal" },
+		{ marker: "Serum Creatinine", value: "1.4 mg/dL", refRange: "0.7 - 1.3 mg/dL", status: "elevated", system: "Renal" },
+		{ marker: "Blood Urea Nitrogen (BUN)", value: "26 mg/dL", refRange: "7 - 20 mg/dL", status: "elevated", system: "Renal" },
+		{ marker: "Urine Protein/Creatinine", value: "0.18 mg/mg", refRange: "< 0.20 mg/mg", status: "optimal", system: "Renal" },
+	],
+};
+
+// ─── Patient Database (Ghanaian Patient Cohort) ───────────────────────────────
 
 interface PatientProblemHistory {
 	date: string;
@@ -62,18 +89,36 @@ interface PatientProblemHistory {
 	resolutionNote?: string;
 }
 
+interface DiagnosticSpot {
+	organSystem: string;
+	primaryIssue: string;
+	labBiomarkerSpot: string;
+	admissionNotes: string;
+	urgencyColor: "Red" | "Yellow" | "Green";
+}
+
+interface ChatMessage {
+	id: string;
+	sender: "doctor" | "patient";
+	text: string;
+	timestamp: string;
+	isVoice?: boolean;
+}
+
 interface ClinicalPatient {
 	id: string;
 	mrn: string;
 	name: string;
 	age: number;
 	gender: "Male" | "Female";
+	avatarUrl?: string;
 	bloodType: string;
 	bmi: number;
 	status: "urgent" | "monitoring" | "stable";
 	primaryDiagnosis: string;
 	lastSync: string;
 	defaultOrgan: string;
+	initialSpot: DiagnosticSpot;
 	symptoms: {
 		id: string;
 		name: string;
@@ -102,15 +147,23 @@ const mockPatients: ClinicalPatient[] = [
 	{
 		id: "pt-101",
 		mrn: "MRN-84920",
-		name: "Marcus Vance",
+		name: "Kofi Mensah",
 		age: 52,
 		gender: "Male",
+		avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=250&q=80",
 		bloodType: "A+",
 		bmi: 27.4,
 		status: "urgent",
 		primaryDiagnosis: "Atrial Fibrillation & Elevated ApoB",
 		lastSync: "14 mins ago",
 		defaultOrgan: "cardiovascular",
+		initialSpot: {
+			organSystem: "Cardiovascular (Heart)",
+			primaryIssue: "Atrial Fibrillation & Cardiac Lipid Particle Strain",
+			labBiomarkerSpot: "Apolipoprotein B (ApoB): 128 mg/dL (High) & hs-CRP: 3.4 mg/L",
+			admissionNotes: "First arrived at Accra Clinic with acute chest palpitations & elevated lipid particle strain following stair exertion.",
+			urgencyColor: "Red",
+		},
 		symptoms: [
 			{
 				id: "sym-1",
@@ -132,14 +185,12 @@ const mockPatients: ClinicalPatient[] = [
 		problemHistory: [
 			{ date: "2024-02-14", title: "Resting Heart Rate Spike (118 bpm)", severity: 7, status: "Resolved", resolutionNote: "Metoprolol dosage adjusted to 25mg daily." },
 			{ date: "2024-01-20", title: "Occasional nocturnal chest fluttering", severity: 6, status: "Monitored", resolutionNote: "Ordered 24h Holter monitor." },
-			{ date: "2023-11-05", title: "Elevated Fasting Glucose (108 mg/dL)", severity: 4, status: "Resolved", resolutionNote: "Advised low-glycemic dietary protocol." },
 		],
 		labMarkers: [
 			{ marker: "Apolipoprotein B (ApoB)", value: "128 mg/dL", refRange: "< 90 mg/dL", status: "elevated", system: "Heart" },
 			{ marker: "LDL Cholesterol", value: "142 mg/dL", refRange: "< 100 mg/dL", status: "elevated", system: "Heart" },
 			{ marker: "hs-CRP (Inflammation)", value: "3.4 mg/L", refRange: "< 1.0 mg/L", status: "elevated", system: "Heart" },
 			{ marker: "eGFR (Kidney)", value: "78 mL/min", refRange: "> 90 mL/min", status: "low", system: "Renal" },
-			{ marker: "Fasting Blood Glucose", value: "104 mg/dL", refRange: "70 - 99 mg/dL", status: "elevated", system: "Metabolic" },
 		],
 		medications: [
 			{ name: "Atorvastatin", dosage: "20 mg", frequency: "Daily (Night)", adherence: 94 },
@@ -149,15 +200,23 @@ const mockPatients: ClinicalPatient[] = [
 	{
 		id: "pt-102",
 		mrn: "MRN-67219",
-		name: "Elena Rostova",
+		name: "Ama Serwaa",
 		age: 44,
 		gender: "Female",
+		avatarUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=250&q=80",
 		bloodType: "O-",
 		bmi: 24.1,
 		status: "monitoring",
 		primaryDiagnosis: "Pre-Diabetes & Thyroid Fatigue",
 		lastSync: "2 hours ago",
 		defaultOrgan: "total",
+		initialSpot: {
+			organSystem: "Endocrine & Metabolic System",
+			primaryIssue: "Postprandial Glycemic Spikes & Thyroid Function Strain",
+			labBiomarkerSpot: "Fasting Glucose: 112 mg/dL & HbA1c: 5.9% (Elevated)",
+			admissionNotes: "First arrived with morning exhaustion, cold sensitivity, and elevated post-meal sugar readings.",
+			urgencyColor: "Yellow",
+		},
 		symptoms: [
 			{
 				id: "sym-3",
@@ -175,7 +234,6 @@ const mockPatients: ClinicalPatient[] = [
 			{ marker: "Fasting Glucose", value: "112 mg/dL", refRange: "70 - 99 mg/dL", status: "elevated", system: "Metabolic" },
 			{ marker: "HbA1c", value: "5.9 %", refRange: "< 5.7 %", status: "elevated", system: "Metabolic" },
 			{ marker: "TSH (Thyroid)", value: "4.2 uIU/mL", refRange: "0.4 - 4.0 uIU/mL", status: "elevated", system: "Endocrine" },
-			{ marker: "Vitamin D", value: "24 ng/mL", refRange: "30 - 100 ng/mL", status: "low", system: "Endocrine" },
 		],
 		medications: [
 			{ name: "Metformin XR", dosage: "500 mg", frequency: "Daily with dinner", adherence: 98 },
@@ -184,15 +242,23 @@ const mockPatients: ClinicalPatient[] = [
 	{
 		id: "pt-103",
 		mrn: "MRN-91044",
-		name: "David K. Campbell",
+		name: "Kwame Addo",
 		age: 61,
 		gender: "Male",
+		avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=250&q=80",
 		bloodType: "B+",
 		bmi: 28.9,
 		status: "urgent",
 		primaryDiagnosis: "Stage 2 Hypertension & Renal Strain",
 		lastSync: "35 mins ago",
 		defaultOrgan: "cardiovascular",
+		initialSpot: {
+			organSystem: "Renal (Kidneys) & Vascular System",
+			primaryIssue: "Stage 2 Hypertension & Glomerular Filtration Decline",
+			labBiomarkerSpot: "eGFR: 58 mL/min (Low) & Serum Creatinine: 1.4 mg/dL",
+			admissionNotes: "First arrived with occipital morning headaches and home blood pressure logged at 162/98 mmHg.",
+			urgencyColor: "Red",
+		},
 		symptoms: [
 			{
 				id: "sym-4",
@@ -209,7 +275,6 @@ const mockPatients: ClinicalPatient[] = [
 		labMarkers: [
 			{ marker: "Serum Creatinine", value: "1.4 mg/dL", refRange: "0.7 - 1.3 mg/dL", status: "elevated", system: "Renal" },
 			{ marker: "eGFR", value: "58 mL/min", refRange: "> 90 mL/min", status: "low", system: "Renal" },
-			{ marker: "Blood Urea Nitrogen", value: "26 mg/dL", refRange: "7 - 20 mg/dL", status: "elevated", system: "Renal" },
 		],
 		medications: [
 			{ name: "Lisinopril", dosage: "20 mg", frequency: "Daily (Morning)", adherence: 82 },
@@ -218,27 +283,49 @@ const mockPatients: ClinicalPatient[] = [
 	{
 		id: "pt-104",
 		mrn: "MRN-33012",
-		name: "Sarah Lin",
+		name: "Abena Osei",
 		age: 36,
 		gender: "Female",
+		avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80",
 		bloodType: "A-",
 		bmi: 21.8,
 		status: "stable",
 		primaryDiagnosis: "Optimal Longevity Baseline",
 		lastSync: "1 hour ago",
 		defaultOrgan: "total",
+		initialSpot: {
+			organSystem: "Full Body (Baseline)",
+			primaryIssue: "Optimal Health & Preventative Screening",
+			labBiomarkerSpot: "ApoB: 72 mg/dL (Optimal) & eGFR: 108 mL/min",
+			admissionNotes: "Preventative screening visit, zero acute anatomical or biomarker strain.",
+			urgencyColor: "Green",
+		},
 		symptoms: [],
 		problemHistory: [],
 		labMarkers: [
 			{ marker: "ApoB", value: "72 mg/dL", refRange: "< 90 mg/dL", status: "optimal", system: "Heart" },
-			{ marker: "Fasting Glucose", value: "84 mg/dL", refRange: "70 - 99 mg/dL", status: "optimal", system: "Metabolic" },
 			{ marker: "eGFR", value: "108 mL/min", refRange: "> 90 mL/min", status: "optimal", system: "Renal" },
 		],
 		medications: [],
 	},
 ];
 
-// ─── Doctor Booked Appointments & Schedules ─────────────────────────────────
+// Initial Chat History per patient
+const initialPatientChats: Record<string, ChatMessage[]> = {
+	"pt-101": [
+		{ id: "m1", sender: "patient", text: "Doctor, I experienced rapid heart beating after walking up stairs yesterday.", timestamp: "14 mins ago" },
+		{ id: "m2", sender: "patient", text: "I felt shortness of breath for about 10 minutes.", timestamp: "12 mins ago" },
+	],
+	"pt-102": [
+		{ id: "m3", sender: "patient", text: "Doctor, my morning fasting glucose was 112 mg/dL and I felt very tired upon waking.", timestamp: "2 hours ago" },
+	],
+	"pt-103": [
+		{ id: "m4", sender: "patient", text: "Doctor, I logged my morning blood pressure of 158/96 mmHg with an occipital headache.", timestamp: "35 mins ago" },
+	],
+	"pt-104": [
+		{ id: "m5", sender: "patient", text: "Hello Doctor, routine wellness logs updated. Zero symptoms today!", timestamp: "1 hour ago" },
+	],
+};
 
 export interface ClinicalSpecialist {
 	id: string;
@@ -248,30 +335,10 @@ export interface ClinicalSpecialist {
 }
 
 export const CLINICAL_SPECIALISTS: ClinicalSpecialist[] = [
-	{
-		id: "km",
-		name: "Dr. Kwame Mensah",
-		role: "General Physician & Telehealth",
-		initials: "KM",
-	},
-	{
-		id: "ao",
-		name: "Dr. Abena Osei",
-		role: "Clinical Hematologist",
-		initials: "AO",
-	},
-	{
-		id: "ka",
-		name: "Dr. Kofi Annan",
-		role: "Geneticist & Bio-consultant",
-		initials: "KA",
-	},
-	{
-		id: "aa",
-		name: "Akosua Addo, MSc",
-		role: "Clinical Dietitian & Nutritionist",
-		initials: "AA",
-	},
+	{ id: "km", name: "Dr. Kwame Mensah", role: "General Physician & Telehealth", initials: "KM" },
+	{ id: "ao", name: "Dr. Abena Osei", role: "Clinical Hematologist", initials: "AO" },
+	{ id: "ka", name: "Dr. Kofi Annan", role: "Geneticist & Bio-consultant", initials: "KA" },
+	{ id: "aa", name: "Akosua Addo, MSc", role: "Clinical Dietitian & Nutritionist", initials: "AA" },
 ];
 
 export const CONSULTATION_TIME_SLOTS = [
@@ -305,9 +372,9 @@ const initialAppointments: DoctorAppointment[] = [
 	{
 		id: "apt-1",
 		patientId: "pt-101",
-		patientName: "Marcus Vance",
+		patientName: "Kofi Mensah",
 		patientMrn: "MRN-84920",
-		patientAvatar: "MV",
+		patientAvatar: "KM",
 		appointmentType: "Urgent Arrhythmia & Palpitations Check-in",
 		specialistName: "Dr. Kwame Mensah",
 		specialistRole: "General Physician & Telehealth",
@@ -318,16 +385,16 @@ const initialAppointments: DoctorAppointment[] = [
 		durationMinutes: 30,
 		mode: "telehealth",
 		status: "waiting",
-		notes: "Experiencing rapid heartbeat and chest tightness after stair climb. Would like doctor to review latest Metoprolol adherence.",
+		notes: "Experiencing rapid heartbeat and chest tightness after stair climb.",
 		roomOrLink: "https://telehealth.genetiq.health/room/pt-101",
 	},
 	{
 		id: "apt-2",
 		patientId: "pt-102",
-		patientName: "Elena Rostova",
+		patientName: "Ama Serwaa",
 		patientMrn: "MRN-67219",
-		patientAvatar: "ER",
-		appointmentType: "Clinical Hematology & Ferritin Telemetry Review",
+		patientAvatar: "AS",
+		appointmentType: "Clinical Glycemic & Thyroid Telemetry Review",
 		specialistName: "Dr. Abena Osei",
 		specialistRole: "Clinical Hematologist",
 		specialistInitials: "AO",
@@ -337,62 +404,7 @@ const initialAppointments: DoctorAppointment[] = [
 		durationMinutes: 45,
 		mode: "in-person",
 		status: "confirmed",
-		notes: "Discussing borderline low RBC indices, cold sensitivity, and thyroid panel balance.",
-	},
-	{
-		id: "apt-3",
-		patientId: "pt-103",
-		patientName: "David Chen",
-		patientMrn: "MRN-33108",
-		patientAvatar: "DC",
-		appointmentType: "Familial Hypercholesterolemia Genomic Screening",
-		specialistName: "Dr. Kofi Annan",
-		specialistRole: "Geneticist & Bio-consultant",
-		specialistInitials: "KA",
-		department: "Genetics & Bio-consultation",
-		date: "Tomorrow",
-		time: "10:00 AM",
-		durationMinutes: 30,
-		mode: "telehealth",
-		status: "confirmed",
-		notes: "Reviewing PCSK9 and LDLR gene variant risk profile and high baseline ApoB (128 mg/dL).",
-		roomOrLink: "https://telehealth.genetiq.health/room/pt-103",
-	},
-	{
-		id: "apt-4",
-		patientId: "pt-101",
-		patientName: "Marcus Vance",
-		patientMrn: "MRN-84920",
-		patientAvatar: "MV",
-		appointmentType: "Cardio-Metabolic Dietary Protocol & Macro Intake",
-		specialistName: "Akosua Addo, MSc",
-		specialistRole: "Clinical Dietitian & Nutritionist",
-		specialistInitials: "AA",
-		department: "Clinical Nutrition",
-		date: "Tomorrow",
-		time: "2:15 PM",
-		durationMinutes: 30,
-		mode: "phone",
-		status: "confirmed",
-		notes: "Formulating low-sodium, high-fiber dietary plan to assist blood pressure regulation.",
-	},
-	{
-		id: "apt-5",
-		patientId: "pt-102",
-		patientName: "Elena Rostova",
-		patientMrn: "MRN-67219",
-		patientAvatar: "ER",
-		appointmentType: "AI Clinical Biomarker Triage & Lab Interpretation",
-		specialistName: "Dr. Kwame Mensah",
-		specialistRole: "General Physician & Telehealth",
-		specialistInitials: "KM",
-		department: "General Physician & Telehealth",
-		date: "Aug 28",
-		time: "11:00 AM",
-		durationMinutes: 20,
-		mode: "ai-consult",
-		status: "completed",
-		notes: "AI multi-system review of thyroid panel, fasting insulin, and renal markers.",
+		notes: "Discussing postprandial sugar spikes, cold sensitivity, and thyroid panel balance.",
 	},
 ];
 
@@ -418,149 +430,46 @@ export const DoctorPortal = () => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedOrganSystem, setSelectedOrganSystem] = useState<string>("cardiovascular");
 
-	// Appointments & Patient Schedule State
+	// Diagnostic Spotlight Close state
+	const [isSpotlightClosed, setIsSpotlightClosed] = useState(false);
+
+	// Patient Chat State
+	const [patientChats, setPatientChats] = useState<Record<string, ChatMessage[]>>(initialPatientChats);
+
+	// Appointments State
 	const [appointments, setAppointments] = useState<DoctorAppointment[]>(initialAppointments);
 	const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
-	const [appointmentFilter, setAppointmentFilter] = useState<"all" | "today" | "telehealth" | "in-person" | "completed">("all");
-	const [specialistFilter, setSpecialistFilter] = useState<string>("all");
 	const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 	const [newApptPatientId, setNewApptPatientId] = useState("pt-101");
-	const [newApptSpecialistId, setNewApptSpecialistId] = useState("km");
 	const [newApptSlot, setNewApptSlot] = useState(CONSULTATION_TIME_SLOTS[0]);
-	const [newApptMode, setNewApptMode] = useState<"telehealth" | "in-person" | "phone" | "ai-consult">("telehealth");
 	const [newApptNotes, setNewApptNotes] = useState("");
 
-	// Load stored appointments on mount & listen for updates from patient booking modal
-	useEffect(() => {
-		const loadStoredAppointments = () => {
-			try {
-				const saved = localStorage.getItem("genetiq.doctor_appointments");
-				if (saved) {
-					const parsed = JSON.parse(saved);
-					if (Array.isArray(parsed) && parsed.length > 0) {
-						setAppointments((prev) => {
-							const existingIds = new Set(prev.map((a) => a.id));
-							const uniqueNew = parsed.filter((a: any) => !existingIds.has(a.id));
-							return [...uniqueNew, ...prev];
-						});
-					}
-				}
-			} catch (err) {
-				console.error(err);
-			}
-		};
-
-		loadStoredAppointments();
-		window.addEventListener("storage", loadStoredAppointments);
-		return () => window.removeEventListener("storage", loadStoredAppointments);
-	}, []);
-
-	// Advice & Clinical Dispatch Modal State
+	// Advice / Messaging Modal State
 	const [isAdviceModalOpen, setIsAdviceModalOpen] = useState(false);
 	const [adviceText, setAdviceText] = useState("");
 	const [isVoiceRecording, setIsVoiceRecording] = useState(false);
-	const [showProblemHistory, setShowProblemHistory] = useState(true);
 	const recognitionRef = useRef<any>(null);
 
-	// Doctor Profile Menu & Clinical Settings State
+	// Settings Modal State
 	const [isDoctorMenuOpen, setIsDoctorMenuOpen] = useState(false);
 	const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
-	const [activeSettingsTab, setActiveSettingsTab] = useState<
-		"ehr" | "alerts" | "orders" | "voice" | "security"
-	>("ehr");
 	const [ehrSyncing, setEhrSyncing] = useState(false);
 
 	const doctorMenuRef = useRef<HTMLDivElement>(null);
 	const patientDropdownRef = useRef<HTMLDivElement>(null);
 
-	// Appointment Handlers
-	const handleJoinTelehealth = (appt: DoctorAppointment) => {
-		toast.info(`Launching encrypted Telehealth session with ${appt.patientName}...`);
-		setTimeout(() => {
-			toast.success(`Connected to secure clinical room with ${appt.patientName}.`);
-		}, 800);
-	};
-
-	const handleFocusPatientFromAppt = (patientId: string) => {
-		const target = patients.find((p) => p.id === patientId);
-		if (target) {
-			setSelectedPatientId(target.id);
-			setSelectedOrganSystem(target.defaultOrgan);
-			setIsScheduleModalOpen(false);
-			toast.success(`Patient Chart & 3D Twin switched to ${target.name}.`);
-		}
-	};
-
-	const handleMarkApptCompleted = (apptId: string) => {
-		setAppointments((prev) =>
-			prev.map((a) => (a.id === apptId ? { ...a, status: "completed" as const } : a)),
-		);
-		toast.success("Appointment completed and recorded into clinical encounter audit trail.");
-	};
-
-	const handleCreateNewAppointment = (e: React.FormEvent) => {
-		e.preventDefault();
-		const patientObj = patients.find((p) => p.id === newApptPatientId);
-		const specObj = CLINICAL_SPECIALISTS.find((s) => s.id === newApptSpecialistId) || CLINICAL_SPECIALISTS[0];
-		if (!patientObj) return;
-
-		const slotParts = newApptSlot.split(",");
-		const datePart = slotParts[0]?.trim() || "Today";
-		const timePart = slotParts[1]?.trim() || newApptSlot;
-
-		const newAppt: DoctorAppointment = {
-			id: `apt-${Date.now()}`,
-			patientId: patientObj.id,
-			patientName: patientObj.name,
-			patientMrn: patientObj.mrn,
-			patientAvatar: patientObj.name.split(" ").map((n) => n[0]).join(""),
-			appointmentType: `${specObj.role}: ${newApptMode === "telehealth" ? "Online Video" : newApptMode === "in-person" ? "In-Person Clinic" : newApptMode === "phone" ? "Audio Phone" : "AI Clinical"} Consultation`,
-			specialistName: specObj.name,
-			specialistRole: specObj.role,
-			specialistInitials: specObj.initials,
-			department: specObj.role,
-			date: datePart,
-			time: timePart,
-			durationMinutes: newApptMode === "in-person" ? 45 : 30,
-			mode: newApptMode,
-			status: "confirmed",
-			notes: newApptNotes.trim() || "Scheduled consultation via Doctor Portal.",
-			roomOrLink: newApptMode === "telehealth" ? `https://telehealth.genetiq.health/room/${patientObj.id}` : undefined,
-		};
-
-		setAppointments((prev) => [newAppt, ...prev]);
-
-		try {
-			const existing = localStorage.getItem("genetiq.doctor_appointments");
-			const parsed = existing ? JSON.parse(existing) : [];
-			localStorage.setItem("genetiq.doctor_appointments", JSON.stringify([newAppt, ...parsed]));
-		} catch (err) {
-			console.error(err);
-		}
-
-		setIsBookingModalOpen(false);
-		setNewApptNotes("");
-		toast.success(`New consultation booked with ${specObj.name} for ${patientObj.name} at ${newApptSlot}!`);
-	};
-
-	const filteredAppointments = appointments.filter((a) => {
-		if (specialistFilter !== "all" && a.specialistInitials?.toLowerCase() !== specialistFilter) {
-			return false;
-		}
-		if (appointmentFilter === "today") return a.date.toLowerCase().includes("today") || a.status === "waiting";
-		if (appointmentFilter === "telehealth") return a.mode === "telehealth";
-		if (appointmentFilter === "in-person") return a.mode === "in-person";
-		if (appointmentFilter === "completed") return a.status === "completed";
-		return true;
-	});
-
-	// Panel Collapsible State - auto collapse on smaller screens for immediate 3D twin visibility
+	// Panel Collapsible State
 	const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState(() =>
 		typeof window !== "undefined" ? window.innerWidth <= 900 : false,
 	);
 	const [isRightPanelCollapsed, setIsRightPanelCollapsed] = useState(() =>
 		typeof window !== "undefined" ? window.innerWidth <= 1200 : false,
 	);
+
+	// Reset spotlight visibility when selected patient changes
+	useEffect(() => {
+		setIsSpotlightClosed(false);
+	}, [selectedPatientId]);
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -576,20 +485,13 @@ export const DoctorPortal = () => {
 	// Click outside handlers
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
-			if (
-				doctorMenuRef.current &&
-				!doctorMenuRef.current.contains(event.target as Node)
-			) {
+			if (doctorMenuRef.current && !doctorMenuRef.current.contains(event.target as Node)) {
 				setIsDoctorMenuOpen(false);
 			}
-			if (
-				patientDropdownRef.current &&
-				!patientDropdownRef.current.contains(event.target as Node)
-			) {
+			if (patientDropdownRef.current && !patientDropdownRef.current.contains(event.target as Node)) {
 				setIsDropdownOpen(false);
 			}
 		};
-
 		document.addEventListener("mousedown", handleClickOutside);
 		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, []);
@@ -598,12 +500,24 @@ export const DoctorPortal = () => {
 		setEhrSyncing(true);
 		setTimeout(() => {
 			setEhrSyncing(false);
-			toast.success("EHR FHIR v4 synchronization completed. 3 patient records updated with latest lab telemetry.");
-		}, 1400);
+			toast.success("EHR FHIR v4 synchronization completed. Patient records updated.");
+		}, 1200);
 	};
 
-	const selectedPatient =
-		patients.find((p) => p.id === selectedPatientId) || patients[0];
+	const selectedPatient = patients.find((p) => p.id === selectedPatientId) || patients[0];
+	const currentChatMessages = patientChats[selectedPatient.id] || [];
+
+	// Displayed Lab Markers dynamically derived from active organ system pill or patient default
+	const displayedLabMarkers =
+		selectedOrganSystem && SYSTEM_MOCK_LABS[selectedOrganSystem]
+			? SYSTEM_MOCK_LABS[selectedOrganSystem]
+			: selectedPatient.labMarkers;
+
+	// Organ System Selection Handler with toast feedback
+	const handleSelectOrganSystem = (sysId: string, label: string) => {
+		setSelectedOrganSystem(sysId);
+		toast.info(`3D Twin & Telemetry focused on ${label}`);
+	};
 
 	// Filtered dropdown
 	const filteredDropdownPatients = patients.filter((p) =>
@@ -612,40 +526,35 @@ export const DoctorPortal = () => {
 		p.primaryDiagnosis.toLowerCase().includes(searchQuery.toLowerCase()),
 	);
 
-	// Pre-fill advice text when opening advice modal
 	const handleOpenAdviceModal = (symptomName?: string) => {
 		if (symptomName?.includes("Palpitation") || selectedPatient.primaryDiagnosis.includes("Fibrillation")) {
 			setAdviceText(
-				`Hello ${selectedPatient.name},\n\nI reviewed your recent report of ${symptomName || "palpitations and shortness of breath"}. Please sit down and rest immediately, drink 500ml of water, and ensure you have taken your morning Metoprolol 25mg.\n\nAvoid caffeine and strenuous activity today. If your shortness of breath persists beyond 15 minutes or you experience chest pressure, please call our triage nurse or emergency immediately.\n\n— ${doctor.doctorName}`,
+				`Hello ${selectedPatient.name}, I reviewed your report of ${symptomName || "palpitations"}. Please rest immediately, drink water, and ensure you take your morning Metoprolol 25mg.`,
 			);
 		} else if (selectedPatient.primaryDiagnosis.includes("Hypertension")) {
 			setAdviceText(
-				`Hello ${selectedPatient.name},\n\nI noticed your morning blood pressure entry of 158/96 mmHg. Please sit quietly for 10 minutes and retake the measurement on your left arm. Take your prescribed morning Lisinopril 20mg and stay well hydrated.\n\n— ${doctor.doctorName}`,
+				`Hello ${selectedPatient.name}, I noticed your blood pressure entry of 158/96 mmHg. Rest quietly for 10 minutes and retake it. Take your morning Lisinopril 20mg.`,
 			);
 		} else {
 			setAdviceText(
-				`Hello ${selectedPatient.name},\n\nI have reviewed your latest symptom and lab log. Please continue your current daily protocol and rest adequately today. Let us know if any discomfort persists.\n\n— ${doctor.doctorName}`,
+				`Hello ${selectedPatient.name}, I reviewed your symptom log. Please rest adequately today and notify us if discomfort continues.`,
 			);
 		}
 		setIsAdviceModalOpen(true);
 	};
 
-	// Voice recognition handler
 	const toggleVoiceInput = () => {
 		if (isVoiceRecording) {
-			if (recognitionRef.current) {
-				recognitionRef.current.stop();
-			}
+			if (recognitionRef.current) recognitionRef.current.stop();
 			setIsVoiceRecording(false);
 			toast.info("Voice dictation stopped.");
 			return;
 		}
 
-		const SpeechRecognition =
-			(window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+		const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
 		if (!SpeechRecognition) {
-			toast.error("Speech Recognition is not supported on this browser. You can type your note directly.");
+			toast.error("Speech Recognition is not supported on this browser.");
 			return;
 		}
 
@@ -654,32 +563,18 @@ export const DoctorPortal = () => {
 			recognition.continuous = true;
 			recognition.interimResults = true;
 			recognition.lang = "en-US";
-
 			recognition.onstart = () => {
 				setIsVoiceRecording(true);
-				toast.success("Listening... Speak your clinical advice now.");
+				toast.success("Listening... Dictate clinical note now.");
 			};
-
 			recognition.onresult = (event: any) => {
 				let transcript = "";
 				for (let i = event.resultIndex; i < event.results.length; ++i) {
-					if (event.results[i].isFinal) {
-						transcript += event.results[i][0].transcript + " ";
-					}
+					if (event.results[i].isFinal) transcript += event.results[i][0].transcript + " ";
 				}
-				if (transcript) {
-					setAdviceText((prev) => `${prev.trim()} ${transcript.trim()}`);
-				}
+				if (transcript) setAdviceText((prev) => `${prev.trim()} ${transcript.trim()}`);
 			};
-
-			recognition.onerror = () => {
-				setIsVoiceRecording(false);
-			};
-
-			recognition.onend = () => {
-				setIsVoiceRecording(false);
-			};
-
+			recognition.onend = () => setIsVoiceRecording(false);
 			recognitionRef.current = recognition;
 			recognition.start();
 		} catch (e) {
@@ -688,38 +583,37 @@ export const DoctorPortal = () => {
 		}
 	};
 
-	// Cleanup recognition on unmount
-	useEffect(() => {
-		return () => {
-			if (recognitionRef.current) {
-				recognitionRef.current.stop();
-			}
-		};
-	}, []);
-
-	// Send advice to patient
 	const handleDispatchAdvice = () => {
 		if (!adviceText.trim()) {
-			toast.error("Please enter or dictate clinical advice.");
+			toast.error("Please type or dictate a message.");
 			return;
 		}
 
-		// Clear urgent flag if any
+		const newMsg: ChatMessage = {
+			id: `msg-${Date.now()}`,
+			sender: "doctor",
+			text: adviceText.trim(),
+			timestamp: "Just now",
+			isVoice: isVoiceRecording,
+		};
+
+		setPatientChats((prev) => ({
+			...prev,
+			[selectedPatient.id]: [...(prev[selectedPatient.id] || []), newMsg],
+		}));
+
 		setPatients((prev) =>
-			prev.map((p) =>
-				p.id === selectedPatient.id ? { ...p, status: "monitoring" } : p,
-			),
+			prev.map((p) => (p.id === selectedPatient.id ? { ...p, status: "monitoring" as const } : p)),
 		);
 
+		setAdviceText("");
 		setIsAdviceModalOpen(false);
-		toast.success(`Clinical advice and care plan dispatched to ${selectedPatient.name}'s Genetiq app!`);
+		toast.success(`Message sent directly to ${selectedPatient.name}'s Genetiq app!`);
 	};
 
 	const handleAcknowledge = () => {
 		setPatients((prev) =>
-			prev.map((p) =>
-				p.id === selectedPatient.id ? { ...p, status: "monitoring" } : p,
-			),
+			prev.map((p) => (p.id === selectedPatient.id ? { ...p, status: "monitoring" as const } : p)),
 		);
 		toast.success(`Triage alert for ${selectedPatient.name} cleared.`);
 	};
@@ -728,14 +622,112 @@ export const DoctorPortal = () => {
 		toast.success(`90-day lab re-test order dispatched for ${selectedPatient.name}.`);
 	};
 
+	const handleCreateNewAppointment = (e: React.FormEvent) => {
+		e.preventDefault();
+		const patientObj = patients.find((p) => p.id === newApptPatientId) || selectedPatient;
+		const specObj = CLINICAL_SPECIALISTS[0];
+
+		const newAppt: DoctorAppointment = {
+			id: `apt-${Date.now()}`,
+			patientId: patientObj.id,
+			patientName: patientObj.name,
+			patientMrn: patientObj.mrn,
+			patientAvatar: patientObj.name.split(" ").map((n) => n[0]).join(""),
+			appointmentType: `${specObj.role} Consultation`,
+			specialistName: specObj.name,
+			specialistRole: specObj.role,
+			specialistInitials: specObj.initials,
+			department: specObj.role,
+			date: newApptSlot.split(",")[0]?.trim() || "Today",
+			time: newApptSlot.split(",")[1]?.trim() || newApptSlot,
+			durationMinutes: 30,
+			mode: "telehealth",
+			status: "confirmed",
+			notes: newApptNotes.trim() || "Scheduled consultation via Doctor Portal.",
+			roomOrLink: `https://telehealth.genetiq.health/room/${patientObj.id}`,
+		};
+
+		setAppointments((prev) => [newAppt, ...prev]);
+		setIsBookingModalOpen(false);
+		setNewApptNotes("");
+		toast.success(`New consultation booked with ${specObj.name} for ${patientObj.name}!`);
+	};
+
 	return (
 		<div className={`${styles.clinicalStage} ${isLeftPanelCollapsed ? styles.leftCollapsed : ""}`}>
 			{/* 1. Full-Screen 3D Digital Twin Stage */}
 			<div className={styles.canvasFullStage}>
 				<CameraProvider>
-					<MainScene selectedCategory={selectedOrganSystem} showSidebar={false} />
+					<MainScene selectedCategory={selectedOrganSystem} showSidebar={false} gender={selectedPatient.gender} />
 				</CameraProvider>
 			</div>
+
+			{/* 1b. Glowing 3D Target Spot Marker on the Body (Pulsing Beacon) */}
+			<div className={`${styles.bodySpotBeacon} ${styles[`beacon_${selectedOrganSystem || selectedPatient.defaultOrgan}`]}`}>
+				<div className={styles.beaconRingPulse} />
+				<div className={styles.beaconCoreDot} />
+				<div className={styles.beaconSpotCard}>
+					<Target size={13} style={{ color: selectedPatient.gender === "Female" ? "#d946ef" : "#00a896", flexShrink: 0 }} />
+					<span>
+						<strong>3D Twin ({selectedPatient.gender} Body Model):</strong>{" "}
+						{selectedOrganSystem ? selectedOrganSystem.toUpperCase() : selectedPatient.initialSpot?.organSystem}
+					</span>
+				</div>
+			</div>
+
+			{/* 1c. 3D Twin Diagnostic Risk Spotlight Card (Closable) */}
+			{selectedPatient.initialSpot && !isSpotlightClosed && (
+				<div className={styles.diagnosticSpotlightBadge}>
+					<div className={styles.spotlightHeader}>
+						<div
+							className={styles.spotlightPulseDot}
+							style={{
+								background:
+									selectedPatient.initialSpot.urgencyColor === "Red"
+										? "#ef4444"
+										: selectedPatient.initialSpot.urgencyColor === "Yellow"
+										? "#f59e0b"
+										: "#10b981",
+							}}
+						/>
+						<span className={styles.spotlightTag}>
+							INITIAL ADMISSION SPOT & LAB SPOTLIGHT ({selectedPatient.name})
+						</span>
+						<span
+							className={
+								selectedPatient.initialSpot.urgencyColor === "Red"
+									? styles.badgeUrgent
+									: selectedPatient.initialSpot.urgencyColor === "Yellow"
+									? styles.badgeWarning
+									: styles.badgeOptimal
+							}
+						>
+							{selectedPatient.initialSpot.organSystem}
+						</span>
+						<button
+							type="button"
+							className={styles.spotlightCloseBtn}
+							onClick={() => setIsSpotlightClosed(true)}
+							title="Close Diagnostic Spotlight"
+						>
+							<X size={14} />
+						</button>
+					</div>
+					<div className={styles.spotlightTitle}>{selectedPatient.initialSpot.primaryIssue}</div>
+					<div className={styles.spotlightBiomarker}>
+						<Activity size={13} style={{ color: "#00a896", flexShrink: 0 }} />
+						<span><strong>Lab Findings at Arrival:</strong> {selectedPatient.initialSpot.labBiomarkerSpot}</span>
+					</div>
+					<div className={styles.spotlightNotes}>{selectedPatient.initialSpot.admissionNotes}</div>
+					<button
+						type="button"
+						className={styles.spotlightFocusBtn}
+						onClick={() => handleSelectOrganSystem(selectedPatient.defaultOrgan, selectedPatient.initialSpot.organSystem)}
+					>
+						<Target size={13} /> Zoom 3D Twin to Affected Organ Spot
+					</button>
+				</div>
+			)}
 
 			{/* 2. Top Floating Header & Patient Selector */}
 			<header className={styles.topHeader}>
@@ -813,7 +805,14 @@ export const DoctorPortal = () => {
 											setIsDropdownOpen(false);
 										}}
 									>
-										<div>
+										<div className={`${styles.dropdownAvatar} ${p.gender === "Female" ? styles.patientAvatarFemale : ""}`}>
+											{p.avatarUrl ? (
+												<img src={p.avatarUrl} alt={p.name} className={styles.patientAvatarImg} />
+											) : (
+												p.name.split(" ").map((n) => n[0]).join("")
+											)}
+										</div>
+										<div style={{ flex: 1, minWidth: 0 }}>
 											<div style={{ fontSize: "0.85rem", fontWeight: 700 }}>{p.name}</div>
 											<div style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.5)" }}>
 												{p.age}y · {p.gender} · {p.primaryDiagnosis}
@@ -837,7 +836,7 @@ export const DoctorPortal = () => {
 					)}
 				</div>
 
-				{/* Header Right Controls: KPIs + Schedule + Doctor Profile & Settings Menu */}
+				{/* Header Right Controls */}
 				<div className={styles.headerControls}>
 					<div className={styles.kpiPills}>
 						<div className={styles.kpiPill}>
@@ -850,7 +849,6 @@ export const DoctorPortal = () => {
 						</div>
 					</div>
 
-					{/* Direct Appointments / Schedule Quick Trigger */}
 					<button
 						type='button'
 						className={styles.scheduleHeaderBtn}
@@ -864,10 +862,9 @@ export const DoctorPortal = () => {
 						</span>
 					</button>
 
-					{/* Theme Switcher */}
 					<ThemeSwitcher />
 
-					{/* Doctor Profile & Clinical Features Dropdown */}
+					{/* Doctor Profile Menu */}
 					<div className={styles.doctorMenuWrapper} ref={doctorMenuRef}>
 						<button
 							type='button'
@@ -884,7 +881,6 @@ export const DoctorPortal = () => {
 
 						{isDoctorMenuOpen && (
 							<div className={styles.doctorMenuDropdown}>
-								{/* Doctor Profile Hero */}
 								<div className={styles.doctorMenuHero}>
 									<div className={styles.doctorMenuHeroAvatar}>
 										{doctorInitials}
@@ -902,7 +898,6 @@ export const DoctorPortal = () => {
 
 								<div className={styles.menuDivider} />
 
-								{/* Clinical Features & Access List */}
 								<div className={styles.doctorMenuItems}>
 									<button
 										type='button'
@@ -919,16 +914,12 @@ export const DoctorPortal = () => {
 											<span className={styles.menuItemTitle}>Patient Appointments & Schedule</span>
 											<span className={styles.menuItemSub}>{appointments.length} booked consultations</span>
 										</div>
-										<span className={styles.statusPillLive}>
-											{appointments.filter((a) => a.status === "waiting").length > 0 ? "1 Waiting" : "Active"}
-										</span>
 									</button>
 
 									<button
 										type='button'
 										className={styles.doctorMenuItem}
 										onClick={() => {
-											setActiveSettingsTab("ehr");
 											setIsSettingsModalOpen(true);
 											setIsDoctorMenuOpen(false);
 										}}
@@ -940,103 +931,12 @@ export const DoctorPortal = () => {
 											<span className={styles.menuItemTitle}>EHR & FHIR Sync</span>
 											<span className={styles.menuItemSub}>Epic / Cerner live sync status</span>
 										</div>
-										<span className={styles.statusPillLive}>Live</span>
-									</button>
-
-									<button
-										type='button'
-										className={styles.doctorMenuItem}
-										onClick={() => {
-											setActiveSettingsTab("alerts");
-											setIsSettingsModalOpen(true);
-											setIsDoctorMenuOpen(false);
-										}}
-									>
-										<div className={styles.menuItemIcon} style={{ background: "rgba(245, 158, 11, 0.15)", color: "#f59e0b" }}>
-											<Bell size={15} />
-										</div>
-										<div className={styles.menuItemText}>
-											<span className={styles.menuItemTitle}>Triage Thresholds & Alerts</span>
-											<span className={styles.menuItemSub}>ApoB & arrhythmia triggers</span>
-										</div>
-										<ChevronRight size={13} style={{ color: "rgba(255,255,255,0.4)" }} />
-									</button>
-
-									<button
-										type='button'
-										className={styles.doctorMenuItem}
-										onClick={() => {
-											setActiveSettingsTab("orders");
-											setIsSettingsModalOpen(true);
-											setIsDoctorMenuOpen(false);
-										}}
-									>
-										<div className={styles.menuItemIcon} style={{ background: "rgba(14, 165, 233, 0.15)", color: "#0ea5e9" }}>
-											<FileText size={15} />
-										</div>
-										<div className={styles.menuItemText}>
-											<span className={styles.menuItemTitle}>Order Sets & Formulary</span>
-											<span className={styles.menuItemSub}>90-day lab & prescription sets</span>
-										</div>
-										<ChevronRight size={13} style={{ color: "rgba(255,255,255,0.4)" }} />
-									</button>
-
-									<button
-										type='button'
-										className={styles.doctorMenuItem}
-										onClick={() => {
-											setActiveSettingsTab("voice");
-											setIsSettingsModalOpen(true);
-											setIsDoctorMenuOpen(false);
-										}}
-									>
-										<div className={styles.menuItemIcon} style={{ background: "rgba(139, 92, 246, 0.15)", color: "#8b5cf6" }}>
-											<Volume2 size={15} />
-										</div>
-										<div className={styles.menuItemText}>
-											<span className={styles.menuItemTitle}>Voice AI Dictation</span>
-											<span className={styles.menuItemSub}>Continuous speech & lexicon</span>
-										</div>
-										<ChevronRight size={13} style={{ color: "rgba(255,255,255,0.4)" }} />
-									</button>
-
-									<button
-										type='button'
-										className={styles.doctorMenuItem}
-										onClick={() => {
-											setActiveSettingsTab("security");
-											setIsSettingsModalOpen(true);
-											setIsDoctorMenuOpen(false);
-										}}
-									>
-										<div className={styles.menuItemIcon} style={{ background: "rgba(16, 185, 129, 0.15)", color: "#10b981" }}>
-											<ShieldCheck size={15} />
-										</div>
-										<div className={styles.menuItemText}>
-											<span className={styles.menuItemTitle}>HIPAA Audit & Credentials</span>
-											<span className={styles.menuItemSub}>Active session & AES-256 logs</span>
-										</div>
-										<ChevronRight size={13} style={{ color: "rgba(255,255,255,0.4)" }} />
 									</button>
 								</div>
 
 								<div className={styles.menuDivider} />
 
-								{/* Bottom Switch to Patient View & Settings */}
 								<div className={styles.doctorMenuFooter}>
-									<button
-										type='button'
-										className={styles.doctorSettingsBtn}
-										onClick={() => {
-											setActiveSettingsTab("ehr");
-											setIsSettingsModalOpen(true);
-											setIsDoctorMenuOpen(false);
-										}}
-									>
-										<Settings size={14} />
-										<span>Portal Settings</span>
-									</button>
-
 									<button
 										type='button'
 										className={styles.patientModeItem}
@@ -1063,9 +963,7 @@ export const DoctorPortal = () => {
 					className={`${styles.expandToggleBtn} ${styles.expandToggleBtnLeft}`}
 					onClick={() => {
 						setIsLeftPanelCollapsed(false);
-						if (window.innerWidth <= 768) {
-							setIsRightPanelCollapsed(true);
-						}
+						if (window.innerWidth <= 768) setIsRightPanelCollapsed(true);
 					}}
 				>
 					<User size={14} />
@@ -1079,9 +977,7 @@ export const DoctorPortal = () => {
 					className={`${styles.expandToggleBtn} ${styles.expandToggleBtnRight}`}
 					onClick={() => {
 						setIsRightPanelCollapsed(false);
-						if (window.innerWidth <= 768) {
-							setIsLeftPanelCollapsed(true);
-						}
+						if (window.innerWidth <= 768) setIsLeftPanelCollapsed(true);
 					}}
 				>
 					<Activity size={14} />
@@ -1110,8 +1006,12 @@ export const DoctorPortal = () => {
 						</div>
 
 						<div className={styles.patientHeroBlock}>
-							<div className={styles.patientAvatarHero}>
-								{selectedPatient.name.split(" ").map((n) => n[0]).join("")}
+							<div className={`${styles.patientAvatarHero} ${selectedPatient.gender === "Female" ? styles.patientAvatarFemale : ""}`}>
+								{selectedPatient.avatarUrl ? (
+									<img src={selectedPatient.avatarUrl} alt={selectedPatient.name} className={styles.patientAvatarImg} />
+								) : (
+									selectedPatient.name.split(" ").map((n) => n[0]).join("")
+								)}
 							</div>
 							<div className={styles.patientInfo}>
 								<div className={styles.patientName}>{selectedPatient.name}</div>
@@ -1189,7 +1089,7 @@ export const DoctorPortal = () => {
 								className={styles.btnActionPrimary}
 								onClick={() => handleOpenAdviceModal(selectedPatient.symptoms[0]?.name)}
 							>
-								<Send size={14} /> Send Advice
+								<Send size={14} /> Text Patient / Advice
 							</button>
 						</div>
 					</div>
@@ -1202,7 +1102,7 @@ export const DoctorPortal = () => {
 						<div className={styles.cardHeader}>
 							<h3>
 								<Activity size={16} style={{ color: "#00a896" }} />
-								Lab Biomarkers & Chemistry
+								Lab Biomarkers & Chemistry ({selectedOrganSystem ? selectedOrganSystem.toUpperCase() : "HEART"})
 							</h3>
 							<button
 								type='button'
@@ -1214,7 +1114,7 @@ export const DoctorPortal = () => {
 							</button>
 						</div>
 
-						{selectedPatient.labMarkers.map((m, idx) => (
+						{displayedLabMarkers.map((m, idx) => (
 							<div key={idx} className={styles.markerRow}>
 								<div>
 									<div className={styles.markerName}>{m.marker}</div>
@@ -1295,14 +1195,14 @@ export const DoctorPortal = () => {
 				</div>
 			</div>
 
-			{/* 4. Advice & Care Plan Dispatch Modal (Voice + Text + Historical Problems) */}
+			{/* 4. Doctor-Patient Chat & Voice Drawer / Modal */}
 			{isAdviceModalOpen && (
 				<div className={styles.modalOverlay} onClick={() => setIsAdviceModalOpen(false)}>
-					<div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+					<div className={`${styles.modalContent} ${styles.chatModalCard}`} onClick={(e) => e.stopPropagation()}>
 						<div className={styles.modalHeader}>
 							<h2>
 								<Send size={18} style={{ color: "#00a896" }} />
-								Clinical Care Advice & Patient Dispatch
+								Direct Chat with {selectedPatient.name}
 							</h2>
 							<button
 								type='button'
@@ -1314,119 +1214,61 @@ export const DoctorPortal = () => {
 						</div>
 
 						<div className={styles.modalBody}>
-							{/* Patient target box */}
 							<div className={styles.patientTargetBox}>
-								<div>
-									<div className={styles.targetName}>Recipient: {selectedPatient.name} ({selectedPatient.mrn})</div>
+								<div className={`${styles.dropdownAvatar} ${selectedPatient.gender === "Female" ? styles.patientAvatarFemale : ""}`}>
+									{selectedPatient.avatarUrl ? (
+										<img src={selectedPatient.avatarUrl} alt={selectedPatient.name} className={styles.patientAvatarImg} />
+									) : (
+										selectedPatient.name.split(" ").map((n) => n[0]).join("")
+									)}
+								</div>
+								<div style={{ flex: 1, minWidth: 0 }}>
+									<div className={styles.targetName}>{selectedPatient.name} ({selectedPatient.mrn})</div>
 									<div className={styles.targetDetails}>{selectedPatient.primaryDiagnosis} · Age {selectedPatient.age}</div>
 								</div>
-								<span className={styles.badgeUrgent}>Direct App Dispatch</span>
+								<span className={styles.badgeOptimal}>Live Patient Chat Sync</span>
 							</div>
 
-							{/* Patient Problem History Accordion */}
-							<div className={styles.historyAccordion}>
-								<div
-									className={styles.accordionTitle}
-									onClick={() => setShowProblemHistory(!showProblemHistory)}
-									style={{ cursor: "pointer" }}
-								>
-									<span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-										<History size={14} />
-										Patient Problem & Symptom History ({selectedPatient.problemHistory.length})
-									</span>
-									{showProblemHistory ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-								</div>
-
-								{showProblemHistory && (
-									<div style={{ display: "flex", flexDirection: "column", gap: "6px", marginTop: "6px" }}>
-										{selectedPatient.problemHistory.length === 0 ? (
-											<div style={{ fontSize: "0.76rem", color: "rgba(255,255,255,0.4)", padding: "4px" }}>
-												No prior unresolved issues on record.
+							{/* Chat Messages Stream */}
+							<div className={styles.chatMessageStream}>
+								{currentChatMessages.map((msg) => (
+									<div
+										key={msg.id}
+										className={`${styles.chatBubble} ${msg.sender === "doctor" ? styles.chatBubbleDoctor : styles.chatBubblePatient}`}
+									>
+										<div className={styles.chatBubbleHeader}>
+											<span>{msg.sender === "doctor" ? doctor.doctorName : selectedPatient.name}</span>
+											<span className={styles.chatBubbleTime}>{msg.timestamp}</span>
+										</div>
+										<div className={styles.chatBubbleText}>{msg.text}</div>
+										{msg.isVoice && (
+											<div className={styles.voiceBadgeTag}>
+												<Mic size={10} /> Voice Note Dictated
 											</div>
-										) : (
-											selectedPatient.problemHistory.map((prob, idx) => (
-												<div key={idx} className={styles.historyItem}>
-													<div style={{ display: "flex", justifyContent: "space-between", fontWeight: 700, marginBottom: "2px" }}>
-														<span>{prob.title}</span>
-														<span style={{ color: prob.status === "Resolved" ? "#10b981" : "#f59e0b", fontSize: "0.72rem" }}>
-															{prob.status} ({prob.date})
-														</span>
-													</div>
-													{prob.resolutionNote && (
-														<div style={{ fontSize: "0.74rem", color: "rgba(255,255,255,0.55)" }}>
-															Note: {prob.resolutionNote}
-														</div>
-													)}
-												</div>
-											))
 										)}
 									</div>
-								)}
+								))}
 							</div>
 
-							{/* Quick Smart Templates */}
-							<div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-								<span style={{ fontSize: "0.76rem", fontWeight: 700, color: "rgba(255,255,255,0.6)" }}>
-									Smart Clinical Templates:
-								</span>
-								<div className={styles.templatePills}>
-									<button
-										type='button'
-										className={styles.templatePill}
-										onClick={() =>
-											setAdviceText(
-												`Hello ${selectedPatient.name},\n\nPlease sit down and rest immediately, drink 500ml of water, and ensure you have taken your morning Metoprolol 25mg.\n\nAvoid caffeine and strenuous activity today. If your shortness of breath persists beyond 15 minutes, please contact emergency.\n\n— ${doctor.doctorName}`,
-											)
-										}
-									>
-										<Heart size={13} /> Cardio / Palpitations Protocol
-									</button>
-									<button
-										type='button'
-										className={styles.templatePill}
-										onClick={() =>
-											setAdviceText(
-												`Hello ${selectedPatient.name},\n\nPlease sit quietly for 10 minutes and retake your blood pressure on your left arm. Take your morning Lisinopril 20mg with a full glass of water.\n\n— ${doctor.doctorName}`,
-											)
-										}
-									>
-										<Activity size={13} /> Blood Pressure Protocol
-									</button>
-									<button
-										type='button'
-										className={styles.templatePill}
-										onClick={() =>
-											setAdviceText(
-												`Hello ${selectedPatient.name},\n\nYour recent blood glucose readings look elevated. Please ensure you take Metformin XR with your evening meal and reduce high-glycemic carbohydrates today.\n\n— ${doctor.doctorName}`,
-											)
-										}
-									>
-										<Droplet size={13} /> Glucose & Metabolic Advice
-									</button>
-								</div>
-							</div>
-
-							{/* Editable Advice Textarea with Voice Dictation */}
+							{/* Input Box */}
 							<div className={styles.adviceInputWrapper}>
 								<label>
-									<span>Doctor Care Message & Instructions</span>
-									<div className={styles.voiceControlRow}>
-										<button
-											type='button'
-											className={`${styles.voiceBtn} ${isVoiceRecording ? styles.voiceBtnRecording : ""}`}
-											onClick={toggleVoiceInput}
-										>
-											{isVoiceRecording ? <MicOff size={14} /> : <Mic size={14} />}
-											{isVoiceRecording ? "Listening..." : "Dictate via Voice"}
-										</button>
-									</div>
+									<span>Text Message / Care Advice</span>
+									<button
+										type='button'
+										className={`${styles.voiceBtn} ${isVoiceRecording ? styles.voiceBtnRecording : ""}`}
+										onClick={toggleVoiceInput}
+									>
+										{isVoiceRecording ? <MicOff size={14} /> : <Mic size={14} />}
+										{isVoiceRecording ? "Listening..." : "Voice Note Dictate"}
+									</button>
 								</label>
 
 								<textarea
 									className={styles.adviceTextarea}
 									value={adviceText}
 									onChange={(e) => setAdviceText(e.target.value)}
-									placeholder='Type or dictate clinical instructions to the patient...'
+									placeholder={`Type a message to text ${selectedPatient.name} or use Voice Note...`}
 								/>
 							</div>
 						</div>
@@ -1437,7 +1279,7 @@ export const DoctorPortal = () => {
 								className={styles.btnActionSecondary}
 								onClick={() => setIsAdviceModalOpen(false)}
 							>
-								Cancel
+								Close Chat
 							</button>
 
 							<button
@@ -1445,14 +1287,14 @@ export const DoctorPortal = () => {
 								className={styles.btnActionPrimary}
 								onClick={handleDispatchAdvice}
 							>
-								<Sparkles size={14} /> Dispatch to Patient App & Sync EHR
+								<Sparkles size={14} /> Send Message to Patient App
 							</button>
 						</div>
 					</div>
 				</div>
 			)}
 
-			{/* 5. Doctor Clinical Settings & Feature Hub Modal */}
+			{/* 5. Doctor Settings Modal */}
 			{isSettingsModalOpen && (
 				<div className={styles.modalOverlay} onClick={() => setIsSettingsModalOpen(false)}>
 					<div className={`${styles.modalContent} ${styles.settingsModalContent}`} onClick={(e) => e.stopPropagation()}>
@@ -1464,7 +1306,7 @@ export const DoctorPortal = () => {
 								<div>
 									<h2>Doctor Portal Settings & Features</h2>
 									<p style={{ margin: 0, fontSize: "0.74rem", color: "rgba(255,255,255,0.5)" }}>
-										{doctor.doctorName} · {doctor.hospitalName} ({doctor.department})
+										{doctor.doctorName} · {doctor.hospitalName}
 									</p>
 								</div>
 							</div>
@@ -1478,334 +1320,30 @@ export const DoctorPortal = () => {
 						</div>
 
 						<div className={styles.settingsModalBody}>
-							{/* Tab Navigation */}
-							<div className={styles.settingsTabsList}>
-								<button
-									type='button'
-									className={`${styles.settingsTabBtn} ${activeSettingsTab === "ehr" ? styles.settingsTabBtnActive : ""}`}
-									onClick={() => setActiveSettingsTab("ehr")}
-								>
-									<Database size={15} />
-									<span>EHR & FHIR Sync</span>
-								</button>
-								<button
-									type='button'
-									className={`${styles.settingsTabBtn} ${activeSettingsTab === "alerts" ? styles.settingsTabBtnActive : ""}`}
-									onClick={() => setActiveSettingsTab("alerts")}
-								>
-									<Bell size={15} />
-									<span>Triage & Alerts</span>
-								</button>
-								<button
-									type='button'
-									className={`${styles.settingsTabBtn} ${activeSettingsTab === "orders" ? styles.settingsTabBtnActive : ""}`}
-									onClick={() => setActiveSettingsTab("orders")}
-								>
-									<FileText size={15} />
-									<span>Order Sets & Formularies</span>
-								</button>
-								<button
-									type='button'
-									className={`${styles.settingsTabBtn} ${activeSettingsTab === "voice" ? styles.settingsTabBtnActive : ""}`}
-									onClick={() => setActiveSettingsTab("voice")}
-								>
-									<Volume2 size={15} />
-									<span>Voice AI Dictation</span>
-								</button>
-								<button
-									type='button'
-									className={`${styles.settingsTabBtn} ${activeSettingsTab === "security" ? styles.settingsTabBtnActive : ""}`}
-									onClick={() => setActiveSettingsTab("security")}
-								>
-									<ShieldCheck size={15} />
-									<span>HIPAA & Credentials</span>
-								</button>
-							</div>
-
-							{/* Tab Content Panel */}
-							<div className={styles.settingsTabContent}>
-								{/* TAB 1: EHR & FHIR SYNC */}
-								{activeSettingsTab === "ehr" && (
-									<div className={styles.settingsSection}>
-										<div className={styles.sectionHeader}>
-											<div>
-												<h3>EHR & Health System Interoperability</h3>
-												<p>Real-time FHIR v4 bidirectional synchronization with hospital EHR networks.</p>
-											</div>
-											<button
-												type='button'
-												className={styles.syncNowBtn}
-												onClick={handleTriggerEhrSync}
-												disabled={ehrSyncing}
-											>
-												<RefreshCw size={14} className={ehrSyncing ? styles.spinning : ""} />
-												<span>{ehrSyncing ? "Syncing Records..." : "Sync EHR Now"}</span>
-											</button>
-										</div>
-
-										<div className={styles.integrationCardsGrid}>
-											<div className={styles.integrationCard}>
-												<div className={styles.integrationHeader}>
-													<div className={styles.intIconTitle}>
-														<Database size={16} style={{ color: "#00a896" }} />
-														<span style={{ fontWeight: 700 }}>Epic Systems FHIR API</span>
-													</div>
-													<span className={styles.statusPillLive}>Connected</span>
-												</div>
-												<div className={styles.integrationMeta}>
-													<div>Endpoint: <code>https://fhir.metropolitanmed.org/r4</code></div>
-													<div>Protocol: US Core STU3 (LOINC, SNOMED-CT, RxNorm)</div>
-													<div>Last sync: Just now · Auto-sync active (every 5m)</div>
-												</div>
-											</div>
-
-											<div className={styles.integrationCard}>
-												<div className={styles.integrationHeader}>
-													<div className={styles.intIconTitle}>
-														<Activity size={16} style={{ color: "#0ea5e9" }} />
-														<span style={{ fontWeight: 700 }}>Telemetry & Wearable Stream</span>
-													</div>
-													<span className={styles.statusPillLive}>Active</span>
-												</div>
-												<div className={styles.integrationMeta}>
-													<div>Stream: Apple HealthKit / Withings Cloud API</div>
-													<div>Ingestion: Real-time PPG, Blood Pressure, Glucose</div>
-													<div>Connected Patients: 3 active monitoring pipelines</div>
-												</div>
-											</div>
-										</div>
-
-										<div className={styles.settingsCardBox}>
-											<div className={styles.settingRow}>
-												<div>
-													<div className={styles.settingTitle}>Auto-Import Daily Biometrics</div>
-													<div className={styles.settingDesc}>Automatically fetch home-logged symptoms and blood pressures into patient charts.</div>
-												</div>
-												<input type="checkbox" defaultChecked className={styles.toggleCheckbox} />
-											</div>
-											<div className={styles.settingRow}>
-												<div>
-													<div className={styles.settingTitle}>EHR Clinical Note Auto-Append</div>
-													<div className={styles.settingDesc}>Push all care advice and doctor notes directly to patient EHR encounter history.</div>
-												</div>
-												<input type="checkbox" defaultChecked className={styles.toggleCheckbox} />
-											</div>
-										</div>
+							<div className={styles.settingsSection}>
+								<div className={styles.sectionHeader}>
+									<div>
+										<h3>EHR & Health System Interoperability</h3>
+										<p>Real-time FHIR v4 bidirectional synchronization with hospital EHR networks.</p>
 									</div>
-								)}
-
-								{/* TAB 2: TRIAGE & ALERTS */}
-								{activeSettingsTab === "alerts" && (
-									<div className={styles.settingsSection}>
-										<div className={styles.sectionHeader}>
-											<div>
-												<h3>Clinical Triage Thresholds & Notifications</h3>
-												<p>Automated telemetry alarms and notification escalation protocols for urgent patient conditions.</p>
-											</div>
-										</div>
-
-										<div className={styles.settingsCardBox}>
-											<div className={styles.settingRow}>
-												<div>
-													<div className={styles.settingTitle}>ApoB Critical Elevated Threshold</div>
-													<div className={styles.settingDesc}>Trigger urgent doctor notification when patient ApoB exceeds this level.</div>
-												</div>
-												<div className={styles.settingControl}>
-													<span className={styles.thresholdVal}>120 mg/dL</span>
-												</div>
-											</div>
-
-											<div className={styles.settingRow}>
-												<div>
-													<div className={styles.settingTitle}>Resting Heart Rate Triage Spike</div>
-													<div className={styles.settingDesc}>Flag patient in red banner if resting HR exceeds threshold for over 15 minutes.</div>
-												</div>
-												<div className={styles.settingControl}>
-													<span className={styles.thresholdVal}>105 bpm</span>
-												</div>
-											</div>
-
-											<div className={styles.settingRow}>
-												<div>
-													<div className={styles.settingTitle}>Home Blood Pressure Red Flag</div>
-													<div className={styles.settingDesc}>Escalate triage priority when systolic reading exceeds threshold.</div>
-												</div>
-												<div className={styles.settingControl}>
-													<span className={styles.thresholdVal}>150 mmHg</span>
-												</div>
-											</div>
-
-											<div className={styles.settingRow}>
-												<div>
-													<div className={styles.settingTitle}>Emergency SMS & Pager Escalation</div>
-													<div className={styles.settingDesc}>Dispatch immediate SMS alert to on-call cardiology team for Red Severity symptoms.</div>
-												</div>
-												<input type="checkbox" defaultChecked className={styles.toggleCheckbox} />
-											</div>
-										</div>
-									</div>
-								)}
-
-								{/* TAB 3: ORDER SETS & FORMULARIES */}
-								{activeSettingsTab === "orders" && (
-									<div className={styles.settingsSection}>
-										<div className={styles.sectionHeader}>
-											<div>
-												<h3>Clinical Order Sets & Fast Protocols</h3>
-												<p>Pre-configured standard order sets for fast lab scheduling and pharmacotherapy prescription.</p>
-											</div>
-										</div>
-
-										<div className={styles.orderSetsList}>
-											<div className={styles.orderSetCard}>
-												<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-													<div style={{ fontWeight: 700, fontSize: "0.88rem", color: "#00a896" }}>
-														90-Day Advanced Lipid & Inflammatory Panel
-													</div>
-													<span className={styles.badgeOptimal}>Standard Protocol</span>
-												</div>
-												<div style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.7)", marginTop: "4px" }}>
-													Markers: ApoB, LDL-P, hs-CRP, Fasting Lipid Panel, eGFR, Liver Panel (ALT/AST).
-												</div>
-												<div style={{ marginTop: "8px", display: "flex", gap: "8px" }}>
-													<button
-														type='button'
-														className={styles.orderSetApplyBtn}
-														onClick={() => {
-															handleOrderRetest();
-															setIsSettingsModalOpen(false);
-														}}
-													>
-														<Plus size={13} /> Order for {selectedPatient.name}
-													</button>
-												</div>
-											</div>
-
-											<div className={styles.orderSetCard}>
-												<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-													<div style={{ fontWeight: 700, fontSize: "0.88rem", color: "#0ea5e9" }}>
-														Atrial Fibrillation Rhythm Assessment & Patch
-													</div>
-													<span className={styles.badgeWarning}>Cardio Protocol</span>
-												</div>
-												<div style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.7)", marginTop: "4px" }}>
-													Order: 14-Day Continuous ECG Adhesive Patch + Serum Potassium & Magnesium Check.
-												</div>
-												<div style={{ marginTop: "8px", display: "flex", gap: "8px" }}>
-													<button
-														type='button'
-														className={styles.orderSetApplyBtn}
-														onClick={() => {
-															toast.success(`14-Day ECG Patch order queued for ${selectedPatient.name}.`);
-															setIsSettingsModalOpen(false);
-														}}
-													>
-														<Plus size={13} /> Order for {selectedPatient.name}
-													</button>
-												</div>
-											</div>
-										</div>
-									</div>
-								)}
-
-								{/* TAB 4: VOICE AI DICTATION */}
-								{activeSettingsTab === "voice" && (
-									<div className={styles.settingsSection}>
-										<div className={styles.sectionHeader}>
-											<div>
-												<h3>Voice AI Dictation & Clinical Speech Model</h3>
-												<p>Configured for hands-free clinical advice generation and real-time medical entity parsing.</p>
-											</div>
-										</div>
-
-										<div className={styles.settingsCardBox}>
-											<div className={styles.settingRow}>
-												<div>
-													<div className={styles.settingTitle}>Continuous Speech Recognition</div>
-													<div className={styles.settingDesc}>Enables real-time streaming voice-to-text without word truncation.</div>
-												</div>
-												<input type="checkbox" defaultChecked className={styles.toggleCheckbox} />
-											</div>
-
-											<div className={styles.settingRow}>
-												<div>
-													<div className={styles.settingTitle}>Cardiology & Pharmacology Lexicon</div>
-													<div className={styles.settingDesc}>Enhance phoneme recognition for drug names (e.g., Metoprolol, Atorvastatin, Lisinopril).</div>
-												</div>
-												<span className={styles.badgeOptimal}>Active</span>
-											</div>
-
-											<div className={styles.settingRow}>
-												<div>
-													<div className={styles.settingTitle}>Background Noise Suppression</div>
-													<div className={styles.settingDesc}>Filter hospital ambient sounds and room reverberation during voice dictation.</div>
-												</div>
-												<input type="checkbox" defaultChecked className={styles.toggleCheckbox} />
-											</div>
-										</div>
-									</div>
-								)}
-
-								{/* TAB 5: HIPAA & SECURITY */}
-								{activeSettingsTab === "security" && (
-									<div className={styles.settingsSection}>
-										<div className={styles.sectionHeader}>
-											<div>
-												<h3>HIPAA Compliance, Audit Trail & Credentials</h3>
-												<p>Active physician verification, access logging, and cryptographic transport protection.</p>
-											</div>
-										</div>
-
-										<div className={styles.credentialsGrid}>
-											<div className={styles.credentialCard}>
-												<div className={styles.credLabel}>Practicing Physician</div>
-												<div className={styles.credValue}>{doctor.doctorName}</div>
-												<div className={styles.credSub}>{doctor.title} · {doctor.hospitalName}</div>
-											</div>
-											<div className={styles.credentialCard}>
-												<div className={styles.credLabel}>Medical License & NPI</div>
-												<div className={styles.credValue}>MD-882914</div>
-												<div className={styles.credSub}>NPI #1849204812 · Board Certified</div>
-											</div>
-											<div className={styles.credentialCard}>
-												<div className={styles.credLabel}>Data Encryption</div>
-												<div className={styles.credValue}>AES-256-GCM</div>
-												<div className={styles.credSub}>TLS 1.3 In-Transit · Zero-Knowledge Storage</div>
-											</div>
-										</div>
-
-										<div className={styles.settingsCardBox} style={{ marginTop: "16px" }}>
-											<div style={{ fontSize: "0.82rem", fontWeight: 700, marginBottom: "8px", color: "rgba(255,255,255,0.8)" }}>
-												Recent HIPAA Audit Access Trail:
-											</div>
-											<div className={styles.auditLogList}>
-												<div className={styles.auditLogRow}>
-													<span>Marcus Vance (MRN-84920) chart accessed for Triage Review</span>
-													<span style={{ color: "rgba(255,255,255,0.4)" }}>Today, 09:14 AM</span>
-												</div>
-												<div className={styles.auditLogRow}>
-													<span>Elena Rostova (MRN-67219) lab panel telemetry viewed</span>
-													<span style={{ color: "rgba(255,255,255,0.4)" }}>Today, 08:42 AM</span>
-												</div>
-												<div className={styles.auditLogRow}>
-													<span>EHR FHIR v4 synchronization performed</span>
-													<span style={{ color: "rgba(255,255,255,0.4)" }}>Today, 08:30 AM</span>
-												</div>
-											</div>
-										</div>
-									</div>
-								)}
+									<button
+										type='button'
+										className={styles.syncNowBtn}
+										onClick={handleTriggerEhrSync}
+										disabled={ehrSyncing}
+									>
+										<RefreshCw size={14} className={ehrSyncing ? styles.spinning : ""} />
+										<span>{ehrSyncing ? "Syncing..." : "Sync EHR Now"}</span>
+									</button>
+								</div>
 							</div>
 						</div>
 
-										<div className={styles.modalFooter}>
+						<div className={styles.modalFooter}>
 							<button
 								type='button'
 								className={styles.btnActionPrimary}
-								onClick={() => {
-									setIsSettingsModalOpen(false);
-									toast.success("Doctor clinical settings and preferences saved.");
-								}}
+								onClick={() => setIsSettingsModalOpen(false)}
 							>
 								<Check size={14} /> Save & Close Settings
 							</button>
@@ -1814,7 +1352,7 @@ export const DoctorPortal = () => {
 				</div>
 			)}
 
-			{/* 6. Patient Appointments & Clinical Schedules Modal */}
+			{/* 6. Patient Appointments Modal */}
 			{isScheduleModalOpen && (
 				<div className={styles.modalOverlay} onClick={() => setIsScheduleModalOpen(false)}>
 					<div className={`${styles.modalContent} ${styles.scheduleModalContent}`} onClick={(e) => e.stopPropagation()}>
@@ -1826,7 +1364,7 @@ export const DoctorPortal = () => {
 								<div>
 									<h2>Patient Appointments & Clinical Schedules</h2>
 									<p style={{ margin: 0, fontSize: "0.74rem", color: "rgba(255,255,255,0.5)" }}>
-										{doctor.doctorName} · {doctor.hospitalName} ({appointments.length} Total Booked)
+										{doctor.doctorName} ({appointments.length} Booked)
 									</p>
 								</div>
 							</div>
@@ -1849,224 +1387,49 @@ export const DoctorPortal = () => {
 							</div>
 						</div>
 
-						{/* Filter Pills */}
-						<div className={styles.scheduleFiltersBar}>
-							<div className={styles.filterPillsGroup}>
-								<button
-									type='button'
-									className={`${styles.filterPill} ${appointmentFilter === "all" ? styles.filterPillActive : ""}`}
-									onClick={() => setAppointmentFilter("all")}
-								>
-									All Consultations ({appointments.length})
-								</button>
-								<button
-									type='button'
-									className={`${styles.filterPill} ${appointmentFilter === "today" ? styles.filterPillActive : ""}`}
-									onClick={() => setAppointmentFilter("today")}
-								>
-									Today's Schedule ({appointments.filter((a) => a.date.toLowerCase().includes("today") || a.status === "waiting").length})
-								</button>
-								<button
-									type='button'
-									className={`${styles.filterPill} ${appointmentFilter === "telehealth" ? styles.filterPillActive : ""}`}
-									onClick={() => setAppointmentFilter("telehealth")}
-								>
-									Video Call (Online) ({appointments.filter((a) => a.mode === "telehealth").length})
-								</button>
-								<button
-									type='button'
-									className={`${styles.filterPill} ${appointmentFilter === "in-person" ? styles.filterPillActive : ""}`}
-									onClick={() => setAppointmentFilter("in-person")}
-								>
-									In-Person Clinic ({appointments.filter((a) => a.mode === "in-person").length})
-								</button>
-								<button
-									type='button'
-									className={`${styles.filterPill} ${appointmentFilter === "completed" ? styles.filterPillActive : ""}`}
-									onClick={() => setAppointmentFilter("completed")}
-								>
-									Completed ({appointments.filter((a) => a.status === "completed").length})
-								</button>
-							</div>
-
-							{/* Filter by Specialist */}
-							<div className={styles.specialistFilterRow}>
-								<span className={styles.specialistFilterLabel}>Specialist:</span>
-								<button
-									type='button'
-									className={`${styles.specPillSmall} ${specialistFilter === "all" ? styles.specPillSmallActive : ""}`}
-									onClick={() => setSpecialistFilter("all")}
-								>
-									All
-								</button>
-								{CLINICAL_SPECIALISTS.map((spec) => (
-									<button
-										key={spec.id}
-										type='button'
-										className={`${styles.specPillSmall} ${specialistFilter === spec.initials.toLowerCase() ? styles.specPillSmallActive : ""}`}
-										onClick={() => setSpecialistFilter(spec.initials.toLowerCase())}
-									>
-										<strong>{spec.initials}</strong> {spec.name}
-									</button>
+						<div className={styles.scheduleModalBody}>
+							<div className={styles.appointmentsGridList}>
+								{appointments.map((appt) => (
+									<div key={appt.id} className={styles.apptCardItem}>
+										<div className={styles.apptCardHeader}>
+											<div>
+												<div className={styles.apptPatientName}>{appt.patientName} ({appt.patientMrn})</div>
+												<div className={styles.apptType}>{appt.appointmentType}</div>
+											</div>
+											<span className={appt.status === "waiting" ? styles.badgeUrgent : styles.badgeOptimal}>
+												{appt.status.toUpperCase()}
+											</span>
+										</div>
+										<div className={styles.apptMetaRow}>
+											<span><Clock size={12} /> {appt.date}, {appt.time}</span>
+											<span>Mode: {appt.mode}</span>
+										</div>
+										{appt.roomOrLink && (
+											<div style={{ marginTop: "6px" }}>
+												<a
+													href={appt.roomOrLink}
+													target="_blank"
+													rel="noreferrer"
+													style={{ color: "#00a896", fontSize: "0.76rem", fontWeight: 700, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "4px" }}
+												>
+													<ExternalLink size={12} /> Launch Telehealth Session
+												</a>
+											</div>
+										)}
+									</div>
 								))}
 							</div>
-						</div>
-
-						{/* Appointments List Body */}
-						<div className={styles.scheduleModalBody}>
-							{filteredAppointments.length === 0 ? (
-								<div className={styles.emptyScheduleState}>
-									<Calendar size={32} style={{ color: "rgba(255,255,255,0.2)", marginBottom: "8px" }} />
-									<div>No booked appointments found for this filter.</div>
-								</div>
-							) : (
-								filteredAppointments.map((appt) => (
-									<div
-										key={appt.id}
-										className={`${styles.appointmentCard} ${appt.status === "waiting" ? styles.appointmentCardWaiting : ""}`}
-									>
-										{/* Top Row: Patient Info + Mode & Status Badges */}
-										<div className={styles.apptTopRow}>
-											<div className={styles.apptPatientMeta}>
-												<div className={styles.apptPatientAvatar}>{appt.patientAvatar}</div>
-												<div>
-													<div className={styles.apptPatientName}>{appt.patientName}</div>
-													<div className={styles.apptMrn}>{appt.patientMrn}</div>
-												</div>
-											</div>
-
-											<div className={styles.apptBadgesGroup}>
-												<span
-													className={
-														appt.mode === "telehealth"
-															? styles.modeBadgeTelehealth
-															: appt.mode === "in-person"
-															? styles.modeBadgeInPerson
-															: appt.mode === "phone"
-															? styles.modeBadgePhone
-															: styles.modeBadgeAi
-													}
-												>
-													{appt.mode === "telehealth" && <Video size={12} />}
-													{appt.mode === "in-person" && <MapPin size={12} />}
-													{appt.mode === "phone" && <PhoneCall size={12} />}
-													{appt.mode === "ai-consult" && <Sparkles size={12} />}
-													<span>
-														{appt.mode === "telehealth"
-															? "Video Call (Online)"
-															: appt.mode === "in-person"
-															? "In-Person Clinic"
-															: appt.mode === "phone"
-															? "Audio Phone"
-															: "AI Consultation"}
-													</span>
-												</span>
-
-												<span
-													className={
-														appt.status === "waiting"
-															? styles.badgeUrgentPulse
-															: appt.status === "confirmed"
-															? styles.badgeOptimal
-															: styles.badgeWarning
-													}
-												>
-													{appt.status === "waiting" ? "Waiting in Room" : appt.status === "confirmed" ? "Confirmed" : "Completed"}
-												</span>
-											</div>
-										</div>
-
-										{/* Specialist Assigned Banner */}
-										<div className={styles.apptSpecialistBanner}>
-											<div className={styles.specBadgeIcon}>{appt.specialistInitials || "KM"}</div>
-											<div className={styles.specMeta}>
-												<span className={styles.specName}>{appt.specialistName || "Dr. Kwame Mensah"}</span>
-												<span className={styles.specRole}>{appt.specialistRole || appt.department}</span>
-											</div>
-										</div>
-
-										{/* Details: Title, Preferred Time Slot, Notes */}
-										<div className={styles.apptDetailsBlock}>
-											<div className={styles.apptTitle}>{appt.appointmentType}</div>
-											<div className={styles.apptTimeRow}>
-												<span style={{ display: "inline-flex", alignItems: "center", gap: "5px" }}>
-													<Clock size={13} style={{ color: "#00a896" }} />
-													Preferred Time Slot: <strong>{appt.date}, {appt.time}</strong> ({appt.durationMinutes} mins)
-												</span>
-											</div>
-											<div className={styles.apptNotesText}>
-												<strong>Notes for Physician:</strong> {appt.notes || "No additional pre-consultation notes provided."}
-											</div>
-										</div>
-
-										{/* Action Buttons Row */}
-										<div className={styles.apptActionsRow}>
-											{appt.mode === "telehealth" && appt.status !== "completed" && (
-												<button
-													type='button'
-													className={styles.joinTelehealthBtn}
-													onClick={() => handleJoinTelehealth(appt)}
-												>
-													<Video size={14} />
-													<span>{appt.status === "waiting" ? "Join Waiting Room Video Now" : "Launch Encrypted Video Room"}</span>
-												</button>
-											)}
-
-											<button
-												type='button'
-												className={styles.focusPatientBtn}
-												onClick={() => handleFocusPatientFromAppt(appt.patientId)}
-											>
-												<UserCheck size={14} />
-												<span>Focus 3D Twin & Chart</span>
-											</button>
-
-											{appt.status !== "completed" && (
-												<button
-													type='button'
-													className={styles.markDoneBtn}
-													onClick={() => handleMarkApptCompleted(appt.id)}
-													title='Mark appointment completed'
-												>
-													<Check size={13} />
-													<span>Mark Done</span>
-												</button>
-											)}
-										</div>
-									</div>
-								))
-							)}
-						</div>
-
-						<div className={styles.modalFooter}>
-							<button
-								type='button'
-								className={styles.btnActionSecondary}
-								onClick={() => setIsScheduleModalOpen(false)}
-							>
-								Close Schedule
-							</button>
 						</div>
 					</div>
 				</div>
 			)}
 
-			{/* 7. Book New Patient Appointment Sub-Modal */}
+			{/* 7. New Booking Modal */}
 			{isBookingModalOpen && (
 				<div className={styles.modalOverlay} onClick={() => setIsBookingModalOpen(false)}>
-					<div className={`${styles.modalContent} ${styles.bookingModalContent}`} onClick={(e) => e.stopPropagation()}>
+					<div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
 						<div className={styles.modalHeader}>
-							<div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-								<div className={styles.scheduleModalIconBadge}>
-									<CalendarPlus size={18} style={{ color: "#00a896" }} />
-								</div>
-								<div>
-									<h2>Schedule Patient Consultation</h2>
-									<p style={{ margin: 0, fontSize: "0.74rem", color: "rgba(255,255,255,0.5)" }}>
-										Book next clinical visit or specialist review
-									</p>
-								</div>
-							</div>
+							<h2>Schedule Consultation</h2>
 							<button
 								type='button'
 								className={styles.closeBtn}
@@ -2077,137 +1440,52 @@ export const DoctorPortal = () => {
 						</div>
 
 						<form onSubmit={handleCreateNewAppointment}>
-							<div className={styles.bookingModalBody}>
-								{/* Patient selector */}
-								<div className={styles.formGroup}>
+							<div className={styles.modalBody}>
+								<div className={styles.inputGroup}>
 									<label>Select Patient</label>
 									<select
-										className={styles.formSelect}
+										className={styles.modalSelect}
 										value={newApptPatientId}
 										onChange={(e) => setNewApptPatientId(e.target.value)}
 									>
 										{patients.map((p) => (
 											<option key={p.id} value={p.id}>
-												{p.name} ({p.mrn}) · {p.primaryDiagnosis}
+												{p.name} ({p.mrn})
 											</option>
 										))}
 									</select>
 								</div>
 
-								{/* Select Specialist */}
-								<div className={styles.formGroup}>
-									<label>Select Specialist</label>
-									<div className={styles.specialistGrid}>
-										{CLINICAL_SPECIALISTS.map((doc) => (
-											<button
-												key={doc.id}
-												type='button'
-												className={`${styles.specialistCard} ${
-													newApptSpecialistId === doc.id ? styles.specialistCardActive : ""
-												}`}
-												onClick={() => setNewApptSpecialistId(doc.id)}
-											>
-												<div className={styles.specialistAvatar}>{doc.initials}</div>
-												<div>
-													<p className={styles.specialistName}>{doc.name}</p>
-													<p className={styles.specialistRole}>{doc.role}</p>
-												</div>
-											</button>
-										))}
-									</div>
-								</div>
-
-								{/* Consultation Type / Mode */}
-								<div className={styles.formGroup}>
-									<label>Consultation Type</label>
-									<div className={styles.modeGridFour}>
-										<button
-											type='button'
-											className={`${styles.modeCardBtn} ${newApptMode === "telehealth" ? styles.modeCardBtnActive : ""}`}
-											onClick={() => setNewApptMode("telehealth")}
-										>
-											<Video size={18} />
-											<span>Video Call</span>
-										</button>
-										<button
-											type='button'
-											className={`${styles.modeCardBtn} ${newApptMode === "in-person" ? styles.modeCardBtnActive : ""}`}
-											onClick={() => setNewApptMode("in-person")}
-										>
-											<MapPin size={18} />
-											<span>In-Person</span>
-										</button>
-										<button
-											type='button'
-											className={`${styles.modeCardBtn} ${newApptMode === "phone" ? styles.modeCardBtnActive : ""}`}
-											onClick={() => setNewApptMode("phone")}
-										>
-											<PhoneCall size={18} />
-											<span>Audio Phone</span>
-										</button>
-										<button
-											type='button'
-											className={`${styles.modeCardBtn} ${newApptMode === "ai-consult" ? styles.modeCardBtnActive : ""}`}
-											onClick={() => setNewApptMode("ai-consult")}
-										>
-											<Sparkles size={18} />
-											<span>AI Consultation</span>
-										</button>
-									</div>
-								</div>
-
-								{/* Preferred Time Slot */}
-								<div className={styles.formGroup}>
-									<label>Preferred Time Slot</label>
-									<div className={styles.slotGridTwo}>
-										{CONSULTATION_TIME_SLOTS.map((slot) => (
-											<button
-												key={slot}
-												type='button'
-												className={`${styles.slotCardBtn} ${
-													newApptSlot === slot ? styles.slotCardBtnActive : ""
-												}`}
-												onClick={() => setNewApptSlot(slot)}
-											>
+								<div className={styles.inputGroup}>
+									<label>Time Slot</label>
+									<select
+										className={styles.modalSelect}
+										value={newApptSlot}
+										onChange={(e) => setNewApptSlot(e.target.value)}
+									>
+										{CONSULTATION_TIME_SLOTS.map((slot, idx) => (
+											<option key={idx} value={slot}>
 												{slot}
-											</button>
+											</option>
 										))}
-									</div>
-								</div>
-
-								{/* Notes for Physician (Optional) */}
-								<div className={styles.formGroup}>
-									<label>Notes for Physician (Optional)</label>
-									<textarea
-										className={styles.formTextarea}
-										value={newApptNotes}
-										onChange={(e) => setNewApptNotes(e.target.value)}
-										placeholder="Mention any symptoms, specific questions, or lab results you'd like the doctor to review..."
-										rows={3}
-									/>
+									</select>
 								</div>
 							</div>
 
 							<div className={styles.modalFooter}>
-								<div className={styles.trustBadge}>
-									<ShieldCheck size={16} style={{ color: "#10b981" }} />
-									<span>HIPAA Compliant & Confidential</span>
-								</div>
-								<div style={{ display: "flex", gap: "8px" }}>
-									<button
-										type='button'
-										className={styles.btnActionSecondary}
-										onClick={() => setIsBookingModalOpen(false)}
-									>
-										Cancel
-									</button>
-									<button
-										type='submit'
-										className={styles.btnActionPrimary}
-									>
-										<CalendarPlus size={14} /> Confirm & Schedule
-									</button>
-								</div>
+								<button
+									type='button'
+									className={styles.btnActionSecondary}
+									onClick={() => setIsBookingModalOpen(false)}
+								>
+									Cancel
+								</button>
+								<button
+									type='submit'
+									className={styles.btnActionPrimary}
+								>
+									<CalendarPlus size={14} /> Confirm & Schedule
+								</button>
 							</div>
 						</form>
 					</div>
@@ -2218,36 +1496,36 @@ export const DoctorPortal = () => {
 			<div className={styles.bottomOrganBar}>
 				<button
 					type='button'
-					className={`${styles.organPill} ${selectedOrganSystem === "cardiovascular" || selectedOrganSystem === "CardioLoad" ? styles.organPillActive : ""}`}
-					onClick={() => setSelectedOrganSystem("cardiovascular")}
+					className={`${styles.organPill} ${selectedOrganSystem === "cardiovascular" ? styles.organPillActive : ""}`}
+					onClick={() => handleSelectOrganSystem("cardiovascular", "Cardiovascular (Heart)")}
 				>
 					<Heart size={14} /> Cardiovascular (Heart)
 				</button>
 				<button
 					type='button'
 					className={`${styles.organPill} ${selectedOrganSystem === "total" ? styles.organPillActive : ""}`}
-					onClick={() => setSelectedOrganSystem("total")}
+					onClick={() => handleSelectOrganSystem("total", "Full Body (Overview)")}
 				>
 					<User size={14} /> Full Body (Overview)
 				</button>
 				<button
 					type='button'
-					className={`${styles.organPill} ${selectedOrganSystem === "Pulmonology" ? styles.organPillActive : ""}`}
-					onClick={() => setSelectedOrganSystem("Pulmonology")}
+					className={`${styles.organPill} ${selectedOrganSystem === "respiratory" || selectedOrganSystem === "Pulmonology" ? styles.organPillActive : ""}`}
+					onClick={() => handleSelectOrganSystem("respiratory", "Respiratory (Lungs)")}
 				>
 					<Wind size={14} /> Respiratory (Lungs)
 				</button>
 				<button
 					type='button'
-					className={`${styles.organPill} ${selectedOrganSystem === "StressManagement" ? styles.organPillActive : ""}`}
-					onClick={() => setSelectedOrganSystem("StressManagement")}
+					className={`${styles.organPill} ${selectedOrganSystem === "neurological" || selectedOrganSystem === "StressManagement" ? styles.organPillActive : ""}`}
+					onClick={() => handleSelectOrganSystem("neurological", "Neurological (Brain)")}
 				>
 					<Brain size={14} /> Neurological (Brain)
 				</button>
 				<button
 					type='button'
-					className={`${styles.organPill} ${selectedOrganSystem === "Pulmonology1" ? styles.organPillActive : ""}`}
-					onClick={() => setSelectedOrganSystem("Pulmonology1")}
+					className={`${styles.organPill} ${selectedOrganSystem === "renal" || selectedOrganSystem === "Pulmonology1" ? styles.organPillActive : ""}`}
+					onClick={() => handleSelectOrganSystem("renal", "Renal (Kidneys)")}
 				>
 					<Droplet size={14} /> Renal (Kidneys)
 				</button>
