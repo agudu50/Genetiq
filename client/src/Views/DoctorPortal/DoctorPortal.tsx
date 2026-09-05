@@ -1137,15 +1137,32 @@ export const DoctorPortal = () => {
 				<div className={`${styles.leftPanel} ${isLeftPanelCollapsed ? styles.collapsed : ""}`}>
 					{/* Patient Biometrics Card */}
 					<div className={styles.glassCard}>
-						<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
-							<span style={{ fontSize: "0.7rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.05em", color: "#00a896" }}>
-								Assigned Patient
-							</span>
+						<div className={styles.cardHeaderTop}>
+							<div className={styles.cardTagGroup}>
+								<span className={styles.cardTagLabel}>Assigned Patient</span>
+								<span
+									className={`${styles.patientStatusPillBadge} ${
+										selectedPatient.status === "urgent"
+											? styles.statusUrgent
+											: selectedPatient.status === "monitoring"
+											? styles.statusWarning
+											: styles.statusOptimal
+									}`}
+								>
+									<span className={styles.statusPulseDot} />
+									{selectedPatient.status === "urgent"
+										? "Urgent Case"
+										: selectedPatient.status === "monitoring"
+										? "Monitoring"
+										: "Stable"}
+								</span>
+							</div>
 							<button
 								type='button'
 								className={styles.panelCollapseBtn}
 								onClick={() => setIsLeftPanelCollapsed(true)}
 								title='Collapse Patient Panel'
+								aria-label='Collapse Patient Panel'
 							>
 								<ChevronLeft size={16} />
 							</button>
@@ -1154,24 +1171,48 @@ export const DoctorPortal = () => {
 						<div className={styles.patientHeroBlock}>
 							<div className={styles.patientAvatarHero}>
 								{selectedPatient.name.split(" ").map((n) => n[0]).join("")}
+								<span
+									className={`${styles.avatarStatusBeacon} ${
+										selectedPatient.status === "urgent"
+											? styles.beaconUrgent
+											: selectedPatient.status === "monitoring"
+											? styles.beaconWarning
+											: styles.beaconOptimal
+									}`}
+								/>
 							</div>
 							<div className={styles.patientInfo}>
-								<div className={styles.patientName}>{selectedPatient.name}</div>
-								<div className={styles.patientMetaText}>{selectedPatient.primaryDiagnosis}</div>
+								<div className={styles.patientNameRow}>
+									<span className={styles.patientName}>{selectedPatient.name}</span>
+									<span className={styles.patientMrnBadge}>{selectedPatient.mrn}</span>
+								</div>
+								<div className={styles.patientDiagnosisPill}>
+									<Heart size={12} className={styles.diagnosisIcon} />
+									<span className={styles.patientMetaText}>{selectedPatient.primaryDiagnosis}</span>
+								</div>
 							</div>
 						</div>
 
 						<div className={styles.patientBiometricsGrid}>
 							<div className={styles.biometricItem}>
-								<span className={styles.bioLabel}>Age / Sex</span>
+								<div className={styles.bioHeader}>
+									<User size={12} className={styles.bioIcon} />
+									<span className={styles.bioLabel}>Age / Sex</span>
+								</div>
 								<span className={styles.bioValue}>{selectedPatient.age} ({selectedPatient.gender[0]})</span>
 							</div>
 							<div className={styles.biometricItem}>
-								<span className={styles.bioLabel}>Blood</span>
+								<div className={styles.bioHeader}>
+									<Droplet size={12} className={styles.bioIconBlood} />
+									<span className={styles.bioLabel}>Blood</span>
+								</div>
 								<span className={styles.bioValue}>{selectedPatient.bloodType}</span>
 							</div>
 							<div className={styles.biometricItem}>
-								<span className={styles.bioLabel}>BMI</span>
+								<div className={styles.bioHeader}>
+									<Activity size={12} className={styles.bioIconBmi} />
+									<span className={styles.bioLabel}>BMI</span>
+								</div>
 								<span className={styles.bioValue}>{selectedPatient.bmi}</span>
 							</div>
 						</div>
@@ -1180,33 +1221,45 @@ export const DoctorPortal = () => {
 					{/* Live Home-Logged Symptoms Card */}
 					<div className={styles.glassCard}>
 						<div className={styles.cardHeader}>
-							<h3>
-								<AlertTriangle size={16} style={{ color: "#f59e0b" }} />
-								Home Symptoms (Real-Time)
-							</h3>
-							<span style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.4)" }}>
+							<div className={styles.symptomsHeaderTitle}>
+								<AlertTriangle size={15} style={{ color: "#f59e0b" }} />
+								<h3>Home Symptoms</h3>
+								<span className={styles.liveSyncBadge}>
+									<span className={styles.livePulseDot} />
+									Live
+								</span>
+							</div>
+							<span className={styles.syncTimeText}>
 								<Clock size={11} /> {selectedPatient.lastSync}
 							</span>
 						</div>
 
 						{selectedPatient.symptoms.length === 0 ? (
-							<div style={{ textAlign: "center", padding: "20px 0", color: "rgba(255,255,255,0.4)", fontSize: "0.82rem" }}>
+							<div className={styles.emptySymptomsState}>
 								<CheckCircle2 size={24} style={{ color: "#10b981", margin: "0 auto 6px auto", display: "block" }} />
 								No active distress symptoms logged.
 							</div>
 						) : (
 							selectedPatient.symptoms.map((s) => (
-								<div key={s.id} className={styles.symptomCard}>
+								<div
+									key={s.id}
+									className={styles.symptomCard}
+								>
 									<div className={styles.symptomTitleRow}>
 										<span className={styles.symptomName}>{s.name}</span>
 										<span className={s.urgency === "Red" ? styles.badgeUrgent : styles.badgeWarning}>
 											Sev: {s.severity}/10
 										</span>
 									</div>
+
 									<div className={styles.symptomNotes}>{s.notes}</div>
+
 									<div className={styles.symptomFooter}>
-										<span>{s.duration}</span>
-										<span style={{ color: s.urgency === "Red" ? "#ef4444" : "#f59e0b", fontWeight: 700 }}>
+										<span className={styles.symptomDuration}>
+											<Clock size={10} /> {s.duration}
+										</span>
+										<span className={s.urgency === "Red" ? styles.triageTagRed : styles.triageTagYellow}>
+											{s.urgency === "Red" ? <ShieldAlert size={11} /> : <AlertTriangle size={11} />}
 											{s.urgency} Triage
 										</span>
 									</div>
@@ -1219,17 +1272,18 @@ export const DoctorPortal = () => {
 							{selectedPatient.status === "urgent" && (
 								<button
 									type='button'
-									className={styles.btnActionPrimary}
-									style={{ background: "#ef4444" }}
+									className={styles.btnClearAlert}
 									onClick={handleAcknowledge}
+									title="Acknowledge and clear active clinical alert"
 								>
 									<CheckCircle2 size={14} /> Clear Alert
 								</button>
 							)}
 							<button
 								type='button'
-								className={styles.btnActionPrimary}
+								className={styles.btnSendAdvice}
 								onClick={() => handleOpenAdviceModal(selectedPatient.symptoms[0]?.name)}
+								title="Dispatch clinical advice directly to patient app"
 							>
 								<Send size={14} /> Send Advice
 							</button>

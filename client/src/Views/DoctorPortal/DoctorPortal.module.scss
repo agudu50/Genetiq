@@ -2750,24 +2750,96 @@
 
 .glassCard {
 	flex-shrink: 0;
-	background: rgba(11, 17, 29, 0.82);
-	backdrop-filter: blur(20px);
-	-webkit-backdrop-filter: blur(20px);
-	border: 1px solid rgba(255, 255, 255, 0.1);
+	background: rgba(18, 18, 18, 0.92);
+	backdrop-filter: blur(20px) saturate(180%);
+	-webkit-backdrop-filter: blur(20px) saturate(180%);
+	border: 1px solid rgba(255, 255, 255, 0.08);
 	border-radius: 18px;
-	padding: 18px;
-	box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
-	transition: border-color 0.2s;
+	padding: 16px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+	transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 
 	:global(html[data-theme="light"]) & {
-		background: rgba(255, 255, 255, 0.92);
-		border-color: rgba(0, 0, 0, 0.08);
-		box-shadow: 0 12px 36px rgba(0, 0, 0, 0.06);
+		background: rgba(255, 255, 255, 0.96);
+		border-color: rgba(15, 23, 42, 0.08);
+		box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
 	}
 
 	&:hover {
-		border-color: rgba(255, 255, 255, 0.2);
+		border-color: rgba(255, 255, 255, 0.15);
 	}
+}
+
+.cardHeaderTop {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 12px;
+}
+
+.cardTagGroup {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.cardTagLabel {
+	font-size: 0.68rem;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: #00a896;
+}
+
+.patientStatusPillBadge {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 0.66rem;
+	font-weight: 800;
+	padding: 2px 8px;
+	border-radius: 20px;
+	letter-spacing: 0.02em;
+
+	&.statusUrgent {
+		background: rgba(239, 68, 68, 0.12);
+		color: #f87171;
+		border: 1px solid rgba(239, 68, 68, 0.25);
+
+		.statusPulseDot {
+			background: #ef4444;
+			box-shadow: 0 0 8px #ef4444;
+		}
+	}
+
+	&.statusWarning {
+		background: rgba(245, 158, 11, 0.12);
+		color: #fbbf24;
+		border: 1px solid rgba(245, 158, 11, 0.25);
+
+		.statusPulseDot {
+			background: #f59e0b;
+			box-shadow: 0 0 8px #f59e0b;
+		}
+	}
+
+	&.statusOptimal {
+		background: rgba(16, 185, 129, 0.12);
+		color: #34d399;
+		border: 1px solid rgba(16, 185, 129, 0.25);
+
+		.statusPulseDot {
+			background: #10b981;
+			box-shadow: 0 0 8px #10b981;
+		}
+	}
+}
+
+.statusPulseDot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	animation: pulseDot 2s infinite ease-in-out;
 }
 
 .cardHeader {
@@ -2802,45 +2874,125 @@
 .patientHeroBlock {
 	display: flex;
 	align-items: center;
-	gap: 14px;
+	gap: 12px;
+	padding: 10px 12px;
+	border-radius: 14px;
+	background: rgba(255, 255, 255, 0.025);
+	border: 1px solid rgba(255, 255, 255, 0.06);
+
+	:global(html[data-theme="light"]) & {
+		background: rgba(15, 23, 42, 0.02);
+		border-color: rgba(15, 23, 42, 0.06);
+	}
 }
 
 .patientAvatarHero {
-	width: 46px;
-	height: 46px;
-	border-radius: 12px;
-	background: #064e3b;
-	color: #fff;
+	position: relative;
+	width: 44px;
+	height: 44px;
+	border-radius: 50%;
+	background: #1e293b;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	color: #ffffff;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 1.1rem;
-	font-weight: 800;
-	box-shadow: 0 4px 12px rgba(6, 78, 59, 0.35);
+	font-size: 1.05rem;
+	font-weight: 850;
+	flex-shrink: 0;
+}
+
+.avatarStatusBeacon {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	border: 2px solid #121212;
+
+	&.beaconUrgent {
+		background: #ef4444;
+		box-shadow: 0 0 8px rgba(239, 68, 68, 0.8);
+	}
+
+	&.beaconWarning {
+		background: #f59e0b;
+		box-shadow: 0 0 8px rgba(245, 158, 11, 0.8);
+	}
+
+	&.beaconOptimal {
+		background: #10b981;
+		box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
+	}
+
+	:global(html[data-theme="light"]) & {
+		border-color: #ffffff;
+	}
 }
 
 .patientInfo {
+	flex: 1;
+	min-width: 0;
 	display: flex;
 	flex-direction: column;
+	gap: 3px;
+}
+
+.patientNameRow {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex-wrap: wrap;
 
 	.patientName {
-		font-size: 1.05rem;
+		font-size: 0.96rem;
 		font-weight: 800;
 		color: #ffffff;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 
 		:global(html[data-theme="light"]) & {
 			color: #0f172a;
 		}
 	}
+}
+
+.patientMrnBadge {
+	font-size: 0.65rem;
+	font-weight: 700;
+	color: rgba(255, 255, 255, 0.55);
+	background: rgba(255, 255, 255, 0.05);
+	padding: 1px 6px;
+	border-radius: 6px;
+
+	:global(html[data-theme="light"]) & {
+		background: rgba(15, 23, 42, 0.05);
+		color: #64748b;
+	}
+}
+
+.patientDiagnosisPill {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 0.72rem;
+	color: rgba(255, 255, 255, 0.65);
+
+	:global(html[data-theme="light"]) & {
+		color: #475569;
+	}
+
+	.diagnosisIcon {
+		color: #00a896;
+		flex-shrink: 0;
+	}
 
 	.patientMetaText {
-		font-size: 0.76rem;
-		color: rgba(255, 255, 255, 0.55);
-		margin-top: 2px;
-
-		:global(html[data-theme="light"]) & {
-			color: #64748b;
-		}
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 }
 
@@ -2848,43 +3000,83 @@
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 	gap: 8px;
-	margin-top: 14px;
-	padding-top: 12px;
-	border-top: 1px solid rgba(255, 255, 255, 0.06);
-
-	:global(html[data-theme="light"]) & {
-		border-top-color: #f1f5f9;
-	}
+	margin-top: 12px;
 }
 
 .biometricItem {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	padding: 6px;
-	background: rgba(255, 255, 255, 0.03);
-	border-radius: 8px;
+	padding: 8px 6px;
+	background: rgba(255, 255, 255, 0.025);
+	border: 1px solid rgba(255, 255, 255, 0.05);
+	border-radius: 12px;
+	transition: all 0.2s ease;
 
 	:global(html[data-theme="light"]) & {
 		background: #f8fafc;
+		border-color: #e2e8f0;
 	}
 
-	.bioLabel {
-		font-size: 0.68rem;
-		color: rgba(255, 255, 255, 0.45);
-		font-weight: 600;
-		text-transform: uppercase;
-
-		:global(html[data-theme="light"]) & {
-			color: #94a3b8;
-		}
+	&:hover {
+		background: rgba(255, 255, 255, 0.05);
+		border-color: rgba(255, 255, 255, 0.12);
 	}
+}
 
-	.bioValue {
-		font-size: 0.85rem;
+.bioHeader {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.bioIcon {
+	color: #00a896;
+}
+
+.bioIconBlood {
+	color: #ef4444;
+}
+
+.bioIconBmi {
+	color: #38bdf8;
+}
+
+.bioLabel {
+	font-size: 0.65rem;
+	color: rgba(255, 255, 255, 0.45);
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+
+	:global(html[data-theme="light"]) & {
+		color: #64748b;
+	}
+}
+
+.bioValue {
+	font-size: 0.88rem;
+	font-weight: 850;
+	color: #ffffff;
+	margin-top: 3px;
+
+	:global(html[data-theme="light"]) & {
+		color: #0f172a;
+	}
+}
+
+// ─── Live Symptoms Cards ─────────────────────────────────────────────────────
+
+.symptomsHeaderTitle {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+
+	h3 {
+		font-size: 0.88rem;
 		font-weight: 800;
 		color: #ffffff;
-		margin-top: 2px;
+		margin: 0;
 
 		:global(html[data-theme="light"]) & {
 			color: #0f172a;
@@ -2892,33 +3084,75 @@
 	}
 }
 
-// ─── Live Symptoms Cards ─────────────────────────────────────────────────────
+.liveSyncBadge {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 0.62rem;
+	font-weight: 800;
+	text-transform: uppercase;
+	padding: 1px 6px;
+	border-radius: 12px;
+	background: rgba(16, 185, 129, 0.12);
+	color: #34d399;
+	border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.livePulseDot {
+	width: 5px;
+	height: 5px;
+	border-radius: 50%;
+	background: #10b981;
+	box-shadow: 0 0 6px #10b981;
+	animation: pulseDot 1.6s infinite ease-in-out;
+}
+
+.syncTimeText {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 0.7rem;
+	color: rgba(255, 255, 255, 0.45);
+
+	:global(html[data-theme="light"]) & {
+		color: #94a3b8;
+	}
+}
 
 .symptomCard {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
-	padding: 12px;
-	background: rgba(255, 255, 255, 0.03);
+	padding: 10px 12px;
+	background: rgba(255, 255, 255, 0.025);
 	border: 1px solid rgba(255, 255, 255, 0.07);
 	border-radius: 12px;
 	margin-bottom: 8px;
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
 	:global(html[data-theme="light"]) & {
 		background: #f8fafc;
 		border-color: #e2e8f0;
 	}
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.04);
+		border-color: rgba(255, 255, 255, 0.12);
+	}
 }
 
 .symptomTitleRow {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	justify-content: space-between;
+	gap: 8px;
 
 	.symptomName {
-		font-size: 0.86rem;
+		font-size: 0.82rem;
 		font-weight: 700;
 		color: #ffffff;
+		line-height: 1.35;
 
 		:global(html[data-theme="light"]) & {
 			color: #0f172a;
@@ -2927,9 +3161,10 @@
 }
 
 .symptomNotes {
-	font-size: 0.78rem;
-	color: rgba(255, 255, 255, 0.65);
-	line-height: 1.35;
+	font-size: 0.76rem;
+	color: rgba(255, 255, 255, 0.72);
+	line-height: 1.45;
+	margin: 1px 0;
 
 	:global(html[data-theme="light"]) & {
 		color: #475569;
@@ -2940,12 +3175,93 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	font-size: 0.72rem;
-	color: rgba(255, 255, 255, 0.45);
-	margin-top: 4px;
+	font-size: 0.7rem;
+	margin-top: 2px;
+	padding-top: 5px;
+	border-top: 1px solid rgba(255, 255, 255, 0.04);
 
 	:global(html[data-theme="light"]) & {
-		color: #94a3b8;
+		border-top-color: rgba(15, 23, 42, 0.05);
+	}
+}
+
+.symptomDuration {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	color: rgba(255, 255, 255, 0.45);
+
+	:global(html[data-theme="light"]) & {
+		color: #64748b;
+	}
+}
+
+.triageTagRed {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-weight: 750;
+	color: #f87171;
+	font-size: 0.7rem;
+}
+
+.triageTagYellow {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-weight: 750;
+	color: #fbbf24;
+	font-size: 0.7rem;
+}
+
+.emptySymptomsState {
+	text-align: center;
+	padding: 24px 12px;
+	color: rgba(255, 255, 255, 0.45);
+	font-size: 0.8rem;
+}
+
+.btnClearAlert {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 9px 12px;
+	background: #dc2626;
+	color: #ffffff;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 12px;
+	font-size: 0.78rem;
+	font-weight: 750;
+	cursor: pointer;
+	box-shadow: 0 2px 10px rgba(220, 38, 38, 0.3);
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+	&:hover {
+		background: #ef4444;
+		transform: translateY(-1px);
+	}
+}
+
+.btnSendAdvice {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 9px 12px;
+	background: #064e3b;
+	color: #ffffff;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 12px;
+	font-size: 0.78rem;
+	font-weight: 750;
+	cursor: pointer;
+	box-shadow: 0 2px 10px rgba(6, 78, 59, 0.3);
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+	&:hover {
+		background: #04382b;
+		transform: translateY(-1px);
 	}
 }
 
@@ -2956,12 +3272,20 @@
 	align-items: center;
 	justify-content: space-between;
 	padding: 8px 10px;
-	background: rgba(255, 255, 255, 0.02);
-	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.025);
+	border: 1px solid rgba(255, 255, 255, 0.05);
+	border-radius: 10px;
 	margin-bottom: 6px;
+	transition: all 0.15s ease;
 
 	:global(html[data-theme="light"]) & {
 		background: #f8fafc;
+		border-color: #e2e8f0;
+	}
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.05);
+		border-color: rgba(255, 255, 255, 0.1);
 	}
 
 	.markerName {
@@ -3499,12 +3823,14 @@
 	.leftPanel,
 	.rightPanel {
 		width: min(340px, calc(100vw - 24px));
-		background: rgba(11, 17, 29, 0.94);
+		background: rgba(18, 18, 18, 0.94);
 		border-radius: 18px;
+		border: 1px solid rgba(255, 255, 255, 0.08);
 		box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
 
 		:global(html[data-theme="light"]) & {
 			background: rgba(255, 255, 255, 0.96);
+			border-color: rgba(15, 23, 42, 0.08);
 			box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12);
 		}
 	}
@@ -3695,9 +4021,9 @@
 		touch-action: pan-y;
 		padding-bottom: 90px !important;
 		pointer-events: auto !important;
-		background: rgba(11, 17, 29, 0.96);
+		background: rgba(18, 18, 18, 0.96);
 		border-radius: 16px;
-		border: 1px solid rgba(255, 255, 255, 0.14);
+		border: 1px solid rgba(255, 255, 255, 0.08);
 		box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
 
 		:global(html[data-theme="light"]) & {
