@@ -1,0 +1,605 @@
+@import "@/App/Styles/variables";
+
+.modalOverlay {
+	position: fixed;
+	inset: 0;
+	z-index: 9999;
+	background: rgba(4, 10, 20, 0.78);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 16px;
+	animation: fadeInOverlay 0.2s ease-out forwards;
+}
+
+@keyframes fadeInOverlay {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.modalContent {
+	width: 100%;
+	max-width: 860px;
+	height: 86vh;
+	background: rgba(13, 20, 36, 0.97);
+	backdrop-filter: blur(28px);
+	-webkit-backdrop-filter: blur(28px);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 20px;
+	box-shadow: 0 28px 70px rgba(0, 0, 0, 0.75), 0 0 35px rgba(59, 130, 246, 0.15);
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	animation: modalScaleUp 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+	:global(html[data-theme="light"]) & {
+		background: #ffffff;
+		border-color: #cbd5e1;
+		box-shadow: 0 24px 60px rgba(0, 0, 0, 0.12), 0 0 30px rgba(59, 130, 246, 0.1);
+	}
+}
+
+@keyframes modalScaleUp {
+	from {
+		opacity: 0;
+		transform: scale(0.96) translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
+}
+
+/* 1. Header */
+.modalHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 14px 20px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(255, 255, 255, 0.02);
+	flex-shrink: 0;
+
+	:global(html[data-theme="light"]) & {
+		border-bottom-color: #e2e8f0;
+		background: #f8fafc;
+	}
+}
+
+.doctorInfo {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.doctorAvatar {
+	width: 42px;
+	height: 42px;
+	border-radius: 12px;
+	background: linear-gradient(135deg, #00a896, #028090);
+	color: #ffffff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 4px 14px rgba(0, 168, 150, 0.35);
+}
+
+.doctorDetails {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.doctorNameRow {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+
+	h3 {
+		font-size: 1.05rem;
+		font-weight: 800;
+		color: #ffffff;
+		margin: 0;
+
+		:global(html[data-theme="light"]) & {
+			color: #0f172a;
+		}
+	}
+}
+
+.roleTag {
+	background: rgba(0, 168, 150, 0.15);
+	color: #00a896;
+	border: 1px solid rgba(0, 168, 150, 0.3);
+	padding: 2px 7px;
+	border-radius: 6px;
+	font-size: 0.72rem;
+	font-weight: 700;
+
+	:global(html[data-theme="light"]) & {
+		background: #e6fffa;
+		color: #007c72;
+		border-color: #99f6e4;
+	}
+}
+
+.onlineBadge {
+	color: #10b981;
+	font-size: 0.72rem;
+	font-weight: 600;
+}
+
+.hospitalMeta {
+	font-size: 0.73rem;
+	color: rgba(255, 255, 255, 0.5);
+
+	:global(html[data-theme="light"]) & {
+		color: #64748b;
+	}
+}
+
+.headerActions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.iconBtn {
+	background: rgba(255, 255, 255, 0.04);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	color: rgba(255, 255, 255, 0.6);
+	padding: 6px 9px;
+	border-radius: 10px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.15s;
+
+	:global(html[data-theme="light"]) & {
+		background: #f1f5f9;
+		border-color: #cbd5e1;
+		color: #64748b;
+	}
+
+	&:hover {
+		color: #ffffff;
+		background: rgba(255, 255, 255, 0.1);
+
+		:global(html[data-theme="light"]) & {
+			color: #0f172a;
+			background: #e2e8f0;
+		}
+	}
+}
+
+/* 2. Chat Timeline */
+.chatStream {
+	flex: 1;
+	overflow-y: auto;
+	padding: 20px 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	background: rgba(8, 14, 26, 0.65);
+	scrollbar-width: thin;
+	scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+
+	:global(html[data-theme="light"]) & {
+		background: #f8fafc;
+	}
+
+	&::-webkit-scrollbar {
+		width: 6px;
+	}
+	&::-webkit-scrollbar-thumb {
+		background: rgba(255, 255, 255, 0.15);
+		border-radius: 4px;
+	}
+}
+
+.messageRow {
+	display: flex;
+	gap: 12px;
+	max-width: 88%;
+}
+
+.doctorMessageRow {
+	align-self: flex-start;
+}
+
+.patientMessageRow {
+	align-self: flex-end;
+	flex-direction: row-reverse;
+}
+
+.avatarCol {
+	flex-shrink: 0;
+}
+
+.docAvatar {
+	width: 34px;
+	height: 34px;
+	border-radius: 10px;
+	background: linear-gradient(135deg, #00a896, #028090);
+	color: #ffffff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 4px 12px rgba(0, 168, 150, 0.3);
+}
+
+.patAvatar {
+	width: 34px;
+	height: 34px;
+	border-radius: 10px;
+	background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+	color: #ffffff;
+	font-weight: 800;
+	font-size: 0.8rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.bubbleCol {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.metaRow {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.72rem;
+
+	.patientMessageRow & {
+		justify-content: flex-end;
+	}
+}
+
+.senderTitle {
+	font-weight: 700;
+	color: #ffffff;
+
+	:global(html[data-theme="light"]) & {
+		color: #0f172a;
+	}
+}
+
+.timeTitle {
+	color: rgba(255, 255, 255, 0.4);
+	font-size: 0.68rem;
+
+	:global(html[data-theme="light"]) & {
+		color: #94a3b8;
+	}
+}
+
+.urgentBadge {
+	display: flex;
+	align-items: center;
+	gap: 3px;
+	font-size: 0.66rem;
+	font-weight: 700;
+	color: #ef4444;
+	background: rgba(239, 68, 68, 0.15);
+	padding: 1px 6px;
+	border-radius: 4px;
+}
+
+.bubble {
+	padding: 12px 16px;
+	border-radius: 16px;
+	font-size: 0.86rem;
+	line-height: 1.55;
+	box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+}
+
+.doctorBubble {
+	background: rgba(0, 168, 150, 0.14);
+	border: 1px solid rgba(0, 168, 150, 0.35);
+	color: #f1f5f9;
+	border-top-left-radius: 4px;
+
+	:global(html[data-theme="light"]) & {
+		background: #f0fdfa;
+		border-color: #99f6e4;
+		color: #0f172a;
+	}
+}
+
+.patientBubble {
+	background: rgba(59, 130, 246, 0.15);
+	border: 1px solid rgba(59, 130, 246, 0.32);
+	color: #f1f5f9;
+	border-top-right-radius: 4px;
+
+	:global(html[data-theme="light"]) & {
+		background: #eff6ff;
+		border-color: #bfdbfe;
+		color: #0f172a;
+	}
+}
+
+.bubbleText {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+/* Checklist in message */
+.actionsBox {
+	margin-top: 10px;
+	padding-top: 10px;
+	border-top: 1px dashed rgba(255, 255, 255, 0.14);
+
+	:global(html[data-theme="light"]) & {
+		border-top-color: #cbd5e1;
+	}
+}
+
+.actionsTitle {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.74rem;
+	font-weight: 700;
+	color: #00a896;
+	margin-bottom: 6px;
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+
+	:global(html[data-theme="light"]) & {
+		color: #007c72;
+	}
+}
+
+.actionsList {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.actionItem {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 10px;
+	border-radius: 8px;
+	background: rgba(0, 0, 0, 0.22);
+	border: 1px solid rgba(255, 255, 255, 0.07);
+	cursor: pointer;
+	transition: all 0.15s;
+
+	:global(html[data-theme="light"]) & {
+		background: #ffffff;
+		border-color: #e2e8f0;
+	}
+
+	&:hover {
+		background: rgba(0, 168, 150, 0.18);
+		border-color: rgba(0, 168, 150, 0.4);
+	}
+}
+
+.actionItemDone {
+	background: rgba(16, 185, 129, 0.1);
+	border-color: rgba(16, 185, 129, 0.3);
+
+	.actionText {
+		color: #ffffff;
+
+		:global(html[data-theme="light"]) & {
+			color: #0f172a;
+		}
+	}
+}
+
+.checkDone {
+	color: #10b981;
+}
+
+.checkTodo {
+	color: rgba(255, 255, 255, 0.45);
+}
+
+.actionText {
+	font-size: 0.78rem;
+	font-weight: 600;
+	color: #ffffff;
+	flex: 1;
+
+	:global(html[data-theme="light"]) & {
+		color: #0f172a;
+	}
+}
+
+.timeDone {
+	font-size: 0.68rem;
+	font-weight: 700;
+	color: #10b981;
+	background: rgba(16, 185, 129, 0.15);
+	padding: 1px 6px;
+	border-radius: 4px;
+}
+
+.statusRow {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.68rem;
+	margin-top: 1px;
+
+	.patientMessageRow & {
+		justify-content: flex-end;
+	}
+}
+
+.docStatus {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	color: #00a896;
+	font-weight: 600;
+}
+
+.patStatus {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	color: #3b82f6;
+	font-weight: 600;
+}
+
+/* 3. Quick Options */
+.quickOptions {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 20px;
+	background: rgba(15, 23, 42, 0.8);
+	border-top: 1px solid rgba(255, 255, 255, 0.06);
+	flex-shrink: 0;
+
+	:global(html[data-theme="light"]) & {
+		background: #f1f5f9;
+		border-top-color: #e2e8f0;
+	}
+}
+
+.quickLabel {
+	font-size: 0.72rem;
+	font-weight: 700;
+	color: #3b82f6;
+	white-space: nowrap;
+}
+
+.quickScroll {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	overflow-x: auto;
+	scrollbar-width: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
+
+.quickBtn {
+	background: rgba(255, 255, 255, 0.04);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	color: rgba(255, 255, 255, 0.8);
+	padding: 4px 10px;
+	border-radius: 14px;
+	font-size: 0.72rem;
+	font-weight: 500;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: all 0.15s;
+
+	:global(html[data-theme="light"]) & {
+		background: #ffffff;
+		border-color: #cbd5e1;
+		color: #334155;
+	}
+
+	&:hover {
+		background: rgba(59, 130, 246, 0.2);
+		border-color: rgba(59, 130, 246, 0.4);
+		color: #ffffff;
+
+		:global(html[data-theme="light"]) & {
+			background: #e0f2fe;
+			color: #0369a1;
+		}
+	}
+}
+
+/* 4. Patient Composer */
+.patientComposer {
+	padding: 12px 20px;
+	background: rgba(13, 20, 36, 0.98);
+	border-top: 1px solid rgba(255, 255, 255, 0.08);
+	flex-shrink: 0;
+
+	:global(html[data-theme="light"]) & {
+		background: #ffffff;
+		border-top-color: #e2e8f0;
+	}
+}
+
+.inputRow {
+	display: flex;
+	align-items: flex-end;
+	gap: 12px;
+}
+
+.replyTextarea {
+	flex: 1;
+	min-height: 72px;
+	max-height: 180px;
+	background: rgba(0, 0, 0, 0.28);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 12px;
+	padding: 12px 16px;
+	font-size: 0.88rem;
+	line-height: 1.5;
+	color: #ffffff;
+	outline: none;
+	resize: vertical;
+	transition: all 0.2s;
+	font-family: inherit;
+
+	:global(html[data-theme="light"]) & {
+		background: #f8fafc;
+		border-color: #cbd5e1;
+		color: #0f172a;
+	}
+
+	&:focus {
+		border-color: #3b82f6;
+		box-shadow: 0 0 16px rgba(59, 130, 246, 0.25);
+		background: rgba(0, 0, 0, 0.38);
+
+		:global(html[data-theme="light"]) & {
+			background: #ffffff;
+		}
+	}
+}
+
+.btnSendReply {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	background: linear-gradient(135deg, #2563eb, #1d4ed8);
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	color: #ffffff;
+	padding: 0 20px;
+	border-radius: 12px;
+	font-size: 0.84rem;
+	font-weight: 800;
+	cursor: pointer;
+	flex-shrink: 0;
+	height: 44px;
+	margin-bottom: 2px;
+	box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
+	transition: all 0.2s;
+
+	&:hover {
+		background: linear-gradient(135deg, #3b82f6, #2563eb);
+		transform: translateY(-1px);
+		box-shadow: 0 6px 22px rgba(37, 99, 235, 0.45);
+	}
+
+	&:active {
+		transform: translateY(0);
+	}
+}

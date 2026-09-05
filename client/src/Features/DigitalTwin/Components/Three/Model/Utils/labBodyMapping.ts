@@ -37,16 +37,28 @@ const STATUS_COLORS: Record<FindingStatus, [number, number, number]> = {
 const MARKER_TO_SYSTEM: Record<string, string> = {
 	// Blood sugar / metabolic → Endocrine (pancreas, thyroid region)
 	"Blood Sugar (Glucose)": "Endocrinology",
+	"Fasting Blood Glucose": "Endocrinology",
 	"Glucose": "Endocrinology",
 	"HbA1c": "Endocrinology",
 
-	// Cholesterol → Cardiovascular (heart/chest)
+	// Cholesterol & Cardiovascular → Cardiovascular (heart/chest)
 	"Bad Cholesterol (LDL)": "cardiovascular",
+	"LDL Cholesterol": "cardiovascular",
 	"LDL": "cardiovascular",
+	"LDL-C": "cardiovascular",
 	"HDL": "cardiovascular",
+	"HDL-C": "cardiovascular",
 	"Cholesterol": "cardiovascular",
 	"Total Cholesterol": "cardiovascular",
 	"Triglycerides": "cardiovascular",
+	"Apolipoprotein B (ApoB)": "cardiovascular",
+	"Apolipoprotein B": "cardiovascular",
+	"ApoB": "cardiovascular",
+	"hs-CRP (Inflammation)": "cardiovascular",
+	"hs-CRP": "cardiovascular",
+	"hsCRP": "cardiovascular",
+	"Palpitations": "cardiovascular",
+	"Atrial Fibrillation": "cardiovascular",
 
 	// Thyroid → Endocrine (neck)
 	"Thyroid (TSH)": "Endocrinology",

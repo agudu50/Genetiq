@@ -46,6 +46,283 @@
 	}
 }
 
+.doctorCareBtn {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	background: rgba(0, 166, 157, 0.12);
+	border: 1px solid rgba(0, 166, 157, 0.35);
+	color: #00a69d;
+	padding: 5px 11px;
+	border-radius: 20px;
+	font-size: 0.74rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.2s;
+
+	&:hover {
+		background: rgba(0, 166, 157, 0.22);
+		border-color: #00a69d;
+		transform: translateY(-1px);
+		box-shadow: 0 4px 12px rgba(0, 166, 157, 0.2);
+	}
+}
+
+.pulseDot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: #10b981;
+	box-shadow: 0 0 6px #10b981;
+	animation: pulse 1.8s infinite;
+}
+
+@keyframes pulse {
+	0%, 100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+	50% {
+		opacity: 0.4;
+		transform: scale(1.3);
+	}
+}
+
+// ─── Doctor Clinical Response Card ──────────────────────────
+.doctorResponseCard {
+	background: linear-gradient(135deg, rgba(0, 168, 150, 0.12), rgba(2, 128, 144, 0.08));
+	border: 1px solid rgba(0, 168, 150, 0.35);
+	border-radius: 14px;
+	padding: 14px 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 168, 150, 0.1);
+	animation: slideInDown 0.25s ease-out forwards;
+
+	:global(html[data-theme="light"]) & {
+		background: linear-gradient(135deg, #f0fdfa, #e6fffa);
+		border-color: #5eead4;
+		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+	}
+}
+
+@keyframes slideInDown {
+	from {
+		opacity: 0;
+		transform: translateY(-6px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.responseCardHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.docHeaderLeft {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.docAvatarBadge {
+	width: 32px;
+	height: 32px;
+	border-radius: 10px;
+	background: linear-gradient(135deg, #00a896, #028090);
+	color: #ffffff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 4px 10px rgba(0, 168, 150, 0.3);
+}
+
+.docName {
+	font-size: 0.88rem;
+	font-weight: 800;
+	color: #ffffff;
+
+	:global(html[data-theme="light"]) & {
+		color: #0f172a;
+	}
+}
+
+.docRole {
+	font-size: 0.72rem;
+	color: rgba(255, 255, 255, 0.55);
+
+	:global(html[data-theme="light"]) & {
+		color: #64748b;
+	}
+}
+
+.urgentBadge {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 0.68rem;
+	font-weight: 700;
+	color: #ef4444;
+	background: rgba(239, 68, 68, 0.15);
+	border: 1px solid rgba(239, 68, 68, 0.3);
+	padding: 2px 8px;
+	border-radius: 6px;
+}
+
+.responseBody {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.responseText {
+	font-size: 0.82rem;
+	line-height: 1.5;
+	color: rgba(255, 255, 255, 0.85);
+	margin: 0;
+
+	:global(html[data-theme="light"]) & {
+		color: #1e293b;
+	}
+}
+
+.widgetActionsList {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin-top: 4px;
+	padding-top: 8px;
+	border-top: 1px dashed rgba(255, 255, 255, 0.1);
+
+	:global(html[data-theme="light"]) & {
+		border-top-color: #cbd5e1;
+	}
+}
+
+.widgetActionsTitle {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.72rem;
+	font-weight: 700;
+	color: #00a896;
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+
+	:global(html[data-theme="light"]) & {
+		color: #007c72;
+	}
+}
+
+.actionsGrid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 6px;
+
+	@media (max-width: 640px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.widgetActionItem {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 5px 8px;
+	border-radius: 6px;
+	background: rgba(0, 0, 0, 0.2);
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	cursor: pointer;
+	transition: all 0.15s;
+
+	:global(html[data-theme="light"]) & {
+		background: #ffffff;
+		border-color: #e2e8f0;
+	}
+
+	&:hover {
+		background: rgba(0, 168, 150, 0.15);
+		border-color: rgba(0, 168, 150, 0.35);
+	}
+}
+
+.widgetActionDone {
+	background: rgba(16, 185, 129, 0.1);
+	border-color: rgba(16, 185, 129, 0.28);
+
+	.actionText {
+		color: #ffffff;
+
+		:global(html[data-theme="light"]) & {
+			color: #0f172a;
+		}
+	}
+}
+
+.actionIconDone {
+	color: #10b981;
+}
+
+.actionIconTodo {
+	color: rgba(255, 255, 255, 0.4);
+
+	:global(html[data-theme="light"]) & {
+		color: #94a3b8;
+	}
+}
+
+.actionText {
+	font-size: 0.74rem;
+	font-weight: 600;
+	color: #ffffff;
+	flex: 1;
+
+	:global(html[data-theme="light"]) & {
+		color: #0f172a;
+	}
+}
+
+.actionDoneTag {
+	font-size: 0.64rem;
+	font-weight: 700;
+	color: #10b981;
+	background: rgba(16, 185, 129, 0.15);
+	padding: 1px 4px;
+	border-radius: 4px;
+}
+
+.responseCardFooter {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.btnOpenChat {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	background: #00a896;
+	color: #ffffff;
+	border: none;
+	padding: 6px 14px;
+	border-radius: 10px;
+	font-size: 0.76rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.2s;
+	box-shadow: 0 4px 12px rgba(0, 168, 150, 0.3);
+
+	&:hover {
+		background: #00c4af;
+		transform: translateY(-1px);
+		box-shadow: 0 6px 18px rgba(0, 168, 150, 0.4);
+	}
+}
+
 // ─── Onboarding Health Metrics Summary Row ─────────────────
 .summaryGrid {
 	display: grid;

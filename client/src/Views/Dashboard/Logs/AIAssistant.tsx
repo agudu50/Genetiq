@@ -1,7 +1,25 @@
 import { useState, useRef, useEffect } from "react";
-import { Bot, Send, ImagePlus, X, Phone, Heart, Leaf, AlertTriangle, Shield, Wifi, WifiOff, Stethoscope, ChevronRight, Brain, Flame, Activity } from "lucide-react";
 import {
-	chatWithGemma,
+	Send,
+	ImagePlus,
+	X,
+	Phone,
+	Heart,
+	Leaf,
+	AlertTriangle,
+	Shield,
+	Wifi,
+	WifiOff,
+	Stethoscope,
+	ChevronRight,
+	Brain,
+	Flame,
+	Square,
+	CheckCircle2,
+	Play,
+	RotateCcw,
+} from "lucide-react";
+import {
 	analyzeLabResults,
 	translateAnalysisResult,
 	GHANAIAN_REMEDIES,
@@ -9,7 +27,16 @@ import {
 } from "@/App/Services/GemmaService";
 import type { GemmaLanguage, GemmaAnalysisResult } from "@/App/Services/GemmaService";
 import { useGemmaConnection } from "@/App/Hooks/useGemmaConnection";
-import { ChatMessageContent } from "@/Features/Dashboard/ChatMessageContent/ChatMessageContent";
+import {
+	subscribeToChatUpdates,
+	dispatchNewMessage,
+	toggleMessageAction,
+	loadChatMessages,
+	saveAndBroadcastChat,
+	getDefaultSeedMessages,
+	generateDoctorReply,
+	ChatMessage,
+} from "@/App/Services/PatientDoctorChatSync";
 import styles from "./AIAssistant.module.scss";
 import { renderRecommendationIcon } from "@/App/Utils/renderRecommendationIcon";
 
@@ -27,20 +54,20 @@ const LANGUAGES: { id: GemmaLanguage; label: string; code: string }[] = [
 
 const LOCALIZED_TEXTS: Record<GemmaLanguage, Record<string, string>> = {
 	english: {
-		welcome_title: "Gemma 4 Health Portal",
-		welcome_sub: "Powered by Google Gemma 4 — Built for Ghana",
-		chat_tab: "AI Chat",
+		welcome_title: "Doctor & Patient Live Clinical Care Portal",
+		welcome_sub: "Direct Live Consultation with Dr. Sarah Jenkins, MD (Cardiology) · Real-Time Patient Dispatch",
+		chat_tab: "Live Doctor Chat",
 		scanner_tab: "Lab Scanner",
 		remedies_tab: "Remedy Guide",
 		emergency_tab: "Emergency",
-		welcome_msg: "Hello! I'm your Genetiq AI Health Assistant, designed for Ghanaian healthcare. Tell me your symptoms or ask any health question — I'll guide you.\n\nYou can ask in English, Twi, Ga, Ewe, or Fante. I understand common conditions like malaria, typhoid, anemia, and more.",
-		placeholder: "Describe your symptoms or ask a question...",
-		quick_chips_malaria: "Malaria symptoms",
-		quick_chips_typhoid: "Typhoid fever",
-		quick_chips_weak: "Feeling weak and dizzy",
-		quick_chips_breathing: "Breathing problems",
-		quick_chips_dehydration: "Signs of dehydration",
-		quick_chips_pregnancy: "Pregnancy health tips",
+		welcome_msg: "Hello Marcus Vance,\n\nI reviewed your recent report of Palpitations & Shortness of Breath. Please sit down and rest immediately, drink 500ml of water, and ensure you have taken your morning Metoprolol 25mg.\n\nAvoid caffeine and strenuous activity today. If your shortness of breath persists beyond 15 minutes or you experience chest pressure, please call our triage nurse or emergency immediately.\n\n— Dr. Sarah Jenkins, MD",
+		placeholder: "Type a live message or update to Dr. Sarah Jenkins, MD...",
+		quick_chips_malaria: "Drank 500ml water & took Metoprolol 25mg",
+		quick_chips_typhoid: "HR down to 76 bpm, feeling much better",
+		quick_chips_weak: "Retook BP: 124/82 mmHg",
+		quick_chips_breathing: "Palpitations stopped, resting comfortably",
+		quick_chips_dehydration: "Requesting quick nurse triage callback",
+		quick_chips_pregnancy: "Confirming medication adherence",
 		remedy_title: "Ghanaian Remedy & Nutrition Guide",
 		remedy_sub: "Local foods and herbs with proven health benefits — backed by traditional knowledge and modern nutrition science.",
 		remedy_disclaimer: "These remedies complement, but do not replace, professional medical treatment. Always consult a healthcare provider before using herbal remedies, especially if pregnant, breastfeeding, or on medication.",
@@ -328,14 +355,6 @@ const translateRemedy = (remedyName: string, field: "benefits" | "usage" | "warn
 	return (dict as any)[lang]?.[remedyName]?.[field] || fallback;
 };
 
-interface ChatMsg {
-	id: string;
-	role: "user" | "bot";
-	text: string;
-	urgency?: "Green" | "Yellow" | "Red";
-	bodySystem?: string;
-}
-
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function AIAssistant() {
@@ -349,7 +368,7 @@ export default function AIAssistant() {
 			<div className={styles.pageHeader}>
 				<div className={styles.headerLeft}>
 					<div className={styles.headerIcon}>
-						<Bot size={22} />
+						<Stethoscope size={22} />
 						<div className={styles.headerDot} />
 					</div>
 					<div>
@@ -391,7 +410,7 @@ export default function AIAssistant() {
 			{/* ── Tabs ── */}
 			<div className={styles.tabBar}>
 				{[
-					{ id: "chat" as Tab, label: LOCALIZED_TEXTS[language].chat_tab, icon: <Bot size={15} /> },
+					{ id: "chat" as Tab, label: LOCALIZED_TEXTS[language].chat_tab, icon: <Stethoscope size={15} /> },
 					{ id: "scanner" as Tab, label: LOCALIZED_TEXTS[language].scanner_tab, icon: <ImagePlus size={15} /> },
 					{ id: "remedies" as Tab, label: LOCALIZED_TEXTS[language].remedies_tab, icon: <Leaf size={15} /> },
 					{ id: "emergency" as Tab, label: LOCALIZED_TEXTS[language].emergency_tab, icon: <Phone size={15} /> },
@@ -409,7 +428,7 @@ export default function AIAssistant() {
 
 			{/* ── Content ── */}
 			<div className={styles.content}>
-				{activeTab === "chat" && <ChatSection language={language} gemmaOnline={gemmaOnline} />}
+				{activeTab === "chat" && <ChatSection language={language} />}
 				{activeTab === "scanner" && <ScannerSection language={language} gemmaOnline={gemmaOnline} />}
 				{activeTab === "remedies" && <RemedySection language={language} />}
 				{activeTab === "emergency" && <EmergencySection language={language} />}
@@ -418,44 +437,29 @@ export default function AIAssistant() {
 	);
 }
 
-// ─── Tab 1: Chat ──────────────────────────────────────────────────────────────
-
-function ChatSection({ language, gemmaOnline }: { language: GemmaLanguage; gemmaOnline: boolean }) {
-	const [messages, setMessages] = useState<ChatMsg[]>([]);
+function ChatSection({ language }: { language: GemmaLanguage }) {
+	const patientId = "pt-101";
+	const [doctorMessages, setDoctorMessages] = useState<ChatMessage[]>(() => loadChatMessages(patientId));
 	const [input, setInput] = useState("");
-	const [loading, setLoading] = useState(false);
-	const [waitSecs, setWaitSecs] = useState(0);
+	const [isSimulating, setIsSimulating] = useState(false);
+	const [isDoctorTyping, setIsDoctorTyping] = useState(false);
 	const chatEnd = useRef<HTMLDivElement>(null);
 
-	// Dynamically translate welcome message on language change or on mount
 	useEffect(() => {
-		setMessages((prev) => {
-			const hasWelcome = prev.some((m) => m.id === "welcome");
-			const welcomeMsg = {
-				id: "welcome",
-				role: "bot" as const,
-				text: LOCALIZED_TEXTS[language].welcome_msg,
-			};
-			if (hasWelcome) {
-				return prev.map((m) => (m.id === "welcome" ? welcomeMsg : m));
-			} else {
-				return [welcomeMsg, ...prev];
-			}
+		const unsubscribe = subscribeToChatUpdates(patientId, (updated) => {
+			setDoctorMessages(updated);
 		});
-	}, [language]);
+		return () => unsubscribe();
+	}, [patientId]);
 
 	useEffect(() => {
 		chatEnd.current?.scrollIntoView({ behavior: "smooth" });
-	}, [messages, loading]);
+	}, [doctorMessages, isDoctorTyping]);
 
-	useEffect(() => {
-		if (!loading) {
-			setWaitSecs(0);
-			return;
-		}
-		const id = window.setInterval(() => setWaitSecs((s) => s + 1), 1000);
-		return () => clearInterval(id);
-	}, [loading]);
+	// Toggle action task checklist in real time
+	const handleToggleTask = (msgId: string, actionId: string) => {
+		toggleMessageAction(patientId, msgId, actionId);
+	};
 
 	const quickChips = [
 		LOCALIZED_TEXTS[language].quick_chips_malaria,
@@ -466,99 +470,245 @@ function ChatSection({ language, gemmaOnline }: { language: GemmaLanguage; gemma
 		LOCALIZED_TEXTS[language].quick_chips_pregnancy,
 	];
 
-	const send = async (text?: string) => {
-		const msg = text || input.trim();
+	// Run full live consultation demo sequence in real time
+	const handleRunLiveSimulation = () => {
+		if (isSimulating) return;
+		setIsSimulating(true);
+
+		// Step 0: Clear thread
+		saveAndBroadcastChat(patientId, []);
+
+		// Step 1: Marcus reports palpitation & high heart rate
+		setTimeout(() => {
+			dispatchNewMessage(patientId, {
+				sender: "patient",
+				senderName: "Marcus Vance",
+				senderRole: "Patient (App Dispatch)",
+				timestamp: "Today · 09:12 AM",
+				text: "Dr. Jenkins, I just walked up the stairs and my heart started racing suddenly. My watch is showing 118 bpm, and I feel lightheaded and short of breath. Should I take an extra Metoprolol or sit down?",
+			});
+		}, 300);
+
+		// Step 2: Doctor typing indicator & Urgent Directive dispatch
+		setTimeout(() => {
+			setIsDoctorTyping(true);
+		}, 1200);
+
+		setTimeout(() => {
+			setIsDoctorTyping(false);
+			dispatchNewMessage(patientId, {
+				sender: "doctor",
+				senderName: "Dr. Sarah Jenkins, MD",
+				senderRole: "Attending Cardiologist",
+				timestamp: "Today · 09:15 AM",
+				priority: "urgent",
+				text: "Hello Marcus Vance,\n\nI reviewed your recent report of Palpitations & Shortness of Breath. Please sit down and rest immediately, drink 500ml of water, and ensure you have taken your morning Metoprolol 25mg.\n\nAvoid caffeine and strenuous activity today. If your shortness of breath persists beyond 15 minutes or you experience chest pressure, please call our triage nurse or emergency immediately.\n\n— Dr. Sarah Jenkins, MD",
+				actions: [
+					{ id: "act-1", label: "Sit down and rest quietly immediately", isCompleted: false },
+					{ id: "act-2", label: "Drink 500ml of fresh water", isCompleted: false },
+					{ id: "act-3", label: "Confirm morning Metoprolol 25mg intake", isCompleted: false },
+					{ id: "act-4", label: "Recheck Resting HR in 15 mins (Call triage if SOB persists)", isCompleted: false },
+				],
+			});
+		}, 2600);
+
+		// Step 3: Marcus fulfills directives 1, 2, 3 and updates doctor
+		setTimeout(() => {
+			const msgs = loadChatMessages(patientId);
+			const docMsg = msgs.find((m) => m.sender === "doctor" && m.actions);
+			if (docMsg) {
+				toggleMessageAction(patientId, docMsg.id, "act-1");
+				toggleMessageAction(patientId, docMsg.id, "act-2");
+				toggleMessageAction(patientId, docMsg.id, "act-3");
+			}
+			dispatchNewMessage(patientId, {
+				sender: "patient",
+				senderName: "Marcus Vance",
+				senderRole: "Patient (App Dispatch)",
+				timestamp: "Today · 09:19 AM",
+				text: "Understood Dr. Jenkins. I just sat down on the couch, drank 500ml of water, and confirmed my morning Metoprolol 25mg. Resting now.",
+			});
+		}, 4600);
+
+		// Step 4: Marcus checks 15-min HR directive and reports 76 bpm recovery
+		setTimeout(() => {
+			const msgs = loadChatMessages(patientId);
+			const docMsg = msgs.find((m) => m.sender === "doctor" && m.actions);
+			if (docMsg) {
+				toggleMessageAction(patientId, docMsg.id, "act-4");
+			}
+			dispatchNewMessage(patientId, {
+				sender: "patient",
+				senderName: "Marcus Vance",
+				senderRole: "Patient (App Dispatch)",
+				timestamp: "Today · 09:34 AM",
+				text: "Update: It's been 15 minutes. My resting heart rate has dropped down to 76 bpm. The palpitations have settled and my breathing is completely back to normal. Thank you for the swift guidance!",
+			});
+			setIsSimulating(false);
+		}, 7000);
+	};
+
+	const handleReset = () => {
+		const fresh = getDefaultSeedMessages();
+		saveAndBroadcastChat(patientId, fresh);
+		setIsDoctorTyping(false);
+		setIsSimulating(false);
+	};
+
+	const send = (text?: string) => {
+		const msg = (text || input).trim();
 		if (!msg) return;
 		setInput("");
 
-		const userMsg: ChatMsg = { id: `u-${Date.now()}`, role: "user", text: msg };
-		const recentUserMessages = messages
-			.filter((m) => m.role === "user")
-			.map((m) => m.text)
-			.slice(-5);
-		setMessages((prev) => [...prev, userMsg]);
-		setLoading(true);
+		dispatchNewMessage(patientId, {
+			sender: "patient",
+			senderName: "Marcus Vance",
+			senderRole: "Patient (App Dispatch)",
+			text: msg,
+		});
 
-		try {
-			const result = await chatWithGemma({ message: msg, language, recentUserMessages });
-			setMessages((prev) => [
-				...prev,
-				{
-					id: `b-${Date.now()}`,
-					role: "bot",
-					text: result.message,
-					urgency: result.urgency,
-					bodySystem: result.bodySystem,
-				},
-			]);
-		} catch {
-			setMessages((prev) => [
-				...prev,
-				{
-					id: `b-err-${Date.now()}`,
-					role: "bot",
-					text: "I'm sorry, I encountered an error. Please try again.",
-				},
-			]);
-		} finally {
-			setLoading(false);
-		}
+		// Trigger realistic Dr. Sarah Jenkins response
+		setIsDoctorTyping(true);
+		setTimeout(() => {
+			setIsDoctorTyping(false);
+			const doctorReply = generateDoctorReply(msg);
+			dispatchNewMessage(patientId, doctorReply);
+		}, 1300);
 	};
 
 	return (
 		<div className={styles.chatSection}>
-			<div className={styles.chatMessages}>
-				{messages.map((m) => (
-					<div
-						key={m.id}
-						className={`${styles.chatMsg} ${m.role === "user" ? styles.chatUser : styles.chatBot}`}
+			{/* Top Live Doctor Connection Bar */}
+			<div className={styles.doctorConnectionBar}>
+				<div className={styles.doctorBarLeft}>
+					<div className={styles.doctorAvatarBadge}>
+						<Stethoscope size={20} />
+					</div>
+					<div className={styles.doctorInfoMeta}>
+						<div className={styles.doctorNameRow}>
+							<strong>Dr. Sarah Jenkins, MD</strong>
+							<span className={styles.doctorRoleTag}>● Attending Cardiologist</span>
+						</div>
+						<div className={styles.patientLinkSub}>
+							Direct Care & Clinical Dispatch Link · Patient: Marcus Vance (MRN-84920)
+						</div>
+					</div>
+				</div>
+
+				<div className={styles.doctorBarRight}>
+					<button
+						className={`${styles.simBtn} ${isSimulating ? styles.simBtnActive : ""}`}
+						onClick={handleRunLiveSimulation}
+						disabled={isSimulating}
+						title="Simulate full live episode in real time"
 					>
-						{m.role === "bot" && <Bot size={16} className={styles.chatBotIcon} />}
-						<div className={styles.chatBubble}>
-							{m.urgency && m.urgency !== "Green" && (
-								<span className={`${styles.urgencyBadge} ${styles[`urgency${m.urgency}`]}`}>
-									{m.urgency === "Red" ? (
-										<span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
-											<AlertTriangle size={11} strokeWidth={2.5} /> Urgent
-										</span>
-									) : (
-										<span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
-											<Activity size={11} strokeWidth={2.5} /> Moderate
+						<Play size={13} />
+						<span>{isSimulating ? "Simulating Live Flow..." : "Simulate Live Episode"}</span>
+					</button>
+
+					<button
+						className={styles.resetBtn}
+						onClick={handleReset}
+						title="Reset thread back to defaults"
+					>
+						<RotateCcw size={12} />
+						<span>Reset</span>
+					</button>
+
+					<span className={styles.ehrSyncBadge}>
+						● Live EHR Sync
+					</span>
+				</div>
+			</div>
+
+			{/* Message Timeline */}
+			<div className={styles.chatMessages}>
+				{doctorMessages.map((docMsg) => {
+					const isDoc = docMsg.sender === "doctor";
+					return (
+						<div
+							key={docMsg.id}
+							className={`${styles.chatMsg} ${isDoc ? styles.chatBot : styles.chatUser}`}
+						>
+							{isDoc && (
+								<div className={styles.doctorMsgAvatar}>
+									<Stethoscope size={16} />
+								</div>
+							)}
+							<div className={styles.chatBubble}>
+								<div className={styles.senderHeader}>
+									<strong className={isDoc ? styles.senderDoc : styles.senderPat}>
+										{docMsg.senderName}
+									</strong>
+									<span className={styles.metaTime}>
+										({docMsg.senderRole}) · {docMsg.timestamp}
+									</span>
+									{docMsg.priority === "urgent" && (
+										<span className={styles.urgentDirectivePill}>
+											Urgent Directive
 										</span>
 									)}
-								</span>
-							)}
-							{m.role === "bot" ? (
-								<ChatMessageContent text={m.text} compact />
-							) : (
-								<p>{m.text}</p>
-							)}
-							{m.bodySystem && m.bodySystem !== "total" && (
-								<span className={styles.systemTag}>
-									<Stethoscope size={10} /> {m.bodySystem}
-								</span>
-							)}
-						</div>
-					</div>
-				))}
-				{loading && (
-					<div className={`${styles.chatMsg} ${styles.chatBot}`}>
-						<Bot size={16} className={styles.chatBotIcon} />
-						<div className={styles.chatBubble}>
-							<div className={styles.typingDots}>
-								<span /><span /><span />
+								</div>
+
+								<div className={styles.messageBodyText}>
+									{docMsg.text}
+								</div>
+
+								{/* Interactive Actions within doctor directives */}
+								{docMsg.actions && docMsg.actions.length > 0 && (
+									<div className={styles.checklistWrapper}>
+										<span className={styles.checklistTitle}>
+											Doctor Action Directives (Tap to check off):
+										</span>
+										{docMsg.actions.map((act) => (
+											<div
+												key={act.id}
+												onClick={() => handleToggleTask(docMsg.id, act.id)}
+												className={`${styles.checklistItem} ${
+													act.isCompleted ? styles.checklistItemDone : ""
+												}`}
+											>
+												{act.isCompleted ? (
+													<CheckCircle2 size={15} style={{ color: "#10b981", flexShrink: 0 }} />
+												) : (
+													<Square size={15} style={{ opacity: 0.5, flexShrink: 0 }} />
+												)}
+												<span className={styles.checklistLabel}>
+													{act.label}
+												</span>
+												{act.isCompleted && act.completedAt && (
+													<span className={styles.doneTimestamp}>
+														Done ({act.completedAt})
+													</span>
+												)}
+											</div>
+										))}
+									</div>
+								)}
 							</div>
-							<p className={styles.waitHint}>
-								{gemmaOnline
-									? `Gemma 4 AI is thinking… (${waitSecs}s)`
-									: "Thinking…"}
-							</p>
 						</div>
+					);
+				})}
+
+				{/* Real-time Doctor Typing Indicator */}
+				{isDoctorTyping && (
+					<div className={styles.typingIndicatorRow}>
+						<div className={styles.doctorMsgAvatar}>
+							<Stethoscope size={15} />
+						</div>
+						<div className={styles.typingDots}>
+							<div className={styles.dot} />
+							<div className={styles.dot} />
+							<div className={styles.dot} />
+						</div>
+						<span>Dr. Sarah Jenkins is reviewing and preparing clinical response...</span>
 					</div>
 				)}
+
 				<div ref={chatEnd} />
 			</div>
 
+			{/* Quick Reply Chips */}
 			<div className={styles.chatChips}>
 				{quickChips.map((chip) => (
 					<button key={chip} className={styles.chip} onClick={() => send(chip)}>
@@ -567,16 +717,20 @@ function ChatSection({ language, gemmaOnline }: { language: GemmaLanguage; gemma
 				))}
 			</div>
 
+			{/* Live Chat Input Bar */}
 			<div className={styles.chatInputBar}>
 				<input
 					value={input}
 					onChange={(e) => setInput(e.target.value)}
 					onKeyDown={(e) => e.key === "Enter" && send()}
 					placeholder={LOCALIZED_TEXTS[language].placeholder}
-					disabled={loading}
 				/>
-				<button onClick={() => send()} disabled={loading || !input.trim()}>
-					{loading ? <div className={styles.miniSpinner} /> : <Send size={16} />}
+				<button
+					onClick={() => send()}
+					disabled={!input.trim()}
+					title="Send live message to Dr. Jenkins"
+				>
+					<Send size={16} />
 				</button>
 			</div>
 		</div>

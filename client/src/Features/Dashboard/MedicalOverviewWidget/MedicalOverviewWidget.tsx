@@ -1,11 +1,30 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import styles from "./MedicalOverviewWidget.module.scss";
 import { useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/App/i18n/LanguageContext";
 import { paths } from "@/App/Routes/Paths";
-import { Activity, ShieldCheck, Pill, Stethoscope, FlaskConical } from "lucide-react";
+import {
+	Activity,
+	ShieldCheck,
+	Pill,
+	Stethoscope,
+	FlaskConical,
+	MessageSquare,
+	CheckSquare,
+	Square,
+	CheckCircle2,
+	AlertCircle,
+	ChevronRight,
+} from "lucide-react";
+import {
+	subscribeToChatUpdates,
+	loadChatMessages,
+	toggleMessageAction,
+	ChatMessage,
+} from "@/App/Services/PatientDoctorChatSync";
+import { PatientCareChatModal } from "../Components/PatientCareChatModal/PatientCareChatModal";
 
 type Tab = "conditions" | "medications" | "symptoms" | "labs";
 
@@ -15,6 +34,32 @@ export const MedicalOverviewWidget = () => {
 	const user = useSelector((state: RootState) => state.user);
 	const uploadRecords = useSelector((state: RootState) => state.uploadHistory.records);
 	const [activeTab, setActiveTab] = useState<Tab>("conditions");
+	const [isDoctorChatOpen, setIsDoctorChatOpen] = useState(false);
+
+	const patientId = "pt-101";
+
+	const [latestDoctorMessage, setLatestDoctorMessage] = useState<ChatMessage | null>(() => {
+		const allMsgs = loadChatMessages(patientId);
+		const docMsgs = allMsgs.filter((m) => m.sender === "doctor");
+		return docMsgs.length > 0 ? docMsgs[docMsgs.length - 1] : null;
+	});
+
+	// Subscribe to real-time chat updates across tabs & components
+	useEffect(() => {
+		const unsubscribe = subscribeToChatUpdates(patientId, (allMsgs) => {
+			const docMsgs = allMsgs.filter((m) => m.sender === "doctor");
+			if (docMsgs.length > 0) {
+				setLatestDoctorMessage(docMsgs[docMsgs.length - 1]);
+			}
+		});
+		return () => unsubscribe();
+	}, [patientId]);
+
+	// Toggle action on the widget card
+	const handleToggleActionFromWidget = (actionId: string) => {
+		if (!latestDoctorMessage || !latestDoctorMessage.actions) return;
+		toggleMessageAction(patientId, latestDoctorMessage.id, actionId);
+	};
 
 	const medicalConditions = Array.isArray(user?.medicalConditions) ? user.medicalConditions : [];
 	const medications = Array.isArray(user?.medications) ? user.medications : [];
@@ -67,7 +112,104 @@ export const MedicalOverviewWidget = () => {
 					<Stethoscope size={18} strokeWidth={2.25} />
 					{t("medical_overview") || "Medical Overview"}
 				</h3>
+
+				<button
+					type='button'
+					className={styles.doctorCareBtn}
+					onClick={() => setIsDoctorChatOpen(true)}
+					title='Open care advice & chat with Dr. Sarah Jenkins'
+				>
+					<MessageSquare size={13} />
+					<span>Doctor Care Chat</span>
+					<span className={styles.pulseDot} />
+				</button>
 			</div>
+
+			<PatientCareChatModal
+				isOpen={isDoctorChatOpen}
+				onClose={() => setIsDoctorChatOpen(false)}
+				patientName={user?.firstName ? `${user.firstName} ${user.lastName}`.trim() : "Marcus Vance"}
+				doctorName='Dr. Sarah Jenkins, MD'
+				doctorRole='Attending Cardiologist'
+			/>
+
+			{/* Doctor Clinical Care Response & Directives Card */}
+			{latestDoctorMessage && (
+				<div className={styles.doctorResponseCard}>
+					<div className={styles.responseCardHeader}>
+						<div className={styles.docHeaderLeft}>
+							<div className={styles.docAvatarBadge}>
+								<Stethoscope size={15} />
+							</div>
+							<div>
+								<div className={styles.docName}>{latestDoctorMessage.senderName}</div>
+								<div className={styles.docRole}>
+									{latestDoctorMessage.senderRole} · {latestDoctorMessage.timestamp}
+								</div>
+							</div>
+						</div>
+						{latestDoctorMessage.priority === "urgent" && (
+							<span className={styles.urgentBadge}>
+								<AlertCircle size={11} /> Clinical Directive
+							</span>
+						)}
+					</div>
+
+					<div className={styles.responseBody}>
+						<p className={styles.responseText}>
+							{latestDoctorMessage.text.split("\n").map((line, i) => (
+								<span key={i}>
+									{line}
+									{i < latestDoctorMessage.text.split("\n").length - 1 && <br />}
+								</span>
+							))}
+						</p>
+
+						{latestDoctorMessage.actions && latestDoctorMessage.actions.length > 0 && (
+							<div className={styles.widgetActionsList}>
+								<div className={styles.widgetActionsTitle}>
+									<CheckSquare size={13} />
+									<span>Doctor Action Directives (Tap to check off):</span>
+								</div>
+								<div className={styles.actionsGrid}>
+									{latestDoctorMessage.actions.map((act) => (
+										<div
+											key={act.id}
+											className={`${styles.widgetActionItem} ${
+												act.isCompleted ? styles.widgetActionDone : ""
+											}`}
+											onClick={() => handleToggleActionFromWidget(act.id)}
+											title='Tap to mark completed'
+										>
+											{act.isCompleted ? (
+												<CheckCircle2 size={15} className={styles.actionIconDone} />
+											) : (
+												<Square size={15} className={styles.actionIconTodo} />
+											)}
+											<span className={styles.actionText}>{act.label}</span>
+											{act.isCompleted && act.completedAt && (
+												<span className={styles.actionDoneTag}>Done ({act.completedAt})</span>
+											)}
+										</div>
+									))}
+								</div>
+							</div>
+						)}
+					</div>
+
+					<div className={styles.responseCardFooter}>
+						<button
+							type='button'
+							className={styles.btnOpenChat}
+							onClick={() => setIsDoctorChatOpen(true)}
+						>
+							<MessageSquare size={13} />
+							<span>Open Full Chat & Reply to {latestDoctorMessage.senderName}</span>
+							<ChevronRight size={13} />
+						</button>
+					</div>
+				</div>
+			)}
 
 			{/* Onboarding Health Metrics Summary Row */}
 			<div className={styles.summaryGrid}>
