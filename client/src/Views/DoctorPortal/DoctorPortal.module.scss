@@ -3422,9 +3422,9 @@
 }
 
 .markerExpandedBody {
-	padding: 8px 10px 10px 10px;
+	padding: 10px 12px;
 	border-top: 1px solid rgba(255, 255, 255, 0.05);
-	background: rgba(0, 0, 0, 0.2);
+	background: rgba(0, 0, 0, 0.22);
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
@@ -3439,21 +3439,41 @@
 .markerInsightBox {
 	display: flex;
 	flex-direction: column;
-	gap: 3px;
+	gap: 5px;
+	background: rgba(0, 168, 150, 0.08);
+	border: 1px solid rgba(0, 168, 150, 0.2);
+	border-radius: 8px;
+	padding: 8px 10px;
+
+	:global(html[data-theme="light"]) & {
+		background: rgba(0, 168, 150, 0.06);
+		border-color: rgba(0, 168, 150, 0.25);
+	}
+}
+
+.markerInsightHeader {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.insightIcon {
+	color: #00a896;
+	flex-shrink: 0;
 }
 
 .markerInsightLabel {
 	font-size: 0.68rem;
-	font-weight: 750;
+	font-weight: 800;
 	text-transform: uppercase;
-	letter-spacing: 0.03em;
+	letter-spacing: 0.04em;
 	color: #00a896;
 }
 
 .markerInsightText {
-	font-size: 0.74rem;
-	line-height: 1.45;
-	color: rgba(255, 255, 255, 0.8);
+	font-size: 0.75rem;
+	line-height: 1.48;
+	color: rgba(255, 255, 255, 0.88);
 	margin: 0;
 
 	:global(html[data-theme="light"]) & {
@@ -3463,25 +3483,50 @@
 
 .markerMetaGrid {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: repeat(3, 1fr);
 	gap: 6px;
-	padding-top: 4px;
-	border-top: 1px solid rgba(255, 255, 255, 0.04);
 
-	:global(html[data-theme="light"]) & {
-		border-top-color: rgba(15, 23, 42, 0.06);
+	@media (max-width: 480px) {
+		grid-template-columns: 1fr;
 	}
 }
 
-.markerMetaItem {
+.markerMetaCard {
 	display: flex;
 	flex-direction: column;
-	gap: 1px;
+	gap: 3px;
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	border-radius: 8px;
+	padding: 6px 8px;
+
+	:global(html[data-theme="light"]) & {
+		background: #ffffff;
+		border-color: #e2e8f0;
+	}
+}
+
+.markerMetaHeader {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.metaIcon {
+	color: rgba(255, 255, 255, 0.45);
+	flex-shrink: 0;
+
+	:global(html[data-theme="light"]) & {
+		color: #64748b;
+	}
 }
 
 .markerMetaLabel {
-	font-size: 0.65rem;
-	color: rgba(255, 255, 255, 0.45);
+	font-size: 0.63rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	color: rgba(255, 255, 255, 0.48);
 
 	:global(html[data-theme="light"]) & {
 		color: #64748b;
@@ -3489,13 +3534,22 @@
 }
 
 .markerMetaVal {
-	font-size: 0.72rem;
-	font-weight: 700;
-	color: rgba(255, 255, 255, 0.9);
+	font-size: 0.73rem;
+	font-weight: 750;
+	color: #ffffff;
+	line-height: 1.35;
 
 	:global(html[data-theme="light"]) & {
 		color: #0f172a;
 	}
+}
+
+.trendWarning {
+	color: #fbbf24;
+}
+
+.trendNormal {
+	color: #34d399;
 }
 
 // ─── Status Badges ───────────────────────────────────────────────────────────

@@ -29,6 +29,7 @@ import {
 	FileText,
 	Heart,
 	History,
+	Info,
 	LogOut,
 	MapPin,
 	Mic,
@@ -1542,25 +1543,39 @@ export const DoctorPortal = () => {
 										<div className={styles.markerExpandedBody}>
 											{m.clinicalInsight && (
 												<div className={styles.markerInsightBox}>
-													<span className={styles.markerInsightLabel}>Clinical Interpretation:</span>
+													<div className={styles.markerInsightHeader}>
+														<Info size={12} className={styles.insightIcon} />
+														<span className={styles.markerInsightLabel}>Clinical Interpretation</span>
+													</div>
 													<p className={styles.markerInsightText}>{m.clinicalInsight}</p>
 												</div>
 											)}
 											<div className={styles.markerMetaGrid}>
 												{m.target && (
-													<div className={styles.markerMetaItem}>
-														<span className={styles.markerMetaLabel}>Target Goal:</span>
+													<div className={styles.markerMetaCard}>
+														<div className={styles.markerMetaHeader}>
+															<ShieldCheck size={11} className={styles.metaIcon} />
+															<span className={styles.markerMetaLabel}>Target Goal</span>
+														</div>
 														<span className={styles.markerMetaVal}>{m.target}</span>
 													</div>
 												)}
 												{m.trend && (
-													<div className={styles.markerMetaItem}>
-														<span className={styles.markerMetaLabel}>90-Day Trend:</span>
-														<span className={styles.markerMetaVal}>{m.trend}</span>
+													<div className={styles.markerMetaCard}>
+														<div className={styles.markerMetaHeader}>
+															<Activity size={11} className={styles.metaIcon} />
+															<span className={styles.markerMetaLabel}>90-Day Trend</span>
+														</div>
+														<span className={`${styles.markerMetaVal} ${m.status === "elevated" ? styles.trendWarning : styles.trendNormal}`}>
+															{m.trend}
+														</span>
 													</div>
 												)}
-												<div className={styles.markerMetaItem}>
-													<span className={styles.markerMetaLabel}>Organ System:</span>
+												<div className={styles.markerMetaCard}>
+													<div className={styles.markerMetaHeader}>
+														<Heart size={11} className={styles.metaIcon} />
+														<span className={styles.markerMetaLabel}>Organ System</span>
+													</div>
 													<span className={styles.markerMetaVal}>{m.system}</span>
 												</div>
 											</div>
