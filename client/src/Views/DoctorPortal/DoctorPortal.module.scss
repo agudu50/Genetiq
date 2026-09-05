@@ -411,7 +411,14 @@
 	left: 50%;
 	transform: translateX(-50%);
 	width: 380px;
-	max-height: 480px;
+	max-height: calc(100vh - 80px);
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	-webkit-overflow-scrolling: touch;
+	touch-action: pan-y;
+	scrollbar-width: thin;
+	scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+	box-sizing: border-box;
 	
 	// Glassmorphism matching profile dropdown
 	background: rgba(15, 23, 42, 0.95);
@@ -427,28 +434,48 @@
 	z-index: 100;
 	animation: popIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 
+	&::-webkit-scrollbar {
+		width: 5px;
+	}
+
+	&::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: rgba(255, 255, 255, 0.2);
+		border-radius: 4px;
+	}
+
 	:global(html[data-theme="light"]) & {
 		background: rgba(255, 255, 255, 0.96);
 		border-color: rgba(15, 23, 42, 0.08);
 		box-shadow: 0 20px 50px rgba(15, 23, 42, 0.1), 0 0 24px rgba(6, 78, 59, 0.05);
+		scrollbar-color: rgba(15, 23, 42, 0.15) transparent;
+
+		&::-webkit-scrollbar-thumb {
+			background: rgba(15, 23, 42, 0.15);
+		}
 	}
 
 	@media (max-width: 768px) {
 		position: fixed;
 		top: 54px;
-		left: 10px;
-		right: 10px;
-		transform: none;
-		width: auto;
-		max-width: calc(100vw - 20px);
+		left: 50%;
+		right: auto;
+		transform: translateX(-50%);
+		width: calc(100vw - 20px);
+		max-width: 380px;
 		max-height: calc(100dvh - 66px);
 	}
 
 	@media (max-width: 480px) {
 		top: 50px;
-		left: 6px;
-		right: 6px;
-		max-width: calc(100vw - 12px);
+		left: 50%;
+		right: auto;
+		transform: translateX(-50%);
+		width: calc(100vw - 16px);
+		max-width: 360px;
 		max-height: calc(100dvh - 60px);
 	}
 }
@@ -558,16 +585,40 @@
 	flex-direction: column;
 	gap: 4px;
 	overflow-y: auto;
-	max-height: 320px;
+	overscroll-behavior: contain;
+	-webkit-overflow-scrolling: touch;
+	touch-action: pan-y;
+	max-height: 340px;
 	scrollbar-width: thin;
+	scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 
 	&::-webkit-scrollbar {
 		width: 4px;
 	}
 
+	&::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
 	&::-webkit-scrollbar-thumb {
-		background: rgba(255, 255, 255, 0.15);
+		background: rgba(255, 255, 255, 0.2);
 		border-radius: 4px;
+	}
+
+	:global(html[data-theme="light"]) & {
+		scrollbar-color: rgba(15, 23, 42, 0.15) transparent;
+
+		&::-webkit-scrollbar-thumb {
+			background: rgba(15, 23, 42, 0.15);
+		}
+	}
+
+	@media (max-width: 768px) {
+		max-height: calc(100dvh - 180px);
+	}
+
+	@media (max-width: 480px) {
+		max-height: calc(100dvh - 160px);
 	}
 }
 
@@ -3560,13 +3611,15 @@
 	.patientDropdownMenu {
 		position: fixed;
 		top: 54px;
-		left: 10px;
-		right: 10px;
-		width: auto;
-		transform: none;
+		left: 50%;
+		right: auto;
+		transform: translateX(-50%);
+		width: calc(100vw - 20px);
+		max-width: 380px;
 		max-height: calc(100dvh - 66px);
 		z-index: 1000;
 		border-radius: 16px;
+		box-sizing: border-box;
 	}
 
 	.doctorMenuDropdown {
@@ -3765,10 +3818,13 @@
 
 	.patientDropdownMenu {
 		top: 50px;
-		left: 6px;
-		right: 6px;
-		max-width: calc(100vw - 12px);
+		left: 50%;
+		right: auto;
+		transform: translateX(-50%);
+		width: calc(100vw - 16px);
+		max-width: 360px;
 		max-height: calc(100dvh - 60px);
+		box-sizing: border-box;
 	}
 
 	.doctorMenuDropdown {
