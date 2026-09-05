@@ -682,15 +682,32 @@ function Model({
 	};
 
 	const cardioHotspotMaterials = useMemo(() => {
-		const uniformGlow = createGlowingMaterial(
-			new THREE.Color(0xfbbf24), // Vibrant Yellow / Golden-Amber
-			new THREE.Color(0xf59e0b),
-			new THREE.Color(0x92400e),
-		);
 		return {
-			apobLdl: uniformGlow,
-			afib: uniformGlow,
-			hscrp: uniformGlow,
+			apobLdl: createGlowingMaterial(
+				new THREE.Color(0xfbbf24), // 1. Golden Amber (Cardiovascular / ApoB LAD)
+				new THREE.Color(0xf59e0b),
+				new THREE.Color(0xb45309),
+			),
+			afib: createGlowingMaterial(
+				new THREE.Color(0xfb923c), // 2. Warm Tangerine / Coral (AFib Arrhythmia / Renal)
+				new THREE.Color(0xea580c),
+				new THREE.Color(0x9a3412),
+			),
+			pulmonaryOutflow: createGlowingMaterial(
+				new THREE.Color(0x38bdf8), // 3. Electric Cyan (Respiratory / Pulmonary Outflow)
+				new THREE.Color(0x0284c7),
+				new THREE.Color(0x0369a1),
+			),
+			autonomicPlexus: createGlowingMaterial(
+				new THREE.Color(0x818cf8), // 4. Electric Indigo (Neurological / Autonomic Tone)
+				new THREE.Color(0x4f46e5),
+				new THREE.Color(0x312e81),
+			),
+			hscrp: createGlowingMaterial(
+				new THREE.Color(0xc084fc), // 5. Vivid Amethyst / Inflammatory (Endocrine / hs-CRP)
+				new THREE.Color(0x9333ea),
+				new THREE.Color(0x581c87),
+			),
 		};
 	}, []);
 
@@ -863,30 +880,48 @@ function Model({
 						})
 					) : (
 						<>
-							{/* 1. Coronary Artery / LAD: ApoB 128 mg/dL & LDL 142 mg/dL Atheroma Burden */}
+							{/* 1. Coronary Artery / LAD: ApoB 128 mg/dL & LDL 142 mg/dL Atheroma Burden (Golden Amber) */}
 							<mesh
 								position={[0.8, 21.2, 3.2]}
 								onClick={(e) => handleMeshClick(e, "Cardiovascular")}
 							>
-								<planeGeometry args={[1.5, 1.5, 32, 32]} />
+								<planeGeometry args={[3.8, 3.8, 32, 32]} />
 								<primitive attach='material' object={cardioHotspotMaterials.apobLdl} />
 							</mesh>
 
-							{/* 2. Sinoatrial Node / Right Atrium: Paroxysmal Atrial Fibrillation */}
+							{/* 2. Sinoatrial Node / Right Atrium: Paroxysmal Atrial Fibrillation (Warm Tangerine) */}
 							<mesh
 								position={[-1.4, 23.8, 2.0]}
 								onClick={(e) => handleMeshClick(e, "Cardiovascular")}
 							>
-								<planeGeometry args={[1.4, 1.4, 32, 32]} />
+								<planeGeometry args={[3.5, 3.5, 32, 32]} />
 								<primitive attach='material' object={cardioHotspotMaterials.afib} />
 							</mesh>
 
-							{/* 3. Myocardial Micro-Vascular Bed: hs-CRP 3.4 mg/L Inflammatory Stress */}
+							{/* 3. Pulmonary Outflow Tract: Oxygenation Perfusion (Electric Cyan) */}
+							<mesh
+								position={[-0.6, 25.4, 2.8]}
+								onClick={(e) => handleMeshClick(e, "Cardiovascular")}
+							>
+								<planeGeometry args={[3.4, 3.4, 32, 32]} />
+								<primitive attach='material' object={cardioHotspotMaterials.pulmonaryOutflow} />
+							</mesh>
+
+							{/* 4. Cardiac Autonomic Plexus: Vagal / Sympathetic Tone (Electric Indigo) */}
+							<mesh
+								position={[0.2, 26.2, 1.6]}
+								onClick={(e) => handleMeshClick(e, "Cardiovascular")}
+							>
+								<planeGeometry args={[3.5, 3.5, 32, 32]} />
+								<primitive attach='material' object={cardioHotspotMaterials.autonomicPlexus} />
+							</mesh>
+
+							{/* 5. Myocardial Micro-Vascular Bed: hs-CRP 3.4 mg/L Inflammatory Stress (Vivid Amethyst) */}
 							<mesh
 								position={[1.2, 18.8, 2.8]}
 								onClick={(e) => handleMeshClick(e, "Cardiovascular")}
 							>
-								<planeGeometry args={[1.4, 1.4, 32, 32]} />
+								<planeGeometry args={[3.6, 3.6, 32, 32]} />
 								<primitive attach='material' object={cardioHotspotMaterials.hscrp} />
 							</mesh>
 						</>

@@ -44,28 +44,28 @@ export const createGlowingMaterial = (
           // Smooth pulsating indicator
           float gentlePulse = pow(sin(time * 2.0), 2.0) * 0.35 + pulse * 0.35;
           
-          // Tight, concentrated clinical point radii
-          float coreRadius = 0.09 + gentlePulse * 0.03;
-          float haloRadius = 0.30 + gentlePulse * 0.05;
+          // Concentrated yet expansive clinical glow radii
+          float coreRadius = 0.12 + gentlePulse * 0.04;
+          float haloRadius = 0.34 + gentlePulse * 0.06;
           
           // Color blending from high-intensity core to crisp mid-tone
           vec3 finalColor;
           if (dist < coreRadius) {
-              finalColor = mix(coreColor * 2.0, coreColor * 1.4, dist / coreRadius);
+              finalColor = mix(coreColor * 2.2, coreColor * 1.5, dist / coreRadius);
           } else if (dist < haloRadius) {
               float t = (dist - coreRadius) / (haloRadius - coreRadius);
-              finalColor = mix(coreColor * 1.4, midColor, t);
+              finalColor = mix(coreColor * 1.5, midColor, t);
           } else {
-              float t = clamp((dist - haloRadius) / (0.45 - haloRadius), 0.0, 1.0);
+              float t = clamp((dist - haloRadius) / (0.48 - haloRadius), 0.0, 1.0);
               finalColor = mix(midColor, outerColor, t);
           }
 
-          // Crisp pinpoint center beacon
+          // Crisp center beacon
           float pointCore = smoothstep(coreRadius * 1.2, 0.0, dist) * (2.2 + gentlePulse * 1.0);
           finalColor += coreColor * pointCore;
 
-          // Tight circular falloff - keeps indicator compact and focused like a point
-          float alpha = smoothstep(0.44, 0.04, dist);
+          // Organic circular falloff
+          float alpha = smoothstep(0.48, 0.03, dist);
           float breathingMultiplier = 0.85 + gentlePulse * 0.35;
           alpha *= breathingMultiplier * intensity;
 

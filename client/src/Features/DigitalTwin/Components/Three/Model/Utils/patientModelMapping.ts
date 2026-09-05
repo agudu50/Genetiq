@@ -314,23 +314,17 @@ export function derivePatient3DGlowConfig(patient: Patient3DData): Patient3DGlow
 	const diagnosis = (patient.primaryDiagnosis || "").toLowerCase();
 
 	if (patient.id === "pt-101" || diagnosis.includes("fibrillation") || diagnosis.includes("apob")) {
-		// Marcus Vance: High ApoB, AFib, hs-CRP — uniform yellow/golden-amber glow matching full body
-		const uniformGlow = {
-			core: new THREE.Color(0xfbbf24),
-			mid: new THREE.Color(0xf59e0b),
-			outer: new THREE.Color(0x92400e),
-		};
-
+		// Marcus Vance: High ApoB, AFib, hs-CRP — matching the exact color tokens from Full Body Overview
 		cardioHotspots.push({
 			id: "apob",
 			title: "ApoB 128 mg/dL & LDL Atheroma Burden",
 			position: [0.8, 21.2, 3.2],
-			scale: 3.6,
-			coreColor: uniformGlow.core,
-			midColor: uniformGlow.mid,
-			outerColor: uniformGlow.outer,
+			scale: 3.8,
+			coreColor: new THREE.Color(0xfbbf24), // 1. Golden Amber (Cardiovascular)
+			midColor: new THREE.Color(0xf59e0b),
+			outerColor: new THREE.Color(0xb45309),
 			pulseSpeed: 2.2,
-			intensity: 1.4,
+			intensity: 1.6,
 			label: "Coronary Artery / LAD Atheroma",
 		});
 		cardioHotspots.push({
@@ -338,23 +332,47 @@ export function derivePatient3DGlowConfig(patient: Patient3DData): Patient3DGlow
 			title: "Paroxysmal Atrial Fibrillation Arrhythmia",
 			position: [-1.4, 23.8, 2.0],
 			scale: 3.5,
-			coreColor: uniformGlow.core,
-			midColor: uniformGlow.mid,
-			outerColor: uniformGlow.outer,
+			coreColor: new THREE.Color(0xfb923c), // 2. Warm Tangerine / Coral (Renal / Electrophysiology)
+			midColor: new THREE.Color(0xea580c),
+			outerColor: new THREE.Color(0x9a3412),
 			pulseSpeed: 2.5,
-			intensity: 1.4,
+			intensity: 1.6,
 			label: "Sinoatrial Node / Right Atrium",
+		});
+		cardioHotspots.push({
+			id: "pulmonary_outflow",
+			title: "Pulmonary Arterial Oxygenation Outflow (SpO2 96%)",
+			position: [-0.6, 25.4, 2.8],
+			scale: 3.4,
+			coreColor: new THREE.Color(0x38bdf8), // 3. Electric Cyan (Respiratory / Pulmonary)
+			midColor: new THREE.Color(0x0284c7),
+			outerColor: new THREE.Color(0x0369a1),
+			pulseSpeed: 2.0,
+			intensity: 1.5,
+			label: "Pulmonary Arterial Outflow Tract",
+		});
+		cardioHotspots.push({
+			id: "autonomic_plexus",
+			title: "Cardiac Autonomic Plexus & Sympathetic Stress",
+			position: [0.2, 26.2, 1.6],
+			scale: 3.5,
+			coreColor: new THREE.Color(0x818cf8), // 4. Electric Indigo (Neurological / Autonomic Tone)
+			midColor: new THREE.Color(0x4f46e5),
+			outerColor: new THREE.Color(0x312e81),
+			pulseSpeed: 2.4,
+			intensity: 1.5,
+			label: "Cardiac Autonomic Ganglia",
 		});
 		cardioHotspots.push({
 			id: "hscrp",
 			title: "hs-CRP 3.4 mg/L Inflammatory Stress",
 			position: [1.2, 18.8, 2.8],
-			scale: 3.4,
-			coreColor: uniformGlow.core,
-			midColor: uniformGlow.mid,
-			outerColor: uniformGlow.outer,
+			scale: 3.6,
+			coreColor: new THREE.Color(0xc084fc), // 5. Vivid Amethyst (Endocrine / Inflammatory)
+			midColor: new THREE.Color(0x9333ea),
+			outerColor: new THREE.Color(0x581c87),
 			pulseSpeed: 2.2,
-			intensity: 1.4,
+			intensity: 1.6,
 			label: "Myocardial Micro-Vascular Bed",
 		});
 	} else if (patient.id === "pt-103" || diagnosis.includes("hypertension")) {
