@@ -310,6 +310,121 @@
 	}
 }
 
+// Labs Tab
+.labsContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.labsHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 4px 6px;
+	border-radius: 6px;
+	background: rgba(0, 168, 150, 0.08);
+	border: 1px solid rgba(0, 168, 150, 0.15);
+}
+
+.labsHeaderTitle {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 11px;
+	font-weight: 700;
+	color: #00a896;
+
+	svg {
+		color: #00a896;
+	}
+}
+
+.labsHeaderMeta {
+	font-size: 10px;
+	color: var(--text-secondary);
+	font-weight: 500;
+}
+
+.labsList {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.labItem {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 6px 10px;
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	cursor: pointer;
+	transition: background 0.2s ease, border-color 0.2s ease;
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.06);
+		border-color: rgba(0, 168, 150, 0.3);
+	}
+}
+
+.labItemLeft {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+}
+
+.labItemName {
+	font-size: 11.5px;
+	font-weight: 700;
+	color: var(--text);
+}
+
+.labItemRef {
+	font-size: 10px;
+	color: var(--text-secondary);
+}
+
+.labItemRight {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.labItemValue {
+	font-size: 12px;
+	font-weight: 800;
+	color: var(--text);
+}
+
+.labStatusTag {
+	padding: 2px 7px;
+	border-radius: 4px;
+	font-size: 9.5px;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+
+	&.tagHigh {
+		background: rgba(239, 68, 68, 0.15);
+		color: #ef4444;
+		border: 1px solid rgba(239, 68, 68, 0.3);
+	}
+
+	&.tagLow {
+		background: rgba(245, 158, 11, 0.15);
+		color: #f59e0b;
+		border: 1px solid rgba(245, 158, 11, 0.3);
+	}
+
+	&.tagNormal {
+		background: rgba(16, 185, 129, 0.15);
+		color: #10b981;
+		border: 1px solid rgba(16, 185, 129, 0.3);
+	}
+}
+
 // ─── Empty States ─────────────────────────────────
 .emptyTab {
 	display: flex;

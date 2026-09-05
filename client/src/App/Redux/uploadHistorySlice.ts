@@ -35,6 +35,82 @@ export interface UploadRecord {
 	bloodType: string;
 }
 
+export const DEFAULT_MARCUS_LAB_RECORD: UploadRecord = {
+	id: "lab-rec-marcus-apob-101",
+	uploadedAt: new Date(Date.now() - 14 * 60 * 1000).toISOString(),
+	fileName: "90-Day ApoB & Comprehensive Lipid Subfraction",
+	healthScore: 68,
+	firstName: "Marcus",
+	lastName: "Vance",
+	age: "52",
+	gender: "Male",
+	bloodType: "O+",
+	findings: [
+		{
+			id: "f-apob",
+			name: "Apolipoprotein B (ApoB)",
+			marker: "ApoB",
+			value: "128 mg/dL",
+			status: "elevated",
+			statusLabel: "High (Ref: < 90 mg/dL)",
+			note: "Direct particle concentration is elevated, indicating heightened atherogenic particle burden and arterial plaque deposition risk.",
+		},
+		{
+			id: "f-ldl",
+			name: "LDL Cholesterol",
+			marker: "LDL-C",
+			value: "142 mg/dL",
+			status: "elevated",
+			statusLabel: "High (Ref: < 100 mg/dL)",
+			note: "Low-density lipoprotein cholesterol is above target range. Primary driver for coronary atheroma buildup.",
+		},
+		{
+			id: "f-hscrp",
+			name: "hs-CRP (Inflammation)",
+			marker: "hs-CRP",
+			value: "3.4 mg/L",
+			status: "elevated",
+			statusLabel: "High (Ref: < 1.0 mg/L)",
+			note: "High-sensitivity C-reactive protein indicates persistent systemic vascular inflammation.",
+		},
+		{
+			id: "f-egfr",
+			name: "eGFR (Kidney)",
+			marker: "eGFR",
+			value: "78 mL/min",
+			status: "low",
+			statusLabel: "Low (Ref: > 90 mL/min)",
+			note: "Mildly reduced glomerular filtration rate consistent with Stage 2 renal filtration strain.",
+		},
+		{
+			id: "f-glucose",
+			name: "Fasting Blood Glucose",
+			marker: "Glucose",
+			value: "104 mg/dL",
+			status: "elevated",
+			statusLabel: "High (Ref: 70 - 99 mg/dL)",
+			note: "Mildly elevated fasting blood sugar indicating borderline glycemic resistance.",
+		},
+	],
+	recommendations: [
+		{
+			icon: "pill",
+			title: "Atorvastatin 40mg + Ezetimibe 10mg",
+			body: "Cardiologist-recommended dual-action lipid lowering therapy targeting ApoB reduction below 70 mg/dL.",
+		},
+		{
+			icon: "heart",
+			title: "Cardiovascular Risk Follow-Up",
+			body: "Schedule repeat lipid subfraction and inflammatory marker re-test in 90 days.",
+		},
+		{
+			icon: "droplet",
+			title: "Renal Function Hydration Support",
+			body: "Maintain adequate daily hydration and monitor blood pressure to support glomerular filtration.",
+		},
+	],
+};
+
 const LOCAL_STORAGE_KEY = "genetiq.uploadHistory";
 
 const loadRecordsFromStorage = (): UploadRecord[] => {
@@ -43,20 +119,24 @@ const loadRecordsFromStorage = (): UploadRecord[] => {
 			const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
 			if (stored) {
 				const parsed = JSON.parse(stored);
-				if (Array.isArray(parsed)) {
-					return parsed.filter(
+				if (Array.isArray(parsed) && parsed.length > 0) {
+					// Check if Marcus's 90-Day ApoB record is already in the list
+					const hasApoB = parsed.some(
 						(r: UploadRecord) =>
-							r.id !== "default-seed-record" &&
-							!r.id.startsWith("seed") &&
-							r.fileName !== "blood_panel_report.pdf",
+							r.fileName?.includes("ApoB") ||
+							r.findings?.some((f) => f.marker === "ApoB" || f.name.includes("ApoB")),
 					);
+					if (hasApoB) {
+						return parsed;
+					}
+					return [DEFAULT_MARCUS_LAB_RECORD, ...parsed];
 				}
 			}
 		} catch (e) {
 			console.error("Error loading upload history", e);
 		}
 	}
-	return [];
+	return [DEFAULT_MARCUS_LAB_RECORD];
 };
 
 export interface UploadHistoryState {

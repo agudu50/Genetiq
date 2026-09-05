@@ -83,14 +83,21 @@ const getStatusTone = (status: string) => {
 	return "neutral";
 };
 
-const now = new Date();
-
 const DEFAULT_MOCK_ITEMS: HistoryItem[] = [
+	{
+		id: "mock-1",
+		type: "Lab Results",
+		title: "90-Day ApoB & Lipid Subfraction",
+		date: new Date(Date.now() - 14 * 60 * 1000).toISOString(),
+		status: "Verified",
+		icon: "beaker",
+		color: "#00a896",
+	},
 	{
 		id: "mock-2",
 		type: "AI Insights",
-		title: "Inflammation Risk Alert",
-		date: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString(),
+		title: "Inflammation hs-CRP & ApoB Alert",
+		date: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
 		status: "Review Needed",
 		icon: "brain",
 		color: "#f59e0b",
@@ -98,29 +105,20 @@ const DEFAULT_MOCK_ITEMS: HistoryItem[] = [
 	{
 		id: "mock-3",
 		type: "Lab Results",
-		title: "Lab 2",
-		date: new Date(now.getTime() - 72 * 60 * 60 * 1000).toISOString(),
-		status: "Verified",
-		icon: "beaker",
-		color: "#8b5cf6",
-	},
-	{
-		id: "mock-4",
-		type: "Lab Results",
-		title: "Lab 1",
-		date: new Date(now.getTime() - 72 * 60 * 60 * 1000).toISOString(),
+		title: "Comprehensive Metabolic & Renal Panel",
+		date: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
 		status: "Verified",
 		icon: "beaker",
 		color: "#10b981",
 	},
 	{
-		id: "mock-5",
+		id: "mock-4",
 		type: "Lab Results",
-		title: "Lab 1",
-		date: new Date(now.getTime() - 72 * 60 * 60 * 1000).toISOString(),
+		title: "Baseline Lipid Panel",
+		date: new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString(),
 		status: "Verified",
 		icon: "beaker",
-		color: "#38bdf8",
+		color: "#00a896",
 	},
 ];
 
@@ -153,16 +151,20 @@ export const HealthHistoryWidget = () => {
 	}, [loadQuizHistory]);
 
 	const mappedUploads = useMemo<HistoryItem[]>(() => {
-		return uploadRecords.map((rec, index) => {
-			const titleNum = uploadRecords.length > 1 ? uploadRecords.length - index : 1;
+		return uploadRecords.map((rec) => {
+			const displayTitle =
+				rec.fileName && rec.fileName !== "blood_panel_report.pdf"
+					? rec.fileName.replace(/\.pdf$/i, "")
+					: "90-Day ApoB & Comprehensive Lipid Subfraction";
+			const hasElevated = rec.findings?.some((f) => f.status === "elevated" || f.status === "action");
 			return {
 				id: rec.id,
 				type: "Lab Results",
-				title: `Lab ${titleNum}`,
+				title: displayTitle,
 				date: rec.uploadedAt,
 				status: "Verified",
 				icon: "beaker",
-				color: index % 2 === 0 ? "#8b5cf6" : "#10b981",
+				color: hasElevated ? "#f59e0b" : "#00a896",
 			};
 		});
 	}, [uploadRecords]);

@@ -4,24 +4,29 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/App/Redux/store";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/App/i18n/LanguageContext";
-import { Activity, ShieldCheck, Pill, Stethoscope } from "lucide-react";
+import { paths } from "@/App/Routes/Paths";
+import { Activity, ShieldCheck, Pill, Stethoscope, FlaskConical } from "lucide-react";
 
-type Tab = "conditions" | "medications" | "symptoms";
+type Tab = "conditions" | "medications" | "symptoms" | "labs";
 
 export const MedicalOverviewWidget = () => {
 	const { t } = useLanguage();
 	const navigate = useNavigate();
 	const user = useSelector((state: RootState) => state.user);
+	const uploadRecords = useSelector((state: RootState) => state.uploadHistory.records);
 	const [activeTab, setActiveTab] = useState<Tab>("conditions");
 
 	const medicalConditions = Array.isArray(user?.medicalConditions) ? user.medicalConditions : [];
 	const medications = Array.isArray(user?.medications) ? user.medications : [];
 	const symptoms = Array.isArray(user?.symptoms) ? user.symptoms : [];
+	const latestRecord = uploadRecords[0];
+	const labFindings = latestRecord?.findings || [];
 
 	const conditionsCount = medicalConditions.length;
 	const activeMeds = medications.filter((m) => m && m.name);
 	const medicationsCount = activeMeds.length;
 	const symptomsCount = symptoms.length;
+	const labsCount = labFindings.length;
 
 	const bmiValue = useMemo(() => {
 		const h = Number(user.height);
@@ -46,9 +51,14 @@ export const MedicalOverviewWidget = () => {
 			label: t("symptoms") || "Symptoms",
 			count: symptomsCount,
 		},
+		{
+			key: "labs",
+			label: t("labs") || "Labs",
+			count: labsCount,
+		},
 	];
 
-	const hasAnyData = conditionsCount > 0 || medicationsCount > 0 || symptomsCount > 0;
+	const hasAnyData = conditionsCount > 0 || medicationsCount > 0 || symptomsCount > 0 || labsCount > 0;
 
 	return (
 		<div className={styles.medicalWidget}>
@@ -186,6 +196,56 @@ export const MedicalOverviewWidget = () => {
 								onImport={() => navigate("/config/import")}
 							/>
 						)}
+					</div>
+				)}
+
+				{activeTab === "labs" && (
+					<div className={styles.labsContainer}>
+						<div className={styles.labsHeader}>
+							<div className={styles.labsHeaderTitle}>
+								<FlaskConical size={13} />
+								<span>{latestRecord?.fileName || "90-Day ApoB & Lipid Subfraction"}</span>
+							</div>
+							<span className={styles.labsHeaderMeta}>Quest Diagnostics Direct</span>
+						</div>
+						<div className={styles.labsList}>
+							{labFindings.length > 0 ? (
+								labFindings.map((f) => {
+									const isHigh = f.status === "elevated" || f.status === "action";
+									const isLow = f.status === "low";
+									const tagClass = isHigh ? styles.tagHigh : isLow ? styles.tagLow : styles.tagNormal;
+									const statusText = isHigh ? "High" : isLow ? "Low" : "Normal";
+
+									return (
+										<div
+											key={f.id}
+											className={styles.labItem}
+											onClick={() => navigate(paths.clinicalHistory)}
+										>
+											<div className={styles.labItemLeft}>
+												<span className={styles.labItemName}>{f.name}</span>
+												<span className={styles.labItemRef}>
+													{f.statusLabel.includes("Ref")
+														? f.statusLabel.slice(f.statusLabel.indexOf("Ref"))
+														: `Marker: ${f.marker}`}
+												</span>
+											</div>
+											<div className={styles.labItemRight}>
+												<span className={styles.labItemValue}>{f.value}</span>
+												<span className={`${styles.labStatusTag} ${tagClass}`}>
+													{statusText}
+												</span>
+											</div>
+										</div>
+									);
+								})
+							) : (
+								<EmptyTabState
+									text={t("no_labs") || "No lab biomarkers recorded"}
+									onImport={() => navigate(paths.clinicalHistory)}
+								/>
+							)}
+						</div>
 					</div>
 				)}
 			</div>
