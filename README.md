@@ -1,310 +1,277 @@
-# Genetiq - Digital Health Twin Platform
+# Genetiq - Digital Health Twin & AI Triage Platform
 
 <p align="center">
   <img src="https://img.shields.io/badge/React-18.3-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="React" />
-  <img src="https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/TypeScript-5.6-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Vite-6.0-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
   <img src="https://img.shields.io/badge/Three.js-r172-000000?style=for-the-badge&logo=three.js&logoColor=white" alt="Three.js" />
+  <img src="https://img.shields.io/badge/Google_Gemini-3.5_Flash-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Gemini" />
+  <img src="https://img.shields.io/badge/Gemma_4-Local_AI-orange?style=for-the-badge&logo=google&logoColor=white" alt="Gemma" />
+  <img src="https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase" />
 </p>
 
+---
+
 ## 🌍 The Problem at Hand
-Ghanaian healthcare, particularly in rural and sub-urban communities, faces three critical challenges:
-1. **Clinical Scarcity & Gaps**: Rural clinics and Community-based Health Planning and Services (CHPS) compounds are often understaffed, meaning patients wait hours for basic consultations or triage.
-2. **Diagnostic & Literacy Barriers**: Medical lab reports, Rapid Diagnostic Tests (RDTs), and prescriptions are filled with complex medical jargon that patients cannot interpret on their own.
-3. **Language Barriers**: Important medical guidelines and emergency directions are predominantly published in English, excluding patients who speak local languages like Twi, Ga, Ewe, or Fante.
-4. **Connectivity Constraints**: Relying on cloud-based Artificial Intelligence (AI) is impractical for remote regions with unstable internet connectivity.
+Healthcare delivery in emerging markets and rural communities faces critical structural challenges:
+1. **Clinical Scarcity & Triage Delays**: Remote clinics and Community-based Health Planning and Services (CHPS) compounds operate with severe staffing shortages, leading to long waiting times for basic consultations.
+2. **Diagnostic & Literacy Barriers**: Laboratory reports, Rapid Diagnostic Tests (RDTs), and clinical prescriptions are dense with technical jargon that patients struggle to comprehend.
+3. **Language Inclusivity Gaps**: Vital medical instructions and emergency guidelines are predominantly in English, creating barriers for speakers of local languages like **Twi, Ga, Ewe, and Fante**.
+4. **Connectivity Constraints & Privacy**: Remote clinics often suffer from intermittent internet connectivity, requiring intelligent on-device edge capabilities that operate without continuous cloud access.
 
-## 💡 Our Solution: Genetiq + Gemma 4 Local Artificial Intelligence (AI)
-Genetiq addresses these challenges by bringing local, edge-native intelligence directly to the patient's device, with no internet required:
-1. **Edge-Native Gemma 4 Artificial Intelligence (AI) Assistant**: By running Google's frontier Gemma 4 models locally on-device, we deliver medical triage and guidance without relying on cloud services.
-2. **Multimodal Lab Scanner**: Patients upload or scan photos of their laboratory sheets or Rapid Diagnostic Test (RDT) cassettes. Gemma 4 reads the image, extracts biomarkers, and translates them into a plain-English layout.
-3. **3D Digital Twin Visualizer**: Triage inputs automatically zoom and highlight affected biological systems on an interactive 3D human body model (e.g. malaria/anemia highlights *Hematology*), visually reinforcing where the issue is.
-4. **Localized Remedies & Languages**: The portal provides health advice, diet recovery tips (like Moringa and Sobolo), and translates all diagnostic text into **Twi, Ga, Ewe, and Fante** dynamically.
+---
 
-## 🛠️ The Tech Stack We Used
-- **Frontend Core**: React 18, TypeScript, and Vite.
-- **3D Visualization**: Three.js & React Three Fiber (R3F) for the interactive digital twin.
-- **Artificial Intelligence (AI) Backend Service**: FastAPI (Fast Application Programming Interface) (Python 3) local server.
-- **Machine Learning Core**: PyTorch and Hugging Face Transformers for executing model inference on the edge.
+## 💡 Our Solution: Genetiq
+**Genetiq** is a next-generation **Digital Health Twin and Clinical Triage Platform** that merges frontier multimodal AI, edge-native on-device models, interactive 3D anatomical visualization, and real-time telemedicine connectivity.
 
-## ✨ Features
+- **3D Digital Twin Visualizer**: Maps patient vitals, genetic markers, and lab results onto high-fidelity interactive **Male and Female 3D anatomical models**, highlighting affected biological systems in real-time.
+- **Multimodal Lab & RDT Scanner**: Patients snap or upload photos of lab reports or test cassettes (e.g., Malaria RDT, Complete Blood Count). Multimodal AI reads biomarkers and explains them in clear, plain language.
+- **Dual AI Engine (Cloud + Edge)**: Powered by **Google Gemini 3.5 Flash** for deep multimodal cloud processing and local **Google Gemma 4** models via FastAPI for offline edge triage.
+- **Doctor Portal & Telemedicine Sync**: Dedicated clinical dashboard allowing physicians to review patient 3D digital twins, inspect biomarker telemetry, and interact via real-time encrypted chat.
+- **Culturally-Tailored Care & Localized Dialects**: Triage advice includes verified local dietary remedies (Moringa, Sobolo, Kontomire, Neem) and instant translations into **Twi, Ga, Ewe, and Fante**.
 
+---
 
-### 🧬 3D Digital Twin
+## 🛠️ The Tech Stack
 
-- **Interactive 3D Body Model**: Visually track and pinpoint health conditions
-  in real-time
-- **Dynamic System Highlights**: Real-time glowing indicators precisely mapped
-  to key biological regions (Respiratory, Digestive, Endocrine, Renal,
-  Urological, Neurological, Cardiovascular, & Musculoskeletal)
-- Real-time camera transitions and cinematic zooming transitions
-- Switch between full body and specialized system views seamlessly
+### Frontend (`/client`)
+- **Core Framework**: React 18.3, TypeScript 5.6, Vite 6.0
+- **3D Graphics & Rendering**: Three.js (r172), React Three Fiber (`@react-three/fiber`), `@react-three/drei`, Postprocessing
+- **State & Data Flow**: Redux Toolkit, TanStack React Query, React Router v7
+- **Styling & UI**: Modular SCSS, Framer Motion, Lucide Icons, React Icons
+- **Real-Time Client**: Socket.io Client, Supabase JS SDK
 
-### 📊 Health Dashboard
+### Backend & Cloud Services (`/server`)
+- **API Server**: Node.js & Express.js (ESM/CommonJS with hot reloading)
+- **Database & Auth**: Supabase (PostgreSQL) / MongoDB schemas
+- **AI & Multimodal Vision**: `@google/genai` (Gemini 3.5 Flash SDK) & Tesseract OCR
+- **Storage & Cloud Deployment**: Google Cloud Storage (GCS), Google Cloud Run, Vercel
+- **Real-Time Engine**: Socket.io & WebSocket server (`ws`)
 
-- **Welcome Header**: Personalized greetings with quick health stats
-- **Health Score**: Track your overall wellness score with trends
-- **Activity Charts**: Weekly activity visualization with multiple metrics
-- **Health Insights**: AI-powered health alerts and recommendations
-- **Quick Actions**: Fast access to common health tasks
+### Local Edge AI Engine (`/server/gemma`)
+- **Gateway**: Python 3.10+, FastAPI, Uvicorn
+- **Machine Learning Core**: PyTorch, Hugging Face Transformers, Accelerated CPU/GPU runtime
+- **Models Supported**: `google/gemma-2-2b-it`, `google/gemma-4-12B-it`, `google/paligemma-3b-pt-224`
 
-### ⚠️ Risk Assessment & Dashboard
+---
 
-- **Key Areas of Concern**: Stunning glassmorphic cards indicating exact health
-  risks visually (e.g. Diagnostic Costs, Information Gaps)
-- **Action Plans**: Follow-up Care, Supplements, and Lifestyle modifications
-  categorized using interactive pill-shaped tabs
-- **Activity Charts**: Weekly activity visualization featuring dynamic step,
-  calorie, and active minute metrics
-- **Cardiovascular Risk Analysis**: Detailed heart health monitoring
+## ✨ Key Features & Capabilities
 
-### 📈 Health History Tracking
+### 🧬 1. Interactive 3D Digital Twin
+- **Dual Anatomical Models**: Toggle seamlessly between high-precision **Male** and **Female** 3D biological models.
+- **Dynamic System Glow & Mapping**: Real-time glowing indicators mapped to specific physiological systems:
+  - *Cardiovascular, Respiratory, Digestive, Endocrine, Renal/Urological, Neurological, Musculoskeletal, Hematology*.
+- **Biomarker Color Legend**: Interactive HUD detailing biomarker status (Normal, Borderline, Critical) with direct coordinate pinpointing.
+- **Cinematic Camera Transitions**: Automated smooth zooming and orbital positioning focusing on symptomatic regions.
 
-- **Historical Uploads Panel**: Modern paginated cards to trace past laboratory findings effortlessly.
-- **Smart Data Charts**: Dynamic side-by-side SVG charts for tracking health scores over time and visualizing normal vs. abnormal markers.
-- **Fluid & Responsive Layout**: Clean, centered, single-column design that stretches gracefully on desktops and adapts flawlessly to mobile screens.
-- **Horizontal Profile Banner**: Quick access to patient vital stats and new upload actions directly at the top of the history page.
+### 🩺 2. Clinical Doctor Portal & Telemedicine
+- **Live Patient Queue**: Clinicians can inspect active patients, triage urgency levels, and historical health records.
+- **Synchronized 3D Pathology View**: Visualizes the selected patient's active health anomalies directly on the 3D body model.
+- **Real-Time Telemedicine Chat Sync**: Secure doctor-patient messaging channel (`PatientDoctorChatSync`) for consultations and follow-up guidance.
+- **Lab Telemetry Inspection**: Instant breakdown of patient lab panels with normal range comparisons.
 
-### 📋 Action Plans
+### 🧠 3. Multimodal AI Assistant & Lab Ingestion
+- **Lab Report & RDT Vision Scanner**: Automated OCR and clinical entity extraction from lab sheets and rapid test strips.
+- **Interactive Audio & Voice Triage**: Supports spoken symptom logs and natural conversation triage.
+- **Ghanaian Dialect Translation**: Instant translation of diagnosis and treatment advice into **Twi, Ga, Ewe, and Fante**.
+- **Local Remedy Integration**: Context-aware recommendations incorporating verified local nutrition (e.g., Sobolo for blood pressure support, Moringa, Kontomire for iron deficiency).
+- **Smart Offline Fallback Mode**: Gracefully shifts to an offline simulation engine with preloaded medical presets when edge GPU or internet connectivity is unavailable.
 
-- **Follow-up Care**: Recommended medical checkups and tests
-- **Supplements**: Personalized supplement recommendations
-- **Lifestyle**: Daily habits and lifestyle improvements
+### 📊 4. Health Dashboard & Analytics
+- **Personalized Health Score**: Wellness score calculation with historical trend lines.
+- **Activity & Vitals Telemetry**: Weekly activity tracking (steps, active calories, sleep, heart rate).
+- **Action Plans & Risk Categorization**: Segmented guidance for Follow-up Care, Targeted Supplements, and Lifestyle Modifications.
 
-### 🌍 Internationalization
+### 📈 5. Health History & Smart Data Charts
+- **Historical Uploads Archive**: Paginated past laboratory records and diagnostic test results.
+- **Comparative SVG Charts**: Visual trends showing health score progression and abnormal vs. normal biomarker fluctuations over time.
 
-Support for 17 languages including:
-
-- English, Spanish, French, German, Italian
-- Portuguese, Russian, Arabic, Chinese, Japanese
-- Korean, Hindi, Polish, Turkish, and more
-
-
-
-### 📋 Onboarding & Data Control
-
-- **Dynamic Action Navigation**: Specialized Navbar guide for onboarding steps
-  (Quiz, Supplements, Uploads, Connections).
-- **High-Fidelity Modals**: Premium dark-glassmorphic confirmation and success
-  modals for health data processing.
-- **Genetic Data Ingestion**: Secure file upload system for genetic and
-  biomarker data results.
-- **Real-time Processing**: Visual feedback during Digital Twin generation with
-  estimated notification timers.
-
-### 🇬🇭 Ghanaian Gemma 4 Health Assistant
-
-- **Edge-Native Artificial Intelligence (AI) Assistant**: Powered by a local FastAPI (Fast Application Programming Interface) server running Google Gemma 4 models via PyTorch/Transformers.
-- **Multimodal Lab Scanning**: Optical Character Recognition (OCR) and visual comprehension of uploaded lab sheets, Rapid Diagnostic Test (RDT) strips, and prescriptions.
-- **Ghanaian Language Translation**: Instantly toggle translations of clinical findings and summaries into Twi, Ga, Ewe, and Fante.
-- **3D Digital Twin Integration**: Dynamic symptom triage automatically zooms and highlights relevant biological systems on the 3D twin (e.g. malaria/anemia zooms to *Hematology*).
-- **Local Remedy Encyclopedia**: Curated nutrition advice featuring local food items like Moringa, Sobolo, Kontomire, and Neem tree tea.
-- **Smart Offline Fallback**: Zero-setup offline simulator ensures presets and dashboard remain 100% functional during pitches or offline reviews without requiring active Graphics Processing Unit (GPU) resources.
-
-### 🎨 Modern UI/UX
-
-- **Premium Dark Aesthetics**: High-contrast dark theme by default, optimized
-  for OLED and mobile readability.
-- **Glassmorphism & Glows**: Advanced backdrop blurs and subtle glows for
-  high-risk health metrics.
-- **Responsive Fluidity**: Perfectly balanced layouts for mobile, tablet, and
-  desktop viewports.
-- **Micro-animations**: Smooth transitions for modal state changes and route
-  navigation.
-- **Brand Consistency**: Unified indigo-violet gradient branding across all
-  primary action components.
-
-## 🛠️ Tech Stack
-
-### Frontend
-
-| Technology        | Purpose          |
-| ----------------- | ---------------- |
-| React 18          | UI Framework     |
-| TypeScript        | Type Safety      |
-| Vite              | Build Tool       |
-| React Three Fiber | 3D Rendering     |
-| Three.js          | 3D Graphics      |
-| Redux Toolkit     | State Management |
-| React Router      | Navigation       |
-| SCSS Modules      | Styling          |
-
-### Backend, AI Engine & Cloud Infrastructure
-
-| Technology | Purpose |
-| ---------- | ------- |
-| **Gemini 3.5 Flash** | Multimodal OCR, diagnostic analysis, and health triage |
-| **@google/genai** | Official Google GenAI SDK for model orchestration and structured outputs |
-| **Google Cloud Run** | Serverless containerized deployment and scaling |
-| **Google Cloud Storage (GCS)** | Secure medical lab report and scan storage |
-| **Express.js** | Main Application Programming Interface (API) Server |
-| **Supabase / PostgreSQL** | Persistent database & authentication |
-| **Python 3 / FastAPI** | Edge/Local Gemma Artificial Intelligence (AI) Gateway |
-| **PyTorch / Transformers** | Edge/Local Machine Learning Engine |
+---
 
 ## 📁 Project Structure
 
 ```
-genetiq-app/
-├── public/                 # Static assets
-│   └── assets/models/      # 3D model files
-├── server/                 # Backend API
-│   ├── controllers/        # Route handlers
-│   ├── gemma/              # Gemma 4 local AI service (Python)
-│   │   ├── prompts.py      # Local Ghanaian remedies & prompts
-│   │   ├── server.py       # FastAPI Gemma server
-│   │   └── requirements.txt# Python dependencies
-│   ├── models/             # Database schemas
-│   └── routes/             # API routes
-├── src/
-│   ├── App/                # App configuration
-│   │   ├── Services/       # GemmaService.ts (client API connector)
-│   │   ├── Redux/          # State management (triageSlice.tsx)
-│   │   ├── Routes/         # Routing config
-│   │   ├── Styles/         # Global styles
-│   │   └── theme/          # Theme context
-│   ├── assets/             # Images & icons
-│   ├── Features/           # Feature modules
-│   │   ├── Auth/           # Authentication
-│   │   ├── Dashboard/      # Dashboard widgets
-│   │   ├── DigitalTwin/    # 3D visualization
-│   │   ├── Onboarding/     # User onboarding
-│   │   ├── Risk/           # Risk assessment
-│   │   └── Structural/     # Layout components
-│   ├── locales/            # Translation files
-│   └── Views/              # Page components
-├── docker-compose.yml      # Docker configuration
-├── Dockerfile              # Container build
-└── vite.config.ts          # Vite configuration
+Genetiq/
+├── client/                     # Frontend React & Three.js Application
+│   ├── public/                 # Static assets & 3D models (.obj, .mtl, .gltf)
+│   │   └── assets/models/      # Male and Female anatomical 3D models
+│   ├── src/
+│   │   ├── App/                # App services, Redux store & global styling
+│   │   │   ├── Redux/          # Slices (triageSlice, authSlice, etc.)
+│   │   │   ├── Services/       # GemmaService, PatientDoctorChatSync, API connectors
+│   │   │   └── theme/          # Theme context & color tokens
+│   │   ├── Features/           # Core feature components
+│   │   │   ├── DigitalTwin/    # 3D canvas, Three.js models, CameraController, Shaders
+│   │   │   ├── Dashboard/      # Dashboard widgets, AI Assistant panel, telemetry
+│   │   │   └── Onboarding/     # Onboarding flows & upload modalities
+│   │   ├── Views/              # Routed pages
+│   │   │   ├── Dashboard/      # Main patient dashboard
+│   │   │   ├── DoctorPortal/   # Clinical telemedicine portal
+│   │   │   ├── HealthHistory/  # Historical lab panels & data charts
+│   │   │   ├── DetailedRisk/   # In-depth risk analysis view
+│   │   │   └── Landing/        # Landing page & entry point
+│   │   ├── vite.config.ts      # Vite configuration
+│   │   └── package.json        # Client dependencies & scripts
+│
+├── server/                     # Backend API & AI Engine
+│   ├── config/                 # Supabase, DB & environment config
+│   ├── controllers/            # Express controllers (auth, uploads, telemetry, chat)
+│   ├── routes/                 # API route definitions
+│   ├── services/               # Gemini AI & Google Cloud Storage services
+│   ├── models/                 # Database models & schemas
+│   ├── gemma/                  # Edge AI Python Service
+│   │   ├── server.py           # FastAPI local Gemma 4 endpoint
+│   │   ├── prompts.py          # Clinical prompts & Ghanaian remedy dataset
+│   │   └── requirements.txt    # Python machine learning dependencies
+│   ├── index.js                # Express & Socket.io server entry point
+│   └── package.json            # Server dependencies
+│
+├── cloudbuild.yaml             # Google Cloud Build pipeline
+├── docker-compose.yml          # Container orchestration
+└── README.md                   # Project documentation
 ```
+
+---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
+- **Node.js**: `v18.0.0` or higher
+- **npm** or **yarn**
+- **Python**: `3.10+` (optional, for local Gemma edge inference)
+- **Supabase Account** or **PostgreSQL** database
 
-- Node.js 18+
-- npm or yarn
-- MongoDB (for main backend)
-- Python 3.10+ (for local Gemma Artificial Intelligence (AI) server)
+---
 
-### Client & Express Server Setup
+### Installation & Quickstart
 
 1. **Clone the repository**
-
    ```bash
-   git clone https://github.com/your-org/genetiq-app.git
-   cd genetiq-app
+   git clone https://github.com/agudu50/Genetiq.git
+   cd Genetiq
    ```
 
-2. **Install dependencies**
-
+2. **Setup Client & Server Dependencies**
    ```bash
+   # Install client dependencies
+   cd client
+   npm install
+
+   # Install server dependencies
+   cd ../server
    npm install
    ```
 
-3. **Start client & server development**
+3. **Configure Environment Variables**
 
+   Create a `.env` file in `client/`:
+   ```env
+   VITE_API_URL=http://localhost:5000
+   VITE_SUPABASE_URL=your_supabase_project_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+
+   Create a `.env` file in `server/`:
+   ```env
+   PORT=5000
+   GEMINI_API_KEY=your_google_gemini_api_key
+   SUPABASE_URL=your_supabase_project_url
+   SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+   GCS_BUCKET_NAME=your_gcs_bucket_name
+   ```
+
+4. **Run the Full Stack Development Environment**
+
+   From the `client` directory:
    ```bash
+   # Runs both Express Server and Vite Client concurrently with auto-reload:
    npm run dev
    ```
 
-### 🧠 Local Gemma Artificial Intelligence (AI) Engine Setup
+   To run with the local **Gemma AI** server concurrently:
+   ```bash
+   npm run dev:ai
+   ```
 
-If the Gemma Artificial Intelligence (AI) server is not running, the application will automatically activate **Smart Offline Fallback Mode** (indicated by an orange badge), where all preset medical cases remain testable using local templates. 
+   Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-To run the live Gemma model locally:
+---
 
-1. **Accept the Model License**
-   Log in to Hugging Face (HF), visit the [google/gemma-2-2b-it](https://huggingface.co/google/gemma-2-2b-it) page (or the gated `google/gemma-4-12B-it` model page), and click **Acknowledge license / Request access**.
+### 🧠 Running Local Gemma 4 Edge AI (Optional)
 
-2. **Create an Access Token**
-   Go to your [Hugging Face settings -> Access Tokens](https://huggingface.co/settings/tokens) and copy a new **Read** token.
+If the local Gemma service is not started, Genetiq automatically uses **Google Gemini 3.5 Flash** or switches to the **Smart Offline Fallback Engine**.
 
-3. **Install Python dependencies**
+To run Gemma 4 locally on your machine:
+
+1. **Request Model Access**: Accept the license on Hugging Face for [google/gemma-2-2b-it](https://huggingface.co/google/gemma-2-2b-it) or `google/gemma-4-12B-it`.
+2. **Install Python Requirements**:
    ```bash
    cd server/gemma
    pip install -r requirements.txt
    ```
+3. **Launch the FastAPI Server**:
+   ```bash
+   # PowerShell
+   $env:HF_TOKEN="your_huggingface_token"
+   python server.py --model google/gemma-2-2b-it
 
-4. **Start the Gemma 4 Local Server**
-   Start the FastAPI instance passing your Hugging Face (HF) token in your terminal environment:
-   
-   * **PowerShell**:
-     ```powershell
-     $env:HF_TOKEN="your_token_here"
-     python server.py --model google/gemma-2-2b-it
-     ```
-   * **Command Prompt (CMD)**:
-     ```cmd
-     set HF_TOKEN=your_token_here
-     python server.py --model google/gemma-2-2b-it
-     ```
-
-   *(You can substitute `--model` with `google/paligemma-3b-pt-224` to test real-time multimodal image scanning, or `google/gemma-4-12B-it` on laptops equipped with high-end Graphics Processing Units (GPUs) and Video Random Access Memory (VRAM)).*
-
-### Available Scripts
-
-| Command           | Description               |
-| ----------------- | ------------------------- |
-| `npm run dev`     | Start development server  |
-| `npm run build`   | Build for production      |
-| `npm run preview` | Preview production build  |
-| `npm run lint`    | Run ESLint                |
-| `npm run format`  | Format code with Prettier |
-
-## 🐳 Docker Deployment
-
-```bash
-# Build and run with Docker Compose
-docker-compose up --build
-
-# Or build manually
-docker build -t genetiq-app .
-docker run -p 3000:3000 genetiq-app
-```
-
-## 🌐 Deployment
-
-The application is configured for deployment on:
-
-- **Vercel** (Frontend) - see `vercel.json`
-- **Docker** (Full stack) - see `Dockerfile` and `docker-compose.yml`
-
-## 🎯 Roadmap
-
-- [x] Premium Dashboard UI/UX Refinement
-- [x] High-Fidelity Onboarding Modals
-- [x] Integrate Google Gemma 4 Local AI Assistant
-- [x] Add dynamic systemic visualizations (Respiratory, Digestive, etc) to 3D
-      Digital Twin
-- [x] Health History Page Redesign & Smart Chart Enhancements
-- [ ] Wearable device integration (Apple Watch, Fitbit, Oura)
-- [ ] AI-powered predictive health analytics
-- [ ] Family health history tracking
-- [ ] Telemedicine integration
-
-## 🤝 Contributing
-
-Contributions are welcome! Please read our contributing guidelines before
-submitting a pull request.
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is proprietary software. All rights reserved.
-
-## 📞 Support
-
-For support, please contact the development team or open an issue in the
-repository.
+   # Bash / macOS / Linux
+   export HF_TOKEN="your_huggingface_token"
+   python server.py --model google/gemma-2-2b-it
+   ```
 
 ---
 
+## 📜 Available NPM Scripts
+
+### In `client/`:
+| Command | Description |
+| :--- | :--- |
+| `npm run dev` | Starts Express backend and Vite client concurrently |
+| `npm run dev:ai` | Starts Express backend, Vite client, and FastAPI Gemma server |
+| `npm run build` | Builds TypeScript and bundles production client via Vite |
+| `npm run preview` | Previews the production build locally |
+| `npm run lint` | Runs ESLint across client codebase |
+| `npm run format` | Formats code with Prettier |
+
+### In `server/`:
+| Command | Description |
+| :--- | :--- |
+| `npm start` | Starts the Express server |
+| `npm run dev` | Starts the Express server with native Node `--watch` mode |
+
+---
+
+## 🐳 Docker Deployment
+
+You can build and deploy the complete containerized stack using Docker Compose:
+
+```bash
+docker-compose up --build
+```
+
+---
+
+## 🎯 Roadmap & Completed Milestones
+
+- [x] High-precision 3D Digital Twin with system-level glow shaders
+- [x] Male and Female anatomical body models with dynamic mesh mapping
+- [x] Interactive Biomarker Color Legend & spatial coordinate locator
+- [x] Clinical Doctor Portal with live telemedicine chat sync
+- [x] Multimodal Lab Sheet & RDT Scanner with Google Gemini 3.5 Flash
+- [x] Local Edge AI Triage with Google Gemma 4 (FastAPI + PyTorch)
+- [x] Localized Ghanaian Language Translation (Twi, Ga, Ewe, Fante)
+- [x] Ghanaian Nutritional & Natural Remedy Encyclopedia
+- [x] Dynamic Health History analytics & SVG trend visualizations
+- [ ] Wearable device telemetry sync (Apple Health, Fitbit, Garmin)
+- [ ] Longitudinal AI-powered predictive disease forecasting
+- [ ] Offline Mesh-Networking for village CHPS compound node-to-node sync
+
+---
+
+## 📄 License
+This project is proprietary software. All rights reserved.
+
 <p align="center">
-  Made with ❤️ by the Genetiq Team
+  Made with ❤️ by the Genetiq Engineering Team
 </p>
